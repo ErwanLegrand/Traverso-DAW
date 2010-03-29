@@ -89,6 +89,7 @@ private:
   		ZoomCommand,
                 ScrollCommand,
                 ShuttleCommand,
+                NormalizeClipCommand
 	};
 };
 

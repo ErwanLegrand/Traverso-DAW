@@ -112,6 +112,8 @@ public:
 
 	int recording_state() const;
 
+        float calculate_normalization_factor(float targetdB = 0.0);
+
 private:
 	AudioTrack* 			m_track;
 	ReadSource*		m_readSource;
@@ -146,10 +148,7 @@ private:
 	void set_track_end_location(const TimeRef& location);
 	void set_sources_active_state();
 	void process_capture(nframes_t nframes);
-	
-	
-        float calculate_normalization_factor(float targetdB = 0.0);
-	
+		
 	friend class ResourcesManager;
 
 signals:
