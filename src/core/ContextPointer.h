@@ -118,6 +118,10 @@ public:
 	inline int on_first_input_event_scene_x() const {
                 return (int) m_port->map_to_scene(m_onFirstInputEventX, m_onFirstInputEventY).x();
 	}
+
+        inline QPointF on_first_input_event_scene_pos() const {
+                return m_port->map_to_scene(m_onFirstInputEventX, m_onFirstInputEventY);
+        }
 	
 	/**
 	 *        Returns the scene y coordinate on first input event.
