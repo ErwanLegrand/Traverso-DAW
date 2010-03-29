@@ -365,7 +365,7 @@ Command* TimeLineView::add_marker_at(const TimeRef when)
 
 Command* TimeLineView::playhead_to_marker()
 {
-        update_softselected_marker(QPointF(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
+        update_softselected_marker(cpointer().on_first_input_event_scene_pos());
 
 	if (m_blinkingMarker) {
 		m_sv->get_sheet()->set_transport_pos(m_blinkingMarker->get_marker()->get_when());
@@ -464,7 +464,7 @@ void TimeLineView::mouse_hover_move_event()
 
 Command * TimeLineView::drag_marker()
 {
-        update_softselected_marker(QPointF(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y()));
+        update_softselected_marker(cpointer().on_first_input_event_scene_pos());
 
 	if (m_blinkingMarker) {
 		return new DragMarker(m_blinkingMarker, m_sv->timeref_scalefactor, tr("Drag Marker"));
