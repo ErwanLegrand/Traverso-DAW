@@ -119,7 +119,7 @@ private:
 	QList<CurveNodeView*>	m_nodeViews;
 	TimeRef		m_startoffset;
 	
-        void update_softselected_node(QPoint pos, bool force = false);
+        void update_softselected_node(QPointF pos);
 
 public slots:
 	Command* add_node();

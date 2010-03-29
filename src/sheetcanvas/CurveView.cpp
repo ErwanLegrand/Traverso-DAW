@@ -356,7 +356,6 @@ void CurveView::add_curvenode_view(CurveNode* node)
 	
 	qSort(m_nodeViews.begin(), m_nodeViews.end(), Curve::smallerNode);
 	
-	update_softselected_node(cpointer().pos());
 	update();
 }
 
@@ -366,7 +365,8 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 		if (nodeview->get_curve_node() == node) {
 			m_nodeViews.removeAll(nodeview);
 			if (nodeview == m_blinkingNode) {
-				update_softselected_node(cpointer().pos());
+                                m_blinkingNode = 0;
+                                update_softselected_node(cpointer().scene_pos());
 			}
 			AddRemove* cmd = (AddRemove*) m_guicurve->remove_node(nodeview, false);
 			cmd->set_instantanious(true);
@@ -410,7 +410,7 @@ void CurveView::active_context_changed()
 	
 void CurveView::mouse_hover_move_event()
 {
-        update_softselected_node(mapToItem(this, cpointer().scene_pos()).toPoint());
+        update_softselected_node(cpointer().scene_pos());
 
 	if (m_blinkingNode) {
 		setCursor(themer()->get_cursor("CurveNode"));
@@ -423,11 +423,13 @@ void CurveView::mouse_hover_move_event()
 }
 
 
-void CurveView::update_softselected_node( QPoint pos , bool force)
+void CurveView::update_softselected_node(QPointF point)
 {
-	if (ie().is_holding() && !force) {
+        if (ie().is_holding()) {
 		return;
 	}
+
+        QPoint pos = mapToItem(this, point).toPoint();
 	
 	CurveNodeView* prevNode = m_blinkingNode;
 	m_blinkingNode = m_nodeViews.first();
@@ -511,11 +513,9 @@ Command* CurveView::remove_node()
 {
 	PENTER;
 
-	QPointF origPos(mapFromScene(QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y())));
-
 	emit curveModified();
 
-	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
+        update_softselected_node(cpointer().on_first_input_event_scene_pos());
 
 	if (m_blinkingNode) {
 		CurveNode* node = m_blinkingNode->get_curve_node();
@@ -529,9 +529,7 @@ Command* CurveView::drag_node()
 {
 	PENTER;
 
-        QPointF origPos(mapToItem(this, QPoint(cpointer().on_first_input_event_scene_x(), cpointer().on_first_input_event_scene_y())));
-
-	update_softselected_node(QPoint((int)origPos.x(), (int)origPos.y()), true);
+        update_softselected_node(cpointer().on_first_input_event_scene_pos());
 	
 	if (m_blinkingNode) {
 		TimeRef min(qint64(0));
