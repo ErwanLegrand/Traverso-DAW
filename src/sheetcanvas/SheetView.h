@@ -57,7 +57,8 @@ class SheetView : public ViewItem
 	Q_CLASSINFO("work_cursor_move", tr("Move"))
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
 	Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
-	Q_CLASSINFO("playhead_to_workcursor", tr("To workcursor"))
+        Q_CLASSINFO("add_marker_at_work_cursor", tr("Add Marker at Work Cursor"))
+        Q_CLASSINFO("playhead_to_workcursor", tr("To workcursor"))
         Q_CLASSINFO("workcursor_to_playhead", tr("To Playhead"));
 	Q_CLASSINFO("center_playhead", tr("Center"))
         Q_CLASSINFO("add_track", tr("Add Track"))
@@ -172,8 +173,9 @@ public slots:
         Command* play_cursor_move();
 	Command* work_cursor_move();
 	Command* add_marker();
-	Command* add_marker_at_playhead();
-	Command* playhead_to_workcursor();
+        Command* add_marker_at_playhead();
+        Command* add_marker_at_work_cursor();
+        Command* playhead_to_workcursor();
         Command* workcursor_to_playhead();
 	Command* center_playhead();
         Command* add_track();

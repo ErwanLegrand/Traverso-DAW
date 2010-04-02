@@ -864,6 +864,11 @@ Command * SheetView::add_marker_at_playhead()
 	return m_tlvp->get_timeline_view()->add_marker_at_playhead();
 }
 
+Command * SheetView::add_marker_at_work_cursor()
+{
+        return m_tlvp->get_timeline_view()->add_marker_at_work_cursor();
+}
+
 Command * SheetView::playhead_to_workcursor( )
 {
 	TimeRef worklocation = m_sheet->get_work_location();

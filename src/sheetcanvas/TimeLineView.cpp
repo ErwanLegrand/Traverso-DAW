@@ -334,6 +334,11 @@ Command* TimeLineView::add_marker_at_playhead()
 	return add_marker_at(m_sv->get_sheet()->get_transport_location());
 }
 
+Command* TimeLineView::add_marker_at_work_cursor()
+{
+        return add_marker_at(m_sv->get_sheet()->get_work_location());
+}
+
 Command* TimeLineView::add_marker_at(const TimeRef when)
 {
 	CommandGroup* group = new CommandGroup(m_timeline, "");

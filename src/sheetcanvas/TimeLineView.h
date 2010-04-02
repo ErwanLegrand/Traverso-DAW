@@ -70,8 +70,9 @@ class TimeLineView : public ViewItem
 {
         Q_OBJECT
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
-	Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
-	Q_CLASSINFO("remove_marker", tr("Remove Marker"))
+        Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
+        Q_CLASSINFO("add_marker_at_work_cursor", tr("Add Marker at Work Cursor"))
+        Q_CLASSINFO("remove_marker", tr("Remove Marker"))
 	Q_CLASSINFO("drag_marker", tr("Drag Marker"))
 	Q_CLASSINFO("clear_markers", tr("Clear all Markers"))
 	Q_CLASSINFO("playhead_to_marker", tr("Playhead to Marker"))
@@ -102,8 +103,9 @@ public slots:
 	
 public slots:
 	Command* add_marker();
-	Command* add_marker_at_playhead();
-	Command* remove_marker();
+        Command* add_marker_at_playhead();
+        Command* add_marker_at_work_cursor();
+        Command* remove_marker();
 	Command* drag_marker();
 	Command* clear_markers();
 	Command* playhead_to_marker();
