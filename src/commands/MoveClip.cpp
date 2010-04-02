@@ -433,6 +433,8 @@ void MoveClip::start_zoom(bool autorepeat)
 	} else {
 		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
 		d->sv->start_shuttle(true, true);
+                delete d->zoom;
+                d->zoom = 0;
 	}
 }
 
