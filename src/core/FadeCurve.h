@@ -32,6 +32,7 @@ $Id: FadeCurve.h,v 1.19 2008/01/21 16:22:14 r_sijrier Exp $
 
 class Sheet;
 class AudioClip;
+class AudioBus;
 
 class FadeCurve : public Curve, public APILinkedListNode
 {
@@ -56,7 +57,7 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	int set_state( const QDomNode & node );
 	
-	void process(audio_sample_t** mixdown, nframes_t nframes, uint channels);
+        void process(AudioBus* bus, nframes_t nframes);
 	
 	float get_bend_factor() {return m_bendFactor;}
 	float get_strength_factor() {return m_strenghtFactor;}

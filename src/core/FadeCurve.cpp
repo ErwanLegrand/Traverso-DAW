@@ -31,6 +31,7 @@ $Id: FadeCurve.cpp,v 1.36 2008/11/07 10:43:08 r_sijrier Exp $
 #include "CommandGroup.h"
 #include <AddRemove.h>
 #include "AudioDevice.h"
+#include "AudioBus.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -166,43 +167,73 @@ int FadeCurve::set_state( const QDomNode & node )
 }
 
 
-void FadeCurve::process(audio_sample_t** mixdown, nframes_t nframes, uint channels)
+void FadeCurve::process(AudioBus *bus, nframes_t nframes)
 {
 
-	if (is_bypassed() || (get_range() < 16)) {
+        if (is_bypassed()) {
 		return;
 	}
 	
 	
-	TimeRef faderange = TimeRef(get_range());
-	TimeRef fadepos;
+        audio_sample_t* mixdown[bus->get_channel_count()];
+        int outputRate = audiodevice().get_sample_rate();
+        uint framesToProcess = nframes;
+
+        TimeRef trackStartLocation, trackEndLocation, mix_pos;
+        TimeRef fadeRange = TimeRef(get_range());
+
+        TimeRef transportLocation = m_sheet->get_transport_location();
+        TimeRef upperRange = transportLocation + TimeRef(framesToProcess, outputRate);
+
 	
 	if (m_type == FadeIn) {
-		if( !( m_sheet->get_transport_location() < (m_clip->get_track_start_location() + faderange) ) ) {
-			return;
-		}
-		
-		fadepos = m_sheet->get_transport_location() - m_clip->get_track_start_location();
-	} else {
-		if( !(m_sheet->get_transport_location() > (m_clip->get_track_end_location() - faderange)) ) {
-			return;
-		}
-		
-		fadepos = m_sheet->get_transport_location() - (m_clip->get_track_end_location() - faderange);
+                trackStartLocation = m_clip->get_track_start_location();
+        } else {
+                trackStartLocation = m_clip->get_track_end_location() - fadeRange;
 	}
 
-	TimeRef range(nframes, audiodevice().get_sample_rate());
-	TimeRef limit(std::min (range.universal_frame(), faderange.universal_frame()));
-	
-	nframes_t framerange = limit.to_frame(audiodevice().get_sample_rate());
-	
-	get_vector(fadepos.universal_frame(), (fadepos + limit).universal_frame(), m_sheet->gainbuffer, framerange);
+        trackEndLocation = trackStartLocation + fadeRange;
 
-	for (uint chan=0; chan<channels; ++chan) {
-		for (nframes_t frame = 0; frame < framerange; ++frame) {
-			mixdown[chan][frame] *= m_sheet->gainbuffer[frame];
-		}
-	}
+
+        if ( (trackStartLocation < upperRange) && (trackEndLocation > transportLocation) ) {
+                if (transportLocation < trackStartLocation) {
+                        // Using to_frame() for both the m_trackStartLocation and transportLocation seems to round
+                        // better then using (m_trackStartLocation - transportLocation).to_frame()
+                        // TODO : find out why!
+                        uint offset = (trackStartLocation).to_frame(outputRate) - transportLocation.to_frame(outputRate);
+                        mix_pos = TimeRef();
+                        printf("offset %d\n", offset);
+
+                        for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+                                audio_sample_t* buf = bus->get_buffer(chan, framesToProcess);
+                                mixdown[chan] = buf + offset;
+                        }
+                        framesToProcess = framesToProcess - offset;
+                } else {
+                        mix_pos = (transportLocation - trackStartLocation);
+
+                        for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+                                mixdown[chan] = bus->get_buffer(chan, framesToProcess);
+                        }
+                }
+                if (trackEndLocation < upperRange) {
+                        // Using to_frame() for both the upperRange and m_trackEndLocation seems to round
+                        // better then using (upperRange - m_trackEndLocation).to_frame()
+                        // TODO : find out why!
+                        framesToProcess -= upperRange.to_frame(outputRate) - trackEndLocation.to_frame(outputRate);
+// 			printf("if (m_trackEndLocation < upperRange): framesToProcess %d\n", framesToProcess);
+                }
+        } else {
+                return;
+        }
+
+        get_vector(mix_pos.universal_frame(), upperRange.universal_frame(), m_sheet->gainbuffer, framesToProcess);
+
+        for (int chan=0; chan<bus->get_channel_count(); ++chan) {
+                for (nframes_t frame = 0; frame < framesToProcess; ++frame) {
+                        mixdown[chan][frame] *= m_sheet->gainbuffer[frame];
+                }
+        }
 }
 
 
