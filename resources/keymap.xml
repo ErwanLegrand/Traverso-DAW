@@ -103,7 +103,8 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="W" >
 			<Objects>
-				<Object objectname="SheetView" slotsignature="touch" modes="All" sortorder="2" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="touch" modifierkeys="CTRL;ALT" modes="All" sortorder="2" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="workcursor_to_playhead" modes="All" sortorder="3" submenu="Work Cursor" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="HOME" >

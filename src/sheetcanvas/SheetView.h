@@ -58,6 +58,7 @@ class SheetView : public ViewItem
 	Q_CLASSINFO("add_marker", tr("Add Marker"))
 	Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
 	Q_CLASSINFO("playhead_to_workcursor", tr("To workcursor"))
+        Q_CLASSINFO("workcursor_to_playhead", tr("To Playhead"));
 	Q_CLASSINFO("center_playhead", tr("Center"))
         Q_CLASSINFO("add_track", tr("Add Track"))
         Q_CLASSINFO("toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
@@ -173,6 +174,7 @@ public slots:
 	Command* add_marker();
 	Command* add_marker_at_playhead();
 	Command* playhead_to_workcursor();
+        Command* workcursor_to_playhead();
 	Command* center_playhead();
         Command* add_track();
         Command* toggle_expand_all_tracks();

@@ -877,6 +877,12 @@ Command * SheetView::playhead_to_workcursor( )
 	return (Command*) 0;
 }
 
+Command* SheetView::workcursor_to_playhead()
+{
+        m_sheet->set_work_at(m_sheet->get_transport_location());
+        return 0;
+}
+
 Command * SheetView::center_playhead( )
 {
 	TimeRef centerX = m_sheet->get_transport_location();
