@@ -402,7 +402,11 @@ void MoveClip::move_down(bool autorepeat)
 
 void MoveClip::move_left(bool autorepeat)
 {
-	Q_UNUSED(autorepeat);
+        if (d->zoom) {
+                d->zoom->hzoom_out(autorepeat);
+                return;
+        }
+
 	if (d->verticalOnly) return;
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	m_posDiff -= d->sv->timeref_scalefactor;
@@ -414,7 +418,11 @@ void MoveClip::move_left(bool autorepeat)
 
 void MoveClip::move_right(bool autorepeat)
 {
-	Q_UNUSED(autorepeat);
+        if (d->zoom) {
+                d->zoom->hzoom_in(autorepeat);
+                return;
+        }
+
 	if (d->verticalOnly) return;
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	m_posDiff += d->sv->timeref_scalefactor;
