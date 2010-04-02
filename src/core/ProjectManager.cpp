@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextPointer.h"
 #include "ResourcesManager.h"
 #include "Information.h"
+#include "InputEngine.h"
 #include "Config.h"
 #include "FileHelpers.h"
 #include <AudioDevice.h>
@@ -101,6 +102,9 @@ void ProjectManager::set_current_project(Project* project)
 	QString oldprojectname = "";
 	
 	if (currentProject) {
+
+                ie().abort_current_hold_actions();
+
 //                printf("exit in progress");
                 QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
                 if (oncloseaction == "save") {

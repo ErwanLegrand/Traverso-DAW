@@ -618,7 +618,7 @@ void InputEngine::reset()
         set_numerical_input("");
 }
 
-void InputEngine::mouse_left_viewport_unexpectedly()
+void InputEngine::abort_current_hold_actions()
 {
 	m_activeModifierKeys.clear();
         // Fake an escape key fact, so if a hold action was

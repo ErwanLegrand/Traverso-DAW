@@ -148,7 +148,7 @@ public:
 
         void activate();
         void suspend();
-	void mouse_left_viewport_unexpectedly();
+	void abort_current_hold_actions();
 	
 	Command* succes();
 	Command* failure();

@@ -489,7 +489,7 @@ void Interface::changeEvent(QEvent *event)
 		case QEvent::WindowStateChange:
 			// clean up the ie after Alt-Tab
 			// if problems remain, maybe ie().reset() will help...
-                        ie().mouse_left_viewport_unexpectedly();
+                        ie().abort_current_hold_actions();
 		default:
 			break;
 	}
