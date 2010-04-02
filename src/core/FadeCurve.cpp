@@ -170,7 +170,7 @@ int FadeCurve::set_state( const QDomNode & node )
 void FadeCurve::process(AudioBus *bus, nframes_t nframes)
 {
 
-        if (is_bypassed()) {
+	if (is_bypassed() || (get_range() < 16)) {
 		return;
 	}
 	
@@ -226,6 +226,9 @@ void FadeCurve::process(AudioBus *bus, nframes_t nframes)
         } else {
                 return;
         }
+
+
+        upperRange = mix_pos + TimeRef(framesToProcess, outputRate);
 
         get_vector(mix_pos.universal_frame(), upperRange.universal_frame(), m_sheet->gainbuffer, framesToProcess);
 
