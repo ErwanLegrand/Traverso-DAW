@@ -76,6 +76,7 @@ void WorkCursorMove::set_cursor_shape(int useX, int useY)
 
 int WorkCursorMove::jog()
 {
+        PENTER;
 	int x = cpointer().scene_x();
 
 	if (x < 0) {
@@ -83,6 +84,10 @@ int WorkCursorMove::jog()
 	}
 
 	TimeRef newLocation(x * m_sv->timeref_scalefactor);
+
+        if (newLocation == m_sheet->get_work_location()) {
+                return 1;
+        }
 
 	if (m_sheet->is_snap_on()) {
 		SnapList* slist = m_sheet->get_snap_list();
@@ -93,10 +98,24 @@ int WorkCursorMove::jog()
 
 	m_sv->update_shuttle_factor();
 	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newLocation, m_sv->timeref_scalefactor));
-	// Hmm, the alignment of the holdcursor isn't in the center, so we have to 
-	// substract half the width of it to make it appear centered... :-(
         cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
 	
 	return 1;
 }
 
+void WorkCursorMove::move_left(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+        m_sheet->set_work_at(m_sheet->get_work_location() - m_sv->timeref_scalefactor);
+        cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
+}
+
+
+void WorkCursorMove::move_right(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+        m_sheet->set_work_at(m_sheet->get_work_location() + m_sv->timeref_scalefactor);
+        cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
+}

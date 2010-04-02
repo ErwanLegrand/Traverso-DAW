@@ -44,6 +44,7 @@ Gain.h
 MoveClip.h
 MoveTrack.h
 TrackPan.h
+WorkCursorMove.h
 Zoom.h
 )
 

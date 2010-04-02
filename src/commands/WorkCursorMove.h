@@ -31,6 +31,10 @@ class PlayHead;
 
 class WorkCursorMove : public Command
 {
+        Q_OBJECT
+        Q_CLASSINFO("move_left", tr("Move Left"));
+        Q_CLASSINFO("move_right", tr("Move Right"));
+
 public :
 	WorkCursorMove (PlayHead* cursor, SheetView* sv);
 	~WorkCursorMove (){};
@@ -47,6 +51,11 @@ private :
 	SheetView*	m_sv;
 	PlayHead*	m_playCursor;
 	TimeRef		m_origPos;
+
+public slots:
+        void move_left(bool autorepeat);
+        void move_right(bool autorepeat);
+
 };
 
 #endif
