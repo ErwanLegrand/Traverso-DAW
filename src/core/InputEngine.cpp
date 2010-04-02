@@ -297,30 +297,27 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			continue;
 		}
 		
-		IEAction::Data* data = action->objectUsingModifierKeys.value(QString(item->metaObject()->className()));
+                IEAction::Data* data = 0;
+                QList<IEAction::Data*> dataList = action->objectUsingModifierKeys.values(item->metaObject()->className());
 		
-		// A match was found for actions using the modifier key
-		// let's see if it is valid for the current active modifier keys!
-		if (data) {
-			PMESG("found match in objectUsingModierKeys");
-			bool modifierkeymatch = true;
-			
-			if (data->modifierkeys.size()) {
-				foreach(int key, data->modifierkeys) {
-					if ( ! m_activeModifierKeys.contains(key)) {
-						PMESG("m_activeModifierKeys doesn't contain code %d", key);
-						modifierkeymatch = false;
-						break;
-					}
-				}
-			} else {
-				modifierkeymatch = false;
-			}
-			
-			if (! modifierkeymatch) {
-				data = 0;
-			}
-		}
+                foreach(IEAction::Data* maybeData, dataList) {
+                        // A match was found for actions using the modifier key
+                        // let's see if it is valid for the current active modifier keys!
+                        if (maybeData) {
+                                PMESG("found match in objectUsingModierKeys");
+
+                                if (maybeData->modifierkeys.size()) {
+                                        foreach(int key, maybeData->modifierkeys) {
+                                                if (m_activeModifierKeys.contains(key)) {
+                                                        data = maybeData;
+                                                        break;
+                                                } else {
+                                                        PMESG("m_activeModifierKeys doesn't contain code %d", key);
+                                                }
+                                        }
+                                }
+                        }
+                }
 		
 
                 const QMetaObject* metaobject = item->metaObject();
@@ -1519,10 +1516,12 @@ int InputEngine::init_map(const QString& keymap)
 			if (modifierKeys.isEmpty()) {
 				action->objects.insert(objectname, data);
 			} else {
-				action->objectUsingModifierKeys.insert(objectname, data);
+                                action->objectUsingModifierKeys.insertMulti(objectname, data);
 			}
 		
-			objectNode = objectNode.nextSibling();
+                        PMESG3("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(data->slotsignature));
+
+                        objectNode = objectNode.nextSibling();
 		}
 		
 		action->isInstantaneous = false;
@@ -1548,7 +1547,6 @@ int InputEngine::init_map(const QString& keymap)
 		
 		if (!exists) {
 			m_ieActions.append(action);
-			PMESG2("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(data->slotsignature));
 		}
 		
 		keyfactNode = keyfactNode.nextSibling();
