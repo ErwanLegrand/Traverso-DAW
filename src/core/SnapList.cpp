@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "ContextPointer.h"
 #include "TimeLine.h"
+#include "Utils.h"
 #include "Marker.h"
 
 #include <QString>
@@ -70,7 +71,7 @@ void SnapList::update_snaplist()
 	SLPRINT("acList size is %d\n", acList.size());
 
 	// Be able to snap to trackstart
-	if (m_rangeStart == qint64(0)) {
+        if (m_rangeStart == TimeRef()) {
 		m_xposList.append(TimeRef());
 	}
 
@@ -193,13 +194,13 @@ TimeRef SnapList::get_snap_value(const TimeRef& pos)
 	}
 	
 	if (is_snap_value(pos)) {
-		SLPRINT("get_snap_value returns: %d (was %d)\n", m_xposLut.at(i), pos);
+                SLPRINT("get_snap_value returns: %s (was %s)\n", timeref_to_ms_3(m_xposLut.at(i)).toAscii().data(), timeref_to_ms_3(pos).toAscii().data());
 		return m_xposLut.at(i);
 	}
 	
 	
-	SLPRINT("get_snap_value returns: %d (was %d)\n", pos, pos);
-	return pos;
+        SLPRINT("get_snap_value returns: %s (was %s)\n", timeref_to_ms_3(pos).toAscii().data(), timeref_to_ms_3(pos).toAscii().data());
+        return pos;
 }
 
 // returns true if i is inside a snap area, else returns false
@@ -221,7 +222,7 @@ bool SnapList::is_snap_value(const TimeRef& pos)
 		return false;
 	}
 
-	SLPRINT("is_snap_value returns: %d\n", m_xposBool.at(i));
+        SLPRINT("is_snap_value returns: %d\n", m_xposBool.at(i));
 	return m_xposBool.at(i);
 }
 
@@ -245,13 +246,13 @@ qint64 SnapList::get_snap_diff(const TimeRef& pos)
 		return 0;
 	}
 
-	SLPRINT("get_snap_diff returns: %d\n", m_xposLut.at(i));
+        SLPRINT("get_snap_diff returns: %s\n", timeref_to_ms_3(m_xposLut.at(i)).toAscii().data());
 	return (pos - m_xposLut.at(i)).universal_frame();
 }
 
 void SnapList::set_range(const TimeRef& start, const TimeRef& end, int scalefactor)
 {
- 	SLPRINT("setting xstart %d, xend %d scalefactor %d\n", start, end, scalefactor);
+        SLPRINT("setting xstart %s, xend %s scalefactor %d\n", timeref_to_ms_3(start).toAscii().data(), timeref_to_ms_3(end).toAscii().data(), scalefactor);
 
 	if (m_rangeStart == start && m_rangeEnd == end && m_scalefactor == scalefactor) {
 		return;
@@ -269,7 +270,9 @@ TimeRef SnapList::next_snap_pos(const TimeRef& pos)
 		update_snaplist();
 	}
 	
-	int index = (int)(pos / m_scalefactor);
+        int index = (int)(pos / m_scalefactor);
+
+        SLPRINT("next_snap_pos: index %d\n", index);
 	
 	if (pos < TimeRef()) {
 		PERROR("pos < 0");
@@ -277,13 +280,16 @@ TimeRef SnapList::next_snap_pos(const TimeRef& pos)
 	}
 	
 	if (index > m_xposLut.size()) {
+                SLPRINT("index > m_xposLut.size() (index is %d)\n", index);
 		index = m_xposLut.size() - 1;
 	}
 	
 	TimeRef newpos = pos;
 	
-	for (; index<m_xposLut.size(); ++index) {
-		TimeRef snap = m_xposLut.at(index);
+        // TODO: find out why using the found index above doesn't work
+        // whem moving the workcursor. Using linear search seems to work ok
+        for (int i=0; i<m_xposLut.size(); ++i) {
+		TimeRef snap = m_xposLut.at(i);
 		if (snap > pos) {
 			newpos = snap;
 			break;
