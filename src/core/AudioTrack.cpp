@@ -78,6 +78,7 @@ void AudioTrack::init()
         m_type = AUDIOTRACK;
         m_isArmed = false;
         m_fader->set_gain(1.0);
+        m_processBus = m_sheet->get_render_bus();
 }
 
 QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
@@ -247,7 +248,6 @@ int AudioTrack::process( nframes_t nframes )
         // Get the 'render bus' from sheet, a bit hackish solution, but
         // it avoids to have a dedicated render bus for each Track,
         // or buffers located on the heap...
-        m_processBus = m_sheet->get_render_bus();
         m_processBus->silence_buffers(nframes);
 
         int result;
