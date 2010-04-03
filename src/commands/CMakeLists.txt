@@ -24,6 +24,7 @@ Gain.cpp
 Import.cpp
 MoveClip.cpp
 MoveEdge.cpp
+MoveMarker.cpp
 MoveTrack.cpp
 PCommand.cpp
 SplitClip.cpp
@@ -42,6 +43,7 @@ Crop.h
 ExternalProcessingDialog.h
 Gain.h
 MoveClip.h
+MoveMarker.h
 MoveTrack.h
 TrackPan.h
 WorkCursorMove.h

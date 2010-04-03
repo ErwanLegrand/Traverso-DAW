@@ -1,5 +1,6 @@
 #include "SplitClip.h"
 #include "MoveClip.h"
+#include "MoveMarker.h"
 #include "MoveTrack.h"
 #include "MoveEdge.h"
 #include "TrackPan.h"

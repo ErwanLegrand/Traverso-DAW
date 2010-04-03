@@ -23,7 +23,6 @@
 #define TIME_LINE_VIEW_H
 
 #include "ViewItem.h"
-#include <Command.h>
 
 #include <QTimer>
 
@@ -32,39 +31,6 @@ class TimeLine;
 class MarkerView;
 class Marker;
 
-class DragMarker : public Command
-{
-	Q_OBJECT
-	Q_CLASSINFO("move_left", tr("Move Left"))
-	Q_CLASSINFO("move_right", tr("Move right"))
-
-public:
-	DragMarker(MarkerView* mview, qint64 scalefactor, const QString& des);
-
-	int prepare_actions();
-	int do_action();
-	int undo_action();
-	int finish_hold();
-	int begin_hold();
-	void cancel_action();
-	int jog();
-
-private :
-	Marker*		m_marker;
-	TimeRef		m_origWhen;
-	TimeRef		m_newWhen;
-	struct Data {
-		MarkerView*	view;
-		qint64 		scalefactor;
-		bool		bypassjog;
-		int		jogBypassPos;
-	};
-	Data* d;
-
-public slots:
-	void move_left(bool autorepeat);
-	void move_right(bool autorepeat);
-};
 
 class TimeLineView : public ViewItem
 {

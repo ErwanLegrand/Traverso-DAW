@@ -23,21 +23,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QPainter>
 
+#include "MoveMarker.h"
 #include "Themer.h"
 #include "SheetView.h"
 #include "MarkerView.h"
 #include "TimeLineViewPort.h"
-#include "SnapList.h"
 
-#include <ProjectManager.h>
-#include <Project.h>
 #include <Sheet.h>
 #include <TimeLine.h>
 #include <Marker.h>
 #include <ContextPointer.h>
 #include <Utils.h>
 #include <defines.h>
-#include <AddRemove.h>
 #include <CommandGroup.h>
 #include "Information.h"
 #include "InputEngine.h"
@@ -52,115 +49,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 #define MARKER_SOFT_SELECTION_DISTANCE 50
-
-
-DragMarker::DragMarker(MarkerView* mview, qint64 scalefactor, const QString& des)
-	: Command(mview->get_marker(), des)
-{
-	d = new Data;
-	d->view = mview;
-	m_marker= d->view->get_marker();
-	d->scalefactor = scalefactor;
-	d->bypassjog = false;
-}
-
-int DragMarker::prepare_actions()
-{
-	return 1;
-}
-
-int DragMarker::begin_hold()
-{
-	m_origWhen = m_newWhen = m_marker->get_when();
-	m_marker->set_snappable(false);
-	d->view->get_sheetview()->start_shuttle(true, true);
-	d->view->set_dragging(true);	
-	return 1;
-}
-
-int DragMarker::finish_hold()
-{
-	d->view->get_sheetview()->start_shuttle(false);
-	d->view->set_dragging(false);
-	delete d;
-	
-	return 1;
-}
-
-int DragMarker::do_action()
-{
-	m_marker->set_when(m_newWhen);
-	m_marker->set_snappable(true);
-	return 1;
-}
-
-int DragMarker::undo_action()
-{
-	m_marker->set_when(m_origWhen);
-	m_marker->set_snappable(true);
-	return 1;
-}
-
-void DragMarker::cancel_action()
-{
-	finish_hold();
-	undo_action();
-}
-
-void DragMarker::move_left(bool )
-{
-	d->bypassjog = true;
-	// Move 1 pixel to the left
-	TimeRef newpos = TimeRef(m_newWhen - d->scalefactor);
-	if (newpos < TimeRef()) {
-		newpos = TimeRef();
-	}
-	m_newWhen = newpos;
-	do_action();
-}
-
-void DragMarker::move_right(bool )
-{
-	d->bypassjog = true;
-	// Move 1 pixel to the right
-	m_newWhen = m_newWhen + d->scalefactor;
-	do_action();
-}
-
-int DragMarker::jog()
-{
-	if (d->bypassjog) {
-		int diff = d->jogBypassPos - cpointer().x();
-		if (abs(diff) > 15) {
-			d->bypassjog = false;
-		} else {
-			return 0;
-		}
-	}
-	
-	d->jogBypassPos = cpointer().x();
-	TimeRef newpos = TimeRef(cpointer().scene_x() * d->scalefactor);
-
-	if (m_marker->get_timeline()->get_sheet()->is_snap_on()) {
-		SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
-		newpos = slist->get_snap_value(newpos);
-	}
-
-	if (newpos < TimeRef()) {
-		newpos = TimeRef();
-	}
-	
-	m_newWhen = newpos;
-	d->view->set_position(int(m_newWhen / d->scalefactor));
-	
-	d->view->get_sheetview()->update_shuttle_factor();
-	
-	return 1;
-}
-
-
-// End DragMarker
-
 
 
 TimeLineView::TimeLineView(SheetView* view)
@@ -472,7 +360,7 @@ Command * TimeLineView::drag_marker()
         update_softselected_marker(cpointer().on_first_input_event_scene_pos());
 
 	if (m_blinkingMarker) {
-		return new DragMarker(m_blinkingMarker, m_sv->timeref_scalefactor, tr("Drag Marker"));
+                return new MoveMarker(m_blinkingMarker, m_sv->timeref_scalefactor, tr("Drag Marker"));
 	}
 	
 	return ie().did_not_implement();
