@@ -151,6 +151,7 @@ public:
 
         void set_current_viewport(AbstractViewPort* vp) {
                 m_port = vp;
+                m_keyboardOnlyInput = false;
         }
 
         QList<QObject* > get_context_items();
