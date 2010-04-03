@@ -808,6 +808,9 @@ void AudioClip::set_sheet( Sheet * sheet )
 }
 
 
+// TODO: this function is (also) called from the GUI thread when moving a clip from one track
+//      to another. When this clip is being 'played' during the move, m_track is changed in the gui
+//      thread, but we use m_track in ::process(). Could this result in an invalid pointer?
 void AudioClip::set_track( AudioTrack * track )
 {
 	if (m_track) {

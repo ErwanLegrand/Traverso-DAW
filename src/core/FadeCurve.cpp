@@ -170,7 +170,7 @@ int FadeCurve::set_state( const QDomNode & node )
 void FadeCurve::process(AudioBus *bus, nframes_t nframes)
 {
 
-	if (is_bypassed() || (get_range() < 16)) {
+        if (is_bypassed()) {
 		return;
 	}
 	
@@ -202,7 +202,7 @@ void FadeCurve::process(AudioBus *bus, nframes_t nframes)
                         // TODO : find out why!
                         uint offset = (trackStartLocation).to_frame(outputRate) - transportLocation.to_frame(outputRate);
                         mix_pos = TimeRef();
-                        printf("offset %d\n", offset);
+//                        printf("offset %d\n", offset);
 
                         for (int chan=0; chan<bus->get_channel_count(); ++chan) {
                                 audio_sample_t* buf = bus->get_buffer(chan, framesToProcess);

@@ -118,7 +118,7 @@ void AudioClipManager::remove_clip( AudioClip * clip )
 
 void AudioClipManager::update_last_frame( )
 {
-	PENTER;
+        PENTER3;
 	
 	m_lastLocation = TimeRef();
 	
