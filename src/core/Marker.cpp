@@ -112,7 +112,6 @@ int Marker::set_state(const QDomNode & node)
 
 void Marker::set_when(const TimeRef& when)
 {
-	if (m_when == when) return;
 	m_when = when;
 	emit positionChanged();
 }
