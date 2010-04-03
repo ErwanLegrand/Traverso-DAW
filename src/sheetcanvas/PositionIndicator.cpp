@@ -39,7 +39,7 @@ void PositionIndicator::paint(QPainter * painter, const QStyleOptionGraphicsItem
 	Q_UNUSED(widget);
 	
 	painter->drawPixmap(0, 0, m_background);
-	painter->drawText(m_boundingRect, Qt::AlignVCenter, m_value);
+        painter->drawText(m_boundingRect, Qt::AlignHCenter, m_value);
 }
 
 void PositionIndicator::calculate_bounding_rect()

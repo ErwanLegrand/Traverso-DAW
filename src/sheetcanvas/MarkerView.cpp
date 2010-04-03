@@ -44,12 +44,11 @@ MarkerView::MarkerView(Marker* marker, SheetView* sv, ViewItem* parentView)
 	m_sv = sv;
 	m_marker = marker;
 	m_line = new LineView(this);
-	set_active(false);
 	m_posIndicator = 0;
 
 	QFontMetrics fm(themer()->get_font("Timeline:marker"));
 	m_ascent = fm.ascent();
-	m_width = fm.width("NI"); // use any two letters to set the width of the marker indicator
+	m_width = fm.width("NI"); // use any two letters to set the width of the marker indicator
 	m_line->setPos(m_width / 2, m_ascent);
 	
 	load_theme_data();
@@ -169,7 +168,8 @@ void MarkerView::set_active(bool b)
 		m_line->set_color(QColor(0, 0, 0, 45));
 	}
 
-	m_line->update();
+        set_dragging(b);
+        m_line->update();
 	update();
 }
 
@@ -184,7 +184,7 @@ void MarkerView::set_dragging(bool dragging)
 	if (dragging) {
 		if (! m_posIndicator) {
 			m_posIndicator = new PositionIndicator(this);
-			m_posIndicator->set_position(15, 0);
+                        m_posIndicator->set_position(- (m_posIndicator->boundingRect().width() + 4), 0);
 		}
 	} else {
 		if (m_posIndicator) {
