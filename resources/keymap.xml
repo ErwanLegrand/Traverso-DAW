@@ -50,6 +50,7 @@
                                 <Object objectname="MoveClip" slotsignature="move_left" modes="All" sortorder="3" />
                                 <Object objectname="MoveMarker" slotsignature="move_left" modes="All" sortorder="1" />
                                 <Object objectname="WorkCursorMove" slotsignature="move_left" modes="All" sortorder="3" />
+                                <Object objectname="MoveCurveNode" slotsignature="move_left" modes="Effects" sortorder="1" />
                                 <Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
                                 <Object objectname="Zoom" slotsignature="hzoom_out" modes="All" sortorder="4" />
                                 <Object objectname="Sheet" slotsignature="prev_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
@@ -62,6 +63,7 @@
                                 <Object objectname="MoveClip" slotsignature="move_right" modes="All" sortorder="4" />
                                 <Object objectname="MoveMarker" slotsignature="move_right" modes="All" sortorder="1" />
                                 <Object objectname="WorkCursorMove" slotsignature="move_right" modes="All" sortorder="4" />
+                                <Object objectname="MoveCurveNode" slotsignature="move_right" modes="Effects" sortorder="2" />
                                 <Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="hzoom_in" modes="All" sortorder="5" />
                                 <Object objectname="Sheet" slotsignature="next_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
@@ -71,7 +73,7 @@
 			<Objects>
                                 <Object objectname="Gain" slotsignature="increase_gain" modes="All" />
                                 <Object objectname="MoveTrack" slotsignature="move_up" modes="All" sortorder="1" />
-                                <Object objectname="DragNode" slotsignature="move_up" modes="Effects" />
+                                <Object objectname="MoveCurveNode" slotsignature="move_up" modes="Effects" sortorder="3" />
 				<Object objectname="SheetView" slotsignature="scroll_up" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_up" modes="All" sortorder="1" />
                                 <Object objectname="Zoom" slotsignature="track_vzoom_out" modes="All" sortorder="1" />
@@ -83,7 +85,7 @@
 			<Objects>
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" />
                                 <Object objectname="MoveTrack" slotsignature="move_down" modes="All" sortorder="2" />
-                                <Object objectname="DragNode" slotsignature="move_down" modes="Effects" />
+                                <Object objectname="MoveCurveNode" slotsignature="move_down" modes="Effects" sortorder="4" />
 				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="MoveClip" slotsignature="move_down" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="track_vzoom_in" modes="All" sortorder="2" />
@@ -109,7 +111,8 @@
 			<Objects>
                                 <Object objectname="SheetView" slotsignature="touch"  modes="All" sortorder="2" submenu="Work Cursor" />
                                 <Object objectname="SheetView" slotsignature="workcursor_to_playhead" modifierkeys="CTRL;ALT" modes="All" sortorder="3" submenu="Work Cursor" />
-			</Objects>
+                                <Object objectname="ProjectManager" slotsignature="close_current_project" modifierkeys="ALT" modes="All" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="HOME" >
 			<Objects>
@@ -137,6 +140,7 @@
 				<Object objectname="Project" slotsignature="select" modes="All" />
 				<Object objectname="MoveClip" slotsignature="prev_snap_pos" modes="All" sortorder="5" />
                                 <Object objectname="MoveMarker" slotsignature="prev_snap_pos" modes="All" sortorder="1" />
+                                <Object objectname="ProjectManager" slotsignature="save_project" modifierkeys="CTRL" modes="All" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SPACE" >
@@ -264,7 +268,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalUp" >
 			<Objects>
-				<Object objectname="DragNode" slotsignature="move_up" modes="Effects" />
+                                <Object objectname="MoveCurveNode" slotsignature="move_up" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_up" modes="All" sortorder="1" submenu="Scroll" />
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_right" modes="All" sortorder="1" />
@@ -276,7 +280,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalDown" >
 			<Objects>
-				<Object objectname="DragNode" slotsignature="move_down" modes="Effects" />
+                                <Object objectname="MoveCurveNode" slotsignature="move_down" modes="Effects" />
 				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" />

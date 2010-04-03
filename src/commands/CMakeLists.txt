@@ -23,6 +23,7 @@ Fade.cpp
 Gain.cpp
 Import.cpp
 MoveClip.cpp
+MoveCurveNode.cpp
 MoveEdge.cpp
 MoveMarker.cpp
 MoveTrack.cpp
@@ -43,6 +44,7 @@ Crop.h
 ExternalProcessingDialog.h
 Gain.h
 MoveClip.h
+MoveCurveNode.h
 MoveMarker.h
 MoveTrack.h
 TrackPan.h

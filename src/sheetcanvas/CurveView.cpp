@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "CurveView.h"
 #include "SheetView.h"
 #include "CurveNodeView.h"
-#include "ClipsViewPort.h"
 #include <Themer.h>
 #include "AudioDevice.h"
 		
@@ -30,150 +29,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <CurveNode.h>
 #include <ContextPointer.h>
 #include <Sheet.h>
-#include "Mixer.h"
 #include <InputEngine.h>
 
 #include <AddRemove.h>
 #include "CommandGroup.h"
+#include "MoveCurveNode.h"
 
 #include <Debugger.h>
 
 
 #define NODE_SOFT_SELECTION_DISTANCE 40
 	
-DragNode::DragNode(CurveNode* node,
-	CurveView* curveview,
-	qint64 scalefactor,
-	TimeRef rangeMin,
-	TimeRef rangeMax,
-	const QString& des)
-	: Command(curveview->get_context(), des)
-	, d(new Private)
-{
-	m_node = node;
-	d->rangeMin = rangeMin;
-	d->rangeMax = rangeMax;
-	d->curveView = curveview;
-	d->scalefactor = scalefactor;
-	d->verticalOnly = false;
-}
 
-void DragNode::set_vertical_only()
-{
-	d->verticalOnly = true;
-}
-
-int DragNode::prepare_actions()
-{
-	return 1;
-}
-
-int DragNode::finish_hold()
-{
-	delete d;
-	return 1;
-}
-
-void DragNode::cancel_action()
-{
-	delete d;
-	undo_action();
-}
-
-int DragNode::begin_hold()
-{
-	m_origWhen = m_newWhen = m_node->get_when();
-	m_origValue = m_newValue = m_node->get_value();
-	
-	d->mousepos = QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
-	return 1;
-}
-
-
-int DragNode::do_action()
-{
-	m_node->set_when_and_value(m_newWhen, m_newValue);
-	return 1;
-}
-
-int DragNode::undo_action()
-{
-	m_node->set_when_and_value(m_origWhen, m_origValue);
-	return 1;
-}
-
-void DragNode::move_up(bool )
-{
-	m_newValue = m_newValue + ( 1 / d->curveView->boundingRect().height());
-	calculate_and_set_node_values();
-}
-
-void DragNode::move_down(bool )
-{
-	m_newValue = m_newValue - ( 1 / d->curveView->boundingRect().height());
-	calculate_and_set_node_values();
-}
-
-void DragNode::set_cursor_shape(int useX, int useY)
-{
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
-}
-
-int DragNode::jog()
-{
-	QPoint mousepos = cpointer().pos();
-	
-	int dx, dy;
-	dx = mousepos.x() - d->mousepos.x();
-	dy = mousepos.y() - d->mousepos.y();
-	
-	d->mousepos = mousepos;
-	
-	if (!d->verticalOnly) {
-		m_newWhen = m_newWhen + dx * d->scalefactor;
-	}
-	m_newValue = m_newValue - ( dy / d->curveView->boundingRect().height());
-	
-	TimeRef startoffset = d->curveView->get_start_offset();
-	if ( ((TimeRef(m_newWhen) - startoffset) / d->scalefactor) > d->curveView->boundingRect().width()) {
-		m_newWhen = double(d->curveView->boundingRect().width() * d->scalefactor + startoffset.universal_frame());
-	}
-	if ((TimeRef(m_newWhen) - startoffset) < TimeRef()) {
-		m_newWhen = startoffset.universal_frame();
-	}
-	
-	return calculate_and_set_node_values();
-}
-
-int DragNode::calculate_and_set_node_values()
-{
-	if (m_newValue < 0.0) {
-		m_newValue = 0.0;
-	}
-	if (m_newValue > 1.0) {
-		m_newValue = 1.0;
-	}
-	if (m_newWhen < 0.0) {
-		m_newWhen = 0.0;
-	}
-	
-	if (m_newWhen < d->rangeMin) {
-		m_newWhen = double(d->rangeMin.universal_frame());
-	} else if (d->rangeMax != qint64(-1) && m_newWhen > d->rangeMax) {
-		m_newWhen = double(d->rangeMax.universal_frame());
-	}
-
-	// NOTE: this obviously only makes sense when the Node == GainEnvelope Node
-	// Use a delegate (or something similar) in the future that set's the correct value.
-	float dbFactor = coefficient_to_dB(m_newValue);
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
-        cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
-	
-	return do_action();
-}
-
-
-		
 CurveView::CurveView(SheetView* sv, ViewItem* parentViewItem, Curve* curve)
 	: ViewItem(parentViewItem, curve)
 	, m_curve(curve)
@@ -546,7 +413,7 @@ Command* CurveView::drag_node()
 		if (nodeList.size() > (index + 1)) {
 			max = qint64(((CurveNode*)nodeList.at(index+1))->get_when() - 1);
 		}
-		return new DragNode(m_blinkingNode->get_curve_node(), this, m_sv->timeref_scalefactor, min, max, tr("Drag Node"));
+                return new MoveCurveNode(m_blinkingNode->get_curve_node(), this, m_sv->timeref_scalefactor, min, max, tr("Move Curve Node"));
 	}
 	return ie().did_not_implement();
 }
@@ -554,7 +421,7 @@ Command* CurveView::drag_node()
 
 Command * CurveView::drag_node_vertical_only()
 {
-	DragNode* drag = qobject_cast<DragNode*>(drag_node());
+        MoveCurveNode* drag = qobject_cast<MoveCurveNode*>(drag_node());
 	
 	if (!drag) {
 		return 0;

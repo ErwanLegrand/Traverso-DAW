@@ -940,7 +940,6 @@ Command * Interface::get_keymap(QString &str)
         QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
 	QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
 	QList<const QMetaObject*> timelinelist; timelinelist << &TimeLine::staticMetaObject; timelinelist << &TimeLineView::staticMetaObject;
-	QList<const QMetaObject*> markerlist; markerlist << &Marker::staticMetaObject; markerlist << &MarkerView::staticMetaObject;
 	QList<const QMetaObject*> pluginlist; pluginlist << &Plugin::staticMetaObject; pluginlist << &PluginView::staticMetaObject;
 	QList<const QMetaObject*> fadelist; fadelist << &FadeCurve::staticMetaObject; fadelist << &FadeView::staticMetaObject;
 	QList<const QMetaObject*> interfacelist; interfacelist << &Interface::staticMetaObject;
@@ -948,9 +947,11 @@ Command * Interface::get_keymap(QString &str)
         QList<const QMetaObject*> gainlist; gainlist << &Gain::staticMetaObject;
         QList<const QMetaObject*> movetracklist; movetracklist << &MoveTrack::staticMetaObject;
         QList<const QMetaObject*> movecliplist; movecliplist << &MoveClip::staticMetaObject;
+        QList<const QMetaObject*> movecurvenodelist; movecurvenodelist << &MoveCurveNode::staticMetaObject;
         QList<const QMetaObject*> zoomlist; zoomlist << &Zoom::staticMetaObject;
         QList<const QMetaObject*> trackpanlist; trackpanlist << &TrackPan::staticMetaObject;
         QList<const QMetaObject*> croplist; croplist << &Crop::staticMetaObject;
+        QList<const QMetaObject*> movemarkerlist; movemarkerlist << &MoveMarker::staticMetaObject;
 
 	objects.insert("Sheet", sheetlist);
         objects.insert("Track", tracklist);
@@ -958,7 +959,6 @@ Command * Interface::get_keymap(QString &str)
         objects.insert("AudioClip", cliplist);
 	objects.insert("Curve", curvelist);
 	objects.insert("TimeLine", timelinelist);
-	objects.insert("Marker", markerlist);
 	objects.insert("Plugin", pluginlist);
 	objects.insert("Fade", fadelist);
 	objects.insert("Interface", interfacelist);
@@ -966,6 +966,8 @@ Command * Interface::get_keymap(QString &str)
         objects.insert("Gain", gainlist);
         objects.insert("Move Track", movetracklist);
         objects.insert("Move AudioClip", movecliplist);
+        objects.insert("Move Marker", movemarkerlist);
+        objects.insert("Move Curve Node", movecurvenodelist);
         objects.insert("Zoom", zoomlist);
         objects.insert("Track Pan", trackpanlist);
         objects.insert("Magnetic Cut", croplist);
