@@ -231,6 +231,14 @@ void ViewPort::enterEvent(QEvent* e)
 	setFocus();
 }
 
+void ViewPort::leaveEvent(QEvent *)
+{
+        // Force the next mouse move event to do something
+        // even if the mouse didn't move, so switching viewports
+        // does update the current context!
+        m_oldMousePos = QPoint();
+}
+
 void ViewPort::keyPressEvent( QKeyEvent * e)
 {
 	ie().catch_key_press(e);

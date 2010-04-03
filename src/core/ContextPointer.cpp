@@ -193,6 +193,13 @@ void ContextPointer::update_jog()
 	}
 }
 
+void ContextPointer::set_current_viewport(AbstractViewPort *vp)
+{
+        PENTER;
+        m_port = vp;
+        m_keyboardOnlyInput = false;
+}
+
 void ContextPointer::set_active_context_items_by_mouse_movement(const QList<ContextItem *> &items)
 {
         if (m_keyboardOnlyInput) {
