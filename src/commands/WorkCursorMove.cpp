@@ -27,24 +27,18 @@
 
 #include <Debugger.h>
 
-WorkCursorMove::WorkCursorMove(PlayHead* cursor, SheetView* sv)
+WorkCursorMove::WorkCursorMove(WorkCursor* wc, PlayHead* cursor, SheetView* sv)
 	: Command("Play Cursor Move")
 	, m_sheet(sv->get_sheet())
 	, m_sv(sv)
 	, m_playCursor(cursor)
+        , m_workCursor(wc)
 {
 }
 
 int WorkCursorMove::finish_hold()
 {
-	int x = cpointer().scene_x();
-
-	if (x < 0) {
-		x = 0;
-	}
-
 	m_sheet->get_work_snap()->set_snappable(true);
-
 	m_sv->start_shuttle(false);
 	return -1;
 }
@@ -62,8 +56,8 @@ int WorkCursorMove::begin_hold()
 
 void WorkCursorMove::cancel_action()
 {
-	m_sv->start_shuttle(false);
 	m_sheet->set_work_at(m_origPos);
+        finish_hold();
 }
 
 void WorkCursorMove::set_cursor_shape(int useX, int useY)
@@ -118,4 +112,21 @@ void WorkCursorMove::move_right(bool autorepeat)
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         m_sheet->set_work_at(m_sheet->get_work_location() + m_sv->timeref_scalefactor);
         cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
+}
+
+
+void WorkCursorMove::next_snap_pos(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+        m_sheet->set_work_at(m_sheet->get_snap_list()->next_snap_pos(m_sheet->get_work_location()));
+        m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
+}
+
+void WorkCursorMove::prev_snap_pos(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+        m_sheet->set_work_at(m_sheet->get_snap_list()->prev_snap_pos(m_sheet->get_work_location()));
+        m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
 }

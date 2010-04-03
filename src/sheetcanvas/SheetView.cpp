@@ -780,7 +780,7 @@ Command * SheetView::play_cursor_move( )
 
 Command * SheetView::work_cursor_move( )
 {
-	return new WorkCursorMove(m_playCursor, this);
+        return new WorkCursorMove(m_workCursor, m_playCursor, this);
 }
 
 void SheetView::set_snap_range(int start)
@@ -928,7 +928,7 @@ void SheetView::browse_to_track(Track *track)
         foreach(TrackView* view, views) {
                 if (view->get_track() == track) {
 
-                        center_in_view(view);
+                        center_in_view(view, Qt::AlignVCenter);
 
 
                         QPoint point = m_tpvp->mapToGlobal(m_tpvp->mapFromScene(view->scenePos().x() - m_tpvp->width() / 2,
@@ -1141,9 +1141,13 @@ Command* SheetView::browse_to_previous_context_item()
         return 0;
 }
 
-void SheetView::center_in_view(ViewItem *item)
+void SheetView::center_in_view(ViewItem *item, enum Qt::AlignmentFlag flag)
 {
-        set_vscrollbar_value(item->pos().y() - (m_tpvp->height() / 2) + item->boundingRect().height());
+        if (flag == Qt::AlignHCenter) {
+                set_hscrollbar_value(item->pos().x() - m_clipsViewPort->width() / 2);
+        } else if (flag == Qt::AlignVCenter) {
+                set_vscrollbar_value(item->pos().y() - (m_tpvp->height() / 2) + item->boundingRect().height());
+        }
 }
 
 

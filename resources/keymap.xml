@@ -150,7 +150,8 @@
 		<keyfact type="FKEY" key1="A" >
 			<Objects>
                                 <Object objectname="AudioTrack" slotsignature="toggle_arm" modes="All" sortorder="4" />
-			</Objects>
+                                <Object objectname="WorkCursorMove" slotsignature="prev_snap_pos" modes="All" sortorder="1" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="O" >
 			<Objects>
@@ -289,6 +290,7 @@
 			<Objects>
 				<Object objectname="MoveClip" slotsignature="next_snap_pos" modes="All" sortorder="6" />
                                 <Object objectname="MoveMarker" slotsignature="next_snap_pos" modes="All" sortorder="1" />
+                                <Object objectname="WorkCursorMove" slotsignature="next_snap_pos" modes="All" sortorder="1" />
                         </Objects>
 		</keyfact>
                 <keyfact type="FKEY" key1="T" >

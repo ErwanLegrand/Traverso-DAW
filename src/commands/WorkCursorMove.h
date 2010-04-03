@@ -28,15 +28,18 @@
 class Sheet;
 class SheetView;
 class PlayHead;
+class WorkCursor;
 
 class WorkCursorMove : public Command
 {
         Q_OBJECT
         Q_CLASSINFO("move_left", tr("Move Left"));
         Q_CLASSINFO("move_right", tr("Move Right"));
+        Q_CLASSINFO("next_snap_pos", tr("To next snap position"));
+        Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
 
 public :
-	WorkCursorMove (PlayHead* cursor, SheetView* sv);
+	WorkCursorMove (WorkCursor* wc, PlayHead* cursor, SheetView* sv);
 	~WorkCursorMove (){};
 
 	int finish_hold();
@@ -50,11 +53,14 @@ private :
 	Sheet*		m_sheet;
 	SheetView*	m_sv;
 	PlayHead*	m_playCursor;
+        WorkCursor*     m_workCursor;
 	TimeRef		m_origPos;
 
 public slots:
         void move_left(bool autorepeat);
         void move_right(bool autorepeat);
+        void next_snap_pos(bool autorepeat);
+        void prev_snap_pos(bool autorepeat);
 
 };
 

@@ -103,7 +103,7 @@ public :
 
         void browse_to_track(Track* track);
         void browse_to_audio_clip(AudioClip* clip);
-        void center_in_view(ViewItem* item);
+        void center_in_view(ViewItem* item, enum Qt::AlignmentFlag = Qt::AlignHCenter);
 
 	qint64		timeref_scalefactor;
 
