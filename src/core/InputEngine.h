@@ -144,7 +144,7 @@ public:
         int broadcast_action_from_contextmenu(const QString& name);
 
         void jog();
-	void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=35);
+        void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=50);
 
         void activate();
         void suspend();
