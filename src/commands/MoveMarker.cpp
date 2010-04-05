@@ -94,7 +94,7 @@ void MoveMarker::move_left(bool )
                 newpos = TimeRef();
         }
         m_newWhen = newpos;
-        do_action();
+        m_marker->set_when(m_newWhen);
 }
 
 void MoveMarker::move_right(bool )
@@ -102,23 +102,25 @@ void MoveMarker::move_right(bool )
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         // Move 1 pixel to the right
         m_newWhen = m_newWhen + d->scalefactor;
-        do_action();
+        m_marker->set_when(m_newWhen);
 }
 
 void MoveMarker::next_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
         m_newWhen = slist->next_snap_pos(m_newWhen);
-        do_action();
+        m_marker->set_when(m_newWhen);
 }
 
 void MoveMarker::prev_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
         m_newWhen = slist->prev_snap_pos(m_newWhen);
-        do_action();
+        m_marker->set_when(m_newWhen);
 }
 
 
