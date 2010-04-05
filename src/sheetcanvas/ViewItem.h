@@ -68,7 +68,7 @@ public:
 #endif
         }
 
-	~ViewItem() {};
+        virtual ~ViewItem() {};
 	
 	enum {Type = UserType + 1};
 	

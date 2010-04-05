@@ -42,7 +42,7 @@ class ViewPort : public QGraphicsView, public AbstractViewPort
 public :
         ViewPort(QWidget* parent);
         ViewPort(QGraphicsScene* scene, QWidget* parent);
-        ~ViewPort();
+        virtual ~ViewPort();
 
         // Get functions
 
