@@ -217,6 +217,7 @@ private:
 
 	int finish_audio_export();
 	void start_seek();
+        void initiate_seek_start(TimeRef location);
 	void start_transport_rolling(bool realtime);
 	void stop_transport_rolling();
 	void update_skip_positions();

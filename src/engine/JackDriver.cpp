@@ -305,7 +305,9 @@ int JackDriver::jack_sync_callback (jack_transport_state_t state, jack_position_
 {
         transport_state_t transportstate;
         transportstate.transport = state;
+        printf("jack state is %d\n", state);
         transportstate.location = TimeRef(pos->frame, audiodevice().get_sample_rate());
+        printf("jack transport callback, location is %lld\n", transportstate.location.universal_frame());
         transportstate.isSlave = true;
         transportstate.realtime = true;
 	

@@ -852,6 +852,7 @@ void Sheet::set_hzoom( qreal hzoom )
 int Sheet::process( nframes_t nframes )
 {
 	if (m_startSeek) {
+                printf("process: starting seek\n");
 		start_seek();
 		return 0;
 	}
@@ -1139,7 +1140,7 @@ Command* Sheet::start_transport()
 	// this call will return directly to us (by a call to transport_control),
 	// or handled by the driver
 	if (is_transport_rolling()) {
-		audiodevice().transport_stop(m_audiodeviceClient);
+                audiodevice().transport_stop(m_audiodeviceClient, m_transportLocation);
 	} else {
 		audiodevice().transport_start(m_audiodeviceClient);
 	}
@@ -1157,7 +1158,10 @@ int Sheet::transport_control(transport_state_t state)
 	
 	switch(state.transport) {
 	case TransportStopped:
-		if (is_transport_rolling()) {
+                if (state.location != m_transportLocation) {
+                        initiate_seek_start(state.location);
+                }
+                if (is_transport_rolling()) {
 			stop_transport_rolling();
 			if (is_recording()) {
 				set_recording(false, state.realtime);
@@ -1166,15 +1170,10 @@ int Sheet::transport_control(transport_state_t state)
 		return true;
 	
 	case TransportStarting:
+                printf("TransportStarting\n");
 		if (state.location != m_transportLocation) {
-			if ( ! m_seeking ) {
-				m_newTransportLocation = state.location;
-				m_startSeek = 1;
-				m_seeking = 1;
-				
-				PMESG("tranport starting: initiating seek");
-				return false;
-			}
+                        initiate_seek_start(state.location);
+                        return false;
 		}
 		if (! m_seeking) {
 			if (is_recording()) {
@@ -1218,6 +1217,17 @@ int Sheet::transport_control(transport_state_t state)
 	}
 	
 	return false;
+}
+
+void Sheet::initiate_seek_start(TimeRef location)
+{
+        if ( ! m_seeking ) {
+                m_newTransportLocation = location;
+                m_startSeek = 1;
+                m_seeking = 1;
+
+                PMESG("tranport starting: initiating seek");
+        }
 }
 
 // RT thread save function
@@ -1320,6 +1330,7 @@ void Sheet::set_transport_pos(TimeRef location)
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() ==  threadId);
 #endif
+        printf("sheet: set transport to: %lld\n", location.universal_frame());
 	audiodevice().transport_seek_to(m_audiodeviceClient, location);
 }
 
@@ -1356,6 +1367,7 @@ void Sheet::seek_finished()
 #endif
 	PMESG2("Sheet :: entering seek_finished");
 	m_transportLocation  = m_newTransportLocation;
+        printf("seek finished, setting transport location to %lld\n", m_transportLocation.universal_frame());
 	m_seeking = 0;
 
 	if (m_resumeTransport) {
