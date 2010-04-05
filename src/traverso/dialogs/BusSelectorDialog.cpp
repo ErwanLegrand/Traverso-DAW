@@ -142,6 +142,8 @@ void BusSelectorDialog::set_current_track(Track * t)
         int index = trackComboBox->findData(t->get_id());
 	
 	trackComboBox->setCurrentIndex(index);
+
+        captureBusesListWidget->setFocus();
 }
 
 
