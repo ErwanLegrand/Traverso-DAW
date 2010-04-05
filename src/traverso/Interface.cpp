@@ -1864,3 +1864,30 @@ void Interface::track_finder_show_initial_text()
         m_trackFinder->setStyleSheet("color: gray; background-color: white");
         m_trackFinder->setText(tr("Track Finder"));
 }
+
+
+Command* Interface::browse_to_first_track_in_active_sheet()
+{
+        if (m_currentSheetWidget) {
+                SheetView* sv = m_currentSheetWidget->get_sheetview();
+                QList<TrackView*> tracks = sv->get_track_views();
+                if (tracks.size()) {
+                        sv->browse_to_track(tracks.first()->get_track());
+                }
+        }
+
+        return 0;
+}
+
+Command* Interface::browse_to_last_track_in_active_sheet()
+{
+        if (m_currentSheetWidget) {
+                SheetView* sv = m_currentSheetWidget->get_sheetview();
+                QList<TrackView*> tracks = sv->get_track_views();
+                if (tracks.size()) {
+                        sv->browse_to_track(tracks.last()->get_track());
+                }
+        }
+
+        return 0;
+}

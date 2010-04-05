@@ -96,6 +96,8 @@ class Interface : public QMainWindow
         Q_CLASSINFO("sheet_audio_io_dialog", tr("Show Audio I/O dialog"));
         Q_CLASSINFO("show_track_finder", tr("Activate Track Finder"));
         Q_CLASSINFO("audio_io_dialog", tr("Show Audio I/O Dialog"));
+        Q_CLASSINFO("browse_to_first_track_in_active_sheet", tr("Browse to first Track in current View"))
+        Q_CLASSINFO("browse_to_last_track_in_active_sheet", tr("Browse to last Track in current View"))
 
 public :
 	Interface();
@@ -219,6 +221,8 @@ public slots :
         Command* start_transport();
 	Command* set_recordable_and_start_transport();
         Command* show_track_finder();
+        Command* browse_to_first_track_in_active_sheet();
+        Command* browse_to_last_track_in_active_sheet();
 
 	
 private slots:
