@@ -1,6 +1,6 @@
 /* SLV2
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- *  
+ * Copyright (C) 2007-2009 Dave Robillard <http://drobilla.net>
+ *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -23,20 +23,18 @@
 extern "C" {
 #endif
 
+#include "slv2/collections.h"
 #include "slv2/plugin.h"
 #include "slv2/pluginclass.h"
 #include "slv2/plugininstance.h"
-#include "slv2/plugins.h"
 #include "slv2/pluginui.h"
 #include "slv2/pluginuiinstance.h"
-#include "slv2/pluginuis.h"
 #include "slv2/port.h"
+#include "slv2/query.h"
+#include "slv2/scalepoint.h"
 #include "slv2/types.h"
 #include "slv2/util.h"
 #include "slv2/value.h"
-#include "slv2/values.h"
-#include "slv2/scalepoint.h"
-#include "slv2/scalepoints.h"
 #include "slv2/world.h"
 
 #ifdef __cplusplus

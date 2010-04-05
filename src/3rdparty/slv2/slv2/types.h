@@ -1,6 +1,6 @@
 /* SLV2
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- *  
+ * Copyright (C) 2007-2009 Dave Robillard <http://drobilla.net>
+ *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -24,6 +24,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define SLV2_NAMESPACE_LV2      "http://lv2plug.in/ns/lv2core#"
 #define SLV2_PORT_CLASS_PORT    "http://lv2plug.in/ns/lv2core#Port"
@@ -83,10 +84,13 @@ typedef struct _SLV2UI* SLV2UI;
 typedef void* SLV2UIs;
 
 
+/** A set of query results (conceptually a table) */
+typedef struct _SLV2Results* SLV2Results;
+
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
-
 
 #endif /* __SLV2_TYPES_H__ */
 

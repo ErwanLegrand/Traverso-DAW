@@ -1,6 +1,6 @@
 /* SLV2
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- *  
+ * Copyright (C) 2007-2009 Dave Robillard <http://drobilla.net>
+ *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -23,7 +23,8 @@
 extern "C" {
 #endif
 
-#include <assert.h>
+#include <stddef.h>
+#include <stdlib.h>
 #include "lv2.h"
 #include "slv2/plugin.h"
 #include "slv2/port.h"
@@ -54,7 +55,7 @@ typedef struct _Instance {
  * An SLV2Instance is an instantiated SLV2Plugin (ie a loaded dynamic
  * library).  These functions interact with the binary library code only,
  * they do not read data files in any way.
- * 
+ *
  * @{
  */
 
@@ -63,10 +64,10 @@ typedef struct _Instance {
  * The returned object represents shared library objects loaded into memory,
  * it must be cleaned up with slv2_instance_free when no longer
  * needed.
- * 
+ *
  * \a plugin is not modified or directly referenced by the returned object
  * (instances store only a copy of the plugin's URI).
- * 
+ *
  * \a host_features NULL-terminated array of features the host supports.
  * NULL may be passed if the host supports no additional features (unlike
  * the LV2 specification - SLV2 takes care of it).
@@ -95,9 +96,6 @@ slv2_instance_free(SLV2Instance instance);
 static inline const char*
 slv2_instance_get_uri(SLV2Instance instance)
 {
-	assert(instance);
-	assert(instance->lv2_descriptor);
-	
 	return instance->lv2_descriptor->URI;
 }
 
@@ -112,10 +110,6 @@ slv2_instance_connect_port(SLV2Instance instance,
                            uint32_t     port_index,
                            void*        data_location)
 {
-	assert(instance);
-	assert(instance->lv2_descriptor);
-	assert(instance->lv2_descriptor->connect_port);
-	
 	instance->lv2_descriptor->connect_port
 		(instance->lv2_handle, port_index, data_location);
 }
@@ -130,9 +124,6 @@ slv2_instance_connect_port(SLV2Instance instance,
 static inline void
 slv2_instance_activate(SLV2Instance instance)
 {
-	assert(instance);
-	assert(instance->lv2_descriptor);
-	
 	if (instance->lv2_descriptor->activate)
 		instance->lv2_descriptor->activate(instance->lv2_handle);
 }
@@ -147,10 +138,6 @@ static inline void
 slv2_instance_run(SLV2Instance instance,
                   uint32_t     sample_count)
 {
-	assert(instance);
-	assert(instance->lv2_descriptor);
-	assert(instance->lv2_handle);
-
 	/*if (instance->lv2_descriptor->run)*/
 		instance->lv2_descriptor->run(instance->lv2_handle, sample_count);
 }
@@ -164,10 +151,6 @@ slv2_instance_run(SLV2Instance instance,
 static inline void
 slv2_instance_deactivate(SLV2Instance instance)
 {
-	assert(instance);
-	assert(instance->lv2_descriptor);
-	assert(instance->lv2_handle);
-	
 	if (instance->lv2_descriptor->deactivate)
 		instance->lv2_descriptor->deactivate(instance->lv2_handle);
 }
@@ -182,13 +165,10 @@ static inline const void*
 slv2_instance_get_extension_data(SLV2Instance instance,
                                  const char*  uri)
 {
-	assert(instance);
-	assert(instance->lv2_descriptor);
-	
 	if (instance->lv2_descriptor->extension_data)
 		return instance->lv2_descriptor->extension_data(uri);
 	else
-                return NULL;
+		return NULL;
 }
 
 
@@ -202,9 +182,6 @@ slv2_instance_get_extension_data(SLV2Instance instance,
 static inline const LV2_Descriptor*
 slv2_instance_get_descriptor(SLV2Instance instance)
 {
-	assert(instance);
-	assert(instance->lv2_descriptor);
-	
 	return instance->lv2_descriptor;
 }
 
@@ -213,15 +190,12 @@ slv2_instance_get_descriptor(SLV2Instance instance)
  *
  * Normally hosts should not need to access the LV2_Handle directly,
  * use the slv2_instance_* functions.
- * 
+ *
  * The returned handle is shared and must not be deleted.
  */
 static inline LV2_Handle
 slv2_instance_get_handle(SLV2Instance instance)
 {
-	assert(instance);
-	assert(instance->lv2_descriptor);
-	
 	return instance->lv2_handle;
 }
 

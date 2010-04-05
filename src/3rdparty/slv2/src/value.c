@@ -1,6 +1,6 @@
 /* SLV2
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- *  
+ * Copyright (C) 2007-2009 Dave Robillard <http://drobilla.net>
+ *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -23,40 +23,15 @@
 #include <assert.h>
 #include <locale.h>
 #include <raptor.h>
+#include "slv2/types.h"
 #include "slv2/value.h"
 #include "slv2_internal.h"
 
 
 /* private */
-SLV2Value
-slv2_value_new(SLV2World world, SLV2ValueType type, const char* str)
-{
-	SLV2Value val = (SLV2Value)malloc(sizeof(struct _SLV2Value));
-	val->type = type;
-
-	if (type == SLV2_VALUE_URI) {
-		val->val.uri_val = librdf_new_uri(world->world, (const unsigned char*)str);
-		if (val->val.uri_val)
-			val->str_val = (char*)librdf_uri_as_string(val->val.uri_val);
-		else
-			return NULL;
-	} else {
-		val->str_val = strdup(str);
-	}
-
-	slv2_value_set_numerics_from_string(val);
-
-	return val;
-}
-
-
-/* private */
-void
+static void
 slv2_value_set_numerics_from_string(SLV2Value val)
 {
-	if (!val)
-		return;
-
 	// FIXME: locale kludges to work around librdf bug
 	char* locale = strdup(setlocale(LC_NUMERIC, NULL));
 
@@ -71,8 +46,29 @@ slv2_value_set_numerics_from_string(SLV2Value val)
 		val->val.float_val = strtod(val->str_val, &endptr);
 		setlocale(LC_NUMERIC, locale);
 	}
-	
+
 	free(locale);
+}
+
+
+/* private */
+SLV2Value
+slv2_value_new(SLV2World world, SLV2ValueType type, const char* str)
+{
+	SLV2Value val = (SLV2Value)malloc(sizeof(struct _SLV2Value));
+	val->type = type;
+
+	if (type == SLV2_VALUE_URI) {
+		val->val.uri_val = librdf_new_uri(world->world, (const unsigned char*)str);
+		assert(val->val.uri_val);
+		val->str_val = (char*)librdf_uri_as_string(val->val.uri_val);
+	} else {
+		val->str_val = strdup(str);
+	}
+
+	slv2_value_set_numerics_from_string(val);
+
+	return val;
 }
 
 
@@ -83,7 +79,7 @@ slv2_value_new_librdf_node(SLV2World world, librdf_node* node)
 	SLV2Value val = (SLV2Value)malloc(sizeof(struct _SLV2Value));
 	val->type = SLV2_VALUE_STRING;
 	val->str_val = NULL;
-	
+
 	librdf_uri* datatype_uri = NULL;
 
 	switch (librdf_node_get_type(node)) {
@@ -112,8 +108,10 @@ slv2_value_new_librdf_node(SLV2World world, librdf_node* node)
 		val = NULL;
 		break;
 	}
-	
-	slv2_value_set_numerics_from_string(val);
+
+	if (val)
+		slv2_value_set_numerics_from_string(val);
+
 	return val;
 }
 
@@ -122,9 +120,7 @@ slv2_value_new_librdf_node(SLV2World world, librdf_node* node)
 SLV2Value
 slv2_value_new_librdf_uri(SLV2World world, librdf_uri* uri)
 {
-	if (!uri)
-		return NULL;
-
+	assert(uri);
 	SLV2Value val = (SLV2Value)malloc(sizeof(struct _SLV2Value));
 	val->type = SLV2_VALUE_URI;
 	val->val.uri_val = librdf_new_uri_from_uri(uri);
@@ -141,8 +137,36 @@ slv2_value_new_uri(SLV2World world, const char* uri)
 
 
 SLV2Value
+slv2_value_new_string(SLV2World world, const char* str)
+{
+	return slv2_value_new(world, SLV2_VALUE_STRING, str);
+}
+
+
+SLV2Value
+slv2_value_new_int(SLV2World world, int val)
+{
+	char str[32];
+	snprintf(str, 32, "%d", val);
+	return slv2_value_new(world, SLV2_VALUE_INT, str);
+}
+
+
+SLV2Value
+slv2_value_new_float(SLV2World world, float val)
+{
+	char str[32];
+	snprintf(str, 32, "%f", val);
+	return slv2_value_new(world, SLV2_VALUE_FLOAT, str);
+}
+
+
+SLV2Value
 slv2_value_duplicate(SLV2Value val)
 {
+	if (val == NULL)
+		return val;
+
 	SLV2Value result = (SLV2Value)malloc(sizeof(struct _SLV2Value));
 	result->type = val->type;
 
@@ -185,8 +209,8 @@ slv2_value_equals(SLV2Value value, SLV2Value other)
 	switch (value->type) {
 	case SLV2_VALUE_URI:
 		return (librdf_uri_equals(value->val.uri_val, other->val.uri_val) != 0);
-	case SLV2_VALUE_QNAME:
 	case SLV2_VALUE_STRING:
+	case SLV2_VALUE_QNAME_UNUSED:
 		return ! strcmp(value->str_val, other->str_val);
 	case SLV2_VALUE_INT:
 		return (value->val.int_val == other->val.int_val);
@@ -204,7 +228,7 @@ slv2_value_get_turtle_token(SLV2Value value)
 	size_t len    = 0;
 	char*  result = NULL;
 	char*  locale = strdup(setlocale(LC_NUMERIC, NULL));
-		
+
 	// FIXME: locale kludges to work around librdf bug
 
 	switch (value->type) {
@@ -213,8 +237,8 @@ slv2_value_get_turtle_token(SLV2Value value)
 		result = calloc(len, sizeof(char));
 		snprintf(result, len, "<%s>", value->str_val);
 		break;
-	case SLV2_VALUE_QNAME:
 	case SLV2_VALUE_STRING:
+	case SLV2_VALUE_QNAME_UNUSED:
 		result = strdup(value->str_val);
 		break;
 	case SLV2_VALUE_INT:
@@ -229,13 +253,13 @@ slv2_value_get_turtle_token(SLV2Value value)
 		len = 20; // FIXME: proper maximum value?
 		result = calloc(len, sizeof(char));
 		setlocale(LC_NUMERIC, "POSIX");
-		snprintf(result, len, ".1%f", value->val.float_val);
+		snprintf(result, len, "%f", value->val.float_val);
 		setlocale(LC_NUMERIC, locale);
 		break;
 	}
 
 	free(locale);
-	
+
 	return result;
 }
 
@@ -254,7 +278,7 @@ slv2_value_as_uri(SLV2Value value)
 	return value->str_val;
 }
 
-	
+
 /* private */
 librdf_uri*
 slv2_value_as_librdf_uri(SLV2Value value)

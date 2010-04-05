@@ -1,6 +1,6 @@
 /* SLV2
- * Copyright (C) 2007 Dave Robillard <http://drobilla.net>
- *  
+ * Copyright (C) 2007-2009 Dave Robillard <http://drobilla.net>
+ *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
@@ -27,7 +27,7 @@ extern "C" {
 #include <stdbool.h>
 #include "slv2/types.h"
 #include "slv2/port.h"
-#include "slv2/values.h"
+#include "slv2/collections.h"
 
 /** \defgroup slv2_data Plugin data access
  *
@@ -47,7 +47,7 @@ extern "C" {
  * This is used by plugin lists to avoid loading plugins that are not valid
  * and will not work with libslv2 (eg plugins missing required fields, or
  * having multiple values for mandatory single-valued fields, etc.
- * 
+ *
  * Note that normal hosts do NOT need to use this - slv2 does not
  * load invalid plugins into plugin lists.  This is included for plugin
  * testing utilities, etc.
@@ -90,7 +90,7 @@ slv2_plugin_get_uri(SLV2Plugin plugin);
  *
  * Note this always returns a fully qualified URI.  If you want a local
  * filesystem path, use slv2_uri_to_path.
- * 
+ *
  * \return a shared string which must not be modified or freed.
  *
  * Time = O(1)
@@ -119,7 +119,7 @@ slv2_plugin_get_data_uris(SLV2Plugin plugin);
  *
  * Note this always returns a fully qualified URI.  If you want a local
  * filesystem path, use slv2_uri_to_path.
- * 
+ *
  * \return a shared string which must not be modified or freed.
  *
  * Time = O(1)
@@ -151,7 +151,7 @@ slv2_plugin_get_class(SLV2Plugin plugin);
  * Returns the ?object of all triples found of the form:
  *
  * <code>&lt;plugin-uri&gt; predicate ?object</code>
- * 
+ *
  * May return NULL if the property was not found, or if object(s) is not
  * sensibly represented as an SLV2Values (e.g. blank nodes).
  *
@@ -210,9 +210,9 @@ slv2_plugin_get_value_by_qname_i18n(SLV2Plugin  p,
  * Time = Query
  */
 SLV2Values
-slv2_plugin_get_value_for_subject(SLV2Plugin  p,
-                                  SLV2Value   subject_uri,
-                                  SLV2Value   predicate_uri);
+slv2_plugin_get_value_for_subject(SLV2Plugin p,
+                                  SLV2Value  subject_uri,
+                                  SLV2Value  predicate_uri);
 
 
 /** Return whether a feature is supported by a plugin.
@@ -291,14 +291,14 @@ slv2_plugin_get_num_ports(SLV2Plugin p);
  * with array index corresponding to port index.  If a port doesn't have a
  * minimum, maximum or default value, or the port's type is not float, the
  * corresponding array element will be set to NAN.
- * 
+ *
  * This is a convenience method for the common case of getting the range of
  * all float ports on a plugin, and may be significantly faster than
  * repeated calls to slv2_port_get_range.
  */
 void
-slv2_plugin_get_port_ranges_float(SLV2Plugin p, 
-                                  float*     min_values, 
+slv2_plugin_get_port_ranges_float(SLV2Plugin p,
+                                  float*     min_values,
                                   float*     max_values,
                                   float*     def_values);
 
@@ -405,7 +405,7 @@ slv2_plugin_get_port_by_symbol(SLV2Plugin plugin,
  *
  * Returned value must be freed by caller using slv2_uis_free.
  *
- * \param plugin The plugin to get the UIs for. 
+ * \param plugin The plugin to get the UIs for.
  *
  * Time = Query
  */
