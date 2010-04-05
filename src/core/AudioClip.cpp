@@ -97,9 +97,10 @@ AudioClip::AudioClip(const QDomNode& node)
 	
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
         TimeRef location(e.attribute( "trackstart", "" ).toLongLong());
-	set_track_start_location(location);
 	m_domNode = node.cloneNode();
 	init();
+        // first init to set variables that are referenced in:
+        set_track_start_location(location);
 }
 
 AudioClip::~AudioClip()
