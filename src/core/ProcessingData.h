@@ -42,7 +42,7 @@ class ProcessingData : public ContextItem, public APILinkedListNode
 
 public:
         ProcessingData (Sheet* sheet=0);
-        ~ProcessingData () {}
+        virtual ~ProcessingData () {}
 	
         void set_input_bus(const QString& name);
         virtual void set_output_bus(const QString& name);

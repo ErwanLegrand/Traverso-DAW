@@ -56,7 +56,7 @@ public:
                 , m_contextItem(0)
                 , m_hasActiveContext(false) {}
 
-        ~ContextItem() {
+        virtual ~ContextItem() {
                 if (m_hasActiveContext) {
                         cpointer().about_to_delete(this);
                 }

@@ -37,7 +37,7 @@ class AudioSource : public QObject
 public :
 	AudioSource();
 	AudioSource(const QString& dir, const QString& name);
-	~AudioSource();
+        virtual ~AudioSource();
 	
 	void set_name(const QString& name);
 	void set_dir(const QString& name);

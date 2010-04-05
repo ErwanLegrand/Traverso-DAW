@@ -48,7 +48,7 @@ class Curve : public ContextItem
 public:
 	Curve(ContextItem* parent);
 	Curve(ContextItem* parent, const QDomNode node);
-	~Curve();
+        virtual ~Curve();
 
 	QDomNode get_state(QDomDocument doc, const QString& name);
 	virtual int set_state( const QDomNode& node );
