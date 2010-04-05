@@ -330,9 +330,9 @@ int WriteSource::finish_export( )
 	}
 	
 	if (m_dataF2)
-		delete m_dataF2;
+                delete [] m_dataF2;
 	if (m_leftoverF)
-		delete m_leftoverF;
+                delete [] m_leftoverF;
 
 	if (m_dither) {
 		gdither_free (m_dither);
