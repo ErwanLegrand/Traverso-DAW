@@ -95,6 +95,9 @@ AlsaDriver::~AlsaDriver()
 		free (pfd);
 	}
 
+        free (alsa_name_playback);
+        free (alsa_name_capture);
+
 	release_channel_dependent_memory ();
 }
 
