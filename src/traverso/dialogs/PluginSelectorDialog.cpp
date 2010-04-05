@@ -50,9 +50,12 @@ PluginSelectorDialog::PluginSelectorDialog(QWidget* parent)
 	
 
 #if defined (LV2_SUPPORT)
+        printf("Getting the list of found lv2 plugins from the PluginManager\n");
 	SLV2Plugins pluginList = PluginManager::instance()->get_slv2_plugin_list();
 
 	QMap<QString, PluginInfo> plugins;
+
+        printf("Number of found lv2 plugins: %d\n", slv2_plugins_size(pluginList));
 	
 	for (uint i=0; i < slv2_plugins_size(pluginList); ++i) {
 		const SLV2Plugin plugin = slv2_plugins_get_at(pluginList, i);
