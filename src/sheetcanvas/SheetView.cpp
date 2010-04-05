@@ -1027,6 +1027,14 @@ Command* SheetView::browse_to_context_item_below()
         point.setY(cpointer().scene_y());
         TrackView* view = get_trackview_under(point);
         QList<TrackView*> views = get_track_views();
+
+        // if the mouse cursor is below all tracks, we don't get a
+        // pointed track, so browse to the nearest.
+        if (!view && views.size()) {
+                browse_to_track(views.last()->get_track());
+                return 0;
+        }
+
         if (view) {
                 int index = views.indexOf(view);
                 if (index < views.size()) {
@@ -1048,6 +1056,15 @@ Command* SheetView::browse_to_context_item_above()
         point.setX(10);
         point.setY(cpointer().scene_y());
         TrackView* view = get_trackview_under(point);
+        QList<TrackView*> views = get_track_views();
+
+        // if the mouse cursor is below all tracks, we don't get a
+        // pointed track, so browse to the nearest.
+        if (!view && views.size()) {
+                browse_to_track(views.last()->get_track());
+                return 0;
+        }
+
         if (view) {
                 int index = get_track_views().indexOf(view);
                 if (index >= 1) {
