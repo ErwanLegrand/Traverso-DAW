@@ -1049,7 +1049,7 @@ void AudioDevice::transport_start(Client * client)
 	client->transport_control(state);
 }
 
-void AudioDevice::transport_stop(Client * client)
+void AudioDevice::transport_stop(Client * client, TimeRef location)
 {
 #if defined (JACK_SUPPORT)
 	JackDriver* jackdriver = slaved_jack_driver();
@@ -1064,7 +1064,7 @@ void AudioDevice::transport_stop(Client * client)
         state.transport = TransportStopped;
 	state.isSlave = false;
 	state.realtime = false;
-	state.location = TimeRef(); // get from client!!
+        state.location = location;
 	
 	client->transport_control(state);
 }

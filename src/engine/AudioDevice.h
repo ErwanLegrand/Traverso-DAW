@@ -61,7 +61,7 @@ public:
 	void remove_client(Client* client);
 	
 	void transport_start(Client* client);
-	void transport_stop(Client* client);
+        void transport_stop(Client* client, TimeRef location);
 	int transport_seek_to(Client* client, TimeRef location);
 
         AudioDeviceSetup get_device_setup() {return m_setup;}
