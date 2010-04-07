@@ -151,7 +151,6 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 //        printf("Sheet: %s mouse move event, m_keyboardOnlyMode %d \n", m_sv->get_sheet()->get_name().toAscii().data(), m_keyboardOnlyMode);
 //        printf("mouse move event: x, y : %d, %d\n", QCursor::pos().x(), QCursor::pos().y());
 
-        PENTER4;
 	// Qt generates mouse move events when the scrollbars move
 	// since a mouse move event generates a jog() call for the 
 	// active holding command, this has a number of nasty side effects :-(
@@ -160,17 +159,19 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 		return;
 	}
 
-	m_oldMousePos = event->pos();
+        PENTER;
+
+        m_oldMousePos = event->pos();
 
         QList<ViewItem*> mouseTrackingItems;
 	
 	if (!ie().is_holding()) {
 		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
+                QList<ContextItem*> activeContextItems;
 
 		if (itemsUnderCursor.size()) {
 			itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
 
-                        QList<ContextItem*> activeContextItems;
 
                         foreach(QGraphicsItem* item, itemsUnderCursor) {
                                 if (ViewItem::is_viewitem(item)) {
@@ -181,18 +182,17 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
                                         }
                                 }
                         }
-
-                        if (m_sv) {
-                                activeContextItems.append(m_sv);
-                        }
-
-                        cpointer().set_active_context_items_by_mouse_movement(activeContextItems);
-
-
                 } else {
 			// If no item is below the mouse, default to default cursor
 			viewport()->setCursor(themer()->get_cursor("Default"));
 		}
+
+                if (m_sv) {
+                        activeContextItems.append(m_sv);
+                }
+
+                cpointer().set_active_context_items_by_mouse_movement(activeContextItems);
+
 
 	} else {
 		// It can happen that a cursor is set for a newly created viewitem
