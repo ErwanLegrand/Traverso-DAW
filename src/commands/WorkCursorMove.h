@@ -37,6 +37,8 @@ class WorkCursorMove : public Command
         Q_CLASSINFO("move_right", tr("Move Right"));
         Q_CLASSINFO("next_snap_pos", tr("To next snap position"));
         Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
+        Q_CLASSINFO("move_faster", tr("Move Faster"));
+        Q_CLASSINFO("move_slower", tr("Move Slower"));
 
 public :
 	WorkCursorMove (WorkCursor* wc, PlayHead* cursor, SheetView* sv);
@@ -55,10 +57,13 @@ private :
 	PlayHead*	m_playCursor;
         WorkCursor*     m_workCursor;
 	TimeRef		m_origPos;
+        int             m_speed;
 
 public slots:
         void move_left(bool autorepeat);
         void move_right(bool autorepeat);
+        void move_faster(bool autorepeat);
+        void move_slower(bool autorepeat);
         void next_snap_pos(bool autorepeat);
         void prev_snap_pos(bool autorepeat);
 

@@ -80,6 +80,7 @@
                                 <Object objectname="SheetView" slotsignature="browse_to_context_item_above" modes="All" sortorder="5" />
                                 <Object objectname="SheetView" slotsignature="to_upper_context_level" modifierkeys="CTRL" modes="All" sortorder="8" />
                                 <Object objectname="Interface" slotsignature="browse_to_first_track_in_active_sheet" modes="All" sortorder="10" />
+                                <Object objectname="WorkCursorMove" slotsignature="move_faster" modes="All" sortorder="7" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="DARROW" >
@@ -93,6 +94,7 @@
                                 <Object objectname="SheetView" slotsignature="browse_to_context_item_below" modes="All" sortorder="5" />
                                 <Object objectname="SheetView" slotsignature="to_lower_context_level" modifierkeys="CTRL" modes="All" sortorder="9" />
                                 <Object objectname="Interface" slotsignature="browse_to_last_track_in_active_sheet" modes="All" sortorder="10" />
+                                <Object objectname="WorkCursorMove" slotsignature="move_slower" modes="All" sortorder="6" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SHIFT" >

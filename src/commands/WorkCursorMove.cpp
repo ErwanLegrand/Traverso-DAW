@@ -33,6 +33,7 @@ WorkCursorMove::WorkCursorMove(WorkCursor* wc, PlayHead* cursor, SheetView* sv)
 	, m_sv(sv)
 	, m_playCursor(cursor)
         , m_workCursor(wc)
+        , m_speed(1)
 {
 }
 
@@ -101,7 +102,7 @@ void WorkCursorMove::move_left(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        m_sheet->set_work_at(m_sheet->get_work_location() - m_sv->timeref_scalefactor);
+        m_sheet->set_work_at(m_sheet->get_work_location() - (m_sv->timeref_scalefactor * m_speed));
         cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
 }
 
@@ -110,7 +111,7 @@ void WorkCursorMove::move_right(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        m_sheet->set_work_at(m_sheet->get_work_location() + m_sv->timeref_scalefactor);
+        m_sheet->set_work_at(m_sheet->get_work_location() + (m_sv->timeref_scalefactor * m_speed));
         cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
 }
 
@@ -129,4 +130,21 @@ void WorkCursorMove::prev_snap_pos(bool autorepeat)
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         m_sheet->set_work_at(m_sheet->get_snap_list()->prev_snap_pos(m_sheet->get_work_location()));
         m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
+}
+
+void WorkCursorMove::move_faster(bool autorepeat)
+{
+        m_speed+=3;
+        if (m_speed > 12) {
+                m_speed = 5;
+        }
+}
+
+
+void WorkCursorMove::move_slower(bool autorepeat)
+{
+        m_speed-=3;
+        if (m_speed < 1) {
+                m_speed = 1;
+        }
 }
