@@ -61,6 +61,7 @@ PluginView::PluginView(PluginChainView* parent, PluginChain* chain, Plugin* plug
 	setCursor(themer()->get_cursor("Plugin"));
 	
 	connect(m_plugin, SIGNAL(bypassChanged()), this, SLOT(repaint()));
+        connect(m_plugin, SIGNAL(activeContextChanged()), this, SLOT(repaint()));
 }
 
 PluginView::~PluginView( )
