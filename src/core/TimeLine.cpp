@@ -256,7 +256,8 @@ QList<Marker*> TimeLine::get_cdtrack_list(ExportSpecification *spec)
         }
 
         if (!endmarker) {
-                lst.push_back(new Marker(this, spec->endLocation, Marker::ENDMARKER));
+                TimeRef endlocation = qMax(spec->endLocation, lst.last()->get_when());
+                lst.push_back(new Marker(this, endlocation, Marker::ENDMARKER));
         }
 
         return lst;
