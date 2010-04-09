@@ -140,13 +140,17 @@ void WorkCursorMove::move_faster(bool autorepeat)
                 m_speed = 8;
         } else if (m_speed == 8) {
                 m_speed = 15;
+        } else if (m_speed == 15) {
+                m_speed = 30;
         }
 }
 
 
 void WorkCursorMove::move_slower(bool autorepeat)
 {
-        if (m_speed == 15) {
+        if (m_speed == 30) {
+                m_speed = 15;
+        } else if (m_speed == 15) {
                 m_speed = 8;
         } else if (m_speed == 8) {
                 m_speed = 3;
