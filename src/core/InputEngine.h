@@ -31,6 +31,8 @@
 #include <QHash>
 #include <QStringList>
 
+#include "defines.h"
+
 
 class ContextItem;
 class Command;
@@ -178,16 +180,24 @@ private:
 		DIDNOTIMPLEMENT=3
 	};
 
-	
+        struct HoldModifierKey {
+                int             keycode;
+                bool            wasExecuted;
+                trav_time_t     lastTimeExecuted;
+                IEAction*       ieaction;
+        };
+
         QList<IEAction* >	m_ieActions;
 	QList<int>		m_modifierKeys;
 	QList<int>		m_activeModifierKeys;
+        QHash<int, HoldModifierKey*>  m_holdModifierKeys;
 	QHash<QString, CommandPlugin*> m_commandplugins;
 	QHash<QString, int>	m_modes;
         EventCatcher 		catcher;
         Command* 		holdingCommand;
         QString			sCollectedNumber;
 	QPoint			m_jogBypassPos;
+        QTimer                  m_holdKeyRepeatTimer;
 
 
         bool 			active;
@@ -249,6 +259,7 @@ private:
 	int find_index_for_instant_fkey2( int key1, int key2 );
         int find_index_for_single_fact(int type, int key1, int key2);
 	bool is_modifier_keyfact(int eventcode);
+        void clear_hold_modifier_keys();
 
 	int holdEventCode;
 
@@ -256,6 +267,9 @@ private:
 
         // allow this function to create one instance
         friend InputEngine& ie();
+
+private slots:
+        void process_hold_modifier_keys();
 
 signals:
         void collectedNumberChanged();

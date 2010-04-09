@@ -175,6 +175,8 @@ InputEngine::InputEngine()
         m_collectedNumber = -1;
         sCollectedNumber = "";
 	activate();
+
+        connect(&m_holdKeyRepeatTimer, SIGNAL(timeout()), this, SLOT(process_hold_modifier_keys()));
 	
 //#define profile
 
@@ -618,6 +620,7 @@ void InputEngine::reset()
 void InputEngine::abort_current_hold_actions()
 {
 	m_activeModifierKeys.clear();
+        clear_hold_modifier_keys();
         // Fake an escape key fact, so if a hold action was
         // running it will be canceled!
         if (is_holding()) {
@@ -737,8 +740,18 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 		// the eventcode must be != the current active holding 
 		// command's eventcode!
 		if (index >= 0 && holdEventCode != eventcode) {
-			IEAction* action = m_ieActions.at(index);
-			broadcast_action(action, isAutoRepeat);
+                        if (! isAutoRepeat) {
+                                HoldModifierKey* hmk = new HoldModifierKey;
+                                hmk->keycode = eventcode;
+                                hmk->wasExecuted = false;
+                                hmk->lastTimeExecuted = 0;
+                                hmk->ieaction = m_ieActions.at(index);
+                                m_holdModifierKeys.insert(eventcode, hmk);
+                                // only start it once
+                                if (!m_holdKeyRepeatTimer.isActive()) {
+                                        m_holdKeyRepeatTimer.start(40);
+                                }
+                        }
 		}
 		return;
 	}
@@ -758,13 +771,22 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 
 void InputEngine::process_release_event(int eventcode)
 {
+
 	if (is_modifier_keyfact(eventcode)) {
 		m_activeModifierKeys.removeAll(eventcode);
 		return;
 	}	
 		
 	if (isHolding) {
-		if (eventcode != holdEventCode) {
+                if (m_holdModifierKeys.contains(eventcode)) {
+                        HoldModifierKey* hmk = m_holdModifierKeys.take(eventcode);
+                        delete hmk;
+                        if (m_holdModifierKeys.isEmpty()) {
+                                m_holdKeyRepeatTimer.stop();
+                        }
+                }
+
+                if (eventcode != holdEventCode) {
 			PMESG("release event during hold action, but NOT for holdaction itself!!");
 			return;
 		} else {
@@ -777,6 +799,28 @@ void InputEngine::process_release_event(int eventcode)
 		push_event(RELEASE_EVENT, eventcode);
 		release_checker();
 	}
+}
+
+void InputEngine::process_hold_modifier_keys()
+{
+        if (!m_holdModifierKeys.size()) {
+                m_holdKeyRepeatTimer.stop();
+                return;
+        }
+        foreach(HoldModifierKey* hmk, m_holdModifierKeys) {
+                if (!hmk->wasExecuted) {
+                        hmk->wasExecuted = true;
+                        hmk->lastTimeExecuted = get_microseconds() + 50 * 1000;
+                        broadcast_action(hmk->ieaction, false);
+                        return;
+                }
+
+                trav_time_t timeDiff = get_microseconds() - hmk->lastTimeExecuted;
+                if (timeDiff > 38 * 1000) {
+                        hmk->lastTimeExecuted = get_microseconds();
+                        broadcast_action(hmk->ieaction, true);
+                }
+        }
 }
 
 
@@ -1260,6 +1304,8 @@ void InputEngine::finish_hold()
 
 	isHolding = false;
 
+        clear_hold_modifier_keys();
+
 	if (m_cancelHold) {
 		PMESG("Canceling this hold command");
 		if (holdingCommand) {
@@ -1301,6 +1347,15 @@ void InputEngine::finish_hold()
 	
 	set_jogging(false);
 	conclusion();
+}
+
+void InputEngine::clear_hold_modifier_keys()
+{
+        m_holdKeyRepeatTimer.stop();
+        foreach(HoldModifierKey* hmk, m_holdModifierKeys) {
+                delete hmk;
+        }
+        m_holdModifierKeys.clear();
 }
 
 
@@ -1805,7 +1860,6 @@ QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 	
 	return list;
 }
-
 
 //---------- EVENT CATCHER -------------
 

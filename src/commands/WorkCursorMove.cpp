@@ -134,17 +134,23 @@ void WorkCursorMove::prev_snap_pos(bool autorepeat)
 
 void WorkCursorMove::move_faster(bool autorepeat)
 {
-        m_speed+=3;
-        if (m_speed > 12) {
-                m_speed = 5;
+        if (m_speed == 1) {
+                m_speed = 3;
+        } else if (m_speed == 3) {
+                m_speed = 8;
+        } else if (m_speed == 8) {
+                m_speed = 15;
         }
 }
 
 
 void WorkCursorMove::move_slower(bool autorepeat)
 {
-        m_speed-=3;
-        if (m_speed < 1) {
+        if (m_speed == 15) {
+                m_speed = 8;
+        } else if (m_speed == 8) {
+                m_speed = 3;
+        } else if (m_speed == 3) {
                 m_speed = 1;
         }
 }
