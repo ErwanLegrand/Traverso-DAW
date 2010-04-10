@@ -321,6 +321,9 @@ void Interface::remove_sheetwidget(Sheet* sheet)
 		m_sheetWidgets.remove(sheet);
                 int index =  m_centerAreaWidget->indexOf(sw);
                 m_centerAreaWidget->removeTab(index);
+                if (m_currentSheetWidget == sw) {
+                        m_currentSheetWidget = 0;
+                }
 		delete sw;
 	}
 }
