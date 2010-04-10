@@ -134,7 +134,7 @@ public:
         void catch_scroll(QWheelEvent * e );
 
         int collected_number();
-        QString get_collected_number() const {return sCollectedNumber;}
+        QString get_collected_number() const {return m_sCollectedNumber;}
 
 	bool is_jogging();
 	bool is_holding();
@@ -193,43 +193,44 @@ private:
         QHash<int, HoldModifierKey*>  m_holdModifierKeys;
 	QHash<QString, CommandPlugin*> m_commandplugins;
 	QHash<QString, int>	m_modes;
-        EventCatcher 		catcher;
-        Command* 		holdingCommand;
-        QString			sCollectedNumber;
+        EventCatcher 		m_catcher;
+        Command* 		m_holdingCommand;
+        QString			m_sCollectedNumber;
 	QPoint			m_jogBypassPos;
         QTimer                  m_holdKeyRepeatTimer;
 
 
-        bool 			active;
-        bool 			isHolding;
-        bool 			isPressEventLocked;
-        bool 			isHoldingOutput;
-        bool 			isFirstFact;
-        bool 			isDoubleKey;
-        bool 			isJogging;
+        bool 			m_active;
+        bool 			m_isHolding;
+        bool 			m_isPressEventLocked;
+        bool 			m_isHoldingOutput;
+        bool 			m_isFirstFact;
+        bool 			m_isDoubleKey;
+        bool 			m_isJogging;
 	bool			m_cancelHold;
 	bool			m_bypassJog;
 
-        int 			fact1_k1;
-        int 			fact1_k2;
-        int 			fact2_k1;
-        int 			fact2_k2;
-        int 			fact1Type;
-        int 			wholeMapIndex;
-        int 			wholeActionType;
+        int 			m_fact1_k1;
+        int 			m_fact1_k2;
+        int 			m_fact2_k1;
+        int 			m_fact2_k2;
+        int 			m_fact1Type;
+        int 			m_wholeMapIndex;
+        int 			m_wholeActionType;
         int 			m_collectedNumber;
-        int 			stackIndex;
-        int 			eventType[STACK_SIZE];
-        int 			eventStack[STACK_SIZE];
-        int 			pressEventCounter; // that avoid more than 2 press events in a same fact
-        int 			pairOf2;
-        int 			pairOf3;
-        int 			clearTime;
-        int 			assumeHoldTime;
-        int 			doubleFactWaitTime;
-        long 			eventTime[STACK_SIZE];
+        int 			m_stackIndex;
+        int 			m_eventType[STACK_SIZE];
+        int 			m_eventStack[STACK_SIZE];
+        int 			m_pressEventCounter; // that avoid more than 2 press events in a same fact
+        int 			m_pairOf2;
+        int 			m_pairOf3;
+        int 			m_clearTime;
+        int 			m_assumeHoldTime;
+        int 			m_doubleFactWaitTime;
+        long 			m_eventTime[STACK_SIZE];
 	int			m_broadcastResult;
 	int			m_unbypassJogDistance;
+        int                     m_holdEventCode;
 
         bool 			is_fake( int keyval);
         int 			identify_first_fact();
@@ -261,7 +262,6 @@ private:
 	bool is_modifier_keyfact(int eventcode);
         void clear_hold_modifier_keys();
 
-	int holdEventCode;
 
         friend class EventCatcher;
 

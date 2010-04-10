@@ -148,8 +148,7 @@ bool ViewPort::event(QEvent * event)
 
 void ViewPort::mouseMoveEvent(QMouseEvent* event)
 {
-//        printf("Sheet: %s mouse move event, m_keyboardOnlyMode %d \n", m_sv->get_sheet()->get_name().toAscii().data(), m_keyboardOnlyMode);
-//        printf("mouse move event: x, y : %d, %d\n", QCursor::pos().x(), QCursor::pos().y());
+        PENTER4;
 
 	// Qt generates mouse move events when the scrollbars move
 	// since a mouse move event generates a jog() call for the 
@@ -158,8 +157,6 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 	if (event->pos() == m_oldMousePos) {
 		return;
 	}
-
-        PENTER;
 
         m_oldMousePos = event->pos();
 
@@ -187,6 +184,8 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 			viewport()->setCursor(themer()->get_cursor("Default"));
 		}
 
+                // since sheetview has no bounding rect, and should always have 'active context'
+                // add it if it's available
                 if (m_sv) {
                         activeContextItems.append(m_sv);
                 }
@@ -203,6 +202,9 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 		}
 	}
 
+        // tells the context pointer where we are, so command object can 'get' the
+        // scene position in their jog function from cpointer, or view items that
+        // accept mouse hover move 'events'
 	cpointer().set_point(event->x(), event->y());
 
         foreach(ViewItem* item, mouseTrackingItems) {
@@ -224,8 +226,6 @@ void ViewPort::tabletEvent(QTabletEvent * event)
 
 void ViewPort::enterEvent(QEvent* e)
 {
-//        printf("Sheet: %s enter event, m_keyboardOnlyMode %d \n", m_sv->get_sheet()->get_name().toAscii().data(), m_keyboardOnlyMode);
-
 	QGraphicsView::enterEvent(e);
 	cpointer().set_current_viewport(this);
 	setFocus();
