@@ -519,7 +519,6 @@ int Sheet::start_export(ExportSpecification* spec)
                 spec->name          = m_timeline->format_cdtrack_name(spec->markers.at(i), i+1);
                 spec->totalTime     = spec->cdTrackEnd - spec->cdTrackStart;
                 spec->pos           = spec->cdTrackStart;
-                spec->peakvalue     = peakvalue;
                 m_transportLocation = spec->cdTrackStart;
 
 
@@ -541,7 +540,8 @@ int Sheet::start_export(ExportSpecification* spec)
 
                 while(render(spec) > 0) {}
 
-                peakvalue = qMax(peakvalue, spec->peakvalue);
+                peakvalue = f_max(peakvalue, spec->peakvalue);
+                spec->peakvalue = peakvalue;
 
                 if (spec->renderpass == ExportSpecification::WRITE_TO_HARDDISK) {
                         m_exportSource->finish_export();
