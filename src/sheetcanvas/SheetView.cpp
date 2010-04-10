@@ -744,6 +744,10 @@ ClipsViewPort * SheetView::get_clips_viewport() const
 	return m_clipsViewPort;
 }
 
+TimeLineViewPort* SheetView::get_timeline_viewport() const
+{
+        return m_tlvp;
+}
 
 Command * SheetView::touch( )
 {

@@ -57,7 +57,10 @@ private :
 	PlayHead*	m_playCursor;
         WorkCursor*     m_workCursor;
 	TimeRef		m_origPos;
+        int             m_holdCursorSceneY;
         int             m_speed;
+
+        void do_keyboard_move(TimeRef newLocation, bool centerInView = false);
 
 public slots:
         void move_left(bool autorepeat);

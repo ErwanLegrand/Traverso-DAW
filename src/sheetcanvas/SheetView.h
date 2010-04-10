@@ -81,6 +81,7 @@ public :
 	Sheet* get_sheet() const {return m_sheet;}
 	TrackPanelViewPort* get_trackpanel_view_port() const;
 	ClipsViewPort* get_clips_viewport() const;
+        TimeLineViewPort* get_timeline_viewport() const;
 	
         AudioTrackView* get_audio_trackview_under(QPointF point);
         TrackView* get_trackview_under(QPointF point);

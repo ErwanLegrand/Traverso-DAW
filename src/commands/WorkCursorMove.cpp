@@ -21,9 +21,14 @@
 
 #include "WorkCursorMove.h"
 
-#include <libtraversocore.h>
-#include <SheetView.h>
-#include <Cursors.h>
+#include "InputEngine.h"
+#include "ClipsViewPort.h"
+#include "Sheet.h"
+#include "SnapList.h"
+#include "Snappable.h"
+#include "SheetView.h"
+#include "TimeLineViewPort.h"
+#include "Cursors.h"
 
 #include <Debugger.h>
 
@@ -35,6 +40,7 @@ WorkCursorMove::WorkCursorMove(WorkCursor* wc, PlayHead* cursor, SheetView* sv)
         , m_workCursor(wc)
         , m_speed(1)
 {
+        m_holdCursorSceneY = cpointer().scene_y();
 }
 
 int WorkCursorMove::finish_hold()
@@ -44,14 +50,29 @@ int WorkCursorMove::finish_hold()
 	return -1;
 }
 
+
 int WorkCursorMove::begin_hold()
 {
-	if (m_sheet->is_transport_rolling()) {
+        cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), -20));
+        ViewPort* port = ((ViewPort*)cpointer().get_viewport());
+        int x = port->mapFromScene(m_workCursor->scenePos()).x();
+
+        if (x < 0 || x > port->width()) {
+                m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
+        }
+
+        QCursor::setPos(port->mapToGlobal(
+                        port->mapFromScene(
+                        m_workCursor->scenePos().x(), m_holdCursorSceneY)));
+
+        if (m_sheet->is_transport_rolling()) {
 		m_playCursor->disable_follow();
 	}
+
 	m_sheet->get_work_snap()->set_snappable(false);
 	m_sv->start_shuttle(true, true);
 	m_origPos = m_sheet->get_work_location();
+        
 	return 1;
 }
 
@@ -92,8 +113,8 @@ int WorkCursorMove::jog()
 	m_sheet->set_work_at(newLocation);
 
 	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newLocation, m_sv->timeref_scalefactor));
-        cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
+        cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newLocation, m_sv->timeref_scalefactor));
+        cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), m_holdCursorSceneY));
 	
 	return 1;
 }
@@ -101,35 +122,41 @@ int WorkCursorMove::jog()
 void WorkCursorMove::move_left(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        m_sheet->set_work_at(m_sheet->get_work_location() - (m_sv->timeref_scalefactor * m_speed));
-        cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
+        do_keyboard_move(m_sheet->get_work_location() - (m_sv->timeref_scalefactor * m_speed));
 }
 
 
 void WorkCursorMove::move_right(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        m_sheet->set_work_at(m_sheet->get_work_location() + (m_sv->timeref_scalefactor * m_speed));
-        cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
+        do_keyboard_move(m_sheet->get_work_location() + (m_sv->timeref_scalefactor * m_speed));
 }
 
 
 void WorkCursorMove::next_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        m_sheet->set_work_at(m_sheet->get_snap_list()->next_snap_pos(m_sheet->get_work_location()));
-        m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
+        do_keyboard_move(m_sheet->get_snap_list()->next_snap_pos(m_sheet->get_work_location()), true);
 }
 
 void WorkCursorMove::prev_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
+        do_keyboard_move(m_sheet->get_snap_list()->prev_snap_pos(m_sheet->get_work_location()), true);
+}
+
+void WorkCursorMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
+{
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        m_sheet->set_work_at(m_sheet->get_snap_list()->prev_snap_pos(m_sheet->get_work_location()));
-        m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
+
+        m_sheet->set_work_at(newLocation);
+
+        if (centerInView) {
+                m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
+        }
+
+        cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
+        cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), m_holdCursorSceneY));
 }
 
 void WorkCursorMove::move_faster(bool autorepeat)
