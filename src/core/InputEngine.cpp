@@ -747,6 +747,10 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
                                 hmk->lastTimeExecuted = 0;
                                 hmk->ieaction = m_ieActions.at(index);
                                 m_holdModifierKeys.insert(eventcode, hmk);
+                                // execute the first one directly, this is needed
+                                // if the release event comes before the timer actually
+                                // fires (mouse scroll wheel does press/release events real quick
+                                process_hold_modifier_keys();
                                 // only start it once
                                 if (!m_holdKeyRepeatTimer.isActive()) {
                                         m_holdKeyRepeatTimer.start(40);
