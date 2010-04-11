@@ -1546,10 +1546,11 @@ int AlsaDriver::_run_cycle()
 	float delayed_usecs;
 	nframes_t nframes;
 
-	// 	PWARN ("alsa run cycle wait\n");
-
 	nframes = wait (-1, &wait_status, &delayed_usecs);
 
+        if (wait_status < 0) {
+                return -1;		/* driver failed */
+        }
 
 	if (nframes == 0) {
 
@@ -1560,13 +1561,7 @@ int AlsaDriver::_run_cycle()
 		return 0;
 	}
 
-	if (wait_status == 0)
-		return device->run_cycle (nframes, delayed_usecs);
-
-	if (wait_status < 0)
-		return -1;		/* driver failed */
-	else
-		return 0;
+        return device->run_cycle (nframes, delayed_usecs);
 }
 
 int AlsaDriver::attach()
