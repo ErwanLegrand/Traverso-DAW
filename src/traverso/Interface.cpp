@@ -887,8 +887,14 @@ Command * Interface::show_context_menu( )
 
 	// It's impossible there is NO toplevelmenu, but oh well...
 	if (toplevelmenu) {
-		toplevelmenu->exec(QCursor::pos());
-	}
+                // using toplevelmenu->exec() continues on the event loop
+                // when the hold action finishes, input engine clears hold items
+                // which could be referenced again in inputengine, causing a segfault.
+                // so showing it will be sufficient. In fact, using exec() is
+                // considered bad practice due this very issue.
+                toplevelmenu->move(QCursor::pos());
+                toplevelmenu->show();
+        }
 	
 	return 0;
 }
