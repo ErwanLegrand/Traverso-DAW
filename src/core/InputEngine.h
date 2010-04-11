@@ -258,7 +258,7 @@ private:
         void set_jogging(bool jog);
         void set_numerical_input(const QString& number);
 	void reset();
-	void process_press_event(int eventcode, bool isAutoRepeat=false);
+        void process_press_event(int eventcode);
         void process_release_event(int eventcode);
 	int find_index_for_instant_fkey( int key );
 	int find_index_for_instant_fkey2( int key1, int key2 );

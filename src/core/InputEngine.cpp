@@ -630,7 +630,7 @@ void InputEngine::abort_current_hold_actions()
         // Fake an escape key fact, so if a hold action was
         // running it will be canceled!
         if (is_holding()) {
-                process_press_event(Qt::Key_Escape, false);
+                process_press_event(Qt::Key_Escape);
         }
 }
 
@@ -639,11 +639,12 @@ void InputEngine::abort_current_hold_actions()
 // and pushes it into a stack.
 void InputEngine::catch_key_press(QKeyEvent * e )
 {
-        if (e->isAutoRepeat() && !m_isHolding) {
+        if (e->isAutoRepeat()) {
 		return;
 	}
-	PENTER4;
-	process_press_event(e->key(), e->isAutoRepeat());
+        PENTER3;
+
+        process_press_event(e->key());
 }
 
 void InputEngine::catch_key_release( QKeyEvent * e)
@@ -693,7 +694,7 @@ void InputEngine::catch_scroll(QWheelEvent* e)
 	}
 }
 
-void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
+void InputEngine::process_press_event(int eventcode)
 {
 	if (eventcode == Qt::Key_Escape && is_holding()) {
 		m_cancelHold = true;
@@ -708,7 +709,7 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 	}
 	
 	if (is_modifier_keyfact(eventcode)) {
-		if ( (! isAutoRepeat) && (! m_activeModifierKeys.contains(eventcode)) ) {
+                if (!m_activeModifierKeys.contains(eventcode)) {
 			m_activeModifierKeys.append(eventcode);
 		}
 		return;
@@ -722,7 +723,7 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 			if (fkey_index >= 0) {
                                 m_catcher.holdTimer.stop(); // quit the holding check..
 				IEAction* action = m_ieActions.at(fkey_index);
-				broadcast_action(action, isAutoRepeat);
+                                broadcast_action(action);
 				conclusion();
 				return;
 			}
@@ -732,7 +733,7 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 			if (fkey2_index >= 0) {
                                 m_catcher.holdTimer.stop(); // quit the holding check..
 				IEAction* action = m_ieActions.at(fkey2_index);
-				broadcast_action(action, isAutoRepeat);
+                                broadcast_action(action);
 				conclusion();
 				return;
 			}
@@ -746,21 +747,19 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
 		// the eventcode must be != the current active holding 
 		// command's eventcode!
                 if (index >= 0 && m_holdEventCode != eventcode) {
-                        if (! isAutoRepeat) {
-                                HoldModifierKey* hmk = new HoldModifierKey;
-                                hmk->keycode = eventcode;
-                                hmk->wasExecuted = false;
-                                hmk->lastTimeExecuted = 0;
-                                hmk->ieaction = m_ieActions.at(index);
-                                m_holdModifierKeys.insert(eventcode, hmk);
-                                // execute the first one directly, this is needed
-                                // if the release event comes before the timer actually
-                                // fires (mouse scroll wheel does press/release events real quick
-                                process_hold_modifier_keys();
-                                // only start it once
-                                if (!m_holdKeyRepeatTimer.isActive()) {
-                                        m_holdKeyRepeatTimer.start(10);
-                                }
+                        HoldModifierKey* hmk = new HoldModifierKey;
+                        hmk->keycode = eventcode;
+                        hmk->wasExecuted = false;
+                        hmk->lastTimeExecuted = 0;
+                        hmk->ieaction = m_ieActions.at(index);
+                        m_holdModifierKeys.insert(eventcode, hmk);
+                        // execute the first one directly, this is needed
+                        // if the release event comes before the timer actually
+                        // fires (mouse scroll wheel does press/release events real quick
+                        process_hold_modifier_keys();
+                        // only start it once
+                        if (!m_holdKeyRepeatTimer.isActive()) {
+                                m_holdKeyRepeatTimer.start(10);
                         }
 		}
 		return;
