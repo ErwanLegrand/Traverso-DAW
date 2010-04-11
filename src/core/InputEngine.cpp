@@ -821,7 +821,7 @@ void InputEngine::process_hold_modifier_keys()
         foreach(HoldModifierKey* hmk, m_holdModifierKeys) {
                 if (!hmk->wasExecuted) {
                         hmk->wasExecuted = true;
-                        broadcast_action(hmk->ieaction, false);
+                        broadcast_action(hmk->ieaction);
                         hmk->lastTimeExecuted = get_microseconds() + hmk->ieaction->autorepeatStartDelay * 1000;
                         continue;
                 }

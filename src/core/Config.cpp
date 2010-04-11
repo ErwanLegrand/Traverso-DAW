@@ -96,8 +96,8 @@ void Config::check_and_load_configuration( )
 void Config::init_input_engine( )
 {
 	ie().init_map(config().get_property("CCE", "keymap", "default").toString());
-	ie().set_hold_sensitiveness(config().get_property("CCE", "holdTimeout", 150).toInt());
-	ie().set_double_fact_interval(config().get_property("CCE", "doublefactTimeout", 180).toInt());
+        ie().set_hold_sensitiveness(config().get_property("CCE", "holdTimeout", 180).toInt());
+        ie().set_double_fact_interval(config().get_property("CCE", "doublefactTimeout", 220).toInt());
 }
 
 

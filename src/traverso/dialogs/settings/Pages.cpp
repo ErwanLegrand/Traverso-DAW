@@ -727,8 +727,8 @@ KeyboardConfigPage::KeyboardConfigPage(QWidget * parent)
 
 void KeyboardConfigPage::load_config()
 {
-	int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 180).toInt();
-	int holdTimeout = config().get_property("CCE", "holdTimeout", 150).toInt();
+        int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 220).toInt();
+        int holdTimeout = config().get_property("CCE", "holdTimeout", 180).toInt();
 	
 	doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
 	holdTimeoutSpinBox->setValue(holdTimeout);
@@ -758,8 +758,8 @@ void KeyboardConfigPage::save_config()
 
 void KeyboardConfigPage::reset_default_config()
 {
-	config().set_property("CCE", "doublefactTimeout", 180);
-	config().set_property("CCE", "holdTimeout", 150);
+        config().set_property("CCE", "doublefactTimeout", 220);
+        config().set_property("CCE", "holdTimeout", 180);
 	config().set_property("CCE", "keymap", "default");
 	load_config();
 }
