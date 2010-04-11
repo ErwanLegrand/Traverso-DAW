@@ -316,7 +316,7 @@ TimeRef SnapList::prev_snap_pos(const TimeRef& pos)
 	
 	int index = (int)(pos / m_scalefactor);
 	
-	if (index > m_xposLut.size()) {
+        if (index >= m_xposLut.size()) {
 		index = m_xposLut.size() - 1;
 	}
 	
