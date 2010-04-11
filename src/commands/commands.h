@@ -4,6 +4,8 @@
 #include "MoveMarker.h"
 #include "MoveTrack.h"
 #include "MoveEdge.h"
+#include "WorkCursorMove.h"
+#include "PlayHeadMove.h"
 #include "TrackPan.h"
 #include "Zoom.h"
 #include "Import.h"

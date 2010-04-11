@@ -37,6 +37,7 @@ ArmTracks.cpp
 PlayHeadMove.cpp
 WorkCursorMove.cpp
 RemoveClip.cpp
+MoveCommand.cpp
 )
 
 SET(TRAVERSO_COMMANDS_MOC_CLASSES
@@ -45,10 +46,13 @@ ExternalProcessingDialog.h
 Gain.h
 MoveClip.h
 MoveCurveNode.h
+MoveEdge.h
 MoveMarker.h
 MoveTrack.h
 TrackPan.h
 WorkCursorMove.h
+PlayHeadMove.h
+MoveCommand.h
 Zoom.h
 )
 

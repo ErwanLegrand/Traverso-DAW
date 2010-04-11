@@ -33,12 +33,11 @@
 #include <Debugger.h>
 
 WorkCursorMove::WorkCursorMove(WorkCursor* wc, PlayHead* cursor, SheetView* sv)
-	: Command("Play Cursor Move")
+        : MoveCommand("Play Cursor Move")
 	, m_sheet(sv->get_sheet())
 	, m_sv(sv)
 	, m_playCursor(cursor)
         , m_workCursor(wc)
-        , m_speed(1)
 {
         m_holdCursorSceneY = cpointer().scene_y();
 }
@@ -159,29 +158,3 @@ void WorkCursorMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
         cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), m_holdCursorSceneY));
 }
 
-void WorkCursorMove::move_faster(bool autorepeat)
-{
-        if (m_speed == 1) {
-                m_speed = 3;
-        } else if (m_speed == 3) {
-                m_speed = 8;
-        } else if (m_speed == 8) {
-                m_speed = 15;
-        } else if (m_speed == 15) {
-                m_speed = 30;
-        }
-}
-
-
-void WorkCursorMove::move_slower(bool autorepeat)
-{
-        if (m_speed == 30) {
-                m_speed = 15;
-        } else if (m_speed == 15) {
-                m_speed = 8;
-        } else if (m_speed == 8) {
-                m_speed = 3;
-        } else if (m_speed == 3) {
-                m_speed = 1;
-        }
-}

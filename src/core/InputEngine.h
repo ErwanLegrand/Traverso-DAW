@@ -89,6 +89,8 @@ struct IEAction
 		bool useX;
 		bool useY;
 		int sortorder;
+                int autorepeatInterval;
+                int autorepeatStartDelay;
 	};
 
         QHash<QString, Data*> objects;
@@ -99,6 +101,8 @@ struct IEAction
         int fact1_key2;
         int fact2_key1;
         int fact2_key2;
+        int autorepeatInterval;
+        int autorepeatStartDelay;
         bool isInstantaneous;
         QByteArray keySequence;
 };

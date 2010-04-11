@@ -22,14 +22,16 @@
 #ifndef PLAYHEAD_MOVE_H
 #define PLAYHEAD_MOVE_H
 
-#include <Command.h>
+#include "MoveCommand.h"
 
 class Sheet;
 class SheetView;
 class PlayHead;
 
-class PlayHeadMove : public Command
+class PlayHeadMove : public MoveCommand
 {
+        Q_OBJECT;
+
 public :
 	PlayHeadMove(PlayHead* cursor, SheetView* sv);
 	~PlayHeadMove(){};
@@ -49,6 +51,16 @@ private :
 	int		m_origXPos;
 	int		m_newXPos;
 	int		m_newYPos;
+        int             m_holdCursorSceneY;
+        TimeRef         m_newTransportLocation;
+
+        void do_keyboard_move(TimeRef newLocation, bool centerInView = false);
+
+public slots:
+        void move_left(bool autorepeat);
+        void move_right(bool autorepeat);
+        void next_snap_pos(bool autorepeat);
+        void prev_snap_pos(bool autorepeat);
 };
 
 #endif

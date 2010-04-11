@@ -375,6 +375,12 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
                 if (item == m_holdingCommand) {
 			if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_ARG(bool, autorepeat))) {
                                 PMESG("HIT, invoking %s::%s", m_holdingCommand->metaObject()->className(), QS_C(slotsignature));
+                                // only now we know which object this hold modifier key was dispatched on.
+                                // the process_hold_modifier_keys() only knows about the corresonding ieaction
+                                // next time it'll be called, autorepeat interval of the object + keysequence will
+                                // be used!
+                                action->autorepeatInterval = data->autorepeatInterval;
+                                action->autorepeatStartDelay = data->autorepeatStartDelay;
 				break;
 			}
 		}
@@ -753,7 +759,7 @@ void InputEngine::process_press_event(int eventcode, bool isAutoRepeat)
                                 process_hold_modifier_keys();
                                 // only start it once
                                 if (!m_holdKeyRepeatTimer.isActive()) {
-                                        m_holdKeyRepeatTimer.start(40);
+                                        m_holdKeyRepeatTimer.start(10);
                                 }
                         }
 		}
@@ -811,16 +817,19 @@ void InputEngine::process_hold_modifier_keys()
                 m_holdKeyRepeatTimer.stop();
                 return;
         }
+
         foreach(HoldModifierKey* hmk, m_holdModifierKeys) {
                 if (!hmk->wasExecuted) {
                         hmk->wasExecuted = true;
-                        hmk->lastTimeExecuted = get_microseconds() + 50 * 1000;
                         broadcast_action(hmk->ieaction, false);
-                        return;
+                        hmk->lastTimeExecuted = get_microseconds() + hmk->ieaction->autorepeatStartDelay * 1000;
+                        continue;
                 }
 
-                trav_time_t timeDiff = get_microseconds() - hmk->lastTimeExecuted;
-                if (timeDiff > 38 * 1000) {
+                int timeDiff = qRound(get_microseconds() - hmk->lastTimeExecuted);
+                // if timeDiff is very close (-2 ms) to it's interval value, execute it still
+                // else the next interval might be too long between the previous one.
+                if ((timeDiff + 2 * 1000) >= hmk->ieaction->autorepeatInterval * 1000) {
                         hmk->lastTimeExecuted = get_microseconds();
                         broadcast_action(hmk->ieaction, true);
                 }
@@ -1530,6 +1539,8 @@ int InputEngine::init_map(const QString& keymap)
 			data->commandname = e.attribute( "commandname", "");
 			data->submenu = e.attribute("submenu", "");
 			data->sortorder = e.attribute( "sortorder", "0").toInt();
+                        data->autorepeatInterval = e.attribute("autorepeatinterval", "40").toInt();
+                        data->autorepeatStartDelay = e.attribute("autorepeatstartdelay", "100").toInt();
 			mouseHint = e.attribute( "mousehint", "" );
 			QString args = e.attribute("arguments", "");
 			modifierKeys = e.attribute("modifierkeys", "");

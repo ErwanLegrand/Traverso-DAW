@@ -23,7 +23,7 @@
 #ifndef MOVEEDGE_H
 #define MOVEEDGE_H
 
-#include "Command.h"
+#include "MoveCommand.h"
 #include "defines.h"
 #include <QByteArray>
 
@@ -31,8 +31,9 @@ class AudioClip;
 class SheetView;
 class AudioClipView;
 
-class MoveEdge : public Command
+class MoveEdge : public MoveCommand
 {
+        Q_OBJECT
 public :
         MoveEdge(AudioClipView* cv, SheetView* sv, QByteArray whichEdge);
         ~MoveEdge();
@@ -53,6 +54,12 @@ private :
         TimeRef		m_originalPos;
 	TimeRef		m_newPos;
 	TimeRef		m_otherEdgePos;
+
+public slots:
+        void move_left(bool autorepeat);
+        void move_right(bool autorepeat);
+        void next_snap_pos(bool autorepeat);
+        void prev_snap_pos(bool autorepeat);
 };
 
 #endif

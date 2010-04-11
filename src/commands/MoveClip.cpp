@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  *	Creates  a Move Clip or Copy Clip Command object.
  */
 MoveClip::MoveClip(ViewItem* view, QVariantList args)
-	: Command(view->get_context(), "")
+        : MoveCommand(view->get_context(), "")
 	, d(new Data)
 {
 	QString action = "move"; // default action!
@@ -409,7 +409,7 @@ void MoveClip::move_left(bool autorepeat)
 
 	if (d->verticalOnly) return;
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-	m_posDiff -= d->sv->timeref_scalefactor;
+        m_posDiff -= (d->sv->timeref_scalefactor * m_speed);
         if (m_posDiff + m_trackStartLocation < TimeRef()) {
                 m_posDiff = -1 * m_trackStartLocation;
         }
@@ -425,7 +425,7 @@ void MoveClip::move_right(bool autorepeat)
 
 	if (d->verticalOnly) return;
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-	m_posDiff += d->sv->timeref_scalefactor;
+        m_posDiff += (d->sv->timeref_scalefactor * m_speed);
 	do_move();
 }
 

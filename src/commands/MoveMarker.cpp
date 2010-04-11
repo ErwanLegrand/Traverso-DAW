@@ -33,7 +33,7 @@
 #include "Debugger.h"
 
 MoveMarker::MoveMarker(MarkerView* mview, qint64 scalefactor, const QString& des)
-        : Command(mview->get_marker(), des)
+        : MoveCommand(mview->get_marker(), des)
 {
         d = new Data;
         d->view = mview;
@@ -89,7 +89,7 @@ void MoveMarker::move_left(bool )
 {
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         // Move 1 pixel to the left
-        TimeRef newpos = TimeRef(m_newWhen - d->scalefactor);
+        TimeRef newpos = TimeRef(m_newWhen - (d->scalefactor * m_speed));
         if (newpos < TimeRef()) {
                 newpos = TimeRef();
         }
@@ -101,7 +101,7 @@ void MoveMarker::move_right(bool )
 {
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         // Move 1 pixel to the right
-        m_newWhen = m_newWhen + d->scalefactor;
+        m_newWhen = m_newWhen + (d->scalefactor * m_speed);
         m_marker->set_when(m_newWhen);
 }
 

@@ -22,13 +22,13 @@
 #ifndef MOVEMARKER_H
 #define MOVEMARKER_H
 
-#include "Command.h"
+#include "MoveCommand.h"
 #include "defines.h"
 
 class Marker;
 class MarkerView;
 
-class MoveMarker : public Command
+class MoveMarker : public MoveCommand
 {
         Q_OBJECT
         Q_CLASSINFO("move_left", tr("Move Left"))

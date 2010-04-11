@@ -22,7 +22,7 @@
 #ifndef MOVECLIPACTION_H
 #define MOVECLIPACTION_H
 
-#include "Command.h"
+#include "MoveCommand.h"
 
 #include <QPoint>
 #include <defines.h>
@@ -41,7 +41,7 @@ typedef struct {
 	TimeRef origin;
 } MarkerAndOrigin;
 
-class MoveClip : public Command
+class MoveClip : public MoveCommand
 {
 	Q_OBJECT
 	Q_CLASSINFO("next_snap_pos", tr("To next snap position"));

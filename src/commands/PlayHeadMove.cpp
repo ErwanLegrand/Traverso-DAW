@@ -28,21 +28,17 @@
 #include <Debugger.h>
 
 PlayHeadMove::PlayHeadMove(PlayHead* cursor, SheetView* sv)
-	: Command("Play Cursor Move")
+        : MoveCommand("Play Cursor Move")
 	, m_cursor(cursor)
 	, m_sheet(sv->get_sheet())
 	, m_sv(sv)
 {
 	m_resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
+        m_newTransportLocation = m_sheet->get_transport_location();
 }
 
 int PlayHeadMove::finish_hold()
 {
-	int x = cpointer().scene_x();
-	if (x < 0) {
-		x = 0;
-	}
-	
 	// When SyncDuringDrag is true, don't seek in finish_hold()
 	// since that causes another audio glitch.
 	if (!(m_resync && m_sheet->is_transport_rolling())) {
@@ -52,8 +48,8 @@ int PlayHeadMove::finish_hold()
 		if (m_sheet->is_transport_rolling()) {
 			m_cursor->hide();
 		}
-		TimeRef location(x * m_sv->timeref_scalefactor);
-		m_sheet->set_transport_pos(location);
+
+                m_sheet->set_transport_pos(m_newTransportLocation);
 	}
 	m_sv->start_shuttle(false);
 	return -1;
@@ -64,7 +60,8 @@ int PlayHeadMove::begin_hold()
 	m_cursor->set_active(false);
 	m_origXPos = m_newXPos = int(m_sheet->get_transport_location() / m_sv->timeref_scalefactor);
 	m_sv->start_shuttle(true, true);
-	
+        m_holdCursorSceneY = cpointer().scene_y();
+
 	// Mabye a technically more proper fix is to check if 
 	// m_origXPos and the x pos in finish_hold() are equal or not ??
 	jog();
@@ -99,16 +96,18 @@ int PlayHeadMove::jog()
 	if (x == m_newXPos && y == m_newYPos) {
 		return 0;
 	}
-	
+
 	if (x != m_newXPos) {
 		m_cursor->setPos(x, 0);
-		TimeRef newpos(x * m_sv->timeref_scalefactor);
-		if (m_resync && m_sheet->is_transport_rolling()) {
-			m_sheet->set_transport_pos(newpos);
+
+                m_newTransportLocation = TimeRef(x * m_sv->timeref_scalefactor);
+
+                if (m_resync && m_sheet->is_transport_rolling()) {
+                        m_sheet->set_transport_pos(m_newTransportLocation);
 		}
 		
 		m_sv->update_shuttle_factor();
-		cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newpos, m_sv->timeref_scalefactor));
+                cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_newTransportLocation, m_sv->timeref_scalefactor));
 	}
 	
         cpointer().get_viewport()->set_holdcursor_pos(QPointF(x, y));
@@ -119,3 +118,48 @@ int PlayHeadMove::jog()
 	return 1;
 }
 
+void PlayHeadMove::move_left(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        do_keyboard_move(m_newTransportLocation - (m_sv->timeref_scalefactor * m_speed));
+}
+
+
+void PlayHeadMove::move_right(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        do_keyboard_move(m_newTransportLocation + (m_sv->timeref_scalefactor * m_speed));
+}
+
+
+void PlayHeadMove::next_snap_pos(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        do_keyboard_move(m_sheet->get_snap_list()->next_snap_pos(m_newTransportLocation), true);
+}
+
+void PlayHeadMove::prev_snap_pos(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        do_keyboard_move(m_sheet->get_snap_list()->prev_snap_pos(m_newTransportLocation), true);
+}
+
+void PlayHeadMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
+{
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+
+        if (newLocation < TimeRef()) {
+                newLocation = TimeRef();
+        }
+
+        m_newTransportLocation = newLocation;
+
+        if (m_resync && m_sheet->is_transport_rolling()) {
+                m_sheet->set_transport_pos(m_newTransportLocation);
+        } else {
+                m_cursor->setPos(newLocation / m_sv->timeref_scalefactor, 0);
+        }
+
+        cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_newTransportLocation, m_sv->timeref_scalefactor));
+        cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_cursor->scenePos().x(), m_holdCursorSceneY));
+}

@@ -955,6 +955,9 @@ Command * Interface::get_keymap(QString &str)
         QList<const QMetaObject*> trackpanlist; trackpanlist << &TrackPan::staticMetaObject;
         QList<const QMetaObject*> croplist; croplist << &Crop::staticMetaObject;
         QList<const QMetaObject*> movemarkerlist; movemarkerlist << &MoveMarker::staticMetaObject;
+        QList<const QMetaObject*> moveworkcursorlist; moveworkcursorlist << &WorkCursorMove::staticMetaObject;
+        QList<const QMetaObject*> moveplaycursorlist; moveplaycursorlist << &PlayHeadMove::staticMetaObject;
+        QList<const QMetaObject*> moveclipedgelist; moveclipedgelist << &MoveEdge::staticMetaObject;
 
 	objects.insert("Sheet", sheetlist);
         objects.insert("Track", tracklist);
@@ -969,8 +972,11 @@ Command * Interface::get_keymap(QString &str)
         objects.insert("Gain", gainlist);
         objects.insert("Move Track", movetracklist);
         objects.insert("Move AudioClip", movecliplist);
+        objects.insert("Move Clip Edge", moveclipedgelist);
         objects.insert("Move Marker", movemarkerlist);
         objects.insert("Move Curve Node", movecurvenodelist);
+        objects.insert("Move Work Cursor", moveworkcursorlist);
+        objects.insert("Move Play Cursor", moveplaycursorlist);
         objects.insert("Zoom", zoomlist);
         objects.insert("Track Pan", trackpanlist);
         objects.insert("Magnetic Cut", croplist);
