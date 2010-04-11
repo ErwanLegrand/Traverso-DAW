@@ -279,7 +279,7 @@ TimeRef SnapList::next_snap_pos(const TimeRef& pos)
 		return TimeRef();
 	}
 	
-	if (index > m_xposLut.size()) {
+        if (index >= m_xposLut.size()) {
                 SLPRINT("index > m_xposLut.size() (index is %d)\n", index);
 		index = m_xposLut.size() - 1;
 	}
