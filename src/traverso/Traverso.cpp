@@ -128,6 +128,8 @@ void Traverso::create_interface( )
 	themer()->load();
         Interface* iface = Interface::instance();
 	iface->show();
+
+        config().init_input_engine();
 	
 	QString projectToLoad = "";
 	

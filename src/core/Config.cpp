@@ -83,8 +83,6 @@ void Config::check_and_load_configuration( )
 
         load_configuration();
 
-        init_input_engine();
-
 	// Detect if the config file versions match, if not, there has been most likely 
 	// a change, overwrite with the newest version...
 	if (m_configs.value("ConfigFileVersion").toString() != CONFIG_FILE_VERSION) {
