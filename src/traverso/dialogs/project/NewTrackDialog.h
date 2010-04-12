@@ -37,11 +37,15 @@ public:
 	NewTrackDialog(QWidget* parent = 0);
 	~NewTrackDialog() {};
 
+protected:
+        void showEvent ( QShowEvent * event );
+
 
 private:
 	Project* m_project;
 
         void create_track();
+        void update_driver_info();
 
 
 private slots:

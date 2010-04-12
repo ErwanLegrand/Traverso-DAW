@@ -172,7 +172,7 @@ AudioChannel* JackDriver::add_capture_channel(const QString& chanName)
                 return 0;
         }
 
-        pcpair->channel = audiodevice().create_channel(buf, channelNumber, ChannelIsInput);
+        pcpair->channel = audiodevice().create_channel(chanName, channelNumber, ChannelIsInput);
         pcpair->channel->set_latency( frames_per_cycle + capture_frame_latency );
 
         pcpair->name = chanName;
@@ -199,7 +199,7 @@ AudioChannel* JackDriver::add_playback_channel(const QString& chanName)
                 return 0;
         }
 
-        pcpair->channel = audiodevice().create_channel(buf, channelNumber, ChannelIsOutput);
+        pcpair->channel = audiodevice().create_channel(chanName, channelNumber, ChannelIsOutput);
         pcpair->channel->set_latency( frames_per_cycle + capture_frame_latency );
         pcpair->channel->set_buffer_size(2048);
 

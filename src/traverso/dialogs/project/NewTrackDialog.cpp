@@ -50,6 +50,11 @@ NewTrackDialog::NewTrackDialog(QWidget * parent)
         connect(isSubGroup, SIGNAL(toggled(bool)), this, SLOT(update_buses_comboboxes()));
 }
 
+void NewTrackDialog::showEvent(QShowEvent *event)
+{
+        update_driver_info();
+}
+
 void NewTrackDialog::create_track()
 {
 	if (! m_project) {
@@ -68,18 +73,54 @@ void NewTrackDialog::create_track()
 		title = "Untitled";
 	}
 	
-	
         Track* track;
 
-        if (isSubGroup->isChecked()) {
-                track = new SubGroup(sheet, title, 2);
+        QString driver = audiodevice().get_driver_type();
+        if (driver == "Jack") {
+                AudioDeviceSetup setup = audiodevice().get_device_setup();
+                for (int i=0; i<2; i++) {
+                        QStringList channelnames;
+                        BusConfig busconfig;
+
+                        if (monoRadioButton->isChecked()) {
+                                channelnames << title + "_0";
+                        } else {
+                                channelnames << title + "_0" << title + "_1";
+                        }
+
+                        foreach(const QString& channelname, channelnames) {
+                                ChannelConfig channelconfig;
+                                channelconfig.name = i == 0 ? channelname + "_out" : channelname + "_in";
+                                channelconfig.type = i == 0 ? "output" : "input";
+                                setup.channelConfigs.append(channelconfig);
+                                busconfig.channelNames << channelconfig.name;
+                        }
+
+                        busconfig.channelcount = channelnames.size();
+                        busconfig.name = title;
+                        busconfig.type =  i == 0 ? "output" : "input";
+                        setup.busConfigs.append(busconfig);
+                }
+
+                audiodevice().set_parameters(setup);
+
+                track = new AudioTrack(sheet, title, AudioTrack::INITIAL_HEIGHT);
         } else {
-                track = new AudioTrack(sheet, "Unnamed", AudioTrack::INITIAL_HEIGHT);
-                track->set_input_bus(inputBuses->currentText());
+
+                if (isSubGroup->isChecked()) {
+                        track = new SubGroup(sheet, title, 2);
+                } else {
+                        track = new AudioTrack(sheet, title, AudioTrack::INITIAL_HEIGHT);
+                        track->set_input_bus(inputBuses->currentText());
+                }
         }
 
-        track->set_name(title);
-        track->set_output_bus(outputBuses->currentText());
+        if (driver == "Jack") {
+                track->set_output_bus(title);
+                track->set_input_bus(title);
+        } else {
+                track->set_output_bus(outputBuses->currentText());
+        }
 
         Command* command = sheet->add_track(track);
 		
@@ -132,7 +173,6 @@ void NewTrackDialog::update_buses_comboboxes()
                 outputBuses->addItem(busName);
         }
 
-
         inputBuses->clear();
 
         busNames.clear();
@@ -143,4 +183,14 @@ void NewTrackDialog::update_buses_comboboxes()
         }
 }
 
-
+void NewTrackDialog::update_driver_info()
+{
+        QString driver = audiodevice().get_driver_type();
+        if (driver == "Jack") {
+                jackTrackGroupBox->show();
+                busConfigGroupBox->hide();
+        } else {
+                jackTrackGroupBox->hide();
+                busConfigGroupBox->show();
+        }
+}
