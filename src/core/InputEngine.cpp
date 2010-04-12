@@ -85,13 +85,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  *	\sa Command, ContextPointer, ViewPort, CommandPlugin
  */
 
-static void set_hexcode(int & variable, const QString& text)
+static bool set_hexcode(int & variable, const QString& text)
 {
 	variable = 0;
 	QString s;
 	int x  = 0;
 	if ((text != QString::null) && (text.length() > 0) ) {
-		s="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                s="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		x = s.indexOf(text);
 		if (x>=0) {
 			variable = Qt::Key_A + x;
@@ -138,8 +138,17 @@ static void set_hexcode(int & variable, const QString& text)
 							variable = MouseScrollVerticalUp;
 						} else if( text == "MouseScrollVerticalDown") {
 							variable = MouseScrollVerticalDown;
-						} else {
+                                                } else if( text == "/") {
+                                                        variable = Qt::Key_Slash;
+                                                } else if ( text == "\\") {
+                                                        variable = Qt::Key_Backslash;
+                                                } else if ( text == "[") {
+                                                        variable = Qt::Key_BracketLeft;
+                                                } else if ( text == "]") {
+                                                        variable = Qt::Key_BracketRight;
+                                                } else {
 							PERROR("No HEX code found for %s", QS_C(text));
+                                                        return false;
 						}
 					}
 				}
@@ -150,6 +159,8 @@ static void set_hexcode(int & variable, const QString& text)
 		
 	}
 	PMESG3("HEXCODE FOR %s=%d", QS_C(text), variable);
+        // Code found, return true
+        return true;
 }
 
 
@@ -174,10 +185,14 @@ InputEngine::InputEngine()
         m_doubleFactWaitTime = 200;
         m_collectedNumber = -1;
         m_sCollectedNumber = "";
-	activate();
+        m_holdTimer.setSingleShot(true);
+        activate();
 
         connect(&m_holdKeyRepeatTimer, SIGNAL(timeout()), this, SLOT(process_hold_modifier_keys()));
-	
+        connect( &m_holdTimer, SIGNAL(timeout()), this, SLOT(assume_hold()));
+        connect( &m_secondChanceTimer, SIGNAL(timeout()), this, SLOT(quit_second_chance()));
+        connect( &m_clearOutputTimer, SIGNAL(timeout()), this, SLOT(clear_output()));
+
 //#define profile
 
 #if defined (profile)
@@ -721,7 +736,7 @@ void InputEngine::process_press_event(int eventcode)
 			// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
 			int fkey_index = find_index_for_instant_fkey(eventcode);
 			if (fkey_index >= 0) {
-                                m_catcher.holdTimer.stop(); // quit the holding check..
+                                m_holdTimer.stop(); // quit the holding check..
 				IEAction* action = m_ieActions.at(fkey_index);
                                 broadcast_action(action);
 				conclusion();
@@ -731,7 +746,7 @@ void InputEngine::process_press_event(int eventcode)
 			// Here we jump straight to the <KL> command if "KL" is unambiguously an FKEY2
                         int fkey2_index = find_index_for_instant_fkey2(eventcode, m_eventStack[0]);
 			if (fkey2_index >= 0) {
-                                m_catcher.holdTimer.stop(); // quit the holding check..
+                                m_holdTimer.stop(); // quit the holding check..
 				IEAction* action = m_ieActions.at(fkey2_index);
                                 broadcast_action(action);
 				conclusion();
@@ -770,8 +785,8 @@ void InputEngine::process_press_event(int eventcode)
                         m_pressEventCounter++;
 			push_event(PRESS_EVENT, eventcode);
 			press_checker();
-                        if (!m_catcher.holdTimer.isActive())
-                                m_catcher.holdTimer.start( m_assumeHoldTime); // single shot timer
+                        if (!m_holdTimer.isActive())
+                                m_holdTimer.start( m_assumeHoldTime); // single shot timer
 		} else {
                         m_isPressEventLocked = true;
 		}
@@ -835,6 +850,34 @@ void InputEngine::process_hold_modifier_keys()
         }
 }
 
+void InputEngine::assume_hold() // no release so far ? so consider it a hold...
+{
+        PENTER3;
+        PMESG3("No release so far (waited %d ms). Assuming this is a hold and dispatching it", m_assumeHoldTime);
+        m_holdTimer.stop(); // quit the holding check..
+        m_isHolding = true;
+        dispatch_hold();
+}
+
+void InputEngine::clear_output()
+{
+        PENTER3;
+        if ((m_isHoldingOutput)) {
+                m_clearOutputTimer.stop();
+                m_isHoldingOutput=false;
+        }
+}
+
+void InputEngine::quit_second_chance()
+{
+        PENTER3;
+        m_secondChanceTimer.stop();
+        if (!m_isHolding) // if it is holding, there is no need to push a new fact
+        {
+                PMESG3("No second fact (waited %d ms) ... Forcing a null second fact", m_doubleFactWaitTime);
+                push_fact(0,0); // no second press performed, so I am adding a pair of Zeros as second press and keep going...
+        }
+}
 
 // This pushes an event to the stack
 void InputEngine::push_event(  int pType,  int pCode )
@@ -972,7 +1015,7 @@ void InputEngine::push_fact(int k1,int k2)
 {
 	PENTER3;
 	PMESG3("Pushing FACT : k1=%d k2=%d",k1,k2);
-        m_catcher.holdTimer.stop(); // quit the holding check..
+        m_holdTimer.stop(); // quit the holding check..
         if (m_isFirstFact) {
 		// this is the first fact
 		PMESG3("First fact detected !");
@@ -1003,7 +1046,7 @@ void InputEngine::push_fact(int k1,int k2)
 		conclusion();
 	} else // ok . We are in the second fact.
 	{
-                m_catcher.secondChanceTimer.stop();
+                m_secondChanceTimer.stop();
                 m_fact2_k1 = k1;
                 m_fact2_k2 = k2;
                 if (m_fact2_k1!=0) {
@@ -1253,7 +1296,7 @@ void InputEngine::give_a_chance_for_second_fact()
 {
 	PENTER3;
         PMESG3("Waiting %d ms for second fact ...",m_doubleFactWaitTime );
-        m_catcher.secondChanceTimer.start( m_doubleFactWaitTime );
+        m_secondChanceTimer.start( m_doubleFactWaitTime );
         m_isFirstFact=false;
         m_isHolding = false;
         m_isPressEventLocked = false;
@@ -1284,7 +1327,7 @@ void InputEngine::dispatch_action(int mapIndex)
 void InputEngine::dispatch_hold()
 {
 	PENTER2;
-        m_catcher.clearOutputTimer.stop();
+        m_clearOutputTimer.stop();
         m_isHoldingOutput=false;
 
         m_wholeMapIndex = -1;
@@ -1383,7 +1426,7 @@ void InputEngine::hold_output()
 {
 	PENTER3;
         if (!m_isHoldingOutput) {
-                m_catcher.clearOutputTimer.start(m_clearTime);
+                m_clearOutputTimer.start(m_clearTime);
                 m_isHoldingOutput=true;
 	}
 }
@@ -1433,7 +1476,9 @@ int InputEngine::init_map(const QString& keymap)
 		
 		key = e.attribute( "key", "");
 		
-		set_hexcode(keycode, key);
+                if (!set_hexcode(keycode, key)) {
+                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key));
+                }
 		m_modifierKeys.append(keycode);
 		
 		modifierKeyNode = modifierKeyNode.nextSibling();
@@ -1504,11 +1549,19 @@ int InputEngine::init_map(const QString& keymap)
 			PWARN("keyFactType not supported!");
 		}
 
-		set_hexcode(action->fact1_key1, key1);
-		set_hexcode(action->fact1_key2, key2);
-		set_hexcode(action->fact2_key1, key3);
-		set_hexcode(action->fact2_key2, key4);
-		
+                if (!set_hexcode(action->fact1_key1, key1)) {
+                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key1));
+                }
+                if (!set_hexcode(action->fact1_key2, key2)) {
+                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key2));
+                }
+                if (!set_hexcode(action->fact2_key1, key3)) {
+                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key3));
+                }
+                if (!set_hexcode(action->fact2_key2, key4)) {
+                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key4));
+                }
+
 		
 		// Fix the keyCode positions
 		if  (( action->type == D_FKEY  ) || ( action->type == FHKEY  )) {
@@ -1873,48 +1926,6 @@ QList< MenuData > InputEngine::create_menudata_for(QObject* item)
 		
 	
 	return list;
-}
-
-//---------- EVENT CATCHER -------------
-
-
-
-EventCatcher::EventCatcher()
-{
-	holdTimer.setSingleShot(true);
-	connect( &holdTimer, SIGNAL(timeout()), this, SLOT(assume_hold()));
-	connect( &secondChanceTimer, SIGNAL(timeout()), this, SLOT(quit_second_chance()));
-	connect( &clearOutputTimer, SIGNAL(timeout()), this, SLOT(clear_output()));
-}
-
-
-void EventCatcher::assume_hold() // no release so far ? so consider it a hold...
-{
-	PENTER3;
-        PMESG3("No release so far (waited %d ms). Assuming this is a hold and dispatching it",ie().m_assumeHoldTime);
-	holdTimer.stop(); // quit the holding check..
-        ie().m_isHolding = true;
-	ie().dispatch_hold();
-}
-
-void EventCatcher::clear_output()
-{
-	PENTER3;
-        if ((ie().m_isHoldingOutput)) {
-		clearOutputTimer.stop();
-                ie().m_isHoldingOutput=false;
-	}
-}
-
-void EventCatcher::quit_second_chance()
-{
-	PENTER3;
-	secondChanceTimer.stop();
-        if (!ie().m_isHolding) // if it is holding, there is no need to push a new fact
-	{
-                PMESG3("No second fact (waited %d ms) ... Forcing a null second fact",ie().m_doubleFactWaitTime);
-		ie().push_fact(0,0); // no second press performed, so I am adding a pair of Zeros as second press and keep going...
-	}
 }
 
 

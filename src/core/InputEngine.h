@@ -55,24 +55,6 @@ static const int S_FKEY_HKEY2 = 13;        // >K[KK] - press fastly one key and 
 static const int S_FKEY2_HKEY = 14;        // >KK[K] - press two keys together fastly and then hold a third one, sequentially
 static const int S_FKEY2_HKEY2 = 15;       // >KK[KK] - press two keys together fastly and then hold a third one, sequentially
 
-// internal class used for qt event catching
-class EventCatcher : public QObject
-{
-        Q_OBJECT
-public:
-        EventCatcher();
-
-        QTimer holdTimer;
-        QTimer clearOutputTimer;
-        QTimer secondChanceTimer;
-
-public slots:
-        void assume_hold();
-        void quit_second_chance();
-        void clear_output();
-};
-
-
 
 struct IEAction
 {
@@ -197,11 +179,13 @@ private:
         QHash<int, HoldModifierKey*>  m_holdModifierKeys;
 	QHash<QString, CommandPlugin*> m_commandplugins;
 	QHash<QString, int>	m_modes;
-        EventCatcher 		m_catcher;
         Command* 		m_holdingCommand;
         QString			m_sCollectedNumber;
 	QPoint			m_jogBypassPos;
         QTimer                  m_holdKeyRepeatTimer;
+        QTimer                  m_holdTimer;
+        QTimer                  m_clearOutputTimer;
+        QTimer                  m_secondChanceTimer;
 
 
         bool 			m_active;
@@ -267,12 +251,13 @@ private:
         void clear_hold_modifier_keys();
 
 
-        friend class EventCatcher;
-
         // allow this function to create one instance
         friend InputEngine& ie();
 
 private slots:
+        void assume_hold();
+        void quit_second_chance();
+        void clear_output();
         void process_hold_modifier_keys();
 
 signals:
