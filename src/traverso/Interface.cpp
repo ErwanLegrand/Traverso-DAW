@@ -205,7 +205,7 @@ Interface::Interface()
 
         m_welcomeWidget = new WelcomeWidget(this);
         m_welcomeWidget->show();
-        m_centerAreaWidget->addTab(m_welcomeWidget, tr("&Welcome"));
+        m_centerAreaWidget->addTab(m_welcomeWidget, tr("&0: Welcome"));
         m_welcomeWidget->setFocus(Qt::MouseFocusReason);
 
         m_trackFinder = new QLineEdit(m_projectToolBar);
