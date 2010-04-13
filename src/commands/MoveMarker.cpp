@@ -85,8 +85,12 @@ void MoveMarker::cancel_action()
         undo_action();
 }
 
-void MoveMarker::move_left(bool )
+void MoveMarker::move_left(bool autorepeat)
 {
+        if (m_arrowKeysDoSnap) {
+                return prev_snap_pos(autorepeat);
+        }
+
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         // Move 1 pixel to the left
         TimeRef newpos = TimeRef(m_newWhen - (d->scalefactor * m_speed));
@@ -97,8 +101,12 @@ void MoveMarker::move_left(bool )
         m_marker->set_when(m_newWhen);
 }
 
-void MoveMarker::move_right(bool )
+void MoveMarker::move_right(bool autorepeat)
 {
+        if (m_arrowKeysDoSnap) {
+                return next_snap_pos(autorepeat);
+        }
+
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         // Move 1 pixel to the right
         m_newWhen = m_newWhen + (d->scalefactor * m_speed);

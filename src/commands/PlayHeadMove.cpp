@@ -121,6 +121,10 @@ int PlayHeadMove::jog()
 void PlayHeadMove::move_left(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
+        if (m_arrowKeysDoSnap) {
+                return prev_snap_pos(autorepeat);
+        }
+
         do_keyboard_move(m_newTransportLocation - (m_sv->timeref_scalefactor * m_speed));
 }
 
@@ -128,6 +132,9 @@ void PlayHeadMove::move_left(bool autorepeat)
 void PlayHeadMove::move_right(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
+        if (m_arrowKeysDoSnap) {
+                return next_snap_pos(autorepeat);
+        }
         do_keyboard_move(m_newTransportLocation + (m_sv->timeref_scalefactor * m_speed));
 }
 

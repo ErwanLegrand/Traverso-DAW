@@ -408,6 +408,11 @@ void MoveClip::move_left(bool autorepeat)
         }
 
 	if (d->verticalOnly) return;
+
+        if (m_arrowKeysDoSnap) {
+                return prev_snap_pos(autorepeat);
+        }
+
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         m_posDiff -= (d->sv->timeref_scalefactor * m_speed);
         if (m_posDiff + m_trackStartLocation < TimeRef()) {
@@ -424,7 +429,12 @@ void MoveClip::move_right(bool autorepeat)
         }
 
 	if (d->verticalOnly) return;
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+
+        if (m_arrowKeysDoSnap) {
+                return next_snap_pos(autorepeat);
+        }
+
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         m_posDiff += (d->sv->timeref_scalefactor * m_speed);
 	do_move();
 }
