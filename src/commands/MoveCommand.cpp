@@ -25,12 +25,14 @@
 MoveCommand::MoveCommand(const QString &description)
         : Command(description)
         , m_speed(1)
+        , m_arrowKeysDoSnap(false)
 {
 }
 
 MoveCommand::MoveCommand(ContextItem* item, const QString &description)
         : Command(item, description)
         , m_speed(1)
+        , m_arrowKeysDoSnap(false)
 {
 }
 
@@ -65,3 +67,10 @@ void MoveCommand::move_slower(bool autorepeat)
         }
 }
 
+void MoveCommand::toggle_snap_on_off(bool autorepeat)
+{
+        if (autorepeat) {
+                return;
+        }
+        m_arrowKeysDoSnap = ! m_arrowKeysDoSnap;
+}

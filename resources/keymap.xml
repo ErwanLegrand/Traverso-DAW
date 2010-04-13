@@ -328,6 +328,11 @@
                                 <Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" />
                         </Objects>
                 </keyfact>
+                <keyfact type="FKEY" key1="]" >
+                        <Objects>
+                                <Object objectname="MoveCommand" slotsignature="toggle_snap_on_off" modes="All" sortorder="6" />
+                        </Objects>
+                </keyfact>
 
 
 		
