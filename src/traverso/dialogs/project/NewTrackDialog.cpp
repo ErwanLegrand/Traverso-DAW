@@ -83,7 +83,7 @@ void NewTrackDialog::create_track()
                         BusConfig busconfig;
 
                         if (monoRadioButton->isChecked()) {
-                                channelnames << title + "_0";
+                                channelnames << title;
                         } else {
                                 channelnames << title + "_0" << title + "_1";
                         }
