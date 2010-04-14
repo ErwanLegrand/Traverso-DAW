@@ -104,7 +104,7 @@ int WorkCursorMove::jog()
                 return 1;
         }
 
-	if (m_sheet->is_snap_on()) {
+        if (m_sheet->is_snap_on() || m_doSnap) {
 		SnapList* slist = m_sheet->get_snap_list();
 		newLocation = slist->get_snap_value(newLocation);
 	}
@@ -121,7 +121,7 @@ int WorkCursorMove::jog()
 void WorkCursorMove::move_left(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        if (m_arrowKeysDoSnap) {
+        if (m_doSnap) {
                 return prev_snap_pos(autorepeat);
         }
         do_keyboard_move(m_sheet->get_work_location() - (m_sv->timeref_scalefactor * m_speed));
@@ -131,7 +131,7 @@ void WorkCursorMove::move_left(bool autorepeat)
 void WorkCursorMove::move_right(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        if (m_arrowKeysDoSnap) {
+        if (m_doSnap) {
                 return next_snap_pos(autorepeat);
         }
         do_keyboard_move(m_sheet->get_work_location() + (m_sv->timeref_scalefactor * m_speed));

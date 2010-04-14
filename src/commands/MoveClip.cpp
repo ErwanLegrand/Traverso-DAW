@@ -320,7 +320,7 @@ int MoveClip::jog()
 	}
 
 	// substract the snap distance, if snap is turned on.
-	if (m_sheet->is_snap_on() && !d->verticalOnly) {
+        if ((m_sheet->is_snap_on() || m_doSnap) && !d->verticalOnly) {
 		newTrackStartLocation -= m_sheet->get_snap_list()->calculate_snap_diff(newTrackStartLocation, newTrackStartLocation + m_group.get_length());
 	}
 	
@@ -409,7 +409,7 @@ void MoveClip::move_left(bool autorepeat)
 
 	if (d->verticalOnly) return;
 
-        if (m_arrowKeysDoSnap) {
+        if (m_doSnap) {
                 return prev_snap_pos(autorepeat);
         }
 
@@ -430,7 +430,7 @@ void MoveClip::move_right(bool autorepeat)
 
 	if (d->verticalOnly) return;
 
-        if (m_arrowKeysDoSnap) {
+        if (m_doSnap) {
                 return next_snap_pos(autorepeat);
         }
 

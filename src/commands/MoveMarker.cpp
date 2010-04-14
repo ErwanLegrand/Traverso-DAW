@@ -87,7 +87,7 @@ void MoveMarker::cancel_action()
 
 void MoveMarker::move_left(bool autorepeat)
 {
-        if (m_arrowKeysDoSnap) {
+        if (m_doSnap) {
                 return prev_snap_pos(autorepeat);
         }
 
@@ -103,7 +103,7 @@ void MoveMarker::move_left(bool autorepeat)
 
 void MoveMarker::move_right(bool autorepeat)
 {
-        if (m_arrowKeysDoSnap) {
+        if (m_doSnap) {
                 return next_snap_pos(autorepeat);
         }
 
@@ -136,7 +136,7 @@ int MoveMarker::jog()
 {
         TimeRef newpos = TimeRef(cpointer().scene_x() * d->scalefactor);
 
-        if (m_marker->get_timeline()->get_sheet()->is_snap_on()) {
+        if (m_marker->get_timeline()->get_sheet()->is_snap_on() || m_doSnap) {
                 SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
                 newpos = slist->get_snap_value(newpos);
         }

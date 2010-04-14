@@ -50,6 +50,7 @@
                                 <Object objectname="MoveClip" slotsignature="move_left" autorepeatinterval="50" autorepeatstartdelay="200" modes="All" sortorder="3" />
                                 <Object objectname="MoveMarker" slotsignature="move_left" modes="All" sortorder="1" />
                                 <Object objectname="MoveEdge" slotsignature="move_left" autorepeatinterval="50" autorepeatstartdelay="150" modes="All" sortorder="4" />
+                                <Object objectname="FadeRange" slotsignature="move_left" autorepeatinterval="50" autorepeatstartdelay="150" modes="All" sortorder="4" />
                                 <Object objectname="WorkCursorMove" slotsignature="move_left" autorepeatinterval="50" autorepeatstartdelay="150" modes="All" sortorder="3" />
                                 <Object objectname="PlayHeadMove" slotsignature="move_left" autorepeatinterval="50" autorepeatstartdelay="150" modes="All" sortorder="3" />
                                 <Object objectname="MoveCurveNode" slotsignature="move_left" modes="Effects" sortorder="1" />
@@ -65,6 +66,7 @@
                                 <Object objectname="MoveClip" slotsignature="move_right" autorepeatinterval="50" autorepeatstartdelay="200" modes="All" sortorder="4" />
                                 <Object objectname="MoveMarker" slotsignature="move_right" modes="All" sortorder="1" />
                                 <Object objectname="MoveEdge" slotsignature="move_right" autorepeatinterval="50" autorepeatstartdelay="150" modes="All" sortorder="4" />
+                                <Object objectname="FadeRange" slotsignature="move_right" autorepeatinterval="50" autorepeatstartdelay="150" modes="All" sortorder="4" />
                                 <Object objectname="WorkCursorMove" slotsignature="move_right" autorepeatinterval="50" autorepeatstartdelay="150" modes="All" sortorder="4" />
                                 <Object objectname="PlayHeadMove" slotsignature="move_right" autorepeatinterval="50" autorepeatstartdelay="150" modes="All" sortorder="4" />
                                 <Object objectname="MoveCurveNode" slotsignature="move_right" modes="Effects" sortorder="2" />
@@ -146,11 +148,8 @@
 			<Objects>
 				<Object objectname="AudioClip" modes="All" sortorder="15" pluginname="TraversoCommands" commandname="ClipSelectionSelect" arguments="toggle_selected" />
 				<Object objectname="Project" slotsignature="select" modes="All" />
-                                <Object objectname="MoveClip" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="5" />
-                                <Object objectname="MoveEdge" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="5" />
-                                <Object objectname="MoveMarker" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="1" />
-                                <Object objectname="PlayHeadMove" slotsignature="prev_snap_pos" autorepeatinterval="100" autorepeatstartdelay="200" modes="All" sortorder="1" />
                                 <Object objectname="ProjectManager" slotsignature="save_project" modifierkeys="CTRL" modes="All" />
+                                <Object objectname="MoveCommand" slotsignature="toggle_snap_on_off" modes="All" sortorder="6" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SPACE" >
@@ -165,6 +164,10 @@
 			<Objects>
                                 <Object objectname="AudioTrack" slotsignature="toggle_arm" modes="All" sortorder="4" />
                                 <Object objectname="WorkCursorMove" slotsignature="prev_snap_pos" modes="All" sortorder="1" />
+                                <Object objectname="MoveClip" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="5" />
+                                <Object objectname="MoveEdge" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="5" />
+                                <Object objectname="MoveMarker" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="1" />
+                                <Object objectname="PlayHeadMove" slotsignature="prev_snap_pos" autorepeatinterval="100" autorepeatstartdelay="200" modes="All" sortorder="1" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="O" >
@@ -330,7 +333,6 @@
                 </keyfact>
                 <keyfact type="FKEY" key1="RETURN" >
                         <Objects>
-                                <Object objectname="MoveCommand" slotsignature="toggle_snap_on_off" modes="All" sortorder="6" />
                         </Objects>
                 </keyfact>
 

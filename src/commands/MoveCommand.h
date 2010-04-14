@@ -39,7 +39,7 @@ public :
 
 protected :
         int             m_speed;
-        bool            m_arrowKeysDoSnap;
+        bool            m_doSnap;
 
 public slots:
         void move_faster(bool autorepeat);

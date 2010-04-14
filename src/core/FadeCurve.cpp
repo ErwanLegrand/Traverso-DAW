@@ -351,6 +351,10 @@ QPointF FadeCurve::get_curve_point( float f)
 
 void FadeCurve::set_range(double when)
 {
+        if (when <= 0.0f) {
+                when = 0.1;
+        }
+
 	Curve::set_range(when);
 	emit rangeChanged();
 }

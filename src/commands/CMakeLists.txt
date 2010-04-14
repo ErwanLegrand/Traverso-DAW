@@ -43,6 +43,7 @@ MoveCommand.cpp
 SET(TRAVERSO_COMMANDS_MOC_CLASSES
 Crop.h
 ExternalProcessingDialog.h
+Fade.h
 Gain.h
 MoveClip.h
 MoveCurveNode.h
