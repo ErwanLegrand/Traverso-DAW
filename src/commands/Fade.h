@@ -24,15 +24,19 @@ $Id: Fade.h,v 1.13 2008/01/21 16:22:11 r_sijrier Exp $
 #define FADE_H
 
 #include "Command.h"
+#include "MoveCommand.h"
 
 class Curve;
 class AudioClip;
 class FadeCurve;
 class FadeView;
 class SheetView;
+class Sheet;
 
-class FadeRange : public Command
+class FadeRange : public MoveCommand
 {
+        Q_OBJECT
+
 public :
         FadeRange(AudioClip* clip, FadeCurve* curve, qint64 scalefactor);
 	FadeRange(AudioClip* clip, FadeCurve* curve, double newVal);
@@ -55,12 +59,23 @@ private :
 	double 		m_newRange;
 	class Private {
 		public:
+                        Sheet* sheet;
+                        AudioClip* clip;
 			int origX;
 			int direction;
 			QPoint	mousePos;
 			qint64 scalefactor;
 	};
 	Private* d;
+
+        void do_keyboard_move(double range);
+
+
+public slots:
+        void next_snap_pos(bool autorepeat);
+        void prev_snap_pos(bool autorepeat);
+        void move_left(bool autorepeat);
+        void move_right(bool autorepeat);
 };
 
 

@@ -30,8 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <FadeView.h>
 #include <Peak.h>
 #include <Sheet.h>
+#include "SnapList.h"
 #include "Project.h"
 #include "ProjectManager.h"
+#include "InputEngine.h"
 		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -42,23 +44,27 @@ static const float RASTER_SIZE		= 0.05;
 
 
 FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, qint64 scalefactor)
-	: Command(clip, "")
+        : MoveCommand(clip, "")
 	, d(new Private())
 {
 	m_curve = curve;
 	d->direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
 	d->scalefactor = scalefactor;
+        d->clip = clip;
+        d->sheet = clip->get_sheet();
 	setText( (d->direction == 1) ? tr("Fade In: length") : tr("Fade Out: length"));
 }
 
 
 FadeRange::FadeRange(AudioClip* clip, FadeCurve* curve, double newRange)
-	: Command(clip, "")
+        : MoveCommand(clip, "")
 	, d(new Private())
 {
 	m_curve = curve;
 	d->direction = (m_curve->get_fade_type() == FadeCurve::FadeIn) ? 1 : -1;
-	m_origRange = m_curve->get_range();
+        d->clip = clip;
+        d->sheet = clip->get_sheet();
+        m_origRange = m_curve->get_range();
 	m_newRange = newRange;
 	setText( (d->direction == 1) ? tr("Fade In: remove") : tr("Fade Out: remove"));
 }
@@ -133,6 +139,51 @@ int FadeRange::jog()
 	cpointer().get_viewport()->set_holdcursor_text(timeref_to_ms_3(location));
 	
 	return 1;
+}
+
+
+void FadeRange::move_left(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        if (m_doSnap) {
+                return prev_snap_pos(autorepeat);
+        }
+        do_keyboard_move(m_newRange - (d->scalefactor * m_speed * d->direction));
+}
+
+
+void FadeRange::move_right(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        if (m_doSnap) {
+                return next_snap_pos(autorepeat);
+        }
+
+        do_keyboard_move(m_newRange + (d->scalefactor * m_speed * d->direction));
+}
+
+
+void FadeRange::next_snap_pos(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        TimeRef snap = d->sheet->get_snap_list()->next_snap_pos(d->clip->get_track_start_location() + m_newRange);
+        TimeRef newpos = snap - d->clip->get_track_start_location();
+        do_keyboard_move(newpos.universal_frame());
+}
+
+void FadeRange::prev_snap_pos(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        TimeRef snap = d->sheet->get_snap_list()->prev_snap_pos(d->clip->get_track_start_location() + m_newRange);
+        TimeRef newpos = snap - d->clip->get_track_start_location();
+        do_keyboard_move(newpos.universal_frame());
+}
+
+void FadeRange::do_keyboard_move(double range)
+{
+        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+        m_newRange = range;
+        do_action();
 }
 
 
