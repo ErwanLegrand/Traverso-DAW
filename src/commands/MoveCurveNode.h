@@ -22,14 +22,14 @@
 #ifndef MOVECURVENODE_H
 #define MOVECURVENODE_H
 
-#include "Command.h"
+#include "MoveCommand.h"
 #include "defines.h"
 
 class CurveView;
 class CurveNode;
 class QPoint;
 
-class MoveCurveNode : public Command
+class MoveCurveNode : public MoveCommand
 {
         Q_OBJECT
         Q_CLASSINFO("move_up", tr("Move Up"));

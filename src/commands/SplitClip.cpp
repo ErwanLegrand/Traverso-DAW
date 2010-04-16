@@ -34,10 +34,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 SplitClip::SplitClip(AudioClipView* view)
-	: Command(view->get_clip(), tr("Split Clip"))
+        : MoveCommand(view->get_clip(), tr("Split Clip"))
 {
 	m_clip = view->get_clip();
 	m_sv = view->get_sheetview();
+        m_sheet = m_sv->get_sheet();
 	m_cv = view;
 	m_track = m_clip->get_track();
 	leftClip = 0;
@@ -166,6 +167,54 @@ int SplitClip::jog()
         cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
 	
 	return 1;
+}
+
+
+void SplitClip::move_left(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        if (m_doSnap) {
+                return prev_snap_pos(autorepeat);
+        }
+        do_keyboard_move(m_splitPoint - (m_sv->timeref_scalefactor * m_speed));
+}
+
+
+void SplitClip::move_right(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        if (m_doSnap) {
+                return next_snap_pos(autorepeat);
+        }
+        do_keyboard_move(m_splitPoint + (m_sv->timeref_scalefactor * m_speed));
+}
+
+
+void SplitClip::next_snap_pos(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        do_keyboard_move(m_sheet->get_snap_list()->next_snap_pos(m_splitPoint));
+}
+
+void SplitClip::prev_snap_pos(bool autorepeat)
+{
+        Q_UNUSED(autorepeat);
+        do_keyboard_move(m_sheet->get_snap_list()->prev_snap_pos(m_splitPoint));
+}
+
+void SplitClip::do_keyboard_move(TimeRef location)
+{
+        m_splitPoint = location;
+
+        if (m_splitPoint < m_clip->get_track_start_location()) {
+                m_splitPoint = m_clip->get_track_start_location();
+        }
+        if (m_splitPoint > m_clip->get_track_end_location()) {
+                m_splitPoint = m_clip->get_track_end_location();
+        }
+
+        QPointF pos = m_cv->mapFromScene(m_splitPoint / m_sv->timeref_scalefactor, m_splitcursor->scenePos().y());
+        m_splitcursor->setPos(pos);
 }
 
 // eof

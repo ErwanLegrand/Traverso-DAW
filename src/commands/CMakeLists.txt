@@ -50,6 +50,7 @@ MoveCurveNode.h
 MoveEdge.h
 MoveMarker.h
 MoveTrack.h
+SplitClip.h
 TrackPan.h
 WorkCursorMove.h
 PlayHeadMove.h

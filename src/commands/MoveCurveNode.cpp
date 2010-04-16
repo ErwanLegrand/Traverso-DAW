@@ -33,7 +33,7 @@ MoveCurveNode::MoveCurveNode(CurveNode* node,
         TimeRef rangeMin,
         TimeRef rangeMax,
         const QString& des)
-        : Command(curveview->get_context(), des)
+        : MoveCommand(curveview->get_context(), des)
         , d(new Data)
 {
         m_node = node;
@@ -102,13 +102,13 @@ void MoveCurveNode::move_down(bool )
 
 void MoveCurveNode::move_left(bool )
 {
-        m_newWhen = m_newWhen - d->curveView->get_sheetview()->timeref_scalefactor;
+        m_newWhen = m_newWhen - (d->curveView->get_sheetview()->timeref_scalefactor * m_speed);
         calculate_and_set_node_values();
 }
 
 void MoveCurveNode::move_right(bool )
 {
-        m_newWhen = m_newWhen + d->curveView->get_sheetview()->timeref_scalefactor;
+        m_newWhen = m_newWhen + (d->curveView->get_sheetview()->timeref_scalefactor * m_speed);
         calculate_and_set_node_values();
 }
 

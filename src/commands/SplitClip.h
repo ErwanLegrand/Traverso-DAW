@@ -22,17 +22,19 @@
 #ifndef SPLITCLIPACTION_H
 #define SPLITCLIPACTION_H
 
-#include "Command.h"
+#include "MoveCommand.h"
 #include "defines.h"
 
 class AudioClip;
 class AudioTrack;
 class SheetView;
+class Sheet;
 class AudioClipView;
 class LineView;
 
-class SplitClip : public Command
+class SplitClip : public MoveCommand
 {
+        Q_OBJECT
 public :
 	SplitClip(AudioClipView* view);
         ~SplitClip() {};
@@ -50,6 +52,7 @@ public :
 	
 private :
 	SheetView* m_sv;
+        Sheet*  m_sheet;
 	AudioClipView* m_cv;
         AudioTrack* m_track;
         AudioClip* m_clip;
@@ -57,6 +60,15 @@ private :
         AudioClip* rightClip;
 	TimeRef m_splitPoint;
 	LineView* m_splitcursor;
+
+        void do_keyboard_move(TimeRef location);
+
+public slots:
+        void move_left(bool autorepeat);
+        void move_right(bool autorepeat);
+        void next_snap_pos(bool autorepeat);
+        void prev_snap_pos(bool autorepeat);
+
 };
 
 #endif
