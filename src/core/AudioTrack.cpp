@@ -298,6 +298,10 @@ int AudioTrack::process( nframes_t nframes )
         // TODO: is there a situation where we still want to call send_to_output_buses
         // even if processresult == 0?
         if (processResult) {
+                if (m_processBus->is_monitoring_peaks()) {
+                        m_processBus->monitor_peaks();
+                }
+
                 send_to_output_buses(nframes);
         }
 
