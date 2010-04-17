@@ -23,11 +23,8 @@
 
 #include <QPainter>
 #include <QGradient>
-#include <QSpacerItem>
 #include <QFont>
 #include <QFontMetrics>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QLabel>
 
 #include "Themer.h"
@@ -56,7 +53,6 @@
  * resize correctly.
  */
 
-static const int MAXIMUM_WIDTH	= 150;
 static const int VULED_HEIGHT	= 8;
 
 // initialize static variables
@@ -65,12 +61,9 @@ QVector<float> VUMeterView::lut;
 VUMeterView::VUMeterView(ViewItem* parent, AudioBus* bus)
         : ViewItem(parent)
 {
-//        setMaximumWidth(MAXIMUM_WIDTH);
         m_minSpace = 0;
 
         load_theme_data();
-        m_boundingRect = QRectF(0, 0, 150, 11);
-
 
         int vertPos = 0;
         for (int i = 0; i < bus->get_channel_count(); ++i) {
@@ -78,54 +71,26 @@ VUMeterView::VUMeterView(ViewItem* parent, AudioBus* bus)
                 VUMeterLevelView* level = new VUMeterLevelView(this, bus->get_channel(i));
                 m_levels.append(level);
                 connect(level, SIGNAL(activate_over_led(bool)), led, SLOT(set_active(bool)));
-
-                level->setPos(0, vertPos);
-                vertPos += level->boundingRect().height() + 1;
-
-//                levellayout->addWidget(led);
-//                levellayout->addWidget(level, 5);
-
-//                m_minSpace += level->minimumWidth();
-
-//                levelLedLayout->addWidget(widget);
-
                 if (i < bus->get_channel_count() - 1)  {
-//                        levelLedLayout->addSpacing(m_vulevelspacing);
                         m_minSpace += m_vulevelspacing;
                 }
         }
 
         // add a ruler with tickmarks and labels
         ruler = new VUMeterRulerView(this);
-//        levelLedLayout->addWidget(ruler);
-//        m_minSpace += ruler->maximumWidth();
-
-//        levelLedLayout->addSpacing(m_vulayoutspacing);
         m_minSpace += m_vulayoutspacing;
 
         // add a tooltip showing the channel name
         m_name = bus->get_name();
         m_channels = bus->get_channel_count();
-//        setToolTip(m_name);
+        setToolTip(m_name);
 
         // initialize some stuff
         isActive = false;
 
-//        setAutoFillBackground(false);
-//        setAttribute(Qt::WA_OpaquePaintEvent);
-
         channelNameLabel = new QLabel();
         channelNameLabel->setFont(m_chanNameFont);
         channelNameLabel->setAlignment(Qt::AlignHCenter);
-
-//        mainlayout->addSpacing(5);
-//        mainlayout->addWidget(levelLedLayoutwidget, 5);
-//        mainlayout->addWidget(channelNameLabel);
-//        mainlayout->setMargin(m_mainlayoutmargin);
-//        mainlayout->setSpacing(m_mainlayoutspacing);
-//        m_minSpace += mainlayout->spacing();
-
-//        setLayout(mainlayout);
 
         connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
@@ -141,36 +106,20 @@ void VUMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         painter->fillRect(m_boundingRect, QColor(Qt::blue));
 }
 
-void VUMeterView::resizeEvent( QResizeEvent *  )
+void VUMeterView::calculate_bounding_rect()
 {
-        PENTER3;
-
-        QFontMetrics fm(m_labelFont);
-
-        // Comment by Remon: Why the -1 here???? Without the -1 it seems to work correctly too?
-        // Reply by Nic: It doesn't here (PPC). The label can't become smaller than the text width,
-        //	so we have to elide the text before the label reaches it's minimum width.
-        QString label = fm.elidedText(m_name, Qt::ElideMiddle, channelNameLabel->width()-1);
-        if (label.length() == 1) {
-                label = m_name.left(1) + m_name.right(1);
-        }
-        channelNameLabel->setText(label);
-
-        if (m_boundingRect.width() >= m_minSpace) {
-                ruler->show();
-        } else {
-                ruler->hide();
-        }
+        ViewItem::calculate_bounding_rect();
 }
 
-QSize VUMeterView::sizeHint() const
+void VUMeterView::set_bounding_rect(QRectF rect)
 {
-        return QSize(100, 200);
-}
-
-QSize VUMeterView::minimumSizeHint() const
-{
-        return QSize(100, 200);
+        m_boundingRect = rect;
+        int vertPos = 0;
+        foreach(VUMeterLevelView* level, m_levels) {
+                level->set_bounding_rect(QRectF(0, 0, m_boundingRect.width(), (m_boundingRect.height() / m_levels.size()) - 1));
+                level->setPos(0, vertPos);
+                vertPos += level->boundingRect().height() + m_vulevelspacing;
+        }
 }
 
 void VUMeterView::calculate_lut_data()
@@ -209,13 +158,10 @@ void VUMeterView::reset()
 
 void VUMeterView::load_theme_data()
 {
-        m_vulevelspacing = themer()->get_property("VUMeter:layout:vuspacing", 3).toInt();
+        m_vulevelspacing = themer()->get_property("VUMeterView:layout:vuspacing", 1).toInt();
         m_vulayoutspacing = themer()->get_property("VUMeter:layout:vulayoutspacing", 5).toInt();
         m_mainlayoutmargin = themer()->get_property("VUMeter:layout:mainlayoutmargin", 1).toInt();
         m_mainlayoutspacing = themer()->get_property("VUMeter:layout:mainlayoutspacing", 2).toInt();
-
-//        mainlayout->setMargin(m_mainlayoutmargin);
-//        mainlayout->setSpacing(m_mainlayoutspacing);
 
         m_chanNameFont = themer()->get_font("VUMeter:fontscale:label");
         m_widgetBgBrush = themer()->get_brush("VUMeter:background:widget");
@@ -644,21 +590,17 @@ void VUMeterLevelView::start( )
 {
 }
 
-void VUMeterLevelView::resizeEvent(QResizeEvent *)
+void VUMeterLevelView::calculate_bounding_rect()
 {
         resize_level_pixmap();
 }
 
-
-QSize VUMeterLevelView::sizeHint() const
+void VUMeterLevelView::set_bounding_rect(QRectF rect)
 {
-        return QSize(10, 40);
+        m_boundingRect = rect;
+        calculate_bounding_rect();
 }
 
-QSize VUMeterLevelView::minimumSizeHint() const
-{
-        return QSize(10, 40);
-}
 
 void VUMeterLevelView::reset_peak_hold_value()
 {

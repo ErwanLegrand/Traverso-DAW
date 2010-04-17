@@ -64,15 +64,12 @@ public:
         ~VUMeterView();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+        void calculate_bounding_rect();
+        void set_bounding_rect(QRectF rect);
 
         void reset();
 
         static QVector<float>* VUMeterView_lut();
-
-protected:
-        void resizeEvent( QResizeEvent* e);
-        QSize sizeHint () const;
-        QSize minimumSizeHint () const;
 
 private:
         bool			isActive;
@@ -164,10 +161,8 @@ public:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
         void reset();
 
-protected:
-        void resizeEvent( QResizeEvent * );
-        QSize sizeHint () const;
-        QSize minimumSizeHint () const;
+        void calculate_bounding_rect();
+        void set_bounding_rect(QRectF rect);
 
 
 private:

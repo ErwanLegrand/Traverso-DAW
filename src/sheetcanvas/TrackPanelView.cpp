@@ -49,6 +49,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define MICRO_HEIGHT 35
 #define SMALL_HEIGHT 65
 
+const int LED_SPACING = 6;
+const int LED_WIDTH = 16;
+const int MUTE_X_POS = 130;
+const int SOLO_X_POS = MUTE_X_POS + LED_SPACING + LED_WIDTH;
+const int REC_X_POS = SOLO_X_POS + LED_SPACING + LED_WIDTH;
+const int LED_Y_POS = 4;
+
 
 
 TrackPanelView::TrackPanelView(TrackView* view)
@@ -68,8 +75,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_soloLed = new TrackPanelLed(this, m_track, "solo", "solo");
         m_muteLed = new TrackPanelLed(this, m_track, "mute", "mute");
-        m_muteLed->set_bounding_rect(QRectF(0, 0, 39, 12));
-        m_soloLed->set_bounding_rect(QRectF(0, 0, 31, 12));
+        m_muteLed->set_bounding_rect(QRectF(0, 0, 15, 12));
+        m_soloLed->set_bounding_rect(QRectF(0, 0, 15, 12));
 
         if (m_track->is_solo()) {
                 m_soloLed->ison_changed(true);
@@ -85,6 +92,7 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         if (m_track == m_track->get_sheet()->get_master_out()) {
                 m_vuMeterView = new VUMeterView(this, m_track->get_sheet()->get_master_out()->get_process_bus());
+                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 10));
                 m_vuMeterView->setPos(10, 20);
         }
 
@@ -201,7 +209,7 @@ AudioTrackPanelView::AudioTrackPanelView(AudioTrackView* trackView)
 
         m_tv = trackView;
         m_recLed = new TrackPanelLed(this, m_track, "rec", "toggle_arm");
-        m_recLed->set_bounding_rect(QRectF(0, 0, 27, 12));
+        m_recLed->set_bounding_rect(QRectF(0, 0, 15, 12));
 
         if (m_tv->get_track()->armed()) {
                 m_recLed->ison_changed(true);
@@ -235,20 +243,14 @@ void AudioTrackPanelView::layout_panel_items()
 		m_gainView->setPos(10, 20);
 		m_panView->setPos(10, 36);
 	} else {
-                m_muteLed->setPos(70, 19);
-                m_soloLed->setPos(118, 19);
-                m_recLed->setPos(162, 19);
-		
-		m_gainView->setPos(10, 39);
+                m_gainView->setPos(10, 39);
 		m_panView->setPos(10, 54);
 	}
 	
-	if (height < SMALL_HEIGHT) {
-                m_muteLed->setPos(90, 4);
-                m_soloLed->setPos(132, 4);
-                m_recLed->setPos(166, 4);
-	}
-	
+        m_muteLed->setPos(MUTE_X_POS, LED_Y_POS);
+        m_soloLed->setPos(SOLO_X_POS, LED_Y_POS);
+        m_recLed->setPos(REC_X_POS, LED_Y_POS);
+
         if ((m_inBus->pos().y() + m_inBus->boundingRect().height()) >= height) {
                 m_inBus->hide();
                 m_outBus->hide();
@@ -500,7 +502,8 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
 		painter->setPen(themer()->get_color("TrackPanel:led:font:active"));
 		
-		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
+                QString shortString = m_name.left(1).toUpper();
+                painter->drawText(m_boundingRect, Qt::AlignCenter, shortString);
 	} else {
 		QColor color = themer()->get_color("TrackPanel:led:inactive");
                 if (has_active_context()) {
@@ -514,7 +517,8 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
 		painter->setPen(themer()->get_color("TrackPanel:led:font:inactive"));
 		
-		painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
+                QString shortString = m_name.left(1).toUpper();
+                painter->drawText(m_boundingRect, Qt::AlignCenter, shortString);
 	}
 	
 	painter->restore();
