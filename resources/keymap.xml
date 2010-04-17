@@ -75,6 +75,7 @@
                                 <Object objectname="SheetView" slotsignature="to_upper_context_level" modifierkeys="CTRL" modes="All" sortorder="8" />
                                 <Object objectname="Interface" slotsignature="browse_to_first_track_in_active_sheet" modes="All" sortorder="10" />
                                 <Object objectname="MoveCommand" slotsignature="move_faster" modes="All" sortorder="6" />
+                                <Object objectname="Shuttle" slotsignature="move_up"  modifierkeys="CTRL" modes="All" sortorder="3" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="DARROW" >
@@ -89,6 +90,7 @@
                                 <Object objectname="SheetView" slotsignature="to_lower_context_level" modifierkeys="CTRL" modes="All" sortorder="9" />
                                 <Object objectname="Interface" slotsignature="browse_to_last_track_in_active_sheet" modes="All" sortorder="10" />
                                 <Object objectname="MoveCommand" slotsignature="move_slower" modes="All" sortorder="7" />
+                                <Object objectname="Shuttle" slotsignature="move_down" modifierkeys="CTRL" modes="All" sortorder="4" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SHIFT" >

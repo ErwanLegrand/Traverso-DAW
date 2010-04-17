@@ -101,6 +101,8 @@ public :
         void to_top(TrackView* trackView);
         void to_bottom(TrackView* trackView);
         void set_track_height(TrackView* view, int newheight);
+        void set_hscrollbar_value(int value);
+        void set_vscrollbar_value(int value);
 
         void browse_to_track(Track* track);
         void browse_to_audio_clip(AudioClip* clip);
@@ -139,11 +141,6 @@ private:
 	
 	void layout_tracks();
         void update_tracks_bounding_rect();
-	void set_hscrollbar_value(int value);
-	void set_vscrollbar_value(int value);
-	
-	
-	friend class PlayHead;
 
 
 public slots:
