@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SubGroup.h"
 #include "Track.h"
 #include "Interface.h"
+#include "VUMeterView.h"
 		
 #include <Debugger.h>
 
@@ -81,6 +82,12 @@ TrackPanelView::TrackPanelView(TrackView* view)
         m_outBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSOUT);
 
         m_viewPort->scene()->addItem(this);
+
+        if (m_track == m_track->get_sheet()->get_master_out()) {
+                m_vuMeterView = new VUMeterView(this, m_track->get_sheet()->get_master_out()->get_process_bus());
+                m_vuMeterView->setPos(10, 20);
+        }
+
 
 
         m_boundingRect = QRectF(0, 0, 200, m_track->get_height());

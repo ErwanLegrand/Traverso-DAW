@@ -33,6 +33,7 @@ class TrackPanelViewPort;
 class PanelLed;
 class AudioTrackPanelView;
 class SubGroupView;
+class VUMeterView;
 
 class TrackPanelGain : public ViewItem
 {
@@ -145,6 +146,8 @@ protected:
 	
         TrackPanelBus*          m_inBus;
         TrackPanelBus*  	m_outBus;
+
+        VUMeterView*            m_vuMeterView;
 
 	void draw_panel_name(QPainter* painter);
         virtual void layout_panel_items() = 0;

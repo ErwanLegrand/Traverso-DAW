@@ -36,6 +36,7 @@ TrackPanelViewPort.cpp
 ViewItem.cpp
 ViewPort.cpp
 dialogs/AudioClipEditDialog.cpp
+VUMeterView.cpp
 )
 
 SET(TRAVERSO_SONGCANVAS_MOC_CLASSES
@@ -60,6 +61,7 @@ TrackPanelView.h
 TimeLineView.h
 LineView.h
 ViewPort.h
+VUMeterView.h
 )
 
 SET(TRAVERSO_SONGCANVAS_UI_FILES

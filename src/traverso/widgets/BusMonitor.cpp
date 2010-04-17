@@ -133,14 +133,14 @@ void BusMonitor::create_vu_meters( )
 
         if (m_sheet) {
                 AudioBus* bus = m_sheet->get_master_out()->get_process_bus();
-                m_masterOutMeter = new VUMeter(this, bus);
-
-                connect(bus, SIGNAL(monitoringPeaksStarted()), m_masterOutMeter, SLOT(peak_monitoring_started()));
-                connect(bus, SIGNAL(monitoringPeaksStopped()), m_masterOutMeter, SLOT(peak_monitoring_stopped()));
-
+//                m_masterOutMeter = new VUMeter(this, bus);
+//
+//                connect(bus, SIGNAL(monitoringPeaksStarted()), m_masterOutMeter, SLOT(peak_monitoring_started()));
+//                connect(bus, SIGNAL(monitoringPeaksStopped()), m_masterOutMeter, SLOT(peak_monitoring_stopped()));
+//
                 bus->set_monitor_peaks(true);
-
-                m_layout->addWidget(m_masterOutMeter);
+//
+//                m_layout->addWidget(m_masterOutMeter);
         }
 
 }
