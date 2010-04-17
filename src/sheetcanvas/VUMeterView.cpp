@@ -78,6 +78,7 @@ VUMeterView::VUMeterView(ViewItem* parent, AudioBus* bus)
 
         // add a ruler with tickmarks and labels
         ruler = new VUMeterRulerView(this);
+        ruler->hide();
         m_minSpace += m_vulayoutspacing;
 
         // add a tooltip showing the channel name
@@ -103,7 +104,7 @@ void VUMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 {
         PENTER3;
 
-        painter->fillRect(m_boundingRect, QColor(Qt::blue));
+        painter->fillRect(m_boundingRect, QColor(Qt::gray));
 }
 
 void VUMeterView::calculate_bounding_rect()

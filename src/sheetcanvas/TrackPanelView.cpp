@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QAction>
 #include <QStringList>
 
+#include "AudioBus.h"
 #include "AudioDevice.h"
 #include "TrackPanelView.h"
 #include "AudioTrackView.h"
@@ -92,8 +93,13 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         if (m_track == m_track->get_sheet()->get_master_out()) {
                 m_vuMeterView = new VUMeterView(this, m_track->get_sheet()->get_master_out()->get_process_bus());
-                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 10));
-                m_vuMeterView->setPos(10, 20);
+                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 4));
+                m_vuMeterView->setPos(10, 18);
+        } else {
+                m_vuMeterView = new VUMeterView(this, m_track->get_process_bus());
+                m_track->get_process_bus()->set_monitor_peaks(true);
+                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 4));
+                m_vuMeterView->setPos(10, 18);
         }
 
 
