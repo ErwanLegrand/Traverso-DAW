@@ -21,13 +21,19 @@
 
 #include "WorkCursorMove.h"
 
+#include "ContextPointer.h"
+#include "ContextItem.h"
 #include "InputEngine.h"
 #include "ClipsViewPort.h"
+#include "Marker.h"
 #include "Sheet.h"
 #include "SnapList.h"
 #include "Snappable.h"
 #include "SheetView.h"
 #include "TimeLineViewPort.h"
+#include "TimeLineView.h"
+#include "MarkerView.h"
+#include "TimeLine.h"
 #include "Cursors.h"
 
 #include <Debugger.h>
@@ -38,6 +44,7 @@ WorkCursorMove::WorkCursorMove(WorkCursor* wc, PlayHead* cursor, SheetView* sv)
 	, m_sv(sv)
 	, m_playCursor(cursor)
         , m_workCursor(wc)
+        , m_browseMarkers(false)
 {
         m_holdCursorSceneY = cpointer().scene_y();
 }
@@ -121,6 +128,16 @@ int WorkCursorMove::jog()
 void WorkCursorMove::move_left(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
+
+        if (m_browseMarkers) {
+                return browse_to_previous_marker();
+        }
+
+        // FIXME this should be done automatically when moving
+        // the WC by means of setting the active items under the
+        // edit point!!!
+        remove_markers_from_active_context();
+
         if (m_doSnap) {
                 return prev_snap_pos(autorepeat);
         }
@@ -131,6 +148,16 @@ void WorkCursorMove::move_left(bool autorepeat)
 void WorkCursorMove::move_right(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
+
+        if (m_browseMarkers) {
+                return browse_to_next_marker();
+        }
+
+        // FIXME this should be done automatically when moving
+        // the WC by means of setting the active items under the
+        // edit point!!!
+        remove_markers_from_active_context();
+
         if (m_doSnap) {
                 return next_snap_pos(autorepeat);
         }
@@ -160,7 +187,100 @@ void WorkCursorMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
                 m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
         }
 
+        ClipsViewPort* port = m_sv->get_clips_viewport();
+        QPoint point = port->mapToGlobal(port->mapFromScene(m_sheet->get_work_location() / m_sv->timeref_scalefactor, cpointer().scene_y()));
+        QCursor::setPos(point);
+
         cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
         cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), m_holdCursorSceneY));
 }
 
+void WorkCursorMove::toggle_browse_markers(bool autorepeat)
+{
+        if (autorepeat) {
+                return;
+        }
+
+        m_browseMarkers = !m_browseMarkers;
+}
+
+void WorkCursorMove::browse_to_next_marker()
+{
+        QList<Marker*> markers = m_sheet->get_timeline()->get_markers();
+        QList<ContextItem*> contexts = cpointer().get_active_context_items();
+        foreach(ContextItem* item, contexts) {
+                if (item->inherits("MarkerView")) {
+                        contexts.removeAll(item);
+                }
+        }
+
+        Marker* next = 0;
+        foreach(Marker* marker, markers) {
+                if (marker->get_when() > m_sheet->get_work_location()) {
+                        next = marker;
+                        break;
+                }
+        }
+
+        if (next) {
+                QList<MarkerView*> markerViews = m_sv->get_timeline_viewport()->get_timeline_view()->get_marker_views();
+                foreach(MarkerView* view, markerViews) {
+                        if (view->get_marker() == next) {
+                                contexts.prepend(view);
+                                break;
+                        }
+                }
+                do_keyboard_move(next->get_when());
+        }
+
+        cpointer().set_active_context_items_by_keyboard_input(contexts);
+}
+
+void WorkCursorMove::browse_to_previous_marker()
+{
+        QList<Marker*> markers = m_sheet->get_timeline()->get_markers();
+        QList<ContextItem*> contexts = cpointer().get_active_context_items();
+        foreach(ContextItem* item, contexts) {
+                if (item->inherits("MarkerView")) {
+                        contexts.removeAll(item);
+                }
+        }
+
+        Marker* prev = 0;
+        for (int i=markers.size() - 1; i>= 0; --i) {
+                Marker* marker = markers.at(i);
+                if (marker->get_when() < m_sheet->get_work_location()) {
+                        prev = marker;
+                        break;
+                }
+        }
+
+        if (prev) {
+                QList<MarkerView*> markerViews = m_sv->get_timeline_viewport()->get_timeline_view()->get_marker_views();
+                foreach(MarkerView* view, markerViews) {
+                        if (view->get_marker() == prev) {
+                                contexts.prepend(view);
+                                break;
+                        }
+                }
+
+                do_keyboard_move(prev->get_when());
+        }
+
+        cpointer().set_active_context_items_by_keyboard_input(contexts);
+}
+
+void WorkCursorMove::remove_markers_from_active_context()
+{
+        QList<ContextItem*> contexts = cpointer().get_active_context_items();
+        bool removed = false;
+        foreach(ContextItem* item, contexts) {
+                if (item->inherits("MarkerView")) {
+                        contexts.removeAll(item);
+                        removed = true;
+                }
+        }
+        if (removed) {
+                cpointer().set_active_context_items_by_keyboard_input(contexts);
+        }
+}

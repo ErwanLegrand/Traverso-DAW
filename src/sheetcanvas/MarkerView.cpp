@@ -25,6 +25,7 @@
 #include "Themer.h"
 #include "ClipsViewPort.h"
 #include "PositionIndicator.h"
+#include "MoveMarker.h"
 
 #include <QFont>
 #include <QFontMetrics>
@@ -57,6 +58,7 @@ MarkerView::MarkerView(Marker* marker, SheetView* sv, ViewItem* parentView)
 	connect(m_marker, SIGNAL(positionChanged()), this, SLOT(update_position()));
 	connect(m_marker, SIGNAL(descriptionChanged()), this, SLOT(update_drawing()));
 	connect(m_marker, SIGNAL(indexChanged()), this, SLOT(update_drawing()));
+        connect(this, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 }
 
 void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
@@ -197,3 +199,16 @@ void MarkerView::set_dragging(bool dragging)
 	m_dragging = dragging;
 }
 
+void MarkerView::active_context_changed()
+{
+        if(has_active_context()) {
+                set_active(true);
+        } else {
+                set_active(false);
+        }
+}
+
+Command* MarkerView::drag_marker()
+{
+        return new MoveMarker(this, m_sv->timeref_scalefactor, tr("Drag Marker"));
+}

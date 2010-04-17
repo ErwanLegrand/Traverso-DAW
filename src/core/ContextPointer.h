@@ -152,6 +152,7 @@ public:
         void set_current_viewport(AbstractViewPort* vp);
 
         QList<QObject* > get_context_items();
+        QList<ContextItem*> get_active_context_items() const {return m_activeContextItems;}
 
         void add_contextitem(QObject* item);
         void remove_contextitem(QObject* item);

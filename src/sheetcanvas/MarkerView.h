@@ -25,6 +25,7 @@
 #include "ViewItem.h"
 
 class Marker;
+class Command;
 class SheetView;
 class LineView;
 class QColor;
@@ -61,6 +62,10 @@ private:
 private slots:
 	void update_position();
 	void update_drawing();
+        void active_context_changed();
+
+public slots:
+        Command* drag_marker();
 };
 
 #endif

@@ -51,6 +51,7 @@ public:
 	void calculate_bounding_rect();
 	void load_theme_data();
         void mouse_hover_move_event();
+        QList<MarkerView*> get_marker_views() const { return m_markerViews;}
 
 private:
 	QList<MarkerView* > m_markerViews;

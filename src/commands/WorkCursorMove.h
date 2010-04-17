@@ -58,14 +58,19 @@ private :
         WorkCursor*     m_workCursor;
 	TimeRef		m_origPos;
         int             m_holdCursorSceneY;
+        bool            m_browseMarkers;
 
         void do_keyboard_move(TimeRef newLocation, bool centerInView = false);
+        void browse_to_next_marker();
+        void browse_to_previous_marker();
+        void remove_markers_from_active_context();
 
 public slots:
         void move_left(bool autorepeat);
         void move_right(bool autorepeat);
         void next_snap_pos(bool autorepeat);
         void prev_snap_pos(bool autorepeat);
+        void toggle_browse_markers(bool autorepeat);
 
 };
 
