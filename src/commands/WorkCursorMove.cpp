@@ -210,6 +210,7 @@ void WorkCursorMove::browse_to_next_marker()
         QList<ContextItem*> contexts = cpointer().get_active_context_items();
         foreach(ContextItem* item, contexts) {
                 if (item->inherits("MarkerView")) {
+                        cpointer().remove_from_active_context_list(item);
                         contexts.removeAll(item);
                 }
         }
@@ -242,6 +243,7 @@ void WorkCursorMove::browse_to_previous_marker()
         QList<ContextItem*> contexts = cpointer().get_active_context_items();
         foreach(ContextItem* item, contexts) {
                 if (item->inherits("MarkerView")) {
+                        cpointer().remove_from_active_context_list(item);
                         contexts.removeAll(item);
                 }
         }
@@ -273,14 +275,9 @@ void WorkCursorMove::browse_to_previous_marker()
 void WorkCursorMove::remove_markers_from_active_context()
 {
         QList<ContextItem*> contexts = cpointer().get_active_context_items();
-        bool removed = false;
         foreach(ContextItem* item, contexts) {
                 if (item->inherits("MarkerView")) {
-                        contexts.removeAll(item);
-                        removed = true;
+                        cpointer().remove_from_active_context_list(item);
                 }
-        }
-        if (removed) {
-                cpointer().set_active_context_items_by_keyboard_input(contexts);
         }
 }
