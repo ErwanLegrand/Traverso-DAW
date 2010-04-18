@@ -180,28 +180,10 @@ VUMeterRulerView::VUMeterRulerView(ViewItem* parent)
         // labels
         presetMark.push_back(6);
         presetMark.push_back(0);
-        presetMark.push_back(-5);
-        presetMark.push_back(-10);
-        presetMark.push_back(-15);
-        presetMark.push_back(-20);
-        presetMark.push_back(-25);
-        presetMark.push_back(-30);
-        presetMark.push_back(-35);
-        presetMark.push_back(-40);
-        presetMark.push_back(-50);
-        presetMark.push_back(-60);
-
-        // tick marks
-        for (int i = 6; i >= -20; --i) {
-                lineMark.push_back(i);
-        }
-        lineMark.push_back(-25);
-        lineMark.push_back(-30);
-        lineMark.push_back(-35);
-        lineMark.push_back(-40);
-        lineMark.push_back(-45);
-        lineMark.push_back(-50);
-        lineMark.push_back(-60);
+        presetMark.push_back(-6);
+        presetMark.push_back(-12);
+        presetMark.push_back(-24);
+        presetMark.push_back(-70);
 
         load_theme_data();
         connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
@@ -224,13 +206,7 @@ void VUMeterRulerView::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         // draw the labels
         for (uint j = 0; j < presetMark.size(); ++j) {
 
-                // skip some labels if the widget is too small
-                if ((m_boundingRect.width() < 200) && ((j == 2) || (j == 4) || (j == 6) ||
-                                        (j == 7) || (j == 9))) {
-                        continue;
-                }
-
-                int idx = int(LUT_MULTIPLY * float(-presetMark[j] + 6));
+                int idx = int(LUT_MULTIPLY * float(-presetMark[j]));
 
                 // check the LUT index (I had exceptions without that check)
                 if ((idx < 0) || (idx >= VUMeterView::VUMeterView_lut()->size())) {
