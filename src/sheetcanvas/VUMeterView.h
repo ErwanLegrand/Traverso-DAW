@@ -43,7 +43,6 @@ public:
 
 private:
         std::vector<int>	presetMark;
-        std::vector<int>	lineMark;
         QFont			m_font;
         int			m_fontLabelAscent;
         QColor			m_colorActive;
@@ -119,38 +118,6 @@ inline QVector<float>* VUMeterView::VUMeterView_lut()
 }
 
 
-
-class VUMeterOverLedView : public ViewItem
-{
-        Q_OBJECT
-
-public:
-
-        VUMeterOverLedView(ViewItem* parent);
-
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-public slots:
-/**
- * Switches the LED indicator on and off. Connect this slot with the signal
- * VUMeterViewLevelView::activate_over_led(bool).
- *
- * @param b new state of the LED indicator.
- */
-        void set_active(bool b);
-
-
-private:
-        bool isActive;
-        QColor m_colActive;
-        QColor m_colInactive;
-        QBrush m_colBg;
-
-private slots:
-        void load_theme_data();
-};
-
-
 class VUMeterLevelView : public ViewItem, public AbstractVUMeterLevel
 {
         Q_OBJECT
@@ -176,8 +143,6 @@ private:
                         m_colBg;
         QPixmap		levelPixmap;
         QPixmap		clearPixmap;
-        QTimer 		timer,
-                        phTimer;
         QLinearGradient	gradient2D;
         QColor		m_colOverLed;
 
@@ -197,8 +162,6 @@ private:
         int get_meter_position(float);
 
 private slots:
-        void stop();
-        void start();
         void load_theme_data();
 
 signals:

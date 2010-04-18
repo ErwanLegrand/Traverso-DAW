@@ -206,7 +206,7 @@ void VUMeterRulerView::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         // draw the labels
         for (uint j = 0; j < presetMark.size(); ++j) {
 
-                int idx = int(LUT_MULTIPLY * float(-presetMark[j]));
+                int idx = int(LUT_MULTIPLY * float(-presetMark[j] + 6));
 
                 // check the LUT index (I had exceptions without that check)
                 if ((idx < 0) || (idx >= VUMeterView::VUMeterView_lut()->size())) {
@@ -236,85 +236,6 @@ void VUMeterRulerView::set_bounding_rect(QRectF rect)
         m_boundingRect = rect;
 }
 
-/**********************************************************************/
-/*                      VUMeterOverLedView                                */
-/**********************************************************************/
-
-
-/**
- * \class VUMeterViewOverLedView
- * \brief An LED-styled widget indicating audio levels > 0.0 dB
- *
- * An LED-styled widget that indicates audio levels > 0.0 dB. It looks like a warning lamp
- * and can be switched on and off. It doesn't analyze audio data itself.
- *
- * A VUMeterViewOverLedView is usually constructed within a VUMeterView object in conjunction with a
- * VUMeterLevelView object. It can be switched on to indicate the occurrence of audio levels
- * > 0.0 dB.
- */
-
-static const int THREE_D_LIMIT		= 8;
-
-VUMeterOverLedView::VUMeterOverLedView(ViewItem* parent)
-        : ViewItem(parent)
-{
-//        setAutoFillBackground(false);
-//        setMinimumHeight(VULED_HEIGHT);
-        isActive = false;
-
-        load_theme_data();
-        connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
-}
-
-void VUMeterOverLedView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-        PENTER4;
-
-        if (!isActive) {
-                painter->fillRect(m_boundingRect, m_colInactive);
-                return;
-        }
-
-        if (m_boundingRect.width() < THREE_D_LIMIT) {
-                painter->fillRect(m_boundingRect, m_colActive);
-                return;
-        }
-
-        // draw in 3d mode
-        painter->fillRect(m_boundingRect, m_colBg);
-        painter->fillRect(2, 2, m_boundingRect.width()-4, m_boundingRect.height()-4, m_colActive);
-
-        QColor col;
-        col.setRgb(255, 255, 255);
-        col.setAlpha(200);
-        painter->setPen(col);
-        painter->drawLine(1, 1, 1, m_boundingRect.height()-2);
-        painter->drawLine(1, 1, m_boundingRect.width()-2, 1);
-
-        col.setRgb(0, 0, 0);
-        col.setAlpha(100);
-        painter->setPen(col);
-        painter->drawLine(m_boundingRect.width()-2, 1, m_boundingRect.width()-2, m_boundingRect.height()-2);
-        painter->drawLine(1, m_boundingRect.height()-2, m_boundingRect.width()-2, m_boundingRect.height()-2);
-
-}
-
-void VUMeterOverLedView::set_active(bool b)
-{
-        if (b == isActive) {
-                return;
-        }
-
-        isActive = b;
-        update();
-}
-
-void VUMeterOverLedView::load_theme_data()
-{
-        m_colActive = themer()->get_color("VUMeterView:overled:active");
-        m_colInactive = themer()->get_color("VUMeterView:overled:inactive");
-        m_colBg = themer()->get_brush("VUMeterView:background:bar");
-}
 
 /**********************************************************************/
 /*                      VUMeterLevelView                                    */
@@ -403,8 +324,9 @@ void VUMeterLevelView::paint(QPainter* painter, const QStyleOptionGraphicsItem *
                 peakHoldFalling = false;
                 peakHoldValue = dBVal;
 
+                // ehm, oops, this timer was moved to Interface
                 if (PEAK_HOLD_MODE == 1) {
-                        phTimer.start(PEAK_HOLD_TIME);
+//                        phTimer.start(PEAK_HOLD_TIME);
                 }
         }
 
@@ -442,20 +364,6 @@ void VUMeterLevelView::resize_level_pixmap( )
         gradient2D.setStart(QPointF(m_boundingRect.width(), 0));
 
         painter.fillRect(m_boundingRect, gradient2D);
-
-        // 3D look if there's enough space
-        if (m_boundingRect.width() >= THREE_D_LIMIT) {
-                QColor lcol(Qt::white);
-                QColor rcol(Qt::black);
-                lcol.setAlpha(200);
-                rcol.setAlpha(100);
-
-                painter.setPen(lcol);
-                painter.drawLine(1, 0, 1, m_boundingRect.height());
-                painter.setPen(rcol);
-                painter.drawLine(m_boundingRect.width()-2, 0, m_boundingRect.width()-2, m_boundingRect.height());
-        }
-
         painter.end();
 
         clearPixmap = QPixmap(m_boundingRect.width(), m_boundingRect.height());
@@ -505,16 +413,6 @@ void VUMeterLevelView::update_peak( )
         }
 
         update(m_boundingRect);
-}
-
-void VUMeterLevelView::stop( )
-{
-        timer.stop();
-        emit activate_over_led(false);
-}
-
-void VUMeterLevelView::start( )
-{
 }
 
 void VUMeterLevelView::calculate_bounding_rect()
