@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 #include <QGraphicsScene>
+#include <QStyleOptionGraphicsItem>
 #include <QFont>
 #include <QMenu>
 #include <QAction>
@@ -50,12 +51,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define MICRO_HEIGHT 35
 #define SMALL_HEIGHT 65
 
-const int LED_SPACING = 6;
-const int LED_WIDTH = 16;
-const int MUTE_X_POS = 130;
+const int LED_SPACING = 5;
+const int LED_WIDTH = 15;
+const int LED_HEIGHT = 11;
+const int MUTE_X_POS = 135;
 const int SOLO_X_POS = MUTE_X_POS + LED_SPACING + LED_WIDTH;
 const int REC_X_POS = SOLO_X_POS + LED_SPACING + LED_WIDTH;
-const int LED_Y_POS = 4;
+const int LED_Y_POS = 3;
 
 
 
@@ -76,8 +78,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_soloLed = new TrackPanelLed(this, m_track, "solo", "solo");
         m_muteLed = new TrackPanelLed(this, m_track, "mute", "mute");
-        m_muteLed->set_bounding_rect(QRectF(0, 0, 15, 12));
-        m_soloLed->set_bounding_rect(QRectF(0, 0, 15, 12));
+        m_muteLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
+        m_soloLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 
         if (m_track->is_solo()) {
                 m_soloLed->ison_changed(true);
@@ -91,22 +93,14 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_viewPort->scene()->addItem(this);
 
-        if (m_track == m_track->get_sheet()->get_master_out()) {
-                m_vuMeterView = new VUMeterView(this, m_track->get_sheet()->get_master_out()->get_process_bus());
-                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 4));
-                m_vuMeterView->setPos(10, 18);
-        } else {
-                m_vuMeterView = new VUMeterView(this, m_track->get_process_bus());
-                m_track->get_process_bus()->set_monitor_peaks(true);
-                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 4));
-                m_vuMeterView->setPos(10, 18);
-        }
+        m_vuMeterView = new VUMeterView(this, m_track->get_process_bus());
+        m_track->get_process_bus()->set_monitor_peaks(true);
+        m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 11));
+        m_vuMeterView->setPos(10, 20);
 
 
 
         m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
-
-//        layout_panel_items();
 
         connect(m_track, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
         connect(m_track, SIGNAL(muteChanged(bool)), m_muteLed, SLOT(ison_changed(bool)));
@@ -132,7 +126,18 @@ TrackPanelView::~TrackPanelView( )
 void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
         Q_UNUSED(widget);
-        Q_UNUSED(option);
+
+        int xstart = (int)option->exposedRect.x();
+        int pixelcount = (int)option->exposedRect.width();
+
+        QRectF rect= option->exposedRect;
+        // detect if only vu's are displayed, if so, do nothing.
+//        printf("height, width: %f, %f\n", rect.height(), rect.width());
+//        if (rect.top() > 15 && rect.bottom() < 27) {
+//                return;
+//        }
+
+        PENTER;
 
 
         if (m_trackView->is_moving() || m_track->has_active_context()) {
@@ -142,8 +147,6 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
         }
 
 
-        int xstart = (int)option->exposedRect.x();
-        int pixelcount = (int)option->exposedRect.width();
 
         if (m_trackView->m_topborderwidth > 0) {
                 QColor color = themer()->get_color("Track:cliptopoffset");
@@ -215,7 +218,7 @@ AudioTrackPanelView::AudioTrackPanelView(AudioTrackView* trackView)
 
         m_tv = trackView;
         m_recLed = new TrackPanelLed(this, m_track, "rec", "toggle_arm");
-        m_recLed->set_bounding_rect(QRectF(0, 0, 15, 12));
+        m_recLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 
         if (m_tv->get_track()->armed()) {
                 m_recLed->ison_changed(true);
@@ -276,6 +279,8 @@ void AudioTrackPanelView::layout_panel_items()
 	} else {
 		m_gainView->show();
 	}
+
+        m_gainView->hide();
 }
 
 
@@ -489,11 +494,11 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 {
 	Q_UNUSED(widget);
 	
-	int roundfactor = 20;
+        int roundfactor = 10;
 	
 	painter->save();
 	
-	painter->setRenderHint(QPainter::Antialiasing);
+//	painter->setRenderHint(QPainter::Antialiasing);
 	
 	if (m_isOn) {
 		QColor color = themer()->get_color("TrackPanel:" + m_name + "led");

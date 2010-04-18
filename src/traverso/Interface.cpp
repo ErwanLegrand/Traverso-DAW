@@ -268,6 +268,12 @@ Interface::Interface()
 	update_follow_state();
 
 	setUnifiedTitleAndToolBarOnMac(true);
+
+
+        connect(&m_vuLevelTimer, SIGNAL(timeout()), this, SLOT(update_vu_levels_peak()));
+        connect(&m_vuLevelPeakholdTimer, SIGNAL(timeout()), this, SLOT(reset_vu_levels_peak_hold_value()));
+        m_vuLevelTimer.start(40);
+        m_vuLevelPeakholdTimer.start(1000);
 }
 
 Interface::~Interface()
@@ -1905,4 +1911,29 @@ Command* Interface::browse_to_last_track_in_active_sheet()
         }
 
         return 0;
+}
+
+void Interface::register_vumeter_level(AbstractVUMeterLevel *level)
+{
+        m_vuLevels.append(level);
+}
+
+void Interface::unregister_vumeter_level(AbstractVUMeterLevel *level)
+{
+        m_vuLevels.removeAll(level);
+}
+
+void Interface::update_vu_levels_peak()
+{
+        for(int i=0; i<m_vuLevels.size(); i++) {
+                m_vuLevels.at(i)->update_peak();
+        }
+}
+
+
+void Interface::reset_vu_levels_peak_hold_value()
+{
+        for(int i=0; i<m_vuLevels.size(); i++) {
+                m_vuLevels.at(i)->reset_peak_hold_value();
+        }
 }

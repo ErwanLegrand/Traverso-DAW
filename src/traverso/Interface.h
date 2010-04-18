@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QMainWindow>
 #include <QHash>
 #include <QModelIndex>
+#include <QTimer>
 
 class Sheet;
 class AudioTrack;
@@ -82,6 +83,16 @@ public:
         QTabBar* get_tab_bar() {return tabBar();}
 };
 
+class AbstractVUMeterLevel
+{
+public:
+        AbstractVUMeterLevel() {};
+        virtual ~AbstractVUMeterLevel() {};
+
+        virtual void update_peak() = 0;
+        virtual void reset_peak_hold_value() = 0;
+};
+
 class Interface : public QMainWindow
 {
 	Q_OBJECT
@@ -110,6 +121,9 @@ public :
         void show_busselector(Track* track);
 	void set_insertsilence_track(AudioTrack* track);
 	
+        void register_vumeter_level(AbstractVUMeterLevel* level);
+        void unregister_vumeter_level(AbstractVUMeterLevel* level);
+
 protected:
 	void keyPressEvent ( QKeyEvent* e);
 	void keyReleaseEvent ( QKeyEvent* e);
@@ -168,6 +182,11 @@ private:
         QLineEdit*              m_trackFinder;
         QCompleter*             m_trackFinderCompleter;
         QStandardItemModel*     m_trackFinderModel;
+
+        QList<AbstractVUMeterLevel*> m_vuLevels;
+        QTimer                  m_vuLevelTimer;
+        QTimer                  m_vuLevelPeakholdTimer;
+
 	
 	void create_menus();
         void set_project_actions_enabled(bool enable);
@@ -178,6 +197,7 @@ private:
 	
 	QMenu* create_context_menu(QObject* item, QList<MenuData >* list = 0);
 	QMenu* create_fade_selector_menu(const QString& fadeTypeName);
+
 
 public slots :
 	void set_project(Project* project);
@@ -243,6 +263,9 @@ private slots:
         void sheet_transport_state_changed();
         void track_finder_model_index_changed(const QModelIndex& index);
         void track_finder_return_pressed();
+        void update_vu_levels_peak();
+        void reset_vu_levels_peak_hold_value();
+
 };
 
 

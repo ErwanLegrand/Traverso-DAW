@@ -22,7 +22,7 @@
 #define VUMeterView_H
 
 #include "ViewItem.h"
-#include <QTimer>
+#include "Interface.h"
 
 class AudioBus;
 class AudioChannel;
@@ -151,12 +151,13 @@ private slots:
 };
 
 
-class VUMeterLevelView : public ViewItem
+class VUMeterLevelView : public ViewItem, public AbstractVUMeterLevel
 {
         Q_OBJECT
 
 public:
         VUMeterLevelView(ViewItem* parent, AudioChannel* chan);
+        ~VUMeterLevelView();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
         void reset();
@@ -164,6 +165,8 @@ public:
         void calculate_bounding_rect();
         void set_bounding_rect(QRectF rect);
 
+        void update_peak();
+        void reset_peak_hold_value();
 
 private:
         bool 		activeTail;
@@ -196,8 +199,6 @@ private:
 private slots:
         void stop();
         void start();
-        void update_peak();
-        void reset_peak_hold_value();
         void load_theme_data();
 
 signals:

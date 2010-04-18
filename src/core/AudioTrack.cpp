@@ -78,7 +78,7 @@ void AudioTrack::init()
         m_type = AUDIOTRACK;
         m_isArmed = false;
         m_fader->set_gain(1.0);
-        m_processBus = m_sheet->get_render_bus();
+        m_processBus = new AudioBus(m_name, 2, ChannelIsOutput);
 }
 
 QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)

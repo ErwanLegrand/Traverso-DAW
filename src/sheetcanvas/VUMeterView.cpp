@@ -61,37 +61,18 @@ QVector<float> VUMeterView::lut;
 VUMeterView::VUMeterView(ViewItem* parent, AudioBus* bus)
         : ViewItem(parent)
 {
-        m_minSpace = 0;
-
         load_theme_data();
 
-        int vertPos = 0;
         for (int i = 0; i < bus->get_channel_count(); ++i) {
-                VUMeterOverLedView* led = new VUMeterOverLedView(this);
                 VUMeterLevelView* level = new VUMeterLevelView(this, bus->get_channel(i));
                 m_levels.append(level);
-                connect(level, SIGNAL(activate_over_led(bool)), led, SLOT(set_active(bool)));
-                if (i < bus->get_channel_count() - 1)  {
-                        m_minSpace += m_vulevelspacing;
-                }
+
+//                VUMeterOverLedView* led = new VUMeterOverLedView(this);
+//                connect(level, SIGNAL(activate_over_led(bool)), led, SLOT(set_active(bool)));
         }
 
-        // add a ruler with tickmarks and labels
-        ruler = new VUMeterRulerView(this);
-        ruler->hide();
-        m_minSpace += m_vulayoutspacing;
-
-        // add a tooltip showing the channel name
-        m_name = bus->get_name();
-        m_channels = bus->get_channel_count();
-        setToolTip(m_name);
-
-        // initialize some stuff
-        isActive = false;
-
-        channelNameLabel = new QLabel();
-        channelNameLabel->setFont(m_chanNameFont);
-        channelNameLabel->setAlignment(Qt::AlignHCenter);
+//        add a ruler with tickmarks and labels
+//        ruler = new VUMeterRulerView(this);
 
         connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
@@ -104,7 +85,7 @@ void VUMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 {
         PENTER3;
 
-        painter->fillRect(m_boundingRect, QColor(Qt::gray));
+//        painter->fillRect(m_boundingRect, QColor(Qt::lightGray));
 }
 
 void VUMeterView::calculate_bounding_rect()
@@ -419,27 +400,25 @@ VUMeterLevelView::VUMeterLevelView(ViewItem* parent, AudioChannel* chan)
                 peakHistory[i] = 0.0;
         }
 
-//        setAttribute(Qt::WA_OpaquePaintEvent);
-//        setAutoFillBackground(false);
-
         connect(&audiodevice(), SIGNAL(stopped()), this, SLOT(stop()));
-        connect(&timer, SIGNAL(timeout()), this, SLOT(update_peak()));
-        connect(&phTimer, SIGNAL(timeout()), this, SLOT(reset_peak_hold_value()));
         connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
         load_theme_data();
 
-        timer.start(UPDATE_FREQ);
-
-        if (PEAK_HOLD_MODE == 1) {
-                phTimer.start(PEAK_HOLD_TIME);
-        }
+        Interface::instance()->register_vumeter_level(this);
 }
 
-void VUMeterLevelView::paint(QPainter *directpainter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+VUMeterLevelView::~VUMeterLevelView()
+{
+        Interface::instance()->unregister_vumeter_level(this);
+}
+
+void VUMeterLevelView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
         PENTER4;
-        QPixmap pix(m_boundingRect.width(), m_boundingRect.height());
-        QPainter painter(&pix);
+        if (levelPixmap.width() != int(m_boundingRect.width())
+                || levelPixmap.height() != int(m_boundingRect.height())) {
+                resize_level_pixmap();
+        }
 
         // convert the peak value to dB and make sure it's in a valid range
         float dBVal = coefficient_to_dB(peak);
@@ -458,18 +437,13 @@ void VUMeterLevelView::paint(QPainter *directpainter, const QStyleOptionGraphics
         // check for a new peak hold value
         if (peakHoldFalling && (peakHoldValue >= -120.0)) {
                 // smooth falloff, a little faster than the level meter, looks better
-                peakHoldValue -= 1.2*maxFalloff;
+                peakHoldValue -= 1.2 * maxFalloff;
         }
 
         if (peakHoldValue <= dBVal) {
                 peakHoldFalling = false;
                 peakHoldValue = dBVal;
 
-                // Comment by Remon: EHH?? The phTimer is still running since it _is_ allready started from the
-                // constructor, right? We don't stop the timer anywhere...
-                // Reply by Nic: The timer is REstarted here, which is done by QTimer::start(int) as well.
-                //	We want the new peak hold value to be held for 1 sec., so we restart the timer
-                //	as soon as a new phvalue was detected.
                 if (PEAK_HOLD_MODE == 1) {
                         phTimer.start(PEAK_HOLD_TIME);
                 }
@@ -481,39 +455,32 @@ void VUMeterLevelView::paint(QPainter *directpainter, const QStyleOptionGraphics
         int peakHoldLevel = get_meter_position(peakHoldValue);
 
         // draw levels
-        painter.drawPixmap(0, 0, clearPixmap, 0, 0, meterLevel, -m_boundingRect.height());
+//        painter->drawPixmap(0, 0, clearPixmap, 0, 0, meterLevel, -m_boundingRect.height());
 
-        if (meterLevel < m_boundingRect.width()) {
-                painter.drawPixmap(meterLevel, 0, levelPixmap, meterLevel, 0, m_boundingRect.width() - meterLevel, m_boundingRect.height());
+        if (meterLevel > 0) {
+                painter->drawPixmap(0, 0, levelPixmap, 0, 0, meterLevel, m_boundingRect.height());
         }
 
         // draw RMS lines
         if (SHOW_RMS) {
-                painter.setPen(Qt::white);
-                // Comment by Remon: Somehow the line seems to be one pixel shorter
-                // at the right size. Makes the lines look odd (just one pixel)
-                // when vu's are very small. Changing - 4 to  - 3 solves it for me
-                // any ideas?
-                // Reply by Nic: Indeed, obviously drawing stops 1 pixel before the
-                //	length specified.
-                painter.drawLine(rmsLevel, 1, rmsLevel, m_boundingRect.height() - 2);
+                painter->setPen(Qt::blue);
+                painter->drawLine(rmsLevel, 0, rmsLevel, m_boundingRect.height() - 1);
         }
 
         // draw Peak hold lines
         if (PEAK_HOLD_MODE) {
-                painter.setPen(m_colOverLed);
-                painter.drawLine(peakHoldLevel, 0, peakHoldLevel, m_boundingRect.height());
+                painter->setPen(m_colOverLed);
+                painter->drawLine(peakHoldLevel, 0, peakHoldLevel, m_boundingRect.height() - 1);
         }
-
-        directpainter->drawPixmap(0, 0, pix);
 }
 
 void VUMeterLevelView::resize_level_pixmap( )
 {
+        PENTER;
         levelPixmap = QPixmap(m_boundingRect.width(), m_boundingRect.height());
         QPainter painter(&levelPixmap);
 
-        gradient2D.setFinalStop(QPointF(m_boundingRect.width(), 0));
+        gradient2D.setStart(QPointF(m_boundingRect.width(), 0));
 
         painter.fillRect(m_boundingRect, gradient2D);
 
@@ -533,7 +500,7 @@ void VUMeterLevelView::resize_level_pixmap( )
         painter.end();
 
         clearPixmap = QPixmap(m_boundingRect.width(), m_boundingRect.height());
-        levelClearColor  = themer()->get_brush("VUMeter:background:bar", QPoint(0, 0), QPoint(m_boundingRect.width(), m_boundingRect.height()));
+        levelClearColor = themer()->get_brush("VUMeter:background:bar", QPoint(0, 0), QPoint(m_boundingRect.width(), m_boundingRect.height()));
         painter.begin(&clearPixmap);
         painter.fillRect(m_boundingRect, levelClearColor);
 }
@@ -545,7 +512,7 @@ void VUMeterLevelView::update_peak( )
         // if the meter drops to -inf, reset the 'over LED' and peak hold values
         if ((peak == 0.0) && (tailDeltaY <= -70.0)) {
                 peakHoldValue = -120.0;
-                emit activate_over_led(false);
+//                emit activate_over_led(false);
                 return;
         }
 
@@ -578,7 +545,7 @@ void VUMeterLevelView::update_peak( )
                 overCount = 0;
         }
 
-        update();
+        update(m_boundingRect);
 }
 
 void VUMeterLevelView::stop( )
@@ -593,7 +560,6 @@ void VUMeterLevelView::start( )
 
 void VUMeterLevelView::calculate_bounding_rect()
 {
-        resize_level_pixmap();
 }
 
 void VUMeterLevelView::set_bounding_rect(QRectF rect)
@@ -629,7 +595,7 @@ void VUMeterLevelView::load_theme_data()
         m_colOverLed = themer()->get_color("VUMeter:overled:active");
         m_colBg = themer()->get_brush("VUMeter:background:bar");
 
-        resize_level_pixmap(); // applies the new theme to the buffer pixmaps
+//        resize_level_pixmap(); // applies the new theme to the buffer pixmaps
 }
 
 // accepts dB-values and returns the position in the widget from top
@@ -653,9 +619,9 @@ int VUMeterLevelView::get_meter_position(float f)
 
         // if idx > size of the LUT, dBVal is somewhere < -70 dB, which is not displayed
         if (idx >= VUMeterView::VUMeterView_lut()->size()) {
-                return m_boundingRect.width();
+                return 0;
         } else {
-                return  m_boundingRect.width() - int(VUMeterView::VUMeterView_lut()->at(idx)/115.0 * (float)m_boundingRect.width());
+                return  int(VUMeterView::VUMeterView_lut()->at(idx)/115.0 * (float)m_boundingRect.width());
         }
 }
 
