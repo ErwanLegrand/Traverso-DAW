@@ -227,7 +227,8 @@ void VUMeterRulerView::load_theme_data()
         QFontMetrics fm(m_font);
         m_fontLabelAscent = fm.ascent();
 
-        m_colorActive = QColor(Qt::gray);//themer()->get_color("VUMeterView:font:active");
+        int gray = 70;
+        m_colorActive = QColor(gray, gray, gray);//themer()->get_color("VUMeterView:font:active");
         m_colorInactive = themer()->get_color("VUMeterView:font:inactive");
 }
 
