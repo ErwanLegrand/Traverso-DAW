@@ -225,13 +225,8 @@ void VUMeterRulerView::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         for (uint j = 0; j < presetMark.size(); ++j) {
 
                 // skip some labels if the widget is too small
-                if ((m_boundingRect.width() < 120) && ((j == 0) || (j == 2) || (j == 4) || (j == 6) ||
+                if ((m_boundingRect.width() < 200) && ((j == 2) || (j == 4) || (j == 6) ||
                                         (j == 7) || (j == 9))) {
-                        continue;
-                }
-
-                // skip some labels if the widget is too small
-                if ((m_boundingRect.width() < 220) && ((j == 8) || (j == 10))) {
                         continue;
                 }
 
@@ -246,7 +241,7 @@ void VUMeterRulerView::paint(QPainter *painter, const QStyleOptionGraphicsItem *
                 spm.sprintf("%2i", presetMark[j]);
 
                 painter->drawText(deltaY - m_fontLabelAscent, m_fontLabelAscent + 1, spm);
-                painter->drawLine(m_boundingRect.width() - deltaY, - 7, m_boundingRect.width() - deltaY, TICK_LINE_LENGTH - 7);
+                painter->drawLine(deltaY, - 7, deltaY, TICK_LINE_LENGTH - 7);
         }
 }
 
