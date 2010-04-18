@@ -39,7 +39,7 @@ public:
        VUMeterRulerView(ViewItem* parent);
 
        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
+       void set_bounding_rect(QRectF rect);
 
 private:
         std::vector<int>	presetMark;

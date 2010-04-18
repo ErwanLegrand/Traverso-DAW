@@ -72,7 +72,8 @@ VUMeterView::VUMeterView(ViewItem* parent, AudioBus* bus)
         }
 
 //        add a ruler with tickmarks and labels
-//        ruler = new VUMeterRulerView(this);
+        ruler = new VUMeterRulerView(this);
+        ruler->setPos(0, 10);
 
         connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
@@ -102,6 +103,8 @@ void VUMeterView::set_bounding_rect(QRectF rect)
                 level->setPos(0, vertPos);
                 vertPos += level->boundingRect().height() + m_vulevelspacing;
         }
+
+        ruler->set_bounding_rect(rect);
 }
 
 void VUMeterView::calculate_lut_data()
@@ -140,7 +143,7 @@ void VUMeterView::reset()
 
 void VUMeterView::load_theme_data()
 {
-        m_vulevelspacing = themer()->get_property("VUMeterView:layout:vuspacing", 1).toInt();
+        m_vulevelspacing = themer()->get_property("VUMeterView:layout:vuspacing", 2).toInt();
         m_vulayoutspacing = themer()->get_property("VUMeter:layout:vulayoutspacing", 5).toInt();
         m_mainlayoutmargin = themer()->get_property("VUMeter:layout:mainlayoutmargin", 1).toInt();
         m_mainlayoutspacing = themer()->get_property("VUMeter:layout:mainlayoutspacing", 2).toInt();
@@ -163,7 +166,7 @@ void VUMeterView::load_theme_data()
  * to map dB values to widget positions.
  */
 
-static const int TICK_LINE_LENGTH	= 3;
+static const int TICK_LINE_LENGTH	= 2;
 static const float LUT_MULTIPLY		= 5.0;
 
 VUMeterRulerView::VUMeterRulerView(ViewItem* parent)
@@ -172,6 +175,7 @@ VUMeterRulerView::VUMeterRulerView(ViewItem* parent)
         QFontMetrics fm(themer()->get_font("VUMeter:fontscale:label"));
 //        setMinimumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 3);
 //        setMaximumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 4);
+        m_boundingRect = parent->boundingRect();
 
         // labels
         presetMark.push_back(6);
@@ -213,35 +217,21 @@ void VUMeterRulerView::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         painter->setFont(m_font);
 
         // offset is the space occupied by the 'over' LED
-        float levelRange = float(m_boundingRect.height() - VULED_HEIGHT);
-
-        // draw line marks
-        painter->setPen(m_colorInactive);
-        for (uint j = 0; j < lineMark.size(); ++j) {
-                int idx = int(LUT_MULTIPLY * float((-lineMark[j] + 6)));
-
-                if ((idx < 0) || (idx >= VUMeterView::VUMeterView_lut()->size())) {
-                        continue;
-                }
-
-                deltaY = (int) ( VUMeterView::VUMeterView_lut()->at(idx)/115.0  * levelRange );
-                painter->drawLine(0, m_boundingRect.height() - deltaY, TICK_LINE_LENGTH, m_boundingRect.height() - deltaY);
-        }
+        float levelRange = m_boundingRect.width();
 
         painter->setPen(m_colorActive);
-        QRect markRect(0, 0, m_boundingRect.width(), m_fontLabelAscent);
 
         // draw the labels
         for (uint j = 0; j < presetMark.size(); ++j) {
 
                 // skip some labels if the widget is too small
-                if ((m_boundingRect.height() < 120) && ((j == 0) || (j == 2) || (j == 4) || (j == 6) ||
+                if ((m_boundingRect.width() < 120) && ((j == 0) || (j == 2) || (j == 4) || (j == 6) ||
                                         (j == 7) || (j == 9))) {
                         continue;
                 }
 
                 // skip some labels if the widget is too small
-                if ((m_boundingRect.height() < 220) && ((j == 8) || (j == 10))) {
+                if ((m_boundingRect.width() < 220) && ((j == 8) || (j == 10))) {
                         continue;
                 }
 
@@ -255,26 +245,24 @@ void VUMeterRulerView::paint(QPainter *painter, const QStyleOptionGraphicsItem *
                 deltaY = (int) ( VUMeterView::VUMeterView_lut()->at(idx)/115.0  * levelRange );
                 spm.sprintf("%2i", presetMark[j]);
 
-                markRect.setY(m_boundingRect.height() - deltaY - m_fontLabelAscent/2 - 1);
-                markRect.setHeight(m_fontLabelAscent);
-                if (markRect.bottom() >= m_boundingRect.height()) {
-                        markRect.translate(0, m_boundingRect.height() - markRect.bottom() - 1);
-                }
-                painter->drawText(markRect, Qt::AlignRight, spm);
-                painter->drawLine(0, m_boundingRect.height() - deltaY, TICK_LINE_LENGTH, m_boundingRect.height() - deltaY);
+                painter->drawText(deltaY - m_fontLabelAscent, m_fontLabelAscent + 1, spm);
+                painter->drawLine(m_boundingRect.width() - deltaY, - 7, m_boundingRect.width() - deltaY, TICK_LINE_LENGTH - 7);
         }
 }
 
 void VUMeterRulerView::load_theme_data()
 {
-        m_font = themer()->get_font("VUMeterView:fontscale:label");
+        m_font = themer()->get_font("VUMeter:fontscale:label");
         QFontMetrics fm(m_font);
-//        setMinimumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 3);
-//        setMaximumWidth(fm.width("-XX")+TICK_LINE_LENGTH + 4);
         m_fontLabelAscent = fm.ascent();
 
-        m_colorActive = themer()->get_color("VUMeterView:font:active");
+        m_colorActive = QColor(Qt::gray);//themer()->get_color("VUMeterView:font:active");
         m_colorInactive = themer()->get_color("VUMeterView:font:inactive");
+}
+
+void VUMeterRulerView::set_bounding_rect(QRectF rect)
+{
+        m_boundingRect = rect;
 }
 
 /**********************************************************************/
