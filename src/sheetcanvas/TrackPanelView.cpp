@@ -96,7 +96,7 @@ TrackPanelView::TrackPanelView(TrackView* view)
         if (!(m_track == m_track->get_sheet()->get_master_out())) {
                 m_vuMeterView = new VUMeterView(this, m_track->get_process_bus());
                 m_track->get_process_bus()->set_monitor_peaks(true);
-                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 11));
+                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 170, 13));
                 m_vuMeterView->setPos(10, 20);
         }
 
@@ -437,7 +437,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 		color = color.light(110);
 	}
 	
-	const int PAN_H = 9;
+        const int PAN_H = 6;
 
 	int sliderWidth = (int)m_boundingRect.width() - 75;
 	float v;
@@ -574,11 +574,8 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	Q_UNUSED(widget);
 	
 	QColor color = themer()->get_color("TrackPanel:bus:background");
-	int roundfactor = 15;
 	
 	painter->save();
-	
-	painter->setRenderHint(QPainter::Antialiasing);
 	
         if (has_active_context()) {
 		color = color.light(110);
@@ -586,7 +583,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	 
 	painter->setPen(themer()->get_color("TrackPanel:bus:margin"));
 	painter->setBrush(color);
-	painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
+        painter->drawRect(m_boundingRect);
 	
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
 	painter->setPen(themer()->get_color("TrackPanel:bus:font"));
