@@ -93,10 +93,12 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_viewPort->scene()->addItem(this);
 
-        m_vuMeterView = new VUMeterView(this, m_track->get_process_bus());
-        m_track->get_process_bus()->set_monitor_peaks(true);
-        m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 11));
-        m_vuMeterView->setPos(10, 20);
+        if (!(m_track == m_track->get_sheet()->get_master_out())) {
+                m_vuMeterView = new VUMeterView(this, m_track->get_process_bus());
+                m_track->get_process_bus()->set_monitor_peaks(true);
+                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 180, 11));
+                m_vuMeterView->setPos(10, 20);
+        }
 
 
 
