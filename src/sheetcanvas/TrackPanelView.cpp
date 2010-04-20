@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 const int LED_SPACING = 5;
 const int LED_WIDTH = 15;
 const int LED_HEIGHT = 11;
-const int MUTE_X_POS = 135;
+const int MUTE_X_POS = 125;
 const int SOLO_X_POS = MUTE_X_POS + LED_SPACING + LED_WIDTH;
 const int REC_X_POS = SOLO_X_POS + LED_SPACING + LED_WIDTH;
 const int LED_Y_POS = 3;
@@ -93,16 +93,12 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_viewPort->scene()->addItem(this);
 
+        m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
+
         if (!(m_track == m_track->get_sheet()->get_master_out())) {
                 m_vuMeterView = new VUMeterView(this, m_track->get_process_bus());
                 m_track->get_process_bus()->set_monitor_peaks(true);
-                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 170, 13));
-                m_vuMeterView->setPos(10, 20);
         }
-
-
-
-        m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
 
         connect(m_track, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
         connect(m_track, SIGNAL(muteChanged(bool)), m_muteLed, SLOT(ison_changed(bool)));
@@ -134,10 +130,10 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 
         QRectF rect= option->exposedRect;
         // detect if only vu's are displayed, if so, do nothing.
-//        printf("height, width: %f, %f\n", rect.height(), rect.width());
-//        if (rect.top() > 15 && rect.bottom() < 27) {
-//                return;
-//        }
+        if (rect.left() > 180) {
+//                printf("height, width: %f, %f\n", rect.height(), rect.width());
+                return;
+        }
 
         PENTER;
 
@@ -243,12 +239,15 @@ void AudioTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsIte
 void AudioTrackPanelView::layout_panel_items()
 {
         int height =  m_track->get_height();
-	
+
+        m_vuMeterView->set_bounding_rect(QRectF(0, 0, 10, height - 4));
+        m_vuMeterView->setPos(m_boundingRect.width() - 10 - 5, 2);
+
 	m_gainView->setPos(10, 39);
 	m_panView->setPos(10, 54);
 	
-        m_inBus->setPos(10, 73);
-        m_outBus->setPos(100, 73);
+        m_inBus->setPos(6, 73);
+        m_outBus->setPos(90, 73);
 	
 	if (height < SMALL_HEIGHT) {
 		m_gainView->setPos(10, 20);

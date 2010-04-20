@@ -72,8 +72,8 @@ VUMeterView::VUMeterView(ViewItem* parent, AudioBus* bus)
         }
 
 //        add a ruler with tickmarks and labels
-        ruler = new VUMeterRulerView(this);
-        ruler->setPos(0, 10);
+//        ruler = new VUMeterRulerView(this);
+//        ruler->setPos(0, 10);
 
         connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
@@ -86,7 +86,8 @@ void VUMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 {
         PENTER3;
 
-//        painter->fillRect(m_boundingRect, QColor(Qt::lightGray));
+        painter->setPen(QColor(Qt::lightGray));
+        painter->drawLine(6, 0, 6, int(m_boundingRect.height()));
 }
 
 void VUMeterView::calculate_bounding_rect()
@@ -98,13 +99,20 @@ void VUMeterView::set_bounding_rect(QRectF rect)
 {
         m_boundingRect = rect;
         int vertPos = 0;
+        int horizontalPos = 0;
         foreach(VUMeterLevelView* level, m_levels) {
-                level->set_bounding_rect(QRectF(0, 0, m_boundingRect.width(), (m_boundingRect.height() / m_levels.size()) - 1));
-                level->setPos(0, vertPos);
-                vertPos += level->boundingRect().height() + m_vulevelspacing;
+                if (false) {
+                        level->set_bounding_rect(QRectF(0, 0, m_boundingRect.width(), (m_boundingRect.height() / m_levels.size()) - 1));
+                        level->setPos(0, vertPos);
+                        vertPos += level->boundingRect().height() + m_vulevelspacing;
+                } else {
+                        level->set_bounding_rect(QRectF(0, 0, m_boundingRect.width() / m_levels.size(), m_boundingRect.height()));
+                        level->setPos(horizontalPos, 0);
+                        horizontalPos += level->boundingRect().width() + m_vulevelspacing;
+                }
         }
 
-        ruler->set_bounding_rect(rect);
+//        ruler->set_bounding_rect(rect);
 }
 
 void VUMeterView::calculate_lut_data()
@@ -143,7 +151,7 @@ void VUMeterView::reset()
 
 void VUMeterView::load_theme_data()
 {
-        m_vulevelspacing = themer()->get_property("VUMeterView:layout:vuspacing", 2).toInt();
+        m_vulevelspacing = themer()->get_property("VUMeterView:layout:vuspacing", 1).toInt();
         m_vulayoutspacing = themer()->get_property("VUMeter:layout:vulayoutspacing", 5).toInt();
         m_mainlayoutmargin = themer()->get_property("VUMeter:layout:mainlayoutmargin", 1).toInt();
         m_mainlayoutspacing = themer()->get_property("VUMeter:layout:mainlayoutspacing", 2).toInt();
@@ -273,6 +281,7 @@ VUMeterLevelView::VUMeterLevelView(ViewItem* parent, AudioChannel* chan)
         overCount = rmsIndex = 0;
         peakHoldFalling = false;
         peak = 0.0;
+        m_orientation = Qt::Vertical;
 
         // falloff speed, according to IEC 60268-18: 20 dB in 1.7 sec.
         maxFalloff = 20.0 / (1700.0 / (float)UPDATE_FREQ);
@@ -340,19 +349,31 @@ void VUMeterLevelView::paint(QPainter* painter, const QStyleOptionGraphicsItem *
 //        painter->drawPixmap(0, 0, clearPixmap, 0, 0, meterLevel, -m_boundingRect.height());
 
         if (meterLevel > 0) {
-                painter->drawPixmap(0, 0, levelPixmap, 0, 0, meterLevel, m_boundingRect.height());
+                if (m_orientation == Qt::Horizontal) {
+                        painter->drawPixmap(0, 0, levelPixmap, 0, 0, meterLevel, m_boundingRect.height());
+                } else {
+                        painter->drawPixmap(0, meterLevel, levelPixmap, 0, meterLevel, m_boundingRect.width(), m_boundingRect.height() - meterLevel);
+                }
         }
 
         // draw RMS lines
         if (SHOW_RMS) {
                 painter->setPen(Qt::blue);
-                painter->drawLine(rmsLevel, 0, rmsLevel, m_boundingRect.height() - 1);
+                if (m_orientation == Qt::Horizontal) {
+                        painter->drawLine(rmsLevel, 0, rmsLevel, m_boundingRect.height() - 1);
+                } else {
+                        painter->drawLine(2, rmsLevel, m_boundingRect.width() - 3, rmsLevel);
+                }
         }
 
         // draw Peak hold lines
         if (PEAK_HOLD_MODE) {
                 painter->setPen(m_colOverLed);
-                painter->drawLine(peakHoldLevel, 0, peakHoldLevel, m_boundingRect.height() - 1);
+                if (m_orientation == Qt::Horizontal) {
+                        painter->drawLine(peakHoldLevel, 0, peakHoldLevel, m_boundingRect.height() - 1);
+                } else {
+                        painter->drawLine(0, peakHoldLevel, m_boundingRect.width() - 1, peakHoldLevel);
+                }
         }
 }
 
@@ -362,13 +383,22 @@ void VUMeterLevelView::resize_level_pixmap( )
         levelPixmap = QPixmap(m_boundingRect.width(), m_boundingRect.height());
         QPainter painter(&levelPixmap);
 
-        gradient2D.setStart(QPointF(m_boundingRect.width(), 0));
+        if (m_orientation == Qt::Horizontal) {
+                gradient2D.setStart(QPointF(m_boundingRect.width(), 0));
+        } else {
+                gradient2D.setFinalStop(QPointF(0.0, m_boundingRect.height()));
+        }
 
+        // WAS: 	painter.fillRect(0, 0, width(), height(), gradient2D);
         painter.fillRect(m_boundingRect, gradient2D);
         painter.end();
 
         clearPixmap = QPixmap(m_boundingRect.width(), m_boundingRect.height());
-        levelClearColor = themer()->get_brush("VUMeter:background:bar", QPoint(0, 0), QPoint(m_boundingRect.width(), m_boundingRect.height()));
+        if (m_orientation == Qt::Horizontal) {
+                levelClearColor = themer()->get_brush("VUMeter:background:bar", QPoint(0, 0), QPoint(m_boundingRect.width(), m_boundingRect.height()));
+        } else {
+                levelClearColor  = themer()->get_brush("VUMeter:background:bar", QPoint(0, 0), QPoint(0, m_boundingRect.height()));
+        }
         painter.begin(&clearPixmap);
         painter.fillRect(m_boundingRect, levelClearColor);
 }
@@ -448,12 +478,8 @@ void VUMeterLevelView::load_theme_data()
         gradient2D.setColorAt(1.0,           themer()->get_color("VUMeter:foreground:-60db"));
 
         levelClearColor  = themer()->get_brush("VUMeter:background:bar", QPoint(0, 0), QPoint(0, m_boundingRect.height()));
-//        setMinimumWidth(themer()->get_property("VUMeter:layout:minimumlevelwidth", 6).toInt());
-
         m_colOverLed = themer()->get_color("VUMeter:overled:active");
         m_colBg = themer()->get_brush("VUMeter:background:bar");
-
-//        resize_level_pixmap(); // applies the new theme to the buffer pixmaps
 }
 
 // accepts dB-values and returns the position in the widget from top
@@ -477,9 +503,17 @@ int VUMeterLevelView::get_meter_position(float f)
 
         // if idx > size of the LUT, dBVal is somewhere < -70 dB, which is not displayed
         if (idx >= VUMeterView::VUMeterView_lut()->size()) {
-                return 0;
+                if (m_orientation == Qt::Horizontal) {
+                        return 0;
+                } else {
+                        return m_boundingRect.height();
+                }
         } else {
-                return  int(VUMeterView::VUMeterView_lut()->at(idx)/115.0 * (float)m_boundingRect.width());
+                if (m_orientation == Qt::Horizontal) {
+                        return  int(VUMeterView::VUMeterView_lut()->at(idx)/115.0 * (float)m_boundingRect.width());
+                } else {
+                        return  m_boundingRect.height() - int(VUMeterView::VUMeterView_lut()->at(idx)/115.0 * m_boundingRect.height());
+                }
         }
 }
 
