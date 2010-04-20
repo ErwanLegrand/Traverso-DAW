@@ -58,7 +58,7 @@ const int MUTE_X_POS = 125;
 const int SOLO_X_POS = MUTE_X_POS + LED_SPACING + LED_WIDTH;
 const int REC_X_POS = SOLO_X_POS + LED_SPACING + LED_WIDTH;
 const int LED_Y_POS = 3;
-
+const int VU_WIDTH = 8;
 
 
 TrackPanelView::TrackPanelView(TrackView* view)
@@ -240,8 +240,8 @@ void AudioTrackPanelView::layout_panel_items()
 {
         int height =  m_track->get_height();
 
-        m_vuMeterView->set_bounding_rect(QRectF(0, 0, 10, height - 4));
-        m_vuMeterView->setPos(m_boundingRect.width() - 10 - 5, 2);
+        m_vuMeterView->set_bounding_rect(QRectF(0, 0, VU_WIDTH, height - 4));
+        m_vuMeterView->setPos(m_boundingRect.width() - VU_WIDTH - 5, 2);
 
 	m_gainView->setPos(10, 39);
 	m_panView->setPos(10, 54);

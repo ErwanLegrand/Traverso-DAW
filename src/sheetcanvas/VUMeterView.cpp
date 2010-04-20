@@ -87,7 +87,8 @@ void VUMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         PENTER3;
 
         painter->setPen(QColor(Qt::lightGray));
-        painter->drawLine(6, 0, 6, int(m_boundingRect.height()));
+        int center = qRound(m_boundingRect.width() / 2);
+        painter->drawLine(center, 0, center, int(m_boundingRect.height()));
 }
 
 void VUMeterView::calculate_bounding_rect()
