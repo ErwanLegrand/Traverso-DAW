@@ -170,47 +170,47 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlsaDriver</name>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="191"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="194"/>
         <source>ALSA Driver: The playback device %1 is already in use. Please stop the application using it and run Traverso again</source>
         <translation>Driver ALSA: El dispositivo de reproducción  %1 está en uso. Detenga la aplicación que lo está usando y reinicie Traverso</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="197"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="200"/>
         <source>ALSA Driver: You do not have permission to open the audio device %1 for playback</source>
         <translation>Driver ALSA: Usted no tiene permiso para abrir el dispositivo de audio  %1 para reproducción</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="201"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="204"/>
         <source>snd_pcm_open(playback_handle, ..) failed with unknown error type</source>
         <translation>snd_pcm_open(playback_handle, ..) ha fallado con un tipo de error desconocido</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="216"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="219"/>
         <source>ALSA Driver: The capture device %1 is already in use. Please stop the application using it and run Traverso again</source>
         <translation>Driver ALSA: El dispositivo de grabación  %1 está en uso. Detenga la aplicación que lo está usando y reinicie Traverso</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="222"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="225"/>
         <source>ALSA Driver: You do not have permission to open the audio device %1 for capture</source>
         <translation>Driver ALSA: Usted no tiene permiso para abrir el dispositivo de audio  %1  para grabación</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="226"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="229"/>
         <source>ALSA Driver: snd_pcm_open(capture_handle, ...) failed with unknown error type</source>
         <translation>Driver ALSA: snd_pcm_open(capture_handle, ...) ha fallado con un error desconocido</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="242"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="245"/>
         <source>ALSA Driver: Cannot open PCM device %1 for playback. Falling back to capture-only mode</source>
         <translation>Driver ALSA: No se puede abrir el dispositivo PCM  %1  para reproducción. Habilitando modo de sólo grabación</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="257"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="260"/>
         <source>ALSA: Cannot open PCM device %1 for capture. Falling back to playback-only mode</source>
         <translation>Driver ALSA: No se puede abrir el dispositivo PCM  %1  para grabación. Habilitando modo de sólo reproducción</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="615"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="618"/>
         <source>ALSA Driver: Unable to configure hardware, is it in use by another application?</source>
         <translation>Driver ALSA: No se puede configurar el hardware. ¿Lo está usando otra aplicación?</translation>
     </message>
@@ -405,32 +405,32 @@ efecto al reiniciar Traverso!</translation>
 <context>
     <name>AudioClip</name>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="625"/>
+        <location filename="../../src/core/AudioClip.cpp" line="630"/>
         <source>Toggle Mute</source>
         <translation>Cambiar estado mudo</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="632"/>
+        <location filename="../../src/core/AudioClip.cpp" line="637"/>
         <source>Toggle Lock</source>
         <translation>Cambiar estado bloqueado</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="659"/>
+        <location filename="../../src/core/AudioClip.cpp" line="664"/>
         <source>Remove Fades</source>
         <translation>Quitar fades</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="863"/>
+        <location filename="../../src/core/AudioClip.cpp" line="871"/>
         <source>Normalization</source>
         <translation>Normalización</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="864"/>
+        <location filename="../../src/core/AudioClip.cpp" line="872"/>
         <source>Set Normalization level:</source>
         <translation>NIvel de normalización:</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="873"/>
+        <location filename="../../src/core/AudioClip.cpp" line="881"/>
         <source>AudioClip: Normalize</source>
         <translation>Normalizar clip de audio</translation>
     </message>
@@ -637,27 +637,27 @@ efecto al reiniciar Traverso!</translation>
 <context>
     <name>AudioClipView</name>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="142"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="141"/>
         <source>Click to reset AudioFile !</source>
         <translation>Clik para restaurar el archivo de audio !</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="881"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="888"/>
         <source>Reset Audio File for Clip: %1</source>
         <translation>Restaurar el archivo de audio del Clip %1</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="883"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="890"/>
         <source>All files (*);;Audio files (*.wav *.flac)</source>
         <translation>Todos los archivos (*);;Archivos de audio (*.wav *.flac)</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="886"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="893"/>
         <source>No file selected!</source>
         <translation>No se seleccionó ningún archivo!</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="902"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="909"/>
         <source>Succesfully set AudioClip file to %1</source>
         <translation>Archivo de AudioClip asignado correctamente  a %1</translation>
     </message>
@@ -1120,38 +1120,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AudioTrack</name>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="58"/>
-        <location filename="../../src/core/AudioTrack.cpp" line="122"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="56"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="121"/>
         <source>Master Out</source>
         <translation>Master Out</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="134"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="133"/>
         <source>Track: AudioClip with id %1 not found in Resources database!</source>
         <translation>Pista: El AudioClip con id %1 no está en la base de datos!</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="191"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="190"/>
         <source>Unable to Record to AudioTrack</source>
         <translation>No se puede grabar en la Pista de Audio</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="192"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="191"/>
         <source>AudioDevice doesn&apos;t have this Capture Bus: %1 (Track %2)</source>
         <translation>AudioDevice no tiene este Bus de grabación:  %1 (Pista %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="322"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="320"/>
         <source>Silence Others</source>
         <translation>Silenciar los otros</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="397"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="395"/>
         <source>Remove Clip</source>
         <translation>Borrar Clip</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="411"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="409"/>
         <source>Add Clip</source>
         <translation>Añadir Clip</translation>
     </message>
@@ -1524,7 +1524,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ClipsViewPort</name>
     <message numerus="yes">
-        <location filename="../../src/sheetcanvas/ClipsViewPort.cpp" line="142"/>
+        <location filename="../../src/sheetcanvas/ClipsViewPort.cpp" line="131"/>
         <source>Import %n audiofile(s)</source>
         <translation>
             <numerusform>Importar %n archivo de audio</numerusform>
@@ -1570,37 +1570,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CurveView</name>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.cpp" line="554"/>
-        <source>Drag Node</source>
-        <translation>Arrastrar nodo</translation>
+        <location filename="../../src/sheetcanvas/CurveView.cpp" line="416"/>
+        <source>Move Curve Node</source>
+        <translation>Mover Nodo de Curva</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.cpp" line="652"/>
+        <location filename="../../src/sheetcanvas/CurveView.cpp" line="514"/>
         <source>Clear Nodes</source>
         <translation>Borrar nodos</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="90"/>
+        <location filename="../../src/sheetcanvas/CurveView.h" line="36"/>
         <source>New node</source>
         <translation>Nodo nuevo</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="91"/>
+        <location filename="../../src/sheetcanvas/CurveView.h" line="37"/>
         <source>Remove node</source>
         <translation>Quitar nodo</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="92"/>
+        <location filename="../../src/sheetcanvas/CurveView.h" line="38"/>
         <source>Remove all Nodes</source>
         <translation>Quitar todos los nodos</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="93"/>
+        <location filename="../../src/sheetcanvas/CurveView.h" line="39"/>
         <source>Move node</source>
         <translation>Mover nodo</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="94"/>
+        <location filename="../../src/sheetcanvas/CurveView.h" line="40"/>
         <source>Move node (vertical only)</source>
         <translation>Mover nodo (solo verticalmente)</translation>
     </message>
@@ -1626,41 +1626,15 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DigitalClock</name>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1305"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1394"/>
         <source>Digital Clock</source>
         <translation>Reloj digital</translation>
     </message>
 </context>
 <context>
-    <name>DragMarker</name>
-    <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="38"/>
-        <source>Move Left</source>
-        <translation>Mover a la izquierda</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="39"/>
-        <source>Move right</source>
-        <translation>Mover a la derecha</translation>
-    </message>
-</context>
-<context>
-    <name>DragNode</name>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="39"/>
-        <source>Move Up</source>
-        <translation>Mover hacia arriba</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="40"/>
-        <source>Move Down</source>
-        <translation>Mover hacia abajo</translation>
-    </message>
-</context>
-<context>
     <name>DriverInfo</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="157"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="174"/>
         <source>Change Audio Device settings</source>
         <translation>Cambiar ajustes del dispositivo de audio</translation>
     </message>
@@ -1928,14 +1902,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeBend</name>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="152"/>
-        <location filename="../../src/commands/Fade.cpp" line="160"/>
+        <location filename="../../src/commands/Fade.cpp" line="203"/>
+        <location filename="../../src/commands/Fade.cpp" line="211"/>
         <source>Fade In: bend</source>
         <translation>Fade de entrada: inclinación</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="152"/>
-        <location filename="../../src/commands/Fade.cpp" line="160"/>
+        <location filename="../../src/commands/Fade.cpp" line="203"/>
+        <location filename="../../src/commands/Fade.cpp" line="211"/>
         <source>Fade Out: bend</source>
         <translation>Fade de salida: inclinación</translation>
     </message>
@@ -1943,27 +1917,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeCurve</name>
     <message>
-        <location filename="../../src/core/FadeCurve.cpp" line="241"/>
+        <location filename="../../src/core/FadeCurve.cpp" line="275"/>
         <source>Fade Preset</source>
         <translation>Fades predefinidos</translation>
     </message>
     <message>
-        <location filename="../../src/core/FadeCurve.h" line="40"/>
+        <location filename="../../src/core/FadeCurve.h" line="41"/>
         <source>Toggle Bypass</source>
         <translation>Bypass on/off</translation>
     </message>
     <message>
-        <location filename="../../src/core/FadeCurve.h" line="41"/>
+        <location filename="../../src/core/FadeCurve.h" line="42"/>
         <source>Cycle Shape</source>
         <translation>Forma del ciclo</translation>
     </message>
     <message>
-        <location filename="../../src/core/FadeCurve.h" line="42"/>
+        <location filename="../../src/core/FadeCurve.h" line="43"/>
         <source>Remove Fade</source>
         <translation>Quitar fade</translation>
     </message>
     <message>
-        <location filename="../../src/core/FadeCurve.h" line="43"/>
+        <location filename="../../src/core/FadeCurve.h" line="44"/>
         <source>Toggle Raster</source>
         <translation>Cuadrícula Si/No</translation>
     </message>
@@ -1971,12 +1945,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeMode</name>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="338"/>
+        <location filename="../../src/commands/Fade.cpp" line="389"/>
         <source>Fade In: shape</source>
         <translation>Fade de entrada: forma</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="338"/>
+        <location filename="../../src/commands/Fade.cpp" line="389"/>
         <source>Fade Out: shape</source>
         <translation>Fade de salida: forma</translation>
     </message>
@@ -1984,22 +1958,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeRange</name>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="51"/>
+        <location filename="../../src/commands/Fade.cpp" line="55"/>
         <source>Fade In: length</source>
         <translation>Fade de entrada: duración</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="51"/>
+        <location filename="../../src/commands/Fade.cpp" line="55"/>
         <source>Fade Out: length</source>
         <translation>Fade de salida: duración</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="63"/>
+        <location filename="../../src/commands/Fade.cpp" line="69"/>
         <source>Fade In: remove</source>
         <translation>Fade de entrada: quitar</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="63"/>
+        <location filename="../../src/commands/Fade.cpp" line="69"/>
         <source>Fade Out: remove</source>
         <translation>Fade de salida: quitar</translation>
     </message>
@@ -2007,14 +1981,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeStrength</name>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="244"/>
-        <location filename="../../src/commands/Fade.cpp" line="252"/>
+        <location filename="../../src/commands/Fade.cpp" line="295"/>
+        <location filename="../../src/commands/Fade.cpp" line="303"/>
         <source>Fade In: strength</source>
         <translation>Fade de entrada: intensidad</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="244"/>
-        <location filename="../../src/commands/Fade.cpp" line="252"/>
+        <location filename="../../src/commands/Fade.cpp" line="295"/>
+        <location filename="../../src/commands/Fade.cpp" line="303"/>
         <source>Fade Out: strength</source>
         <translation>Fade de salida: intensidad</translation>
     </message>
@@ -2121,24 +2095,33 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>InputEngine</name>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="246"/>
+        <location filename="../../src/core/InputEngine.cpp" line="263"/>
         <source>Modifier key actions are not supported from Context Menu</source>
         <translation>Los modificadores para acciones de teclado no están disponibles desde el Menú Contextual</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="256"/>
+        <location filename="../../src/core/InputEngine.cpp" line="273"/>
         <source>Hold actions are not supported from Context Menu</source>
         <translation>Las acciones tipo &quot;mantener presionado&quot; no están disponibles desde el Menú Contextual</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="390"/>
+        <location filename="../../src/core/InputEngine.cpp" line="410"/>
         <source>Command Plugin %1 not found!</source>
         <translation>¡ El comando del Plugin %1 no ha sido encontrado !</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="393"/>
+        <location filename="../../src/core/InputEngine.cpp" line="413"/>
         <source>Plugin %1 doesn&apos;t implement Command %2</source>
         <translation>El Plugin %1 no tiene implementado el Comando %2</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/InputEngine.cpp" line="1480"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1553"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1556"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1559"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1562"/>
+        <source>Input Engine: Loaded keymap has this unrecognized key: %1</source>
+        <translation>Motor de entrada: El mapa de teclado tiene esta tecla no reconocida: %1</translation>
     </message>
 </context>
 <context>
@@ -2159,27 +2142,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Interface</name>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="129"/>
+        <location filename="../../src/traverso/Interface.cpp" line="131"/>
         <source>History</source>
         <translation>Historia</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="137"/>
+        <location filename="../../src/traverso/Interface.cpp" line="139"/>
         <source>Resources Bin</source>
         <translation>Ventana de recursos</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="146"/>
+        <location filename="../../src/traverso/Interface.cpp" line="148"/>
         <source>Correlation Meter</source>
         <translation>Medidor de Correlación</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="154"/>
+        <location filename="../../src/traverso/Interface.cpp" line="156"/>
         <source>FFT Spectrum</source>
         <translation>Espectro de frecuencias (FFT)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="354"/>
+        <location filename="../../src/traverso/Interface.cpp" line="208"/>
+        <source>&amp;0: Welcome</source>
+        <translation>&amp;0: Bienvenido</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/Interface.cpp" line="393"/>
         <source>Traverso %1 (built with Qt %2)
 
 A multitrack audio recording and editing program.
@@ -2203,279 +2191,284 @@ Traverso está basado (Gcc, Qt, Xorg, Linux, etc.)
 </translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="361"/>
-        <location filename="../../src/traverso/Interface.h" line="78"/>
+        <location filename="../../src/traverso/Interface.cpp" line="400"/>
+        <location filename="../../src/traverso/Interface.h" line="90"/>
         <source>About Traverso</source>
         <translation>Acerca de Traverso</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="491"/>
+        <location filename="../../src/traverso/Interface.cpp" line="546"/>
         <source>&amp;New...</source>
         <translation>&amp;Nuevo...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="496"/>
+        <location filename="../../src/traverso/Interface.cpp" line="551"/>
         <source>&amp;Open...</source>
         <translation>&amp;Abrir...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="503"/>
+        <location filename="../../src/traverso/Interface.cpp" line="558"/>
         <source>&amp;Save</source>
         <translation>&amp;Guardar</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="511"/>
+        <location filename="../../src/traverso/Interface.cpp" line="566"/>
         <source>&amp;Close Project</source>
         <translation>&amp;Cerrar Proyecto</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="519"/>
+        <location filename="../../src/traverso/Interface.cpp" line="574"/>
         <source>&amp;Manage Project...</source>
         <translation>Gestionar &amp;Projecto...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="536"/>
+        <location filename="../../src/traverso/Interface.cpp" line="591"/>
         <source>&amp;Export...</source>
         <translation>&amp;Exportar...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="545"/>
+        <location filename="../../src/traverso/Interface.cpp" line="600"/>
         <source>&amp;CD Writing...</source>
         <translation>&amp;CD (grabar)...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="554"/>
+        <location filename="../../src/traverso/Interface.cpp" line="609"/>
         <source>&amp;Restore Backup...</source>
         <translation>&amp;Restaurar Backup...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="565"/>
+        <location filename="../../src/traverso/Interface.cpp" line="622"/>
         <source>&amp;Quit</source>
         <translation>&amp;Salir</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="573"/>
+        <location filename="../../src/traverso/Interface.cpp" line="630"/>
         <source>&amp;Edit</source>
         <translation>&amp;Editar</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="575"/>
+        <location filename="../../src/traverso/Interface.cpp" line="633"/>
         <source>Undo</source>
         <translation>Deshacer</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="582"/>
+        <location filename="../../src/traverso/Interface.cpp" line="640"/>
         <source>Redo</source>
         <translation>Rehacer</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="592"/>
+        <location filename="../../src/traverso/Interface.cpp" line="650"/>
         <source>Import &amp;Audio...</source>
         <translation>&amp;Importar Audio...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="598"/>
+        <location filename="../../src/traverso/Interface.cpp" line="656"/>
         <source>Insert Si&amp;lence...</source>
         <translation>Insertar &amp;Silencio...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="607"/>
+        <location filename="../../src/traverso/Interface.cpp" line="665"/>
         <source>&amp;Snap</source>
         <translation>&amp;Pegajoso</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="611"/>
+        <location filename="../../src/traverso/Interface.cpp" line="669"/>
         <source>Snap items to edges of other items while dragging.</source>
         <translation>Ayuda a hacer coincidir los bordes del objeto con los de otros objetos, mientras se arrastra.</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="615"/>
+        <location filename="../../src/traverso/Interface.cpp" line="673"/>
         <source>S&amp;croll Playback</source>
         <translation>Cursor &amp;visible siempre</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="619"/>
+        <location filename="../../src/traverso/Interface.cpp" line="677"/>
         <source>Keep play cursor in view while playing or recording.</source>
         <translation>Mantiene a la vista el cursor al reproducir ó grabar.</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="623"/>
+        <location filename="../../src/traverso/Interface.cpp" line="681"/>
         <source>&amp;Show Effects</source>
         <translation>Mostrar &amp;Efectos</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="627"/>
+        <location filename="../../src/traverso/Interface.cpp" line="685"/>
         <source>Show effect plugins and automation curves on tracks</source>
         <translation>Muestra los plugins de efectos y las curvas de automatización en las pistas</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="631"/>
+        <location filename="../../src/traverso/Interface.cpp" line="689"/>
         <source>&amp;View</source>
         <translation>&amp;Ver</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="637"/>
+        <location filename="../../src/traverso/Interface.cpp" line="696"/>
         <source>Marker Editor...</source>
         <translation>Editor de marcadores...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="641"/>
+        <location filename="../../src/traverso/Interface.cpp" line="700"/>
         <source>Toggle Full Screen</source>
         <translation>Pantalla Completa</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="650"/>
+        <location filename="../../src/traverso/Interface.cpp" line="709"/>
         <source>ToolBars</source>
         <translation>Barras de Herramientas</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="655"/>
+        <location filename="../../src/traverso/Interface.cpp" line="714"/>
         <source>Transport Console</source>
         <translation>Consola clásica de transporte</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="661"/>
+        <location filename="../../src/traverso/Interface.cpp" line="720"/>
         <source>Project</source>
         <translation>Proyecto</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="664"/>
+        <location filename="../../src/traverso/Interface.cpp" line="723"/>
         <source>Edit</source>
         <translation>Editar</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="668"/>
+        <location filename="../../src/traverso/Interface.cpp" line="727"/>
         <source>System Information</source>
         <translation>Información del sistema</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="671"/>
+        <location filename="../../src/traverso/Interface.cpp" line="730"/>
         <source>&amp;Sheet</source>
         <translation>&amp;Hoja</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="673"/>
+        <location filename="../../src/traverso/Interface.cpp" line="733"/>
         <source>New &amp;Sheet(s)...</source>
         <translation>&amp;Hoja(s) nuevas ...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="678"/>
+        <location filename="../../src/traverso/Interface.cpp" line="738"/>
         <source>New &amp;Track(s)...</source>
         <translation>&amp;Pista(s) nuevas...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="529"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1880"/>
+        <source>Track Finder</source>
+        <translation>Buscar Pistas</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/Interface.cpp" line="584"/>
         <source>Audio I/O...</source>
         <translation>I/O...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="163"/>
-        <location filename="../../src/traverso/Interface.cpp" line="164"/>
+        <location filename="../../src/traverso/Interface.cpp" line="165"/>
+        <location filename="../../src/traverso/Interface.cpp" line="166"/>
         <source>VU Meters</source>
         <translation>Volúmenes</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="489"/>
+        <location filename="../../src/traverso/Interface.cpp" line="543"/>
         <source>&amp;File</source>
         <translation>&amp;Archivo</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="684"/>
+        <location filename="../../src/traverso/Interface.cpp" line="744"/>
         <source>Se&amp;ttings</source>
         <translation>Aj&amp;ustes</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="686"/>
+        <location filename="../../src/traverso/Interface.cpp" line="747"/>
         <source>&amp;Recording File Format</source>
         <translation>&amp;Formato de archivo para grabación</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="698"/>
+        <location filename="../../src/traverso/Interface.cpp" line="759"/>
         <source>&amp;Resample Quality</source>
         <translation>&amp;Calidad del cambio de muestreo</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="699"/>
+        <location filename="../../src/traverso/Interface.cpp" line="760"/>
         <source>Best</source>
         <translation>Mejor</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="702"/>
+        <location filename="../../src/traverso/Interface.cpp" line="763"/>
         <source>High</source>
         <translation>Alto</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="705"/>
+        <location filename="../../src/traverso/Interface.cpp" line="766"/>
         <source>Medium</source>
         <translation>Medio</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="708"/>
+        <location filename="../../src/traverso/Interface.cpp" line="769"/>
         <source>Fast</source>
         <translation>Rápido</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="717"/>
+        <location filename="../../src/traverso/Interface.cpp" line="778"/>
         <source>&amp;Preferences...</source>
         <translation>&amp;Preferencias...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="721"/>
+        <location filename="../../src/traverso/Interface.cpp" line="782"/>
         <source>&amp;Help</source>
         <translation>A&amp;yuda</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="722"/>
+        <location filename="../../src/traverso/Interface.cpp" line="785"/>
         <source>&amp;Getting Started</source>
         <translation>Para &amp;Comenzar</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="725"/>
+        <location filename="../../src/traverso/Interface.cpp" line="788"/>
         <source>&amp;User Manual</source>
         <translation>Manual de &amp;Usuario</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="729"/>
+        <location filename="../../src/traverso/Interface.cpp" line="792"/>
         <source>&amp;About Traverso</source>
         <translation>&amp;Acerca de Traverso</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="908"/>
+        <location filename="../../src/traverso/Interface.cpp" line="997"/>
         <source>&lt;b&gt;Description&lt;/b&gt;</source>
         <translation>&lt;b&gt;Descripción&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="908"/>
+        <location filename="../../src/traverso/Interface.cpp" line="997"/>
         <source>&lt;b&gt;Key Sequence&lt;/b&gt;</source>
         <translation>&lt;b&gt;Secuencia de teclas&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1230"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1319"/>
         <source>Open Audio Files</source>
         <translation>Abrir archivos de audio</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1232"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1321"/>
         <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
         <translation>Archivos de audio (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1272"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1361"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1426"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1515"/>
         <source>Opening User Manual in external browser!</source>
         <translation>¡ Abriendo el Manual de Usuario en un navegador externo !</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1432"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1521"/>
         <source>Traverso - Important</source>
         <translation>Traverso - Importante</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1433"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1522"/>
         <source>A Project directory changed outside of Traverso. 
 
 This is NOT supported! Please undo this change now!
@@ -2488,12 +2481,12 @@ Es una operación NO soportada. Por favor, deshaga ese cambio ahora.
 Si desea renombrar un Proyecto, use el Gestor de Proyectos!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1465"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1554"/>
         <source>Traverso - Project load failed</source>
         <translation>Traverso - Carga del Proyecto fallida</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1466"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1555"/>
         <source>The requested Project `%1` 
 could not be loaded for the following reason:
 
@@ -2510,59 +2503,79 @@ Se le presentará ahora una lista de backups disponibles
 (si hay alguno), desde los que restaurar el Proyecto.</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1486"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1493"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1499"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1575"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1582"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1588"/>
         <source>Changed encoding for recording to %1</source>
         <translation>Ha cambiado la codificación de grabación a %1</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1505"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1511"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1517"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1523"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1594"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1600"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1606"/>
+        <location filename="../../src/traverso/Interface.cpp" line="1612"/>
         <source>Changed resample quality to: %1</source>
         <translation>La calidad de cambio de muestreo se establece a: %1</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.h" line="76"/>
+        <location filename="../../src/traverso/Interface.h" line="88"/>
         <source>Show Export Dialog</source>
         <translation>Mostrar diálogo de exportación</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.h" line="77"/>
+        <location filename="../../src/traverso/Interface.h" line="89"/>
         <source>Show Context Menu</source>
         <translation>Mostrar Menú de Contexto</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.h" line="79"/>
+        <location filename="../../src/traverso/Interface.h" line="91"/>
         <source>Show Project Management Dialog</source>
         <translation>Mostrar diálogo del Gestor de Proyectos</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.h" line="80"/>
+        <location filename="../../src/traverso/Interface.h" line="92"/>
         <source>Full Screen</source>
         <translation>Pantalla completa</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.h" line="81"/>
+        <location filename="../../src/traverso/Interface.h" line="93"/>
         <source>Export keymap</source>
         <translation>Exportar el mapa de teclado</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.h" line="82"/>
+        <location filename="../../src/traverso/Interface.h" line="94"/>
         <source>Play</source>
         <translation>Reproducir</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.h" line="83"/>
+        <location filename="../../src/traverso/Interface.h" line="95"/>
         <source>Record</source>
         <translation>Grabar</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/Interface.h" line="84"/>
+        <location filename="../../src/traverso/Interface.h" line="96"/>
         <source>Show Audio I/O dialog</source>
         <translation>Mostrar ventana E/S</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/Interface.h" line="97"/>
+        <source>Activate Track Finder</source>
+        <translation>Activar Buscar Pistas</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/Interface.h" line="98"/>
+        <source>Show Audio I/O Dialog</source>
+        <translation>Mostrar E/S de audio</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/Interface.h" line="99"/>
+        <source>Browse to first Track in current View</source>
+        <translation>Ir a la primera Pista en la vista actual</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/Interface.h" line="100"/>
+        <source>Browse to last Track in current View</source>
+        <translation>Ir a la última Pista en la vista actual</translation>
     </message>
 </context>
 <context>
@@ -2601,111 +2614,129 @@ Se le presentará ahora una lista de backups disponibles
     </message>
     <message>
         <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="196"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="13"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="14"/>
         <source>Form</source>
         <translation>Formulario</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="197"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="19"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="20"/>
         <source>Configure Keyboard</source>
         <translation>Configurar teclado</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="199"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="33"/>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Double fact timeout:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The maximum time in miliseconds between 2 key presses &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;to determine if the 2 key presses are a double fact ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; or &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; or 2 individual key presses ( a &amp;lt; K &amp;gt; and &amp;lt; K &amp;gt; action, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;or &amp;lt; KK &amp;gt; and &amp;lt; KK &amp;gt; action for example).&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Experienced users can set this value as low as 150 ms, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 180 ms.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, see chapter 7: Key Actions. of the User Manual&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Tiempo de doble pulsación:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;El tiempo máximo en milisegundos entre dos pulsaciones de tecla &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;para saber si las dos pulsaciones constituyen una pulsación doble ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; o &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; o dos pulsaciones separadas ( una &amp;lt; K &amp;gt; y una &amp;lt; K &amp;gt; , &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;o una &amp;lt; KK &amp;gt; y una &amp;lt; KK &amp;gt; por ejemplo).&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Los usuarios experimentados pueden usar un valor bajo, como 150ms, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;si aún no tiene mucha experiencia, use el valor por defecto de 180ms, o uno mayor.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Para más información vea el capítulo 7: &quot;Key Actions&quot; del Manual de Usuario&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="215"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="48"/>
+        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="221"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="54"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Double fact timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; Pulsación doble (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="217"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="84"/>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="199"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="34"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hold timeout:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The maximum time to consider a pressed key a hold key fact, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;like [ K ] or [ KK ].&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The shorter this time, the sooner a pressed key will be &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;detected as a hold action. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Experienced users can set this value as low as 110 ms, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 150 ms.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, see chapter 7: &quot;Key Actions&quot; of the User Manual.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600;&quot;&gt;Double fact timeout:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;The maximum time in miliseconds between 2 key presses &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;to determine if the 2 key presses are a&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;double fact ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; or &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;or 2 individual key presses ( a &amp;lt; K &amp;gt; and &amp;lt; K &amp;gt; action, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;or &amp;lt; KK &amp;gt; and &amp;lt; KK &amp;gt; action for example).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Experienced users can set this value as low as 150 ms, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 220 ms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;For more information, see chapter 7: Key Actions. of the User Manual&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Tiempo de pulsación mantenida:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;La duración para considerar una pulsación de tecla como pulsación mantenida, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;como [ K ] o [ KK ].&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Cuanto más corto sea, antes será considerada la pulsación como &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;pulsación mantenida. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Los usuarios experimentados pueden usar un valor pequeño, como 110ms, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;pero si aún tiene poca experiencia, use el valor por defecto de 150ms, o uno mayor.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Para más información consulte el capítulo 7 &quot;Key Actions&quot; del manual de usuario.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600;&quot;&gt;Tiempo de doble pulsación:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;El tiempo máximo (en ms) entre dos pulsaciones de tecla &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;para determinar si las dos pulsaciones son&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;una pulsación doble ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; or &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;o dos pulsaciones individuales ( una acción &amp;lt; K &amp;gt; y una &amp;lt; K &amp;gt; , &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;o &amp;lt; KK &amp;gt; y &amp;lt; KK &amp;gt; por ejemplo).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Los usuarios experimentados pueden usar un valor bajo, como 150 ms, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;si Ud. no tiene aún mucha experiencia, mejor use el valor por defecto de 220 ms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Para más información, ver Cap. 7: Acciones de Teclado, en el manual de usuario&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="234"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="100"/>
+        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="223"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="90"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600;&quot;&gt;Hold timeout:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;The maximum time to consider a pressed key a hold key fact, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;like [ K ] or [ KK ].&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;The shorter this time, the sooner a pressed key will be &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;detected as a hold action. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Experienced users can set this value as low as 130 ms, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 180 ms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;For more information, see chapter 7: &amp;quot;Key Actions&amp;quot; of the User Manual.&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600;&quot;&gt;Tiempo de Pulsación Mantenida:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;El tiempo máximo para considerar una pulsación de tecla como mantenida, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;como [ K ] o [ KK ].&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Cuanto más corto sea este valor, antes será considerada la pulsación &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;como pulsación mantenida. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Los usuarios experimentados pueden usar un valor bajo, como 130 ms, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;si Ud. aún no tiene mucha experiencia, mejor use el valor por defecto de 180 ms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Para más información, ver Cap. 7: &amp;quot;Acciones de Teclado&amp;quot; del Manual de Usuario.&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="245"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="110"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hold timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Pulsación mantenida (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="235"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="131"/>
+        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="246"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="141"/>
         <source>Keymap</source>
         <translation>Mapa de teclado</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="236"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="145"/>
+        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="247"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="155"/>
         <source>Select keymap</source>
         <translation>Seleccionar mapa de teclado</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="237"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="206"/>
+        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="248"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="216"/>
         <source>Export Keymap</source>
         <translation>Exportar mapa de teclado</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="238"/>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="213"/>
+        <location filename="../../src/traverso/ui_KeyboardConfigPage.h" line="249"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="223"/>
         <source>Print Keymap</source>
         <translation>Imprimir mapa de teclado</translation>
     </message>
@@ -2935,7 +2966,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MoveEdge</name>
     <message>
-        <location filename="../../src/commands/MoveEdge.cpp" line="38"/>
+        <location filename="../../src/commands/MoveEdge.cpp" line="39"/>
         <source>Move Clip Edge</source>
         <translation>Mover el borde del clip</translation>
     </message>
@@ -3120,74 +3151,80 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NewTrackDialog</name>
     <message>
-        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="56"/>
+        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="61"/>
         <source>I can&apos;t create a new Track if there is no Project loaded!!</source>
         <translation>No se puede crear una Pista nueva si no hay un Proyecto cargado!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="86"/>
+        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="127"/>
         <source>Added %1: %2</source>
         <translation>Añadido  %1: %2</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="192"/>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="207"/>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="14"/>
         <source>New Track(s)</source>
         <translation>Nuevas pista(s)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="193"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="37"/>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="208"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="34"/>
         <source>Track name</source>
         <translation>Nombre de la pista</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="194"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="57"/>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="209"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="54"/>
         <source>Track is a:</source>
         <translation>El tipo de pista es:</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="195"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="64"/>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="210"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="61"/>
         <source>Audio Track</source>
         <translation>Pista de Audio</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="196"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="74"/>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="211"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="71"/>
         <source>Sub Group</source>
         <translation>Sub Grupo</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="197"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="96"/>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="212"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="80"/>
+        <source>Bus Configuration</source>
+        <translation>Config. del Bus</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="213"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="89"/>
         <source>Output Bus / SubGroup</source>
         <translation>Bus de Salida / SubGrupo</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="198"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="112"/>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="214"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="105"/>
         <source>Input Bus</source>
         <translation>Bus de entrada</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="199"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="87"/>
-        <source>Use existing Bus</source>
-        <translation>Usar Bus existente</translation>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="215"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="126"/>
+        <source>JACK ports</source>
+        <translation>Puertos JACK</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="200"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="151"/>
-        <source>Create Capture Bus</source>
-        <translation>Crear Bus de Grabación</translation>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="216"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="134"/>
+        <source>Mono</source>
+        <translation>Mono</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="201"/>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="139"/>
-        <source>Create new Bus</source>
-        <translation>Crear Bus nuevo</translation>
+        <location filename="../../src/traverso/ui_NewTrackDialog.h" line="217"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="144"/>
+        <source>Stereo</source>
+        <translation>Estéreo</translation>
     </message>
 </context>
 <context>
@@ -3600,7 +3637,7 @@ p, li { white-space: pre-wrap; }
         <translation>Mudo</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProcessingData.cpp" line="95"/>
+        <location filename="../../src/core/ProcessingData.cpp" line="105"/>
         <source>Master Out</source>
         <translation>Master Out</translation>
     </message>
@@ -3626,12 +3663,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ProgressToolBar</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="537"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="554"/>
         <source>Progress Toolbar</source>
         <translation>Barra de progreso</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="580"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="597"/>
         <source>Importing file %1 of %2: %p%</source>
         <translation>Importando archivo %1 de %2: %p%</translation>
     </message>
@@ -3693,7 +3730,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/core/Project.cpp" line="517"/>
-        <location filename="../../src/core/Project.cpp" line="1071"/>
+        <location filename="../../src/core/Project.cpp" line="1069"/>
         <source>Traverso - Information</source>
         <translation>Traverso - Información</translation>
     </message>
@@ -3739,7 +3776,7 @@ p, li { white-space: pre-wrap; }
         <translation>Factor de normalización calculado: %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1072"/>
+        <location filename="../../src/core/Project.cpp" line="1070"/>
         <source>You&apos;re still recording, please stop recording first to be able to exit the application!</source>
         <translation>Todavía está grabando. Detenga la grabación para poder salir de la aplicación!</translation>
     </message>
@@ -3897,55 +3934,65 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ProjectManager</name>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="111"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="115"/>
         <location filename="../../src/core/ProjectManager.h" line="42"/>
         <source>Save Project</source>
         <translation>Guardar Proyecto</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="112"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="116"/>
         <source>Should Project &apos;%1&apos; be safed before closing it?</source>
         <translation>Quiere guardar el Proyecto &apos;%1&apos; antes de cerrarlo?</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="149"/>
-        <location filename="../../src/core/ProjectManager.cpp" line="172"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="153"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="176"/>
         <source>Project %1 already exists!</source>
         <translation>El Proyecto %1 ya existe!</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="160"/>
-        <location filename="../../src/core/ProjectManager.cpp" line="183"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="164"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="187"/>
         <source>Unable to create new Project %1</source>
         <translation>No se puede crear el nuevo Proyecto %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="229"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="233"/>
         <source>Unable to load Project %1</source>
         <translation>No se puede cargar el nuevo Proyecto %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="297"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="301"/>
         <source>No Project to save, open or create a Project first!</source>
         <translation>No hay un Proyecto que guardar. Abra o cree un Proyecto antes!</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="388"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="392"/>
         <source>Could not rename Project directory to %1</source>
         <translation>No se puede renombrar el directorio del Proyecto como %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="474"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="477"/>
         <source>Projectfile backup: The project file %1 could not be opened for reading (Reason: %2)</source>
         <translation>Backup del archivo del Proyecto. El archivo de proyecto %1 no se puede abrir para lectura (razón: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="628"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="487"/>
+        <source>Projectfile backup: The project file %1 could not be opened for writing (Reason: %2)</source>
+        <translation>Projectfile backup: El Archivo de Proyecto %1 no se pudo abrir para escritura (motivo: %2)</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/ProjectManager.cpp" line="632"/>
         <source>Cannot create dir %1</source>
         <translation>No se puede crear el directorio %1</translation>
     </message>
     <message>
         <location filename="../../src/core/ProjectManager.h" line="43"/>
+        <source>Close Project</source>
+        <translation>Cerrar Proyecto</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/ProjectManager.h" line="44"/>
         <source>Exit application</source>
         <translation>Salir de la aplicación</translation>
     </message>
@@ -4003,7 +4050,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="485"/>
         <location filename="../../src/traverso/ui_SheetManagerDialog.h" line="241"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="19"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="20"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="19"/>
         <source>Dialog</source>
         <translation>Diálogo</translation>
@@ -4011,83 +4058,83 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="493"/>
         <location filename="../../src/traverso/ui_SheetManagerDialog.h" line="242"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="35"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="36"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="35"/>
         <source>Project</source>
         <translation>Proyecto</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="486"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="47"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="48"/>
         <source>Informational</source>
         <translation>Informativo</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="487"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="73"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="74"/>
         <source>Title</source>
         <translation>Título</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="488"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="106"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="107"/>
         <source>Description</source>
         <translation>Descripción</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="489"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="139"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="140"/>
         <source>Engineer</source>
         <translation>Ingeniero</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="490"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="160"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="161"/>
         <source>Export</source>
         <translation>Exportar</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="491"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="172"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="173"/>
         <source>Sheet(s)</source>
         <translation>Hoja(s)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="492"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="179"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="180"/>
         <source>Template</source>
         <translation>Plantilla</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="503"/>
         <location filename="../../src/traverso/ui_SheetManagerDialog.h" line="248"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="219"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="220"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="40"/>
         <source>Sheets</source>
         <translation>Hojas</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="497"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="246"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="245"/>
         <source>Sheet Name</source>
         <translation>Nombre de la Hoja</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="496"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="251"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="250"/>
         <source>Tracks</source>
         <translation>Pistas</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="495"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="256"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="255"/>
         <source>Length</source>
         <translation>Duración</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="498"/>
         <location filename="../../src/traverso/ui_SheetManagerDialog.h" line="243"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="272"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="271"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="78"/>
         <source>Selected Sheet</source>
         <translation>Hoja seleccionada</translation>
@@ -4095,7 +4142,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="499"/>
         <location filename="../../src/traverso/ui_SheetManagerDialog.h" line="244"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="302"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="301"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="108"/>
         <source>Delete</source>
         <translation>Borrar</translation>
@@ -4103,7 +4150,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="500"/>
         <location filename="../../src/traverso/ui_SheetManagerDialog.h" line="245"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="328"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="327"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="134"/>
         <source>Rename</source>
         <translation>Cambiar nombre</translation>
@@ -4111,7 +4158,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="501"/>
         <location filename="../../src/traverso/ui_SheetManagerDialog.h" line="246"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="340"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="339"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="146"/>
         <source>New Sheet</source>
         <translation>Hoja nueva</translation>
@@ -4119,157 +4166,157 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="502"/>
         <location filename="../../src/traverso/ui_SheetManagerDialog.h" line="247"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="360"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="359"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="166"/>
         <source>Create new Sheet</source>
         <translation>Crear Hoja nueva</translation>
     </message>
     <message utf8="true">
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="388"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="387"/>
         <source>CD Text</source>
         <translation>Texto del CD</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="504"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="406"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="405"/>
         <source>Performer</source>
         <translation>Intérprete</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="505"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="422"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="421"/>
         <source>Disc ID:</source>
         <translation>ID del disco:</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="506"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="438"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="437"/>
         <source>UPC EAN:</source>
         <translation>UPC EAN:</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="507"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="454"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="453"/>
         <source>Genre:</source>
         <translation>Género:</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="510"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="462"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="461"/>
         <source>Unused</source>
         <translation>Sin usar</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="511"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="467"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="466"/>
         <source>Undefined</source>
         <translation>Sin definir</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="512"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="472"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="471"/>
         <source>Adult Contemporary</source>
         <translation>Música moderna</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="513"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="477"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="476"/>
         <source>Alternative Rock</source>
         <translation>Rock alternativo</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="514"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="482"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="481"/>
         <source>Childrens</source>
         <translation>Niños</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="515"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="487"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="486"/>
         <source>Classical</source>
         <translation>Clásica</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="516"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="492"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="491"/>
         <source>Contemporary Christian</source>
         <translation>Música Cristiana</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="517"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="497"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="496"/>
         <source>Country</source>
         <translation>Música Country</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="518"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="502"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="501"/>
         <source>Dance</source>
         <translation>Música Dance</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="519"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="507"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="506"/>
         <source>Easy Listening</source>
         <translation>Música ligera</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="520"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="512"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="511"/>
         <source>Erotic</source>
         <translation>Música Erotica</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="521"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="517"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="516"/>
         <source>Folk</source>
         <translation>Música Folk</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="522"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="522"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="521"/>
         <source>Gospel</source>
         <translation>Música Gospel</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="523"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="527"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="526"/>
         <source>Hip Hop</source>
         <translation>Hip Hop</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="524"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="532"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="531"/>
         <source>Jazz</source>
         <translation>Jazz</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="525"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="537"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="536"/>
         <source>Latin</source>
         <translation>Música Latina</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="526"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="542"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="541"/>
         <source>Musical</source>
         <translation>Musicales</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="527"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="547"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="546"/>
         <source>New Age</source>
         <translation>New Age</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="528"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="552"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="551"/>
         <source>Opera</source>
         <translation>Opera</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="529"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="557"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="556"/>
         <source>Operette</source>
         <translation>Opereta</translation>
     </message>
@@ -4279,67 +4326,67 @@ p, li { white-space: pre-wrap; }
         <translation>Música pop</translation>
     </message>
     <message utf8="true">
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="562"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="561"/>
         <source>Pop Music</source>
         <translation>Música pop</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="531"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="567"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="566"/>
         <source>Rap</source>
         <translation>Rap</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="532"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="572"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="571"/>
         <source>Reggae</source>
         <translation>Reggae</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="533"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="577"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="576"/>
         <source>Rock Music</source>
         <translation>Música rock</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="534"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="582"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="581"/>
         <source>Rhythm and Blues</source>
         <translation>Rhythm and Blues clásico</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="535"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="587"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="586"/>
         <source>Sound Effects</source>
         <translation>Efectos sonoros</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="536"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="592"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="591"/>
         <source>Spoken Word</source>
         <translation>Palabra hablada</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="537"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="597"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="596"/>
         <source>World Music</source>
         <translation>Músicas del mundo</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="539"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="618"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="617"/>
         <source>Arranger</source>
         <translation>Arreglista</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="540"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="628"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="627"/>
         <source>Songwriter</source>
         <translation>Letrista</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="541"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="638"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="637"/>
         <source>Message</source>
         <translation>Mensaje</translation>
     </message>
@@ -4350,7 +4397,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="544"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="674"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="673"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -4362,7 +4409,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/traverso/ui_ProjectManagerDialog.h" line="551"/>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="693"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="692"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -4388,7 +4435,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="119"/>
+        <location filename="../../src/core/AudioClip.cpp" line="120"/>
         <source>AudioClip</source>
         <translation>Clip de Audio</translation>
     </message>
@@ -4403,7 +4450,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nodo de Curva</translation>
     </message>
     <message>
-        <location filename="../../src/core/FadeCurve.cpp" line="84"/>
+        <location filename="../../src/core/FadeCurve.cpp" line="85"/>
         <source>FadeCurve</source>
         <translation>Curva de Fade</translation>
     </message>
@@ -4503,7 +4550,7 @@ p, li { white-space: pre-wrap; }
         <translation>Línea de tiempo</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="79"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="77"/>
         <source>Track</source>
         <translation>Pista</translation>
     </message>
@@ -4941,63 +4988,63 @@ p, li { white-space: pre-wrap; }
         <translation>No se estableció nombre de artista</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="361"/>
+        <location filename="../../src/core/Sheet.cpp" line="363"/>
         <source>Added %1: %2</source>
         <translation>Añadido  %1: %2</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="370"/>
+        <location filename="../../src/core/Sheet.cpp" line="372"/>
         <source>Removed %1: %2</source>
         <translation>Quitado  %1: %2</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="470"/>
+        <location filename="../../src/core/Sheet.cpp" line="472"/>
         <source>No audio to export! (Is everything muted?)</source>
         <translation>No hay audio que exportar (¿está todo silenciado?)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="474"/>
+        <location filename="../../src/core/Sheet.cpp" line="476"/>
         <source>Export start frame starts beyond export end frame!!</source>
         <translation>¡ El comienzo de la exportación está después de su final !</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="479"/>
+        <location filename="../../src/core/Sheet.cpp" line="481"/>
         <source>Export tries to render to 0 channels wav file??</source>
         <translation>¿La exportación intenta hacerse a un archivo wav de 0 canales?</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="532"/>
+        <location filename="../../src/core/Sheet.cpp" line="533"/>
         <source>Rendering Sheet %1 - Track %2 of %3</source>
         <translation>Procesando Hoja %1 - Pista %2 de %3</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="535"/>
+        <location filename="../../src/core/Sheet.cpp" line="536"/>
         <source>Normalising Sheet %1 - Track %2 of %3</source>
         <translation>Normalizando Hoja %1 - Pista %2 de %3</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="957"/>
-        <location filename="../../src/core/Sheet.cpp" line="966"/>
+        <location filename="../../src/core/Sheet.cpp" line="1012"/>
+        <location filename="../../src/core/Sheet.cpp" line="1021"/>
         <source>Hard Disk overload detected!</source>
         <translation>¡ Se detectó sobrecarga del disco duro !</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="958"/>
+        <location filename="../../src/core/Sheet.cpp" line="1013"/>
         <source>Failed to fill ReadBuffer in time</source>
         <translation>No se pudo llenar a tiempo el Buffer de Lectura</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="967"/>
+        <location filename="../../src/core/Sheet.cpp" line="1022"/>
         <source>Failed to empty WriteBuffer in time</source>
         <translation>No se pudo vaciar a tiempo el Buffer de Escritura</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1053"/>
+        <location filename="../../src/core/Sheet.cpp" line="1110"/>
         <source>No Tracks armed for recording!</source>
         <translation>¡No hay Pistas armadas para grabación!</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/core/Sheet.cpp" line="1235"/>
+        <location filename="../../src/core/Sheet.cpp" line="1301"/>
         <source>Recording to %n Clip(s)</source>
         <translation>
             <numerusform>Grabando en %n Clip</numerusform>
@@ -5078,81 +5125,111 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SheetView</name>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="44"/>
         <location filename="../../src/sheetcanvas/SheetView.h" line="45"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="46"/>
         <source>Set</source>
         <translation>Poner</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="46"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="47"/>
         <source>Center View</source>
         <translation>Centrar vista</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="47"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="48"/>
         <source>Right</source>
         <translation>Derecha</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="48"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="49"/>
         <source>Left</source>
         <translation>Izquierda</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="49"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="50"/>
         <source>Up</source>
         <translation>Arriba</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="50"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="51"/>
         <source>Down</source>
         <translation>Abajo</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="51"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="52"/>
         <source>To start</source>
         <translation>Al principio</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="52"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="53"/>
         <source>To end</source>
         <translation>Al final</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="53"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="54"/>
         <source>To Start</source>
         <translation>Al principio</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="54"/>
         <location filename="../../src/sheetcanvas/SheetView.h" line="55"/>
+        <source>To End</source>
+        <translation>Al final</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="56"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="57"/>
         <source>Move</source>
         <translation>Mover</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="56"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="58"/>
         <source>Add Marker</source>
         <translation>Añadir marcador</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="57"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="59"/>
         <source>Add Marker at Playhead</source>
         <translation>Añadir marcador en el cursor</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="58"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="60"/>
+        <source>Add Marker at Work Cursor</source>
+        <translation>Añadir marcador en el Cursor de Trabajo</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="61"/>
         <source>To workcursor</source>
         <translation>Al cursor de trabajo</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="59"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="62"/>
+        <source>To Playhead</source>
+        <translation>Al Cursor de Reproducción</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="63"/>
         <source>Center</source>
         <translation>Centrar</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="60"/>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="64"/>
         <source>Add Track</source>
         <translation>Añadir Pista</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="65"/>
+        <source>Expand/Collapse Tracks</source>
+        <translation>Expandir/Colapsar Pistas</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="66"/>
+        <source>To Previous Track</source>
+        <translation>A la Pista anterior</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/SheetView.h" line="67"/>
+        <source>To Next Track</source>
+        <translation>A la Pista siguiente</translation>
     </message>
 </context>
 <context>
@@ -5355,42 +5432,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SpectralMeterView</name>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="502"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="501"/>
         <source>Screen Capture file name</source>
         <translation>Nombre de archivo para la Captura de Pantalla</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="510"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="509"/>
         <source>FFT: Unable to write captured image to hard disk</source>
         <translation>FFT: No se puede escribir la imagen capturada al disco duro</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="521"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="520"/>
         <source>FFT: No average curve used, not data to export!</source>
         <translation>FFT: No se usa curva de promedio. No hay datos que exportar!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="522"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="521"/>
         <source>FFT: Enable average curve with &lt; M &gt; to generate data</source>
         <translation>FFT: Habilita curva de promedio con &lt; M &gt; para generar los datos</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="530"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="529"/>
         <source>FFT: No average data to export!</source>
         <translation>FFT: ¡No hay datos promedio que exportar!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="543"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="542"/>
         <source>Select output format</source>
         <translation>Selección de formato de salida</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="543"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="542"/>
         <source>Output format:</source>
         <translation>Formato de salida:</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="551"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="550"/>
         <source>Export average dB curve</source>
         <translation>Exportar curva dB promedio</translation>
     </message>
@@ -5406,7 +5483,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SysInfoToolBar</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="419"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="436"/>
         <source>System Information</source>
         <translation>Información del Sistema</translation>
     </message>
@@ -5474,12 +5551,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SystemResources</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="74"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="163"/>
+        <source>Num. Input: </source>
+        <translation>Núm. Entrada:</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="76"/>
         <source>Read Buffer Status</source>
         <translation>Estado del buffer de lectura</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="75"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="77"/>
         <source>Write Buffer Status</source>
         <translation>Estado del buffer de escritura</translation>
     </message>
@@ -5500,49 +5582,54 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TimeLineView</name>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="347"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="245"/>
         <source>End</source>
         <translation>Final</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="355"/>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="72"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="253"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.h" line="38"/>
         <source>Add Marker</source>
         <translation>Añadir marcador</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="378"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="276"/>
         <source>You have to remove all other markers first.</source>
         <translation>Debe quitar primero los demás marcadores.</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="467"/>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="75"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="363"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.h" line="42"/>
         <source>Drag Marker</source>
         <translation>Mover marcador</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="475"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="371"/>
         <source>Clear Markers</source>
         <translation>Borrar Marcadores</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="73"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.h" line="39"/>
         <source>Add Marker at Playhead</source>
         <translation>Añadir marcador en el cursor</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="74"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.h" line="40"/>
+        <source>Add Marker at Work Cursor</source>
+        <translation>Añadir marcador en el Cursor de Trabajo</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/TimeLineView.h" line="41"/>
         <source>Remove Marker</source>
         <translation>Quitar Marcador</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="76"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.h" line="43"/>
         <source>Clear all Markers</source>
         <translation>Borrar todos los Marcadores</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="77"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.h" line="44"/>
         <source>Playhead to Marker</source>
         <translation>Cursor al Marcador</translation>
     </message>
@@ -5571,8 +5658,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TrackPanelBus</name>
     <message>
-        <location filename="../../src/sheetcanvas/TrackPanelView.cpp" line="635"/>
-        <location filename="../../src/sheetcanvas/TrackPanelView.cpp" line="640"/>
+        <location filename="../../src/sheetcanvas/TrackPanelView.cpp" line="610"/>
+        <source>Sub Groups</source>
+        <translation>Sub Grupos</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/TrackPanelView.cpp" line="629"/>
+        <source>Hardware Buses</source>
+        <translation>Buses Hardware</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/TrackPanelView.cpp" line="646"/>
+        <location filename="../../src/sheetcanvas/TrackPanelView.cpp" line="651"/>
         <source>More...</source>
         <translation>Más...</translation>
     </message>
@@ -5580,17 +5677,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TrackView</name>
     <message>
-        <location filename="../../src/sheetcanvas/TrackView.cpp" line="115"/>
+        <location filename="../../src/sheetcanvas/TrackView.cpp" line="123"/>
         <source>Edit name</source>
         <translation>Editar nombre</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TrackView.cpp" line="116"/>
+        <location filename="../../src/sheetcanvas/TrackView.cpp" line="124"/>
         <source>Enter new name</source>
         <translation>Ponga el nuevo nombre</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TrackView.cpp" line="127"/>
+        <location filename="../../src/sheetcanvas/TrackView.cpp" line="135"/>
         <source>Track %1:  %2</source>
         <translation>Pista %1:  %2</translation>
     </message>
@@ -5826,9 +5923,34 @@ p, li { white-space: pre-wrap; }
         <translation>Shuttle (lanzadera)</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="233"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="66"/>
+        <source>Normalize</source>
+        <translation>Normalizar</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="232"/>
         <source>It is not possible to remove the Master Out track!</source>
         <translation>No se puede quitar la pista Master Out!</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="427"/>
+        <source>Normalization</source>
+        <translation>Normalización</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="428"/>
+        <source>Set Normalization level:</source>
+        <translation>NIvel de normalización:</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="439"/>
+        <source>Normalize Selected Clips</source>
+        <translation>Normalizar Clips seleccionados</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="442"/>
+        <source>AudioClip: Normalize</source>
+        <translation>Normalizar clip de audio</translation>
     </message>
 </context>
 <context>
