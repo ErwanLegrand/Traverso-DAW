@@ -123,7 +123,7 @@ public :
 	
         void register_vumeter_level(AbstractVUMeterLevel* level);
         void unregister_vumeter_level(AbstractVUMeterLevel* level);
-
+        int get_vulevel_update_frequency() const {return m_vuLevelUpdateFrequency;}
 protected:
 	void keyPressEvent ( QKeyEvent* e);
 	void keyReleaseEvent ( QKeyEvent* e);
@@ -135,6 +135,7 @@ protected:
 private:
         TTabWidget*             m_centerAreaWidget;
         int                     m_previousCenterAreaWidgetIndex;
+        int                     m_vuLevelUpdateFrequency;
 	QHash<Sheet*, SheetWidget* > m_sheetWidgets;
         SheetWidget*		m_currentSheetWidget;
 	QList<ViewPort* > 	currentProjectViewPortList;
@@ -184,7 +185,7 @@ private:
         QStandardItemModel*     m_trackFinderModel;
 
         QList<AbstractVUMeterLevel*> m_vuLevels;
-        QTimer                  m_vuLevelTimer;
+        QTimer                  m_vuLevelUpdateTimer;
         QTimer                  m_vuLevelPeakholdTimer;
 
 	

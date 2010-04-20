@@ -246,6 +246,7 @@ Interface::Interface()
 	m_newTrackDialog = 0;
 	m_quickStart = 0;
 	m_restoreProjectBackupDialog = 0;
+        m_vuLevelUpdateFrequency = 40;
 	
 	create_menus();
 	
@@ -270,9 +271,9 @@ Interface::Interface()
 	setUnifiedTitleAndToolBarOnMac(true);
 
 
-        connect(&m_vuLevelTimer, SIGNAL(timeout()), this, SLOT(update_vu_levels_peak()));
+        connect(&m_vuLevelUpdateTimer, SIGNAL(timeout()), this, SLOT(update_vu_levels_peak()));
         connect(&m_vuLevelPeakholdTimer, SIGNAL(timeout()), this, SLOT(reset_vu_levels_peak_hold_value()));
-        m_vuLevelTimer.start(40);
+        m_vuLevelUpdateTimer.start(m_vuLevelUpdateFrequency);
         m_vuLevelPeakholdTimer.start(1000);
 }
 

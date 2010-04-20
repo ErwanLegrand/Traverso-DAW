@@ -42,7 +42,7 @@ public:
        void set_bounding_rect(QRectF rect);
 
 private:
-        std::vector<int>	presetMark;
+        std::vector<int>	m_presetMark;
         QFont			m_font;
         int			m_fontLabelAscent;
         QColor			m_colorActive;
@@ -71,29 +71,17 @@ public:
         static QVector<float>* VUMeterView_lut();
 
 private:
-        bool			isActive;
         int			m_channels;
-        int			m_minSpace;
-        QString			m_name;
-        QLabel*			channelNameLabel;
-        VUMeterRulerView*		ruler;
+        VUMeterRulerView*		m_ruler;
         static QVector<float>	lut;
         QList<VUMeterLevelView*>	m_levels;
         int			m_vulevelspacing;
-        int			m_vulayoutspacing;
-        int			m_mainlayoutmargin;
-        int			m_mainlayoutspacing;
-        QFont			m_chanNameFont;
-        QFont			m_labelFont;
         QBrush			m_widgetBgBrush;
-        QVBoxLayout*		mainlayout;
-        QHBoxLayout*		levelLedLayout;
+        int                     m_orientation;
 
         static void calculate_lut_data();
 
 private slots:
-        void peak_monitoring_stopped();
-        void peak_monitoring_started();
         void load_theme_data();
 };
 
@@ -136,27 +124,26 @@ public:
         void reset_peak_hold_value();
 
 private:
-        bool 		activeTail;
-        bool		peakHoldFalling;
+        bool		m_peakHoldFalling;
         AudioChannel*	m_channel;
-        QBrush		levelClearColor,
+        // TODO: the variables below could be shared globally by
+        // all the VUMeterLevelView's ?
+        QBrush		m_levelClearColor,
                         m_colBg;
-        QPixmap		levelPixmap;
-        QPixmap		clearPixmap;
-        QLinearGradient	gradient2D;
+        QPixmap		m_levelPixmap;
+        QPixmap		m_clearPixmap;
+        QLinearGradient	m_gradient2D;
         QColor		m_colOverLed;
 
         int                     m_orientation;
-        float 			presetMark[7];
-        float			tailDeltaY;
-        float			prevPeakValue;
-        float			peak;
-        float			rms;
-        float			maxFalloff;
-        float			peakHoldValue;
-        float			peakHistory[50];
-        short unsigned int	rmsIndex;
-        short unsigned int	overCount;
+        float			m_tailDeltaY;
+        float			m_peak;
+        float			m_rms;
+        float			m_maxFalloff;
+        float			m_peakHoldValue;
+        float			m_peakHistory[50];
+        short unsigned int	m_rmsIndex;
+        short unsigned int	m_overCount;
 
         void resize_level_pixmap();
         int get_meter_position(float);
