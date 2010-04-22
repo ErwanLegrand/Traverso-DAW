@@ -397,10 +397,12 @@ void AudioClip::set_fade_out(double range)
 void AudioClip::set_gain(float gain)
 {
 	PENTER3;
-	if (gain < 0.0)
+        if (gain < 0.0) {
 		gain = 0.0;
-	if (gain > 32.0)
-		gain = 32.0;
+        }
+        if (gain > 10000.0) {
+                gain = 10000.0;
+        }
 	
 	m_fader->set_gain(gain);
 	emit stateChanged();
