@@ -27,38 +27,58 @@ $Id: AudioChannel.h,v 1.8 2008/11/24 21:11:04 r_sijrier Exp $
 #include <QString>
 #include "Mixer.h"
 #include "RingBuffer.h"
+#include "APILinkedList.h"
 
 class RingBuffer;
 class AudioDevice;
 
-class AudioChannel
+class VUMonitor : public APILinkedListNode
 {
+public:
+        VUMonitor() {
+                m_peaks = new RingBuffer(150);
+                m_peaks->reset();
+        };
+        ~VUMonitor() {
+                delete m_peaks;
+        };
+
+        bool is_smaller_then(APILinkedListNode* /*node*/) {return true;}
+
+        void write_peak(float peakValue) {
+                m_peaks->write( (char*)&peakValue, 1 * sizeof(audio_sample_t));
+        }
+
+        audio_sample_t get_peak_value();
+
+private:
+        RingBuffer*     m_peaks;
+
+};
+
+class AudioChannel : public QObject
+{
+        Q_OBJECT
 
 public:
-	audio_sample_t* get_buffer(nframes_t )
-	{
+        audio_sample_t* get_buffer(nframes_t ) {
 		hasData = true;
 		return buf;
 	}
 
 	void set_latency(unsigned int latency);
 
-	void silence_buffer(nframes_t nframes)
-	{
+        void silence_buffer(nframes_t nframes) {
 		memset (buf, 0, sizeof (audio_sample_t) * nframes);
 	}
 
 	void set_buffer_size(nframes_t size);
 	void set_monitor_peaks(bool monitor);
-        void monitor_peaks() {
-                Q_ASSERT(bufSize > 0);
-		float peakValue = 0;
+        void monitor_peaks(VUMonitor* monitor=0);
 
-		peakValue = Mixer::compute_peak( buf, bufSize, peakValue );
-		peaks->write( (char*)&peakValue, 1 * sizeof(audio_sample_t));
-	}
+        void add_monitor(VUMonitor* monitor);
+        void remove_monitor(VUMonitor* monitor);
 
-        audio_sample_t get_peak_value();
         QString get_name() const {return m_name;}
         uint get_number() const {return m_number;}
         uint get_buffer_size() const {return bufSize;}
@@ -70,8 +90,8 @@ private:
 
         friend class AudioDevice;
 
+        APILinkedList          m_monitors;
         audio_sample_t* 	buf;
-	RingBuffer*		peaks;
 	uint 			bufSize;
 	uint 			m_latency;
 	uint 			m_number;
@@ -90,7 +110,7 @@ private:
 
         int has_data()
         {
-                return hasData || monitoring;
+                return hasData || m_monitors.size();
         }
 
         audio_sample_t* get_data()
@@ -100,6 +120,9 @@ private:
                 return buf;
         }
 
+private slots:
+        void private_add_monitor(VUMonitor* monitor);
+        void private_remove_monitor(VUMonitor* monitor);
 };
 
 #endif

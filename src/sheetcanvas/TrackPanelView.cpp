@@ -95,10 +95,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
 
-        if (!(m_track == m_track->get_sheet()->get_master_out())) {
-                m_vuMeterView = new VUMeterView(this, m_track->get_process_bus());
-                m_track->get_process_bus()->set_monitor_peaks(true);
-        }
+        m_vuMeterView = new VUMeterView(this, m_track);
+        m_track->get_process_bus()->set_monitor_peaks(true);
 
         connect(m_track, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
         connect(m_track, SIGNAL(muteChanged(bool)), m_muteLed, SLOT(ison_changed(bool)));
@@ -323,6 +321,9 @@ void SubGroupPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem*
 void SubGroupPanelView::layout_panel_items()
 {
         int height =  m_track->get_height();
+
+        m_vuMeterView->set_bounding_rect(QRectF(0, 0, VU_WIDTH, height - 4));
+        m_vuMeterView->setPos(m_boundingRect.width() - VU_WIDTH - 5, 2);
 
         m_gainView->setPos(10, 39);
         m_panView->setPos(10, 54);

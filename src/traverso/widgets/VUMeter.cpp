@@ -477,6 +477,9 @@ VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
 	: QWidget(parent)
 	, m_channel(chan)
 {
+        m_monitor = new VUMonitor();
+        m_channel->add_monitor(m_monitor);
+
 	tailDeltaY = peakHoldValue = rms = -120.0;
 	overCount = rmsIndex = 0;
 	peakHoldFalling = false;
@@ -612,7 +615,7 @@ void VUMeterLevel::resize_level_pixmap( )
 
 void VUMeterLevel::update_peak( )
 {
-        peak = m_channel->get_peak_value();
+        peak = m_monitor->get_peak_value();
 
 	// if the meter drops to -inf, reset the 'over LED' and peak hold values
 	if ((peak == 0.0) && (tailDeltaY <= -70.0)) {

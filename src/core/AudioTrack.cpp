@@ -78,7 +78,7 @@ void AudioTrack::init()
         m_type = AUDIOTRACK;
         m_isArmed = false;
         m_fader->set_gain(1.0);
-        m_processBus = new AudioBus(m_name, 2, ChannelIsOutput);
+        m_processBus = m_sheet->get_render_bus();
 }
 
 QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
@@ -154,10 +154,6 @@ int AudioTrack::arm()
 {
         PENTER;
         set_armed(true);
-        AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
-        if (bus) {
-                bus->set_monitor_peaks(true);
-        }
         return 1;
 }
 
@@ -166,10 +162,6 @@ int AudioTrack::disarm()
 {
         PENTER;
         set_armed(false);
-        AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
-        if (bus) {
-                bus->set_monitor_peaks(false);
-        }
         return 1;
 }
 
@@ -230,6 +222,19 @@ void AudioTrack::set_gain(float gain)
 void AudioTrack::set_armed( bool armed )
 {
         m_isArmed = armed;
+        AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
+        if (bus) {
+                if (!m_isArmed) {
+                        for (int i=0; i<bus->get_channel_count(); i++) {
+                                bus->get_channel(i)->remove_monitor(m_vumonitors.at(i));
+                        }
+                } else {
+                        for (int i=0; i<bus->get_channel_count(); i++) {
+                                bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
+                        }
+                }
+        }
+
         emit armedChanged(m_isArmed);
 }
 
@@ -298,8 +303,8 @@ int AudioTrack::process( nframes_t nframes )
         // TODO: is there a situation where we still want to call send_to_output_buses
         // even if processresult == 0?
         if (processResult) {
-                if (m_processBus->is_monitoring_peaks()) {
-                        m_processBus->monitor_peaks();
+                if (!m_isArmed) {
+                        m_processBus->monitor_peaks(m_vumonitors);
                 }
 
                 send_to_output_buses(nframes);
@@ -311,10 +316,11 @@ int AudioTrack::process( nframes_t nframes )
 
 Command* AudioTrack::toggle_arm()
 {
-        if (m_isArmed)
+        if (m_isArmed) {
                 disarm();
-        else
+        } else {
                 arm();
+        }
         return (Command*) 0;
 }
 

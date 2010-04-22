@@ -24,11 +24,11 @@
 #include <QPainter>
 #include <QGradient>
 
+#include "AudioChannel.h"
 #include "Themer.h"
 #include "Mixer.h"
 #include <AudioDevice.h>
-#include <AudioChannel.h>
-#include <AudioBus.h>
+#include "Track.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -54,14 +54,14 @@
 // initialize static variables
 QVector<float> VUMeterView::lut;
 
-VUMeterView::VUMeterView(ViewItem* parent, AudioBus* bus)
+VUMeterView::VUMeterView(ViewItem* parent, Track* track)
         : ViewItem(parent)
 {
         load_theme_data();
         m_orientation = Qt::Horizontal;
 
-        for (int i = 0; i < bus->get_channel_count(); ++i) {
-                VUMeterLevelView* level = new VUMeterLevelView(this, bus->get_channel(i));
+        for (int i = 0; i < 2; ++i) {
+                VUMeterLevelView* level = new VUMeterLevelView(this, track->get_vumonitors().at(i));
                 m_levels.append(level);
         }
 
@@ -248,10 +248,11 @@ static const int PEAK_HOLD_MODE = 1;		// 0 = no peak hold, 1 = dynamic, 2 = cons
 static const bool SHOW_RMS = false;		// toggle RMS lines on / off
 
 
-VUMeterLevelView::VUMeterLevelView(ViewItem* parent, AudioChannel* chan)
+VUMeterLevelView::VUMeterLevelView(ViewItem* parent, VUMonitor* monitor)
         : ViewItem(parent)
-        , m_channel(chan)
 {
+        m_monitor = monitor;
+
         m_boundingRect = QRectF(0, 0, parent->boundingRect().width(), 5);
         m_tailDeltaY = m_peakHoldValue = m_rms = -120.0;
         m_overCount = m_rmsIndex = 0;
@@ -380,7 +381,7 @@ void VUMeterLevelView::resize_level_pixmap( )
 
 void VUMeterLevelView::update_peak( )
 {
-        m_peak = m_channel->get_peak_value();
+        m_peak = m_monitor->get_peak_value();
 
         // if the meter drops to -inf, reset the 'over LED' and peak hold values
         if ((m_peak == 0.0) && (m_tailDeltaY <= -70.0)) {

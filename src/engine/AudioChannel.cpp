@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2006 Remon Sijrier
+    Copyright (C) 2005-2010 Remon Sijrier
 
     This file is part of Traverso
 
@@ -17,10 +17,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
-    $Id: AudioChannel.cpp,v 1.7 2006/09/07 09:36:52 r_sijrier Exp $
 */
 
 #include "AudioChannel.h"
+
+#include "Tsar.h"
 
 #ifdef USE_MLOCK
 #include <sys/mman.h>
@@ -51,9 +52,6 @@ AudioChannel::AudioChannel(const QString& name, uint channelNumber, int type)
         buf = 0;
         bufSize = 0;
         mlocked = 0;
-
-        peaks = new RingBuffer(150);
-        peaks->reset();
 }
 
 AudioChannel::~ AudioChannel( )
@@ -68,8 +66,6 @@ AudioChannel::~ AudioChannel( )
 #endif /* USE_MLOCK */
 
         delete [] buf;
-        delete peaks;
-
 }
 
 void AudioChannel::set_latency( uint latency )
@@ -105,19 +101,68 @@ void AudioChannel::set_buffer_size( nframes_t size )
 }
 
 
+void AudioChannel::monitor_peaks(VUMonitor* monitor)
+{
+                Q_ASSERT(bufSize > 0);
+                float peakValue = 0;
+                peakValue = Mixer::compute_peak( buf, bufSize, peakValue );
+
+                if (monitor) {
+                        monitor->write_peak(peakValue);
+                }
+
+                apill_foreach(VUMonitor* internalmonitor, VUMonitor, m_monitors) {
+                        internalmonitor->write_peak(peakValue);
+                }
+}
+
+void AudioChannel::set_monitor_peaks( bool monitor )
+{
+	monitoring = monitor;
+}
+
+
+void AudioChannel::private_add_monitor(VUMonitor *monitor)
+{
+        m_monitors.append(monitor);
+}
+
+void AudioChannel::private_remove_monitor(VUMonitor *monitor)
+{
+        if (!m_monitors.remove(monitor)) {
+                printf("AudioChannel:: VUMonitor was not in monitors list, failed to remove it!\n");
+        }
+}
+
 /**
- * 
- * @return The highest peak value since the previous call to this function,
- *		 call this at least 10 times each second to keep data consistent 
+ * Adds the client into the audio processing chain in a Thread Save way
+
+ * WARNING: This function assumes the Clients callback function is set to an existing objects function!
  */
-audio_sample_t AudioChannel::get_peak_value( )
+void AudioChannel::add_monitor(VUMonitor *monitor)
+{
+        THREAD_SAVE_INVOKE(this, monitor, private_add_monitor(VUMonitor*));
+}
+
+void AudioChannel::remove_monitor(VUMonitor *monitor)
+{
+        THREAD_SAVE_INVOKE(this, monitor, private_remove_monitor(VUMonitor*));
+}
+
+
+/**
+ *
+ * @return The highest peak value since the previous call to this function,
+ *		 call this at least 10 times each second to keep data consistent
+ */
+audio_sample_t VUMonitor::get_peak_value( )
 {
         float peak = 0;
         audio_sample_t result = 0;
-        int read = peaks->read_space() /  sizeof(audio_sample_t);
+        int read = m_peaks->read_space() /  sizeof(audio_sample_t);
 
         while (read != 0) {
-                read = peaks->read((char*)&peak, 1 * sizeof(audio_sample_t));
+                read = m_peaks->read((char*)&peak, 1 * sizeof(audio_sample_t));
                 if (peak > result)
                         result = peak;
         }
@@ -125,8 +170,4 @@ audio_sample_t AudioChannel::get_peak_value( )
         return result;
 }
 
-void AudioChannel::set_monitor_peaks( bool monitor )
-{
-	monitoring = monitor;
-}
 //eof

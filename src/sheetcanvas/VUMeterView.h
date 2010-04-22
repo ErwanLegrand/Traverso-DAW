@@ -24,9 +24,9 @@
 #include "ViewItem.h"
 #include "Interface.h"
 
-class AudioBus;
-class AudioChannel;
+class Track;
 class VUMeterLevelView;
+class VUMonitor;
 class QLabel;
 class QHBoxLayout;
 class QVBoxLayout;
@@ -59,7 +59,7 @@ class VUMeterView : public ViewItem
         Q_OBJECT
 
 public:
-        VUMeterView(ViewItem* parent, AudioBus* bus);
+        VUMeterView(ViewItem* parent, Track* track);
         ~VUMeterView();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -72,9 +72,9 @@ public:
 
 private:
         int			m_channels;
-        VUMeterRulerView*		m_ruler;
+        VUMeterRulerView*	m_ruler;
         static QVector<float>	lut;
-        QList<VUMeterLevelView*>	m_levels;
+        QList<VUMeterLevelView*> m_levels;
         int			m_vulevelspacing;
         QBrush			m_widgetBgBrush;
         int                     m_orientation;
@@ -111,7 +111,7 @@ class VUMeterLevelView : public ViewItem, public AbstractVUMeterLevel
         Q_OBJECT
 
 public:
-        VUMeterLevelView(ViewItem* parent, AudioChannel* chan);
+        VUMeterLevelView(ViewItem* parent, VUMonitor* monitor);
         ~VUMeterLevelView();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -125,7 +125,7 @@ public:
 
 private:
         bool		m_peakHoldFalling;
-        AudioChannel*	m_channel;
+        VUMonitor*      m_monitor;
         // TODO: the variables below could be shared globally by
         // all the VUMeterLevelView's ?
         QBrush		m_levelClearColor,

@@ -81,14 +81,6 @@ void ProcessingData::private_set_input_bus(AudioBus* bus)
 
 void ProcessingData::set_input_bus(const QString &name)
 {
-//        bool wasArmed=isArmed;
-//        if (isArmed)
-//                disarm();
-//        m_busInName = bus;
-//        if (wasArmed) {
-//                arm();
-//        }
-
         m_busInName = name;
 
         AudioBus* inBus = audiodevice().get_capture_bus(m_busInName);

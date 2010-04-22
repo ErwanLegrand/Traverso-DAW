@@ -4,6 +4,7 @@ INCLUDE_DIRECTORIES(
 
 SET(TRAVERSO_ENGINE_MOC_CLASSES
 AudioBus.h
+AudioChannel.h
 AudioDevice.h
 Client.h
 )

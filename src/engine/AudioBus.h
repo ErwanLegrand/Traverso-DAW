@@ -71,14 +71,19 @@ public:
         bool is_output() {return m_type == ChannelIsOutput;}
         int get_type() const {return m_type;}
 
-	void monitor_peaks()
-	{
+        void monitor_peaks() {
 		for (int i=0; i<channels.size(); ++i) {
 			channels.at(i)->monitor_peaks();
 		}
 	}
 
-	/**
+        void monitor_peaks(VUMonitors vumonitors) {
+                for (int i=0; i<channels.size(); ++i) {
+                        channels.at(i)->monitor_peaks(vumonitors.at(i));
+                }
+        }
+
+        /**
 	 *        Zero all AudioChannels buffers for
 	 * @param nframes size of the buffer
 	 */

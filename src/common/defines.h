@@ -307,6 +307,8 @@ struct AudioDeviceSetup {
         QString         ditherShape;
 };
 
+class VUMonitor;
+typedef QList<VUMonitor*> VUMonitors;
 
 /**
  * Type used to represent the value of free running

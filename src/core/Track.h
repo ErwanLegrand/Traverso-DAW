@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define TRACK_H
 
 #include "ProcessingData.h"
+#include "defines.h"
 
 class Track : public ProcessingData
 {
@@ -44,6 +45,7 @@ public:
         void get_state(QDomElement& element, bool istemplate=false);
         int get_height() const {return m_height;}
         int get_sort_index() const;
+        VUMonitors get_vumonitors() const {return m_vumonitors;}
 
         virtual void set_height(int h);
         void set_muted_by_solo(bool muted);
@@ -58,6 +60,7 @@ public:
 
 
 protected:
+        VUMonitors      m_vumonitors;
         int     m_sortIndex;
         int     m_height;
         int     m_type;

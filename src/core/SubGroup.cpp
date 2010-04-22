@@ -91,9 +91,9 @@ int SubGroup::process(nframes_t nframes)
 
         m_pluginChain->process_post_fader(m_processBus, nframes);
 
-        if (m_processBus->is_monitoring_peaks()) {
-                m_processBus->monitor_peaks();
-        }
+//        if (m_processBus->is_monitoring_peaks()) {
+                m_processBus->monitor_peaks(m_vumonitors);
+//        }
 
         send_to_output_buses(nframes);
 

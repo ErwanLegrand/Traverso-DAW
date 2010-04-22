@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Track.h"
 
+#include "AudioChannel.h"
 #include "PluginChain.h"
 #include "Sheet.h"
 #include "Utils.h"
@@ -32,6 +33,9 @@ Track::Track(Sheet *sheet)
 {
         m_sortIndex = -1;
         m_isSolo = m_mutedBySolo = m_isMuted = false;
+        for (int i=0; i<2; ++i) {
+                m_vumonitors.append(new VUMonitor());
+        }
 }
 
 
