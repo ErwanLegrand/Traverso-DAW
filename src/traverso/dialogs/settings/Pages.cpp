@@ -397,6 +397,7 @@ void AppearenceConfigPage::save_config()
 	config().set_property("Themer", "supportediconsizes", supportedIconSizes);
 	config().set_property("Themer", "transportconsolesize", transportConsoleCombo->currentText());
 	config().set_property("Interface", "LanguageFile", languageComboBox->itemData(languageComboBox->currentIndex()));
+        config().set_property("TrackHeader", "VUOrientation", trackVUOrientationCheckBox->isChecked() ? Qt::Horizontal : Qt::Vertical);
 }
 
 void AppearenceConfigPage::load_config()
@@ -427,6 +428,8 @@ void AppearenceConfigPage::load_config()
 	bool paintStereoAsMono = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
 	bool paintWaveWithLines = config().get_property("Themer", "paintwavewithoutline", true).toBool();
 	bool dbGrid = config().get_property("Themer", "drawdbgrid", false).toBool();
+        Qt::Orientation orientation = (Qt::Orientation)config().get_property("TrackHeader", "VUOrientation", Qt::Vertical).toInt();
+
 	
 	QString interfaceLanguage = config().get_property("Interface", "LanguageFile", "").toString();
 	
@@ -441,6 +444,7 @@ void AppearenceConfigPage::load_config()
 	mergedCheckBox->setChecked(paintStereoAsMono);
 	dbGridCheckBox->setChecked(dbGrid);
 	paintAudioWithOutlineCheckBox->setChecked(paintWaveWithLines);
+        trackVUOrientationCheckBox->setChecked(orientation == Qt::Horizontal ? true : false);
 
 	toolbarStyleCombo->clear();
 	toolbarStyleCombo->addItem(tr("Icons only"));
@@ -512,6 +516,7 @@ void AppearenceConfigPage::reset_default_config()
 	config().set_property("Themer", "iconsize", "22");
 	config().set_property("Themer", "toolbuttonstyle", 0);
 	config().set_property("Interface", "LanguageFile", "");
+        config().set_property("TrackHeader", "VUOrientation", Qt::Vertical);
 
 	load_config();
 }

@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioBus.h"
 #include "AudioDevice.h"
+#include "Config.h"
 #include "TrackPanelView.h"
 #include "AudioTrackView.h"
 #include "SubGroupView.h"
@@ -52,13 +53,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define SMALL_HEIGHT 65
 
 const int LED_SPACING = 5;
-const int LED_WIDTH = 15;
-const int LED_HEIGHT = 11;
-const int MUTE_X_POS = 125;
+const int LED_WIDTH = 17;
+const int LED_HEIGHT = 12;
+const int MUTE_X_POS = 120;
 const int SOLO_X_POS = MUTE_X_POS + LED_SPACING + LED_WIDTH;
 const int REC_X_POS = SOLO_X_POS + LED_SPACING + LED_WIDTH;
 const int LED_Y_POS = 3;
 const int VU_WIDTH = 8;
+const int GAIN_X_POS = 10;
+const int GAIN_Y_POS = 23;
+const int PAN_X_POS = 10;
+const int PAN_Y_POS = GAIN_Y_POS + 13;
 
 
 TrackPanelView::TrackPanelView(TrackView* view)
@@ -71,10 +76,10 @@ TrackPanelView::TrackPanelView(TrackView* view)
         m_track = m_trackView->get_track();
 
         m_gainView = new TrackPanelGain(this, m_track);
-        m_gainView->set_width(m_viewPort->width() - 20);
+        m_gainView->set_width(m_viewPort->width() - 30);
 
         m_panView = new TrackPanelPan(this, m_track);
-        m_panView->set_width(m_viewPort->width() - 20);
+        m_panView->set_width(m_viewPort->width() - 30);
 
         m_soloLed = new TrackPanelLed(this, m_track, "solo", "solo");
         m_muteLed = new TrackPanelLed(this, m_track, "mute", "mute");
@@ -88,6 +93,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
                 m_muteLed->ison_changed(true);
         }
 
+        m_vuMeterView = new VUMeterView(this, m_track);
+
         m_inBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSIN);
         m_outBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSOUT);
 
@@ -95,8 +102,6 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
 
-        m_vuMeterView = new VUMeterView(this, m_track);
-        m_track->get_process_bus()->set_monitor_peaks(true);
 
         connect(m_track, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
         connect(m_track, SIGNAL(muteChanged(bool)), m_muteLed, SLOT(ison_changed(bool)));
@@ -203,6 +208,55 @@ void TrackPanelView::calculate_bounding_rect()
         layout_panel_items();
 }
 
+void TrackPanelView::layout_panel_items()
+{
+        int height =  m_track->get_height();
+        int adjust = 0;
+
+        Qt::Orientation orientation = (Qt::Orientation)config().get_property("TrackHeader", "VUOrientation", Qt::Vertical).toInt();
+        if (orientation == Qt::Vertical) {
+                m_vuMeterView->set_bounding_rect(QRectF(0, 0, VU_WIDTH, height - 4));
+                m_vuMeterView->setPos(m_boundingRect.width() - VU_WIDTH - 5, 2);
+        } else {
+                adjust = 14;
+                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 170, VU_WIDTH));
+                m_vuMeterView->setPos(10, GAIN_Y_POS);
+        }
+
+
+        m_gainView->setPos(GAIN_X_POS, GAIN_Y_POS + adjust);
+        m_panView->setPos(PAN_X_POS, PAN_Y_POS + adjust);
+
+        m_outBus->setPos(96, 73);
+
+        m_soloLed->setPos(SOLO_X_POS, LED_Y_POS);
+        m_muteLed->setPos(MUTE_X_POS, LED_Y_POS);
+
+        if ((m_outBus->pos().y() + m_outBus->boundingRect().height()) >= height) {
+                m_outBus->hide();
+        } else {
+                m_outBus->show();
+        }
+
+        if ( (m_panView->pos().y() + m_panView->boundingRect().height()) >= height) {
+                m_panView->hide();
+        } else {
+                m_panView->show();
+        }
+
+        if ( (m_gainView->pos().y() + m_gainView->boundingRect().height()) >= height) {
+                m_gainView->hide();
+        } else {
+                m_gainView->show();
+        }
+
+        if ( (m_vuMeterView->pos().y() + m_vuMeterView->boundingRect().height()) >= height) {
+                m_vuMeterView->hide();
+        } else {
+                m_vuMeterView->show();
+        }
+
+}
 
 
 
@@ -236,54 +290,19 @@ void AudioTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsIte
 
 void AudioTrackPanelView::layout_panel_items()
 {
+        TrackPanelView::layout_panel_items();
+
         int height =  m_track->get_height();
 
-        m_vuMeterView->set_bounding_rect(QRectF(0, 0, VU_WIDTH, height - 4));
-        m_vuMeterView->setPos(m_boundingRect.width() - VU_WIDTH - 5, 2);
-
-	m_gainView->setPos(10, 39);
-	m_panView->setPos(10, 54);
-	
-        m_inBus->setPos(6, 73);
-        m_outBus->setPos(90, 73);
-	
-	if (height < SMALL_HEIGHT) {
-		m_gainView->setPos(10, 20);
-		m_panView->setPos(10, 36);
-	} else {
-                m_gainView->setPos(10, 39);
-		m_panView->setPos(10, 54);
-	}
-	
-        m_muteLed->setPos(MUTE_X_POS, LED_Y_POS);
-        m_soloLed->setPos(SOLO_X_POS, LED_Y_POS);
         m_recLed->setPos(REC_X_POS, LED_Y_POS);
+        m_inBus->setPos(6, 73);
 
         if ((m_inBus->pos().y() + m_inBus->boundingRect().height()) >= height) {
                 m_inBus->hide();
-                m_outBus->hide();
-	} else {
+        } else {
                 m_inBus->show();
-                m_outBus->show();
-	}
-	
-	if ( (m_panView->pos().y() + m_panView->boundingRect().height()) >= height) {
-		m_panView->hide();
-	} else {
-		m_panView->show();
-	}
-	
-	if ( (m_gainView->pos().y() + m_panView->boundingRect().height()) >= height) {
-		m_gainView->hide();
-	} else {
-		m_gainView->show();
-	}
-
-        m_gainView->hide();
+        }
 }
-
-
-
 
 
 SubGroupPanelView::SubGroupPanelView(SubGroupView* view)
@@ -293,8 +312,8 @@ SubGroupPanelView::SubGroupPanelView(SubGroupView* view)
 
         m_inBus->hide();
         m_panView->hide();
-        m_muteLed->set_bounding_rect(QRectF(0, 0, 41, 14));
-        m_soloLed->set_bounding_rect(QRectF(0, 0, 38, 14));
+        m_muteLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
+        m_soloLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 
 }
 
@@ -318,43 +337,11 @@ void SubGroupPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem*
         TrackPanelView::paint(painter, option, widget);
 }
 
+
 void SubGroupPanelView::layout_panel_items()
 {
-        int height =  m_track->get_height();
-
-        m_vuMeterView->set_bounding_rect(QRectF(0, 0, VU_WIDTH, height - 4));
-        m_vuMeterView->setPos(m_boundingRect.width() - VU_WIDTH - 5, 2);
-
-        m_gainView->setPos(10, 39);
-        m_panView->setPos(10, 54);
-
-        if (height < 50) {
-                m_outBus->setPos(100, 0);
-                m_gainView->setPos(10, 20);
-                m_muteLed->hide();
-                m_soloLed->hide();
-        } else {
-                m_outBus->setPos(100, 2);
-                m_muteLed->setPos(100, 20);
-                m_soloLed->setPos(148, 20);
-                m_gainView->setPos(10, 40);
-                m_muteLed->show();
-                m_soloLed->show();
-        }
-
-
-        if ( (m_gainView->pos().y() + m_panView->boundingRect().height()) >= height) {
-                m_gainView->hide();
-        } else {
-                m_gainView->show();
-        }
+        TrackPanelView::layout_panel_items();
 }
-
-
-
-
-
-
 
 
 
@@ -367,7 +354,7 @@ TrackPanelGain::TrackPanelGain(TrackPanelView *parent, Track *track)
 void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
-	const int height = 9;
+        const int height = 6;
 
 	int sliderWidth = (int)m_boundingRect.width() - 75;
         float gain = m_track->get_gain();
@@ -392,7 +379,7 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:gain"));
-	painter->drawText(0, height + 1, "GAIN");
+        painter->drawText(0, height + 1, "Gain");
 	painter->drawRect(30, 0, sliderWidth, height);
 	
 	QColor color(cr,0,cb);
@@ -446,7 +433,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:pan"));
 
-	painter->drawText(0, PAN_H + 1, "PAN");
+        painter->drawText(0, PAN_H + 1, "Pan");
 
         v = m_track->get_pan();
 	span = QByteArray::number(v,'f',1);
@@ -599,17 +586,26 @@ void TrackPanelBus::bus_changed()
 {
 	QFontMetrics fm(themer()->get_font("TrackPanel:bus"));
 	prepareGeometryChange();
+        int maxbuswidth = 70;
 	
 	if (m_type == BUSIN) {
                 m_busName =  m_track-> get_bus_in_name();
-		m_pix = find_pixmap(":/bus_in");
+                int stringwidth = fm.width(m_busName) + 10;
+                if (stringwidth > maxbuswidth) {
+                        stringwidth = maxbuswidth;
+                }
+                m_pix = find_pixmap(":/bus_in");
 		m_boundingRect = m_pix.rect();
-		m_boundingRect.setWidth(m_pix.rect().width() + fm.width(m_busName) + 10);
+                m_boundingRect.setWidth(m_pix.rect().width() + stringwidth);
 	} else {
                 m_busName = m_track->get_bus_out_name();
-		m_pix = find_pixmap(":/bus_out");
+                int stringwidth = fm.width(m_busName) + 10;
+                if (stringwidth > maxbuswidth) {
+                        stringwidth = maxbuswidth;
+                }
+                m_pix = find_pixmap(":/bus_out");
 		m_boundingRect = m_pix.rect();
-		m_boundingRect.setWidth(m_pix.rect().width() + fm.width(m_busName) + 10);
+                m_boundingRect.setWidth(m_pix.rect().width() + stringwidth);
 	}
 	
 	m_boundingRect.setHeight(m_boundingRect.height() + 6);

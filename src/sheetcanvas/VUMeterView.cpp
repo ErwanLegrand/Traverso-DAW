@@ -25,6 +25,7 @@
 #include <QGradient>
 
 #include "AudioChannel.h"
+#include "Config.h"
 #include "Themer.h"
 #include "Mixer.h"
 #include <AudioDevice.h>
@@ -58,12 +59,13 @@ VUMeterView::VUMeterView(ViewItem* parent, Track* track)
         : ViewItem(parent)
 {
         load_theme_data();
-        m_orientation = Qt::Horizontal;
 
         for (int i = 0; i < 2; ++i) {
                 VUMeterLevelView* level = new VUMeterLevelView(this, track->get_vumonitors().at(i));
                 m_levels.append(level);
         }
+
+        update_orientation();
 
 //        add a ruler with tickmarks and labels
 //        ruler = new VUMeterRulerView(this);
@@ -81,8 +83,13 @@ void VUMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         PENTER3;
 
         painter->setPen(QColor(Qt::lightGray));
-        int center = qRound(m_boundingRect.width() / 2);
-        painter->drawLine(center, 0, center, int(m_boundingRect.height()));
+        if (m_orientation == Qt::Vertical) {
+                int center = qRound(m_boundingRect.width() / 2);
+                painter->drawLine(center, 0, center, int(m_boundingRect.height()));
+        } else {
+                int center = qRound(m_boundingRect.height() / 2) - 1;
+                painter->drawLine(0, center, int(m_boundingRect.width()), center);
+        }
 }
 
 void VUMeterView::calculate_bounding_rect()
@@ -96,7 +103,7 @@ void VUMeterView::set_bounding_rect(QRectF rect)
         int vertPos = 0;
         int horizontalPos = 0;
         foreach(VUMeterLevelView* level, m_levels) {
-                if (m_orientation == Qt::Horizontal) {
+                if (m_orientation == Qt::Vertical) {
                         level->set_bounding_rect(QRectF(0, 0, m_boundingRect.width() / m_levels.size(), m_boundingRect.height()));
                         level->setPos(horizontalPos, 0);
                         horizontalPos += level->boundingRect().width() + m_vulevelspacing;
@@ -108,6 +115,14 @@ void VUMeterView::set_bounding_rect(QRectF rect)
         }
 
 //        ruler->set_bounding_rect(rect);
+}
+
+void VUMeterView::update_orientation()
+{
+        m_orientation = (Qt::Orientation)config().get_property("TrackHeader", "VUOrientation", Qt::Vertical).toInt();
+        foreach(VUMeterLevelView* level, m_levels) {
+                level->set_orientation(m_orientation);
+        }
 }
 
 void VUMeterView::calculate_lut_data()
@@ -365,7 +380,6 @@ void VUMeterLevelView::resize_level_pixmap( )
                 m_gradient2D.setFinalStop(QPointF(0.0, m_boundingRect.height()));
         }
 
-        // WAS: 	painter.fillRect(0, 0, width(), height(), gradient2D);
         painter.fillRect(m_boundingRect, m_gradient2D);
         painter.end();
 
@@ -377,6 +391,12 @@ void VUMeterLevelView::resize_level_pixmap( )
         }
         painter.begin(&m_clearPixmap);
         painter.fillRect(m_boundingRect, m_levelClearColor);
+}
+
+void VUMeterLevelView::set_orientation(Qt::Orientation orientation)
+{
+        m_orientation = orientation;
+        m_levelPixmap = QPixmap();
 }
 
 void VUMeterLevelView::update_peak( )

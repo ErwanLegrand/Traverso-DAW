@@ -148,11 +148,9 @@ protected:
         TrackPanelBus*  	m_outBus;
 
         VUMeterView*            m_vuMeterView;
-        QTimer 		timer,
-                        phTimer;
 
 	void draw_panel_name(QPainter* painter);
-        virtual void layout_panel_items() = 0;
+        virtual void layout_panel_items();
 
 private slots:
 	void update_gain();

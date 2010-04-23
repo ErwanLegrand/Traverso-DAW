@@ -65,6 +65,7 @@ public:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
         void calculate_bounding_rect();
         void set_bounding_rect(QRectF rect);
+        void update_orientation();
 
         void reset();
 
@@ -77,7 +78,7 @@ private:
         QList<VUMeterLevelView*> m_levels;
         int			m_vulevelspacing;
         QBrush			m_widgetBgBrush;
-        int                     m_orientation;
+        Qt::Orientation         m_orientation;
 
         static void calculate_lut_data();
 
@@ -119,6 +120,7 @@ public:
 
         void calculate_bounding_rect();
         void set_bounding_rect(QRectF rect);
+        void set_orientation(Qt::Orientation orientation);
 
         void update_peak();
         void reset_peak_hold_value();
@@ -135,7 +137,7 @@ private:
         QLinearGradient	m_gradient2D;
         QColor		m_colOverLed;
 
-        int                     m_orientation;
+        Qt::Orientation         m_orientation;
         float			m_tailDeltaY;
         float			m_peak;
         float			m_rms;
