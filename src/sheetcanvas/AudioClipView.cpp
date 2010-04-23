@@ -231,6 +231,14 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 
         Peak* peak = m_clip->get_peak();
 
+        // clip away the outline which are painted again vertically
+        // in Qt 4.6.x, it doesn't happen in Qt 4.5.x
+        // FIXME: find out why?
+        if (xstart > 0) {
+                xstart -= 1;
+                pixelcount += 2;
+        }
+
         if (!peak) {
                 PERROR("No Peak object available for clip %s", QS_C(m_clip->get_name()));
                 return;
