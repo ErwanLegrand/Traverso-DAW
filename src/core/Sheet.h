@@ -167,7 +167,6 @@ private:
 	QTimer			m_skipTimer;
 	Project*		m_project;
 	WriteSource*		m_exportSource;
-	AudioBus*		m_playBackBus;
 	Client* 		m_audiodeviceClient;
 	AudioBus*		m_renderBus;
 	AudioBus*		m_clipRenderBus;
@@ -222,7 +221,7 @@ private:
 	void stop_transport_rolling();
 	void update_skip_positions();
 	
-	void resize_buffer(bool updateArmStatus, nframes_t size);
+        void resize_buffer(nframes_t size);
 
         AudioTrack* create_audio_track();
 	

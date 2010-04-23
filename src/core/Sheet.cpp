@@ -93,7 +93,7 @@ Sheet::Sheet(Project* project, int numtracks)
                 private_add_track(track);
 	}
 
-        resize_buffer(false, audiodevice().get_buffer_size());
+        resize_buffer(audiodevice().get_buffer_size());
 }
 
 Sheet::Sheet(Project* project, const QDomNode node)
@@ -164,7 +164,7 @@ void Sheet::init()
         m_renderBus = new AudioBus("Render Bus", 2, ChannelIsOutput);
         m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
         m_masterOut = new MasterOutSubGroup(this);
-        resize_buffer(false, audiodevice().get_buffer_size());
+        resize_buffer(audiodevice().get_buffer_size());
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
         m_snaplist = new SnapList(this);
@@ -488,7 +488,7 @@ int Sheet::prepare_export(ExportSpecification* spec)
 	
 	m_transportLocation = spec->startLocation;
 	
-	resize_buffer(false, spec->blocksize);
+        resize_buffer(spec->blocksize);
 	
 	renderDecodeBuffer = new DecodeBuffer;
 
@@ -498,7 +498,7 @@ int Sheet::prepare_export(ExportSpecification* spec)
 int Sheet::finish_audio_export()
 {
         delete renderDecodeBuffer;
-        resize_buffer(false, audiodevice().get_buffer_size());
+        resize_buffer(audiodevice().get_buffer_size());
         m_rendering = false;
         return 0;
 }
@@ -929,7 +929,7 @@ int Sheet::process_export( nframes_t nframes )
 }
 
 
-void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
+void Sheet::resize_buffer(nframes_t size)
 {
 	if (mixdown)
 		delete [] mixdown;
@@ -948,20 +948,11 @@ void Sheet::resize_buffer(bool updateArmStatus, nframes_t size)
                         }
                 }
         }
-
-	if (updateArmStatus) {
-                apill_foreach(AudioTrack* track, AudioTrack, m_audioTracks) {
-                        AudioBus* bus = audiodevice().get_capture_bus(track->get_bus_in_name());
-			if (bus && track->armed()) {
-				bus->set_monitor_peaks(true);
-			}
-		}
-	}
 }
 
 void Sheet::audiodevice_params_changed()
 {
-	resize_buffer(true, audiodevice().get_buffer_size());
+        resize_buffer(audiodevice().get_buffer_size());
 	
 	// The samplerate possibly has been changed, this initiates
 	// a seek in DiskIO, which clears the buffers and refills them
