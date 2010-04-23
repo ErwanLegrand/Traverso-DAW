@@ -119,7 +119,7 @@ void VUMeterView::set_bounding_rect(QRectF rect)
 
 void VUMeterView::update_orientation()
 {
-        m_orientation = (Qt::Orientation)config().get_property("TrackHeader", "VUOrientation", Qt::Vertical).toInt();
+        m_orientation = (Qt::Orientation)config().get_property("Themer", "VUOrientation", Qt::Vertical).toInt();
         foreach(VUMeterLevelView* level, m_levels) {
                 level->set_orientation(m_orientation);
         }

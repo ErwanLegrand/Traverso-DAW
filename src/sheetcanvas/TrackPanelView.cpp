@@ -115,6 +115,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
         connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 
+        connect(themer(), SIGNAL(themeLoaded()), this, SLOT(theme_config_changed()));
+
         setCursor(themer()->get_cursor("Track"));
 }
 
@@ -213,7 +215,7 @@ void TrackPanelView::layout_panel_items()
         int height =  m_track->get_height();
         int adjust = 0;
 
-        Qt::Orientation orientation = (Qt::Orientation)config().get_property("TrackHeader", "VUOrientation", Qt::Vertical).toInt();
+        Qt::Orientation orientation = (Qt::Orientation)config().get_property("Themer", "VUOrientation", Qt::Vertical).toInt();
         if (orientation == Qt::Vertical) {
                 m_vuMeterView->set_bounding_rect(QRectF(0, 0, VU_WIDTH, height - 4));
                 m_vuMeterView->setPos(m_boundingRect.width() - VU_WIDTH - 5, 2);
@@ -258,6 +260,11 @@ void TrackPanelView::layout_panel_items()
 
 }
 
+void TrackPanelView::theme_config_changed()
+{
+        m_vuMeterView->update_orientation();
+        layout_panel_items();
+}
 
 
 

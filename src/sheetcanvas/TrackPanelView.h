@@ -153,9 +153,10 @@ protected:
         virtual void layout_panel_items();
 
 private slots:
-	void update_gain();
+        void update_gain();
 	void update_pan();
         void update_name();
+        void theme_config_changed();
         void active_context_changed() {update();}
 };
 
