@@ -134,11 +134,6 @@ void AudioChannel::private_remove_monitor(VUMonitor *monitor)
         }
 }
 
-/**
- * Adds the client into the audio processing chain in a Thread Save way
-
- * WARNING: This function assumes the Clients callback function is set to an existing objects function!
- */
 void AudioChannel::add_monitor(VUMonitor *monitor)
 {
         THREAD_SAVE_INVOKE(this, monitor, private_add_monitor(VUMonitor*));

@@ -198,6 +198,8 @@ void ProcessingData::rescan_buses()
         // What if the bus no longer exists? What about
         // signalling something here so the GUI can mark
         // it's in/out bus indicators somehow?
+        m_inputBus = 0;
+        m_outputBus = 0;
         set_input_bus(m_busInName);
         set_output_bus(m_busOutName);
 }

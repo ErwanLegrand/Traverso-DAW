@@ -62,6 +62,8 @@ public :
         int disarm();
         int process(nframes_t nframes);
 
+protected:
+        void set_input_bus(AudioBus* bus);
 
 private :
         APILinkedList 	m_clips;

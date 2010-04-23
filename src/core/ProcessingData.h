@@ -82,9 +82,9 @@ protected:
         float           m_pan;
 
         void send_to_output_buses(nframes_t nframes, bool applyFaderGain=false);
+        virtual void set_input_bus(AudioBus* bus);
 
 private:
-        void set_input_bus(AudioBus* bus);
         void set_output_bus(AudioBus* bus);
 
 

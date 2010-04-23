@@ -38,6 +38,13 @@ Track::Track(Sheet *sheet)
         }
 }
 
+Track::~Track()
+{
+        for (int i=0; i<2; ++i) {
+                delete m_vumonitors.at(i);
+        }
+}
+
 
 void Track::get_state( QDomElement& node, bool istemplate)
 {

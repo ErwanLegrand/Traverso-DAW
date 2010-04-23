@@ -117,7 +117,7 @@ int AudioTrack::set_state( const QDomNode & node )
 
         Track::set_state(node);
 
-        set_input_bus(e.attribute( "InputBus", "Capture 1"));
+        ProcessingData::set_input_bus(e.attribute( "InputBus", "Capture 1"));
         set_output_bus(e.attribute( "OutputBus", tr("Master Out")));
         m_numtakes = e.attribute( "numtakes", "").toInt();
 
@@ -238,6 +238,20 @@ void AudioTrack::set_armed( bool armed )
         emit armedChanged(m_isArmed);
 }
 
+void AudioTrack::set_input_bus(AudioBus *bus)
+{
+        if (m_inputBus && m_isArmed) {
+                for (int i=0; i<m_inputBus->get_channel_count(); i++) {
+                        m_inputBus->get_channel(i)->remove_monitor(m_vumonitors.at(i));
+                }
+        }
+        if (m_isArmed) {
+                for (int i=0; i<bus->get_channel_count(); i++) {
+                        bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
+                }
+        }
+        ProcessingData::set_input_bus(bus);
+}
 
 //
 //  Function called in RealTime AudioThread processing path

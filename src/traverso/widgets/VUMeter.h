@@ -166,6 +166,7 @@ class VUMeterLevel : public QWidget
 	
 public:
         VUMeterLevel(QWidget* parent, AudioChannel* chan);
+        ~VUMeterLevel();
 	
 	void reset();
 

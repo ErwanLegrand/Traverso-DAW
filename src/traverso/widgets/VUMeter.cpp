@@ -508,6 +508,12 @@ VUMeterLevel::VUMeterLevel(QWidget* parent, AudioChannel* chan)
 	}
 }
 
+VUMeterLevel::~VUMeterLevel()
+{
+        // FIXME crashes when loading a project!
+//        delete m_monitor;
+}
+
 void VUMeterLevel::paintEvent( QPaintEvent*  )
 {
         PENTER4;

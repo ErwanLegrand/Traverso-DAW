@@ -33,7 +33,7 @@ class Track : public ProcessingData
 
 public:
         Track (Sheet* sheet=0);
-        virtual ~Track () {}
+        virtual ~Track ();
 
         enum {
                 AUDIOTRACK = 0,
