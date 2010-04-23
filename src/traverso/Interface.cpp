@@ -220,14 +220,12 @@ Interface::Interface()
                 this, SLOT(track_finder_model_index_changed(const QModelIndex&)));
         connect(m_trackFinder, SIGNAL(returnPressed()), this, SLOT(track_finder_return_pressed()));
 
-        QTreeView *treeView = new QTreeView;
-        treeView->setMinimumWidth(300);
-        m_trackFinderCompleter->setPopup(treeView);
-        treeView->setRootIsDecorated(false);
-        treeView->header()->hide();
-        treeView->header()->setStretchLastSection(false);
-        treeView->header()->setResizeMode(0, QHeaderView::Stretch);
-        treeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+        m_trackFinderTreeView = new QTreeView;
+        m_trackFinderTreeView->setMinimumWidth(250);
+        m_trackFinderCompleter->setPopup(m_trackFinderTreeView);
+        m_trackFinderTreeView->setRootIsDecorated(false);
+        m_trackFinderTreeView->header()->hide();
+        m_trackFinderTreeView->header()->setStretchLastSection(false);
 
 
 	// Some default values.
@@ -1842,6 +1840,9 @@ Command* Interface::show_track_finder()
                         m_trackFinderModel->appendRow(items);
                 }
         }
+
+        m_trackFinderTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
+        m_trackFinderTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
 
         m_trackFinder->setFocus();
 

@@ -49,6 +49,7 @@ class QDockWidget;
 class QToolBar;
 class QToolButton;
 class QCompleter;
+class QTreeView;
 class QLineEdit;
 class QStandardItemModel;
 
@@ -183,6 +184,7 @@ private:
         QLineEdit*              m_trackFinder;
         QCompleter*             m_trackFinderCompleter;
         QStandardItemModel*     m_trackFinderModel;
+        QTreeView*              m_trackFinderTreeView;
 
         QList<AbstractVUMeterLevel*> m_vuLevels;
         QTimer                  m_vuLevelUpdateTimer;
