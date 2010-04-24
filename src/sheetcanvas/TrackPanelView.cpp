@@ -527,7 +527,7 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
 		
 		painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
-		painter->setPen(themer()->get_color("TrackPanel:led:font:active"));
+                painter->setPen(themer()->get_color("TrackPanel:led:font:active"));
 		
                 QString shortString = m_name.left(1).toUpper();
                 painter->drawText(m_boundingRect, Qt::AlignCenter, shortString);

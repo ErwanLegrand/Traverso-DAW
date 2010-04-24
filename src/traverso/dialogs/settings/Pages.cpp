@@ -569,7 +569,7 @@ void AppearenceConfigPage::theme_index_changed(const QString & theme)
 	if (data == "builtintheme") {
 		themer()->use_builtin_theme(theme);
 	} else {
-		themer()->set_path_and_theme(path, theme);
+                themer()->set_path_and_theme(path, theme + ".xml");
 	}
 }
 
@@ -611,10 +611,11 @@ void AppearenceConfigPage::update_theme_combobox(const QString& path)
 	}
 	
 	QDir themedir(path);
-	foreach (QString dirName, themedir.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
-		QString filename = path + "/" + dirName + "/" + "traversotheme.xml";
-		if (QFile::exists(filename) ) {
-			themeSelecterCombo->insertItem(0, dirName);
+        foreach (QString themeName, themedir.entryList(QDir::Files)) {
+                themeName = themeName.remove(".xml");
+                QString filename = path + "/" + themeName;
+                if (QFile::exists(filename + ".xml") ) {
+                        themeSelecterCombo->insertItem(0, themeName);
 		}
 	}
 	

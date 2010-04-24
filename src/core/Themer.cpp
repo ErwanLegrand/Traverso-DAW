@@ -98,7 +98,7 @@ Themer::Themer()
 		themepath = ":/themes";
 	}
 	
-	m_themefile =  themepath + "/" + m_currentTheme + "/traversotheme.xml";
+        m_themefile =  themepath + "/" + m_currentTheme;
 	m_coloradjust = -1;
 	
 	bool usestylepallete = config().get_property("Themer", "usestylepallet", "false").toBool();
@@ -154,7 +154,7 @@ void Themer::load( )
  	
  	if ( ! file.exists() ) {
 		printf("File %s doesn't exit, falling back to default (TraversoLight) theme\n", QS_C(m_themefile));
-		file.setFileName(":/themes/TraversoLight/traversotheme.xml");
+                file.setFileName(":/themes/TraversoLight");
 	} else {
 		if (!m_themefile.contains(":/")) {
 	 		m_watcher->addPath(m_themefile);
@@ -386,7 +386,7 @@ void Themer::set_path_and_theme(const QString& path, const QString& theme)
 		return;
 	}
 	m_currentTheme = theme;
-	m_themefile = path + "/" + theme + "/traversotheme.xml";
+        m_themefile = path + "/" + theme;
 	reload_on_themefile_change("");
 }
 
@@ -399,7 +399,10 @@ void Themer::set_color_adjust_value(int value)
 QStringList Themer::get_builtin_themes()
 {
 	QStringList list;
-        list << "system-palette" << "medium-contrast" << "gradients" << "ubuntu" << "TraversoLight" << "oop" << "parchment";
+        QDir themesdir(":/themes");
+        foreach (const QString &fileName, themesdir.entryList(QDir::Files)) {
+                list << fileName;
+        }
 	return list;
 }
 
@@ -410,7 +413,7 @@ void Themer::use_builtin_theme(const QString & theme)
 	}
 	
 	m_currentTheme = theme;
-	m_themefile = QString(":/themes/") + theme + "/traversotheme.xml";;
+        m_themefile = QString(":/themes/") + theme;
 	reload_on_themefile_change("");
 }
 
@@ -521,8 +524,9 @@ QColor Themer::get_default_color(const QString & name)
                 if (name == "Track:mousehover") c = p.color((QPalette::Highlight));
 		
 		if (name == "TrackPanel:background") c = p.color(QPalette::Window);
-		if (name == "TrackPanel:text") c = p.color(QPalette::WindowText);
-		if (name == "TrackPanel:slider:background") c = p.color(QPalette::Button);
+                if (name == "TrackPanel:text") c = p.color(QPalette::WindowText);
+                if (name == "TrackPanel:sliderborder") c = p.color(QPalette::WindowText);
+                if (name == "TrackPanel:slider:background") c = p.color(QPalette::Button);
 		if (name == "TrackPanel:head:active") c = p.color(QPalette::Highlight);
 		if (name == "TrackPanel:head:inactive") c = p.color(QPalette::Highlight);
 		if (name == "TrackPanel:muteled") c = Qt::yellow;
