@@ -145,7 +145,6 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 
         if (m_trackView->is_moving() || m_track->has_active_context()) {
                 QColor color = themer()->get_color("Track:mousehover");
-                color.setAlpha(30);
                 painter->fillRect(boundingRect(), color);
         }
 
@@ -405,16 +404,18 @@ void TrackPanelGain::set_width(int width)
 
         float zeroDB = 1.0 - 100.0/115.0;  // 0 dB position
         float msixDB = 1.0 -  80.0/115.0;  // -6 dB position
-        float smooth = 0.05;
+        float smooth = themer()->get_property("GainSlider:smoothfactor", 0.05).toDouble();
 
-        m_gradient2D.setColorAt(0.0,           themer()->get_color("VUMeter:foreground:6db"));
-        m_gradient2D.setColorAt(zeroDB-smooth, themer()->get_color("VUMeter:foreground:6db"));
-//        m_gradient2D.setColorAt(zeroDB+smooth, themer()->get_color("VUMeter:foreground:0db"));
-//        m_gradient2D.setColorAt(msixDB-smooth, themer()->get_color("VUMeter:foreground:0db"));
-        m_gradient2D.setColorAt(msixDB+smooth, themer()->get_color("VUMeter:foreground:-6db"));
-        m_gradient2D.setColorAt(1.0,           themer()->get_color("VUMeter:foreground:-60db"));
+        m_gradient2D.setColorAt(0.0,           themer()->get_color("GainSlider:6db"));
+        m_gradient2D.setColorAt(zeroDB-smooth, themer()->get_color("GainSlider:6db"));
+        m_gradient2D.setColorAt(zeroDB+smooth, themer()->get_color("GainSlider:0db"));
+        m_gradient2D.setColorAt(msixDB-smooth, themer()->get_color("GainSlider:0db"));
+        m_gradient2D.setColorAt(msixDB+smooth, themer()->get_color("GainSlider:-6db"));
+        m_gradient2D.setColorAt(1.0,           themer()->get_color("GainSlider:-60db"));
+
 
         m_gradient2D.setStart(QPointF(m_boundingRect.width() - 50, 0));
+        m_gradient2D.setFinalStop(31, 0);
 
 }
 

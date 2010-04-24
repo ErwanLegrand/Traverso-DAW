@@ -9,6 +9,9 @@
 		<property name="AudioClip:fillwave" value="1" />
 		
 		<property name="CurveNode:diameter" value="6" />
+
+                <property name="GainSlider:smoothfactor" value="0.05" />
+
 		
                 <property name="Sheet:track:seperatingheight" value="0" />
                 <property name="Sheet:track:minimumheight" value="20" />
@@ -105,6 +108,11 @@
 		<color name="FFTMeter:tickmarks:main" red="0" green="0" blue="0" alpha="255" />
 		<color name="FFTMeter:tickmarks:sub" red="100" green="100" blue="100" alpha="255" />
 		<color name="FFTMeter:text" red="0" green="0" blue="0" alpha="255" />
+
+                <color name="GainSlider:6db" red="255" green="0" blue="0" alpha="255" />
+                <color name="GainSlider:0db" red="255" green="255" blue="0" alpha="255" />
+                <color name="GainSlider:-6db" red="0" green="255" blue="0" alpha="255" />
+                <color name="GainSlider:-60db" red="0" green="255" blue="255" alpha="255" />
 		
 		<color name="VUMeter:background:widget" red="255" green="255" blue="255" alpha="255" />
 		<color name="VUMeter:background:bar" red="0" green="0" blue="0" alpha="255" />
