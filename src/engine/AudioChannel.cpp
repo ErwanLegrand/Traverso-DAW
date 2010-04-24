@@ -152,6 +152,10 @@ void AudioChannel::remove_monitor(VUMonitor *monitor)
  */
 audio_sample_t VUMonitor::get_peak_value( )
 {
+        if (m_flag) {
+                return 0.0;
+        }
+
         float result = m_peak;
         m_flag = 1;
 
