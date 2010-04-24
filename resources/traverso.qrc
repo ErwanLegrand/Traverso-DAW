@@ -24,6 +24,8 @@
         <file alias="themes/medium-contrast/traversotheme.xml">themes/medium-contrast/traversotheme.xml</file>
         <file alias="themes/system-palette/traversotheme.xml">themes/system-palette/traversotheme.xml</file>
         <file alias="themes/gradients/traversotheme.xml">themes/gradients/traversotheme.xml</file>
+        <file alias="themes/oop/traversotheme.xml">themes/oop/traversotheme.xml</file>
+        <file alias="themes/parchment/traversotheme.xml">themes/parchment/traversotheme.xml</file>
         <file alias="bus_in">images/bus-in.xpm</file>
         <file alias="bus_out">images/bus-out.xpm</file>
         <file alias="audiocard">images/soundcard.png</file>
