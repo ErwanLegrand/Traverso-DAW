@@ -386,16 +386,19 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:gain"));
         painter->drawText(0, height + 1, "Gain");
-	painter->drawRect(30, 0, sliderWidth, height);
 	
 	QColor color(cr,0,cb);
         if (has_active_context()) {
 		color = color.light(140);
 	}
+
         painter->fillRect(31, 1, sliderdbx, height-1, m_gradient2D);
 	painter->drawText(sliderWidth + 35, height, sgain);
 	
-	painter->restore();
+        painter->setPen(themer()->get_color("TrackPanel:sliderborder"));
+        painter->drawRect(30, 0, sliderWidth, height);
+
+        painter->restore();
 }
 
 void TrackPanelGain::set_width(int width)
@@ -414,7 +417,7 @@ void TrackPanelGain::set_width(int width)
         m_gradient2D.setColorAt(1.0,           themer()->get_color("GainSlider:-60db"));
 
 
-        m_gradient2D.setStart(QPointF(m_boundingRect.width() - 50, 0));
+        m_gradient2D.setStart(QPointF(m_boundingRect.width() - 40, 0));
         m_gradient2D.setFinalStop(31, 0);
 
 }
@@ -461,7 +464,6 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	span = QByteArray::number(v,'f',1);
 	s = ( v > 0 ? QString("+") + span :  span );
 	painter->fillRect(30, 0, sliderWidth, PAN_H, color);
-	painter->drawRect(30, 0, sliderWidth, PAN_H);
 	int pm= 31 + sliderWidth/2;
 	int z = abs((int)(v*(sliderWidth/2)));
 	int c = abs((int)(255*v));
@@ -471,6 +473,9 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 		painter->fillRect(pm-z, 1, z, PAN_H-1, QColor(c,0,0));
 	}
 	painter->drawText(30 + sliderWidth + 10, PAN_H + 1, s);
+
+        painter->setPen(themer()->get_color("TrackPanel:sliderborder"));
+        painter->drawRect(30, 0, sliderWidth, PAN_H);
 }
 
 void TrackPanelPan::set_width(int width)
