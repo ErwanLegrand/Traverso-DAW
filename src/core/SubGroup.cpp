@@ -91,6 +91,19 @@ int SubGroup::process(nframes_t nframes)
 
         m_pluginChain->process_post_fader(m_processBus, nframes);
 
+        float panFactor;
+
+        if ( (m_processBus->get_channel_count() >= 1) && (m_pan > 0) )  {
+                panFactor = 1 - m_pan;
+                Mixer::apply_gain_to_buffer(m_processBus->get_buffer(0, nframes), nframes, panFactor);
+        }
+
+        if ( (m_processBus->get_channel_count() >= 2) && (m_pan < 0) )  {
+                panFactor = 1 + m_pan;
+                Mixer::apply_gain_to_buffer(m_processBus->get_buffer(1, nframes), nframes, panFactor);
+        }
+
+
 //        if (m_processBus->is_monitoring_peaks()) {
                 m_processBus->monitor_peaks(m_vumonitors);
 //        }

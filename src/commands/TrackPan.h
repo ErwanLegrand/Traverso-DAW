@@ -25,7 +25,7 @@
 #include "Command.h"
 
 class Sheet;
-class AudioTrack;
+class Track;
 
 class TrackPan : public Command
 {
@@ -34,7 +34,7 @@ class TrackPan : public Command
 	Q_CLASSINFO("pan_right", tr("To Right"));
 
 public :
-	TrackPan(AudioTrack* track, QVariantList args);
+        TrackPan(Track* track, QVariantList args);
 
         int begin_hold();
         int finish_hold();
@@ -56,7 +56,7 @@ private :
 	
 	float m_origPan;
 	float m_newPan;
-	AudioTrack* m_track;
+        Track* m_track;
 	
 public slots:
 	void pan_left(bool autorepeat);
