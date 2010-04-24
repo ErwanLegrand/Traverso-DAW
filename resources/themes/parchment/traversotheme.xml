@@ -70,10 +70,10 @@
 		<color name="AudioClip:background:muted"  red="245" green="245" blue="245"  alpha="120" />
 		<color name="AudioClip:background:recording"  red="255" green="255" blue="255"  alpha="170" />
 		<color name="AudioClip:background:muted:mousehover"  red="235" green="235" blue="235"  alpha="170" />
-		<color name="AudioClip:background:selected"  red="101" green="111" blue="171"  alpha="150" />
+		<color name="AudioClip:background:selected"  red="81" green="91" blue="121"  alpha="150" />
 		<color name="AudioClip:background:selected:mousehover"  red="111" green="121" blue="182"  alpha="150" />
 		<color name="AudioClip:background"  red="181" green="205" blue="201"  alpha="80" />
-		<color name="AudioClip:background:mousehover"  red="225" green="223" blue="235"  alpha="200" />
+		<color name="AudioClip:background:mousehover"  red="125" green="123" blue="135"  alpha="200" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
 		<color name="AudioClip:contour"  red="80" green="80" blue="80"  alpha="255" />
@@ -91,7 +91,7 @@
 		<color name="CurveNode:blink" red="120" green="120" blue="220" alpha="220" />
 		
 		<color name="Fade:default" red="180" green="200" blue="210" alpha="100" />
-		<color name="Fade:bypassed" red="255" green="0" blue="255" alpha="40" />
+		<color name="Fade:bypassed" red="255" green="0" blue="255" alpha="140" />
 		
 		<color name="CorrelationMeter:margin" red="246" green="246" blue="255" alpha="255" />
 		<color name="CorrelationMeter:background" red="241" green="250" blue="255" alpha="255" />
@@ -168,8 +168,8 @@
 		<color name="TrackPanel:led:font:inactive" red="230" green="230" blue="230" alpha="255" />
 
 
-                <color name="SubGroup:background" red="150" green="150" blue="251" alpha="100" />
-                <color name="SubGroupPanel:background" red="0" green="0" blue="248" alpha="255" />
+                <color name="SubGroup:background" red="50" green="50" blue="45" alpha="100" />
+                <color name="SubGroupPanel:background" red="0" green="10" blue="28" alpha="255" />
 
 		<color name="TrackPanel:bus:font" red="255" green="255" blue="255" alpha="255" />
 		<color name="TrackPanel:bus:background" red="35" green="70" blue="80" alpha="255" />
