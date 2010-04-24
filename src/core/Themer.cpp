@@ -399,7 +399,7 @@ void Themer::set_color_adjust_value(int value)
 QStringList Themer::get_builtin_themes()
 {
 	QStringList list;
-	list << "system-palette" << "medium-contrast" << "gradients" << "ubuntu" << "TraversoLight";
+        list << "system-palette" << "medium-contrast" << "gradients" << "ubuntu" << "TraversoLight" << "oop" << "parchment";
 	return list;
 }
 
