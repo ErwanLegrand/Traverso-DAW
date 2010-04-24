@@ -28,7 +28,7 @@ $Id: Tsar.cpp,v 1.4 2008/02/11 10:11:52 r_sijrier Exp $
 #include <QMessageBox>
 #include <QCoreApplication>
 #include <QThread>
-		
+#include <QTimerEvent>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

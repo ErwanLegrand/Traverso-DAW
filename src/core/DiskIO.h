@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QMutex>
 #include <QList>
-#include <QTimer>
 #include <QPair>
 
 #include "defines.h"
@@ -83,7 +82,6 @@ private:
 	QList<QPair<BufferStatus*, ReadSource*> > m_readersStatus;
 	QList<QPair<int, WriteSource*> > m_writersStatus;
 	DiskIOThread*		m_diskThread;
-	QTimer			m_workTimer;
 	QMutex			mutex;
 	volatile int		m_readBufferFillStatus;
 	volatile int		m_writeBufferFillStatus;
@@ -103,7 +101,8 @@ private:
 	
 	void update_time_usage();
 	
-	int stop();
+        void do_work();
+        int stop();
 	int there_are_processable_sources();
 
 	friend class DiskIOThread;
@@ -112,9 +111,6 @@ public slots:
 	void seek();
 	void start_io();
 	void stop_io();
-	
-private slots:
-	void do_work();
 
 signals:
 	void seekFinished();
