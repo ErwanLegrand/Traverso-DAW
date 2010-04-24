@@ -71,7 +71,7 @@ Tsar::Tsar()
 	m_threadId = QThread::currentThreadId ();
 #endif
 
-        m_timer.start(20, this);
+        m_timer.start(40, this);
 }
 
 Tsar::~ Tsar( )
