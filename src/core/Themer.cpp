@@ -470,6 +470,12 @@ QColor Themer::get_default_color(const QString & name)
 		if (name == "CorrelationMeter:centerline") c = p.color(QPalette::Highlight);
 		if (name == "CorrelationMeter:text") c = p.color(QPalette::WindowText);
 		
+
+                if (name == "GainSlider:6db") c = Qt::red;
+                if (name == "GainSlider:0db") c = Qt::yellow;
+                if (name == "GainSlider:-6db") c = Qt::green;
+                if (name == "GainSlider:-60db") c = Qt::blue;
+
 		if (name == "FFTMeter:margin") c = p.color(QPalette::Window);
 		if (name == "FFTMeter:background") c = p.color(QPalette::Base);
 		if (name == "FFTMeter:grid") c = p.color(QPalette::Dark);
