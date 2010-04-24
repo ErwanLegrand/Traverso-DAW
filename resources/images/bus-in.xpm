@@ -1,18 +1,14 @@
 /* XPM */
-static char *bus-in[] = {
-/* columns rows colors chars-per-pixel */
-"13 9 3 1",
-"  c black",
-". c red",
-"X c gray100",
-/* pixels */
-"XXXXX        ",
-"XXXXX ...... ",
-"XXXXX . .... ",
-"XXXXXX..  .. ",
-"           . ",
-"XXXXXX..  .. ",
-"XXXXX . .... ",
-"XXXXX ...... ",
-"XXXXX        "
-};
+static char * bus_in_xpm[] = {
+"13 9 2 1",
+" 	c None",
+".	c #000000",
+"             ",
+"       .     ",
+"       ...   ",
+"       ..... ",
+".............",
+"       ..... ",
+"       ...   ",
+"       .     ",
+"             "};

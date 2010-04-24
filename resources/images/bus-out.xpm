@@ -1,18 +1,14 @@
 /* XPM */
-static char *bus-out[] = {
-/* columns rows colors chars-per-pixel */
-"13 9 3 1",
-"  c black",
-". c green",
-"X c gray100",
-/* pixels */
-"        XXXXX",
-" ...... XXXXX",
-" ...... X XXX",
-" ......XXX  X",
-" ..          ",
-" ......XXX  X",
-" ...... X XXX",
-" ...... XXXXX",
-"        XXXXX"
-};
+static char * bus_out_xpm[] = {
+"13 9 2 1",
+" 	c None",
+".	c #000000",
+"             ",
+"        .    ",
+"        ..   ",
+"        .... ",
+" ............",
+"        .... ",
+"        ..   ",
+"        .    ",
+"             "};
