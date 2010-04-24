@@ -81,9 +81,8 @@ const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 #include "Debugger.h"
 
 
-#define UPDATE_INTERVAL		40
+#define UPDATE_INTERVAL		20
 
-#include <QTimerEvent>
 
 // DiskIOThread is a private class to be used by
 // DiskIO only for processing read/write buffers
@@ -94,8 +93,7 @@ public:
 	DiskIOThread(DiskIO* diskio)
 	: QThread(diskio),
 	  m_diskio(diskio)
-	{
-                m_timer.start(UPDATE_INTERVAL, this);
+        {
 #ifndef Q_WS_MAC
 // 		setStackSize(20000);
 #endif
@@ -126,19 +124,8 @@ protected:
 		}
 	}
 #endif
-		exec();
-	}
-
-protected:
-        void timerEvent(QTimerEvent * event) {
-                if (event->timerId() == m_timer.timerId()) {
-                        m_diskio->do_work();
-                }
+                exec();
         }
-
-private:
-        QBasicTimer m_timer;
-
 };
 
 /************** END DISKIO THREAD ************/
@@ -168,6 +155,12 @@ DiskIO::DiskIO(Sheet* sheet)
 	
 	m_decodebuffer = new DecodeBuffer;
 	m_resampleDecodeBuffer = new DecodeBuffer;
+
+        // Move this instance to the workthread
+        moveToThread(m_diskThread);
+        m_workTimer.moveToThread(m_diskThread);
+
+        connect(&m_workTimer, SIGNAL(timeout()), this, SLOT(do_work()));
 
         m_diskThread->start();
 }
@@ -524,7 +517,7 @@ int DiskIO::get_read_buffers_fill_status( )
 void DiskIO::start_io( )
 {
 //	Q_ASSERT_X(m_sheet->threadId != QThread::currentThreadId (), "DiskIO::start_io", "Error, running in gui thread!!!!!");
-//        m_workTimer.start(UPDATE_INTERVAL);
+        m_workTimer.start(UPDATE_INTERVAL);
 }
 
 void DiskIO::stop_io( )
