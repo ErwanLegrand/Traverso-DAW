@@ -154,7 +154,7 @@
 		
 		<color name="TrackPanel:background" red="248" green="248" blue="248" alpha="255" />
                 <color name="TrackPanel:text" red="0" green="0" blue="25" alpha="255" />
-                <color name="TrackPanel:sliderborder" red="0" green="0" blue="255" alpha="255" />
+                <color name="TrackPanel:slider:border" red="100" green="100" blue="100" alpha="255" />
                 <color name="TrackPanel:slider:background" red="200" green="200" blue="240" alpha="255" />
 		<color name="TrackPanel:head:active" red="240" green="140" blue="150" alpha="255" />
 		<color name="TrackPanel:head:inactive" red="255" green="180" blue="190" alpha="255" />

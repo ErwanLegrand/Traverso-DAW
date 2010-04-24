@@ -263,6 +263,12 @@ void TrackPanelView::theme_config_changed()
 {
         m_vuMeterView->update_orientation();
         layout_panel_items();
+        m_gainView->load_theme_data();
+        m_panView->update();
+        m_soloLed->update();
+        m_muteLed->update();
+        m_inBus->update();
+        m_outBus->update();
 }
 
 
@@ -395,7 +401,7 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
         painter->fillRect(31, 1, sliderdbx, height-1, m_gradient2D);
 	painter->drawText(sliderWidth + 35, height, sgain);
 	
-        painter->setPen(themer()->get_color("TrackPanel:sliderborder"));
+        painter->setPen(themer()->get_color("TrackPanel:slider:border"));
         painter->drawRect(30, 0, sliderWidth, height);
 
         painter->restore();
@@ -404,7 +410,11 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 void TrackPanelGain::set_width(int width)
 {
 	m_boundingRect = QRectF(0, 0, width, 9);
+        load_theme_data();
+}
 
+void TrackPanelGain::load_theme_data()
+{
         float zeroDB = 1.0 - 100.0/115.0;  // 0 dB position
         float msixDB = 1.0 -  80.0/115.0;  // -6 dB position
         float smooth = themer()->get_property("GainSlider:smoothfactor", 0.05).toDouble();
@@ -474,7 +484,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	}
 	painter->drawText(30 + sliderWidth + 10, PAN_H + 1, s);
 
-        painter->setPen(themer()->get_color("TrackPanel:sliderborder"));
+        painter->setPen(themer()->get_color("TrackPanel:slider:border"));
         painter->drawRect(30, 0, sliderWidth, PAN_H);
 }
 
