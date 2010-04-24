@@ -52,6 +52,7 @@ public slots:
 	
 private:
         Track* m_track;
+        QLinearGradient	m_gradient2D;
 };
 
 class TrackPanelPan : public ViewItem

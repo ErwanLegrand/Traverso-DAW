@@ -393,7 +393,7 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
         if (has_active_context()) {
 		color = color.light(140);
 	}
-	painter->fillRect(31, 1, sliderdbx, height-1, color);
+        painter->fillRect(31, 1, sliderdbx, height-1, m_gradient2D);
 	painter->drawText(sliderWidth + 35, height, sgain);
 	
 	painter->restore();
@@ -402,6 +402,20 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 void TrackPanelGain::set_width(int width)
 {
 	m_boundingRect = QRectF(0, 0, width, 9);
+
+        float zeroDB = 1.0 - 100.0/115.0;  // 0 dB position
+        float msixDB = 1.0 -  80.0/115.0;  // -6 dB position
+        float smooth = 0.05;
+
+        m_gradient2D.setColorAt(0.0,           themer()->get_color("VUMeter:foreground:6db"));
+        m_gradient2D.setColorAt(zeroDB-smooth, themer()->get_color("VUMeter:foreground:6db"));
+//        m_gradient2D.setColorAt(zeroDB+smooth, themer()->get_color("VUMeter:foreground:0db"));
+//        m_gradient2D.setColorAt(msixDB-smooth, themer()->get_color("VUMeter:foreground:0db"));
+        m_gradient2D.setColorAt(msixDB+smooth, themer()->get_color("VUMeter:foreground:-6db"));
+        m_gradient2D.setColorAt(1.0,           themer()->get_color("VUMeter:foreground:-60db"));
+
+        m_gradient2D.setStart(QPointF(m_boundingRect.width() - 50, 0));
+
 }
 
 Command* TrackPanelGain::gain_increment()
@@ -582,9 +596,14 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
 	painter->setPen(themer()->get_color("TrackPanel:bus:font"));
 	
-        painter->drawText(m_boundingRect.adjusted(15, 0, 0, 0), Qt::AlignCenter, m_busName);
 			
-	painter->drawPixmap(3, 3, m_pix);
+        if (m_type == BUSIN) {
+                painter->drawPixmap(3, 3, m_pix);
+                painter->drawText(m_boundingRect.adjusted(15, 0, 0, 0), Qt::AlignCenter, m_busName);
+        } else {
+                painter->drawPixmap(m_boundingRect.width() - (m_pix.width() + 3), 3, m_pix);
+                painter->drawText(m_boundingRect.adjusted(3, 0, 0, 0), Qt::AlignVCenter, m_busName);
+        }
 	
 	painter->restore();
 }
