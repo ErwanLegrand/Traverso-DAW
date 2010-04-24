@@ -36,24 +36,28 @@ class VUMonitor : public APILinkedListNode
 {
 public:
         VUMonitor() {
-                m_peaks = new RingBuffer(150);
-                m_peaks->reset();
-        };
-        ~VUMonitor() {
-                delete m_peaks;
-        };
+                m_flag = 0;
+        }
+        ~VUMonitor() {}
 
         bool is_smaller_then(APILinkedListNode* /*node*/) {return true;}
 
-        void write_peak(float peakValue) {
-                m_peaks->write( (char*)&peakValue, 1 * sizeof(audio_sample_t));
+        void process(float peakValue) {
+                if (m_flag) {
+                        m_peak = 0.0f;
+                        m_flag = 0;
+                }
+
+                if (peakValue > m_peak) {
+                        m_peak = peakValue;
+                }
         }
 
         audio_sample_t get_peak_value();
 
 private:
-        RingBuffer*     m_peaks;
-
+        int    m_flag;
+        audio_sample_t m_peak;
 };
 
 class AudioChannel : public QObject

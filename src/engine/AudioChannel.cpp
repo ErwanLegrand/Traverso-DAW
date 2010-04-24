@@ -108,11 +108,11 @@ void AudioChannel::monitor_peaks(VUMonitor* monitor)
                 peakValue = Mixer::compute_peak( buf, bufSize, peakValue );
 
                 if (monitor) {
-                        monitor->write_peak(peakValue);
+                        monitor->process(peakValue);
                 }
 
                 apill_foreach(VUMonitor* internalmonitor, VUMonitor, m_monitors) {
-                        internalmonitor->write_peak(peakValue);
+                        internalmonitor->process(peakValue);
                 }
 }
 
@@ -152,15 +152,8 @@ void AudioChannel::remove_monitor(VUMonitor *monitor)
  */
 audio_sample_t VUMonitor::get_peak_value( )
 {
-        float peak = 0;
-        audio_sample_t result = 0;
-        int read = m_peaks->read_space() /  sizeof(audio_sample_t);
-
-        while (read != 0) {
-                read = m_peaks->read((char*)&peak, 1 * sizeof(audio_sample_t));
-                if (peak > result)
-                        result = peak;
-        }
+        float result = m_peak;
+        m_flag = 1;
 
         return result;
 }

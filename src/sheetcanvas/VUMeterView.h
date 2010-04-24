@@ -72,7 +72,6 @@ public:
         static QVector<float>* VUMeterView_lut();
 
 private:
-        int			m_channels;
         VUMeterRulerView*	m_ruler;
         static QVector<float>	lut;
         QList<VUMeterLevelView*> m_levels;
