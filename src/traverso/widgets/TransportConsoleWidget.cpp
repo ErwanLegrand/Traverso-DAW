@@ -147,7 +147,7 @@ void TransportConsoleWidget::transport_started()
 	// a round number (e.g. 100) lets the last digit stay
 	// the same most of the time, but not always, which 
 	// looks jerky
-	m_updateTimer.start(123);
+        m_updateTimer.start(123);
 	m_playAction->setChecked(true);
 	m_playAction->setIcon(QIcon(":/playstop"));
 	m_recAction->setEnabled(false);

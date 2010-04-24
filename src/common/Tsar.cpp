@@ -70,10 +70,8 @@ Tsar::Tsar()
 #if defined (THREAD_CHECK)
 	m_threadId = QThread::currentThreadId ();
 #endif
-	
-	connect(&finishOldEventsTimer, SIGNAL(timeout()), this, SLOT(finish_processed_events()));
-	
-	finishOldEventsTimer.start( 20 );
+
+        m_timer.start(20, this);
 }
 
 Tsar::~ Tsar( )
@@ -82,6 +80,13 @@ Tsar::~ Tsar( )
 		delete eventBuffer;
 	}
 	delete oldEvents;
+}
+
+void Tsar::timerEvent(QTimerEvent *event)
+{
+        if (event->timerId() == m_timer.timerId()) {
+                finish_processed_events();
+        }
 }
 
 /**

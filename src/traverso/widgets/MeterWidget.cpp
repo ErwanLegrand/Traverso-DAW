@@ -108,7 +108,7 @@ MeterView::MeterView(MeterWidget* widget)
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
+        connect(&timer, SIGNAL(timeout()), this, SLOT(update_data()));
 	m_delayTimer.setSingleShot(true);
 	connect(&m_delayTimer, SIGNAL(timeout()), this, SLOT(delay_timeout()));
 }
@@ -186,7 +186,7 @@ void MeterView::show_event()
 	if (m_sheet) {
 		if (m_meter) {
                         Command::process_command(m_sheet->get_master_out()->get_plugin_chain()->add_plugin(m_meter, false));
-			timer.start(40);
+                        timer.start(40);
 		} else {
 			set_sheet(m_sheet);
 		}

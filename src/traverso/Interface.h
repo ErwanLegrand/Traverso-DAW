@@ -125,7 +125,9 @@ public :
         void register_vumeter_level(AbstractVUMeterLevel* level);
         void unregister_vumeter_level(AbstractVUMeterLevel* level);
         int get_vulevel_update_frequency() const {return m_vuLevelUpdateFrequency;}
+
 protected:
+        void timerEvent(QTimerEvent *event);
 	void keyPressEvent ( QKeyEvent* e);
 	void keyReleaseEvent ( QKeyEvent* e);
 	void closeEvent ( QCloseEvent * event );
@@ -187,8 +189,8 @@ private:
         QTreeView*              m_trackFinderTreeView;
 
         QList<AbstractVUMeterLevel*> m_vuLevels;
-        QTimer                  m_vuLevelUpdateTimer;
-        QTimer                  m_vuLevelPeakholdTimer;
+        QBasicTimer                  m_vuLevelUpdateTimer;
+        QBasicTimer                  m_vuLevelPeakholdTimer;
 
 	
 	void create_menus();
@@ -201,6 +203,8 @@ private:
 	QMenu* create_context_menu(QObject* item, QList<MenuData >* list = 0);
 	QMenu* create_fade_selector_menu(const QString& fadeTypeName);
 
+        void update_vu_levels_peak();
+        void reset_vu_levels_peak_hold_value();
 
 public slots :
 	void set_project(Project* project);
@@ -266,9 +270,6 @@ private slots:
         void sheet_transport_state_changed();
         void track_finder_model_index_changed(const QModelIndex& index);
         void track_finder_return_pressed();
-        void update_vu_levels_peak();
-        void reset_vu_levels_peak_hold_value();
-
 };
 
 

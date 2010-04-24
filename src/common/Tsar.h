@@ -24,7 +24,7 @@ $Id: Tsar.h,v 1.4 2008/02/11 10:11:52 r_sijrier Exp $
 #define TSAR_H
 
 #include <QObject>
-#include <QTimer>
+#include <QBasicTimer>
 #include <QByteArray>
 #include "RingBufferNPT.h"
 
@@ -83,6 +83,9 @@ public:
 	void process_event_signal(const TsarEvent& event);
 	void process_event_slot_signal(const TsarEvent& event);
 
+protected:
+        void timerEvent(QTimerEvent *event);
+
 private:
 	Tsar();
 	~Tsar();
@@ -96,7 +99,7 @@ private:
 
 	QList<RingBufferNPT<TsarEvent>*>	m_events;
 	RingBufferNPT<TsarEvent>*		oldEvents;
-	QTimer	finishOldEventsTimer;
+        QBasicTimer                             m_timer;
 	int 	m_eventCounter;
 	int 	m_retryCount;
 
@@ -105,10 +108,7 @@ private:
 #endif
 
 	void process_events();
-
-private slots:
-	void finish_processed_events();
-	
+        void finish_processed_events();
 };
 
 // use this function to access the context pointer

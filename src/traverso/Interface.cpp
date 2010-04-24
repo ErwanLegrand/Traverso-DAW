@@ -268,11 +268,8 @@ Interface::Interface()
 
 	setUnifiedTitleAndToolBarOnMac(true);
 
-
-        connect(&m_vuLevelUpdateTimer, SIGNAL(timeout()), this, SLOT(update_vu_levels_peak()));
-        connect(&m_vuLevelPeakholdTimer, SIGNAL(timeout()), this, SLOT(reset_vu_levels_peak_hold_value()));
-        m_vuLevelUpdateTimer.start(m_vuLevelUpdateFrequency);
-        m_vuLevelPeakholdTimer.start(1000);
+        m_vuLevelUpdateTimer.start(m_vuLevelUpdateFrequency, this);
+        m_vuLevelPeakholdTimer.start(1000, this);
 }
 
 Interface::~Interface()
@@ -428,6 +425,16 @@ Command* Interface::full_screen()
 	else
 		showFullScreen();
 	return (Command*) 0;
+}
+
+void Interface::timerEvent(QTimerEvent *event)
+{
+        if (event->timerId() == m_vuLevelUpdateTimer.timerId()) {
+                update_vu_levels_peak();
+        }
+        if (event->timerId() == m_vuLevelPeakholdTimer.timerId()) {
+                reset_vu_levels_peak_hold_value();
+        }
 }
 
 void Interface::keyPressEvent( QKeyEvent * e)
