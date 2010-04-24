@@ -82,7 +82,7 @@ void VUMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 {
         PENTER3;
 
-        painter->setPen(QColor(Qt::lightGray));
+        painter->setPen(themer()->get_color("VUMeter:levelseparator"));
         if (m_orientation == Qt::Vertical) {
                 int center = qRound(m_boundingRect.width() / 2);
                 painter->drawLine(center, 0, center, int(m_boundingRect.height()));

@@ -498,6 +498,7 @@ QColor Themer::get_default_color(const QString & name)
 		if (name == "VUMeter:font:inactive") c = p.color(QPalette::WindowText);
 		if (name == "VUMeter:overled:active") c = Qt::red;
 		if (name == "VUMeter:overled:inactive") c = p.color(QPalette::Base);
+                if (name == "VUMeter:levelseparator") c = p.color(QPalette::Mid);
 		
 		if (name == "InfoWidget:background") c = p.color(QPalette::Window);
 
