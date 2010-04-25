@@ -60,7 +60,7 @@
 		<color name="AudioClip:wavemacroview:outline" red="235" green="235" blue="235" alpha="255" />
 		<color name="AudioClip:wavemacroview:outline:curvemode" red="135" green="130" blue="255" alpha="255" />
 		<color name="AudioClip:wavemacroview:outline:muted" red="90" green="90" blue="90" alpha="255" />
-		<color name="AudioClip:wavemacroview:brush" red="105" green="145" blue="175" alpha="255" />
+		<color name="AudioClip:wavemacroview:brush" red="55" green="65" blue="75" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush:hover" red="130" green="105" blue="0" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush:muted" red="200" green="200" blue="200" alpha="255" />
 		<color name="AudioClip:wavemacroview:brush:curvemode" red="232" green="230" blue="255" alpha="255" />
@@ -70,9 +70,9 @@
 		<color name="AudioClip:background:muted"  red="245" green="245" blue="245"  alpha="120" />
 		<color name="AudioClip:background:recording"  red="255" green="255" blue="255"  alpha="170" />
 		<color name="AudioClip:background:muted:mousehover"  red="235" green="235" blue="235"  alpha="170" />
-		<color name="AudioClip:background:selected"  red="81" green="91" blue="121"  alpha="150" />
+		<color name="AudioClip:background:selected"  red="81" green="91" blue="121"  alpha="100" />
 		<color name="AudioClip:background:selected:mousehover"  red="111" green="121" blue="182"  alpha="150" />
-		<color name="AudioClip:background"  red="181" green="205" blue="201"  alpha="80" />
+		<color name="AudioClip:background"  red="181" green="205" blue="201"  alpha="60" />
 		<color name="AudioClip:background:mousehover"  red="125" green="123" blue="135"  alpha="200" />
 		<color name="AudioClip:channelseperator"  red="178" green="191" blue="182"  alpha="255" />
 		<color name="AudioClip:channelseperator:selected"  red="24" green="137" blue="210"  alpha="255" />
@@ -84,7 +84,7 @@
 		<color name="AudioClip:db-grid"  red="150" green="150" blue="150"  alpha="180" />
 		
 		
-		<color name="Curve:active" red="255" green="0" blue="255" alpha="255" />
+		<color name="Curve:active" red="255" green="255" blue="0" alpha="255" />
 		<color name="Curve:inactive" red="255" green="0" blue="255" alpha="150" />
 		
 		<color name="CurveNode:default" red="255" green="0" blue="255" alpha="140" />
@@ -94,16 +94,16 @@
 		<color name="Fade:bypassed" red="255" green="0" blue="255" alpha="140" />
 		
 		<color name="CorrelationMeter:margin" red="246" green="246" blue="255" alpha="255" />
-		<color name="CorrelationMeter:background" red="241" green="250" blue="255" alpha="255" />
-		<color name="CorrelationMeter:grid" red="205" green="223" blue="255" alpha="255" />
-		<color name="CorrelationMeter:centerline" red="82" green="80" blue="123" alpha="255"/>
-		<color name="CorrelationMeter:text" red="0" green="0" blue="0" alpha="255" />
+		<color name="CorrelationMeter:background" red="24" green="25" blue="55" alpha="255" />
+		<color name="CorrelationMeter:grid" red="205" green="223" blue="255" alpha="105" />
+		<color name="CorrelationMeter:centerline" red="82" green="80" blue="23" alpha="255"/>
+		<color name="CorrelationMeter:text" red="155" green="155" blue="155" alpha="255" />
 
 		<color name="FFTMeter:margin" red="246" green="246" blue="255" alpha="255" />
-		<color name="FFTMeter:background" red="241" green="250" blue="255" alpha="255" />
-		<color name="FFTMeter:grid" red="205" green="223" blue="255" alpha="255" />
-		<color name="FFTMeter:foreground" red="82" green="80" blue="123" alpha="255"/>
-		<color name="FFTMeter:foreground:light" red="241" green="250" blue="255" alpha="255"/>
+		<color name="FFTMeter:background" red="24" green="25" blue="55" alpha="255" />
+		<color name="FFTMeter:grid" red="205" green="223" blue="255" alpha="105" />
+		<color name="FFTMeter:foreground" red="252" green="250" blue="153" alpha="155"/>
+		<color name="FFTMeter:foreground:light" red="241" green="255" blue="255" alpha="255"/>
 		<color name="FFTMeter:curve:average" red="255" green="0" blue="0" alpha="255" />
 		<color name="FFTMeter:tickmarks:main" red="0" green="0" blue="0" alpha="255" />
 		<color name="FFTMeter:tickmarks:sub" red="100" green="100" blue="100" alpha="255" />
@@ -124,56 +124,58 @@
 		<color name="VUMeter:font:inactive" red="200" green="200" blue="200" alpha="255" />
 		<color name="VUMeter:overled:active" red="255" green="0" blue="0" alpha="255" />
 		<color name="VUMeter:overled:inactive" red="128" green="0" blue="0" alpha="255" />
+		<color name="VUMeter:levelseparator" red="28" green="0" blue="80" alpha="125" />
 		
 		<color name="InfoWidget:background" red="160" green="170" blue="150" alpha="255" />
 
                 <color name="Playhead:active" red="255" green="0" blue="0" alpha="180" />
-                <color name="Playhead:inactive" red="255" green="0" blue="0" alpha="255" />
+                <color name="Playhead:inactive" red="255" green="0" blue="0" alpha="155" />
 
-                <color name="Workcursor:default" red="100" green="50" blue="100" alpha="180" />
+                <color name="Workcursor:default" red="100" green="200" blue="220" alpha="255" />
 
-		<color name="Plugin:background" red="230" green="0" blue="230" alpha="170" />
-		<color name="Plugin:background:bypassed" red="230" green="0" blue="230" alpha="80" />
+		<color name="Plugin:background" red="30" green="100" blue="230" alpha="170" />
+		<color name="Plugin:background:bypassed" red="30" green="100" blue="180" alpha="80" />
 		<color name="Plugin:text" red="255" green="255" blue="255" alpha="255" />
-		<color name="PluginSlider:background" red="199" green="228" blue="211" alpha="255" />
-		<color name="PluginSlider:value"  red="240" green="190" blue="218"  alpha="255" />
+		<color name="PluginSlider:background" red="0" green="28" blue="111" alpha="255" />
+		<color name="PluginSlider:value"  red="180" green="200" blue="255"  alpha="255" />
 		
 		<color name="ResourcesBin:alternaterowcolor" red="243" green="248" blue="255" alpha="255" />
 		
-                <color name="Sheet:background" red="30" green="50" blue="50" alpha="255" />
+                <color name="Sheet:background" red="30" green="48" blue="48" alpha="255" />
                 <color name="SheetPanel:background" red="140" green="140" blue="148" alpha="255" />
 		
-		<color name="Timeline:background" red="40" green="59" blue="59" alpha="255" />
+		<color name="Timeline:background" red="29" green="39" blue="39" alpha="255" />
 		<color name="Timeline:text" red="255" green="255" blue="255" alpha="255" />
 		
 		<color name="Track:cliptopoffset" red="220" green="220" blue="240" alpha="255" />
 		<color name="Track:clipbottomoffset" red="100" green="100" blue="120" alpha="255" />
-		<color name="Track:background" red="30" green="30" blue="51" alpha="255" />
-                <color name="Track:mousehover" red="160" green="170" blue="245"  alpha="80" />
+		<color name="Track:background" red="30" green="30" blue="47" alpha="255" />
+                <color name="Track:mousehover" red="160" green="190" blue="245"  alpha="60" />
 
 		
-		<color name="TrackPanel:background" red="45" green="70" blue="80" alpha="255" />
+		<color name="TrackPanel:background" red="25" green="50" blue="50" alpha="255" />
 		<color name="TrackPanel:text" red="255" green="255" blue="255" alpha="255" />
 		<color name="TrackPanel:slider:background" red="100" green="100" blue="40" alpha="255" />
+		<color name="TrackPanel:slider:border" red="45" green="60" blue="70" alpha="45" />
 		<color name="TrackPanel:head:active" red="140" green="140" blue="50" alpha="255" />
 		<color name="TrackPanel:head:inactive" red="55" green="80" blue="90" alpha="255" />
 		<color name="TrackPanel:muteled" red="255" green="255" blue="50" alpha="255" />
 		<color name="TrackPanel:sololed" red="135" green="254" blue="135" alpha="255" />
 		<color name="TrackPanel:recled" red="255" green="58" blue="58" alpha="255" />
-		<color name="TrackPanel:led:inactive" red="137" green="137" blue="150" alpha="100" />
+		<color name="TrackPanel:led:inactive" red="35" green="60" blue="60" alpha="100" />
 		<color name="TrackPanel:trackseparation" red="180" green="180" blue="180" alpha="255" />
 		<color name="TrackPanel:led:margin:active" red="100" green="100" blue="100" alpha="0" />
-		<color name="TrackPanel:led:margin:inactive" red="30" green="30" blue="30" alpha="255" />
-		<color name="TrackPanel:led:font:active" red="255" green="255" blue="255" alpha="255" />
+		<color name="TrackPanel:led:margin:inactive" red="30" green="30" blue="30" alpha="105" />
+		<color name="TrackPanel:led:font:active" red="0" green="0" blue="0" alpha="255" />
 		<color name="TrackPanel:led:font:inactive" red="230" green="230" blue="230" alpha="255" />
 
 
                 <color name="SubGroup:background" red="50" green="50" blue="45" alpha="100" />
-                <color name="SubGroupPanel:background" red="0" green="10" blue="28" alpha="255" />
+                <color name="SubGroupPanel:background" red="15" green="20" blue="38" alpha="255" />
 
 		<color name="TrackPanel:bus:font" red="255" green="255" blue="255" alpha="255" />
-		<color name="TrackPanel:bus:background" red="35" green="70" blue="80" alpha="255" />
-		<color name="TrackPanel:bus:margin" red="100" green="100" blue="100" alpha="255" />
+		<color name="TrackPanel:bus:background" red="35" green="70" blue="75" alpha="105" />
+		<color name="TrackPanel:bus:margin" red="100" green="100" blue="100" alpha="105" />
 		
 		<color name="Marker:default" red="128" green="200" blue="248" alpha="255" />
 		<color name="Marker:end" red="255" green="0" blue="55" alpha="255" />

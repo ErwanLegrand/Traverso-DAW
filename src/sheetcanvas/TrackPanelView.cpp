@@ -473,16 +473,16 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
         v = m_track->get_pan();
 	span = QByteArray::number(v,'f',1);
 	s = ( v > 0 ? QString("+") + span :  span );
-	painter->fillRect(30, 0, sliderWidth, PAN_H, color);
-	int pm= 31 + sliderWidth/2;
-	int z = abs((int)(v*(sliderWidth/2)));
-	int c = abs((int)(255*v));
-	if (v>=0) {
-		painter->fillRect(pm, 1, z, PAN_H-1, QColor(c,0,0));
-	} else {
-		painter->fillRect(pm-z, 1, z, PAN_H-1, QColor(c,0,0));
-	}
-	painter->drawText(30 + sliderWidth + 10, PAN_H + 1, s);
+        painter->fillRect(30, 0, sliderWidth, PAN_H, color);
+        int pm= 31 + sliderWidth/2;
+        int z = abs((int)(v*(sliderWidth/2)));
+
+        if (v>=0) {
+                painter->fillRect(pm, 1, z, PAN_H-1, m_gradient2D);
+        } else {
+                painter->fillRect(pm-z, 1, z, PAN_H-1, m_gradient2D);
+        }
+        painter->drawText(30 + sliderWidth + 10, PAN_H + 1, s);
 
         painter->setPen(themer()->get_color("TrackPanel:slider:border"));
         painter->drawRect(30, 0, sliderWidth, PAN_H);
@@ -491,7 +491,20 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 void TrackPanelPan::set_width(int width)
 {
 	m_boundingRect = QRectF(0, 0, width, 9);
+        load_theme_data();
 }
+
+void TrackPanelPan::load_theme_data()
+{
+        float smooth = themer()->get_property("GainSlider:smoothfactor", 0.05).toDouble();
+
+        m_gradient2D.setColorAt(0.0, themer()->get_color("PanSlider:-1"));
+        m_gradient2D.setColorAt(0.5, themer()->get_color("PanSlider:0"));
+        m_gradient2D.setColorAt(1.0, themer()->get_color("PanSlider:1"));
+        m_gradient2D.setStart(QPointF(m_boundingRect.width() - 40, 0));
+        m_gradient2D.setFinalStop(31, 0);
+}
+
 
 Command* TrackPanelPan::pan_left()
 {

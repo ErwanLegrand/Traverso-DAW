@@ -154,7 +154,7 @@ void Themer::load( )
  	
  	if ( ! file.exists() ) {
 		printf("File %s doesn't exit, falling back to default (TraversoLight) theme\n", QS_C(m_themefile));
-                file.setFileName(":/themes/TraversoLight");
+                file.setFileName(":/themes/Traverso Light");
 	} else {
 		if (!m_themefile.contains(":/")) {
 	 		m_watcher->addPath(m_themefile);
@@ -502,7 +502,11 @@ QColor Themer::get_default_color(const QString & name)
 		
 		if (name == "InfoWidget:background") c = p.color(QPalette::Window);
 
-		if (name == "Playhead:active") c = QColor(255, 0, 0, 180);
+                if (name == "PanSlider:-1") c = Qt::red;
+                if (name == "PanSlider:0") c = p.color(QPalette::Base);
+                if (name == "PanSlider:1") c = Qt::red;
+
+                if (name == "Playhead:active") c = QColor(255, 0, 0, 180);
 		if (name == "Playhead:inactive") c = QColor(255, 0, 0, 120);
 		
 		if (name == "Plugin:background") c = p.color(QPalette::Button);

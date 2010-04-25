@@ -67,6 +67,7 @@ public:
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void set_width(int width);
+        void load_theme_data();
 
 public slots:
 	Command* pan_left();
@@ -74,6 +75,7 @@ public slots:
 
 private:
         Track* m_track;
+        QLinearGradient	m_gradient2D;
 };
 
 
