@@ -384,7 +384,7 @@ void AudioDriverConfigPage::rate_combobox_index_changed(QString )
 void AppearenceConfigPage::save_config()
 {
 	config().set_property("Themer", "themepath", themePathLineEdit->text());
-	config().set_property("Themer", "currenttheme", themeSelecterCombo->currentText());
+        config().set_property("Themer", "currenttheme", themeSelecterCombo->currentText());
 	config().set_property("Themer", "coloradjust", colorAdjustBox->value());
 	config().set_property("Themer", "style", styleCombo->currentText());
 	config().set_property("Themer", "usestylepallet", useStylePalletCheckBox->isChecked());

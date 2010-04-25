@@ -153,23 +153,29 @@ void Themer::load( )
  	QFile file(m_themefile);
  	
  	if ( ! file.exists() ) {
-		printf("File %s doesn't exit, falling back to default (TraversoLight) theme\n", QS_C(m_themefile));
-                file.setFileName(":/themes/Traverso Light");
-	} else {
-		if (!m_themefile.contains(":/")) {
-	 		m_watcher->addPath(m_themefile);
-		}
-		printf("Themer:: Using themefile: %s\n", QS_C(m_themefile));
-	}
+                m_themefile.append(".xml");
+                file.setFileName(m_themefile);
+                if (!file.exists()) {
+                        printf("File %s doesn't exit, falling back to default (TraversoLight) theme\n", QS_C(m_themefile));
+                        file.setFileName(":/themes/Traverso Light");
+                }
+        }
+
+        if (!m_themefile.contains(":")) {
+                m_watcher->addPath(m_themefile);
+        }
+        printf("Themer:: Using themefile: %s\n", QS_C(m_themefile));
 
 	if (!file.open(QIODevice::ReadOnly)) {
-		PWARN("Cannot open Themer properties file");
+                printf("Cannot open Themer properties file\n");
+                return;
 	}
 
 	QString errorMsg;
 	if (!doc.setContent(&file, &errorMsg)) {
 		file.close();
-		PWARN("Cannot set Content of XML file (%s)", QS_C(errorMsg));
+                printf("Cannot set Content of XML file (%s)\n", QS_C(errorMsg));
+                return;
 	}
 
 	file.close();
@@ -384,7 +390,7 @@ void Themer::set_path_and_theme(const QString& path, const QString& theme)
 {
 	if (m_currentTheme == theme) {
 		return;
-	}
+        }
 	m_currentTheme = theme;
         m_themefile = path + "/" + theme;
 	reload_on_themefile_change("");
