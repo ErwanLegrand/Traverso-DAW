@@ -368,6 +368,12 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	Q_UNUSED(widget);
         const int height = 6;
 
+        QColor color = themer()->get_color("TrackPanel:slider:background");
+        if (has_active_context()) {
+                color = color.light(110);
+        }
+
+
 	int sliderWidth = (int)m_boundingRect.width() - 75;
         float gain = m_track->get_gain();
 	QString sgain = coefficient_to_dbstring(gain);
@@ -392,8 +398,9 @@ void TrackPanelGain::paint( QPainter * painter, const QStyleOptionGraphicsItem *
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:gain"));
         painter->drawText(0, height + 1, "Gain");
-	
-	QColor color(cr,0,cb);
+        painter->fillRect(30, 0, sliderWidth, height, color);
+
+        color = QColor(cr,0,cb);
         if (has_active_context()) {
 		color = color.light(140);
 	}
@@ -496,8 +503,6 @@ void TrackPanelPan::set_width(int width)
 
 void TrackPanelPan::load_theme_data()
 {
-        float smooth = themer()->get_property("GainSlider:smoothfactor", 0.05).toDouble();
-
         m_gradient2D.setColorAt(0.0, themer()->get_color("PanSlider:-1"));
         m_gradient2D.setColorAt(0.5, themer()->get_color("PanSlider:0"));
         m_gradient2D.setColorAt(1.0, themer()->get_color("PanSlider:1"));

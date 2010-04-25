@@ -605,9 +605,9 @@ void AppearenceConfigPage::dirselect_button_clicked()
 void AppearenceConfigPage::update_theme_combobox(const QString& path)
 {
 	themeSelecterCombo->clear();
-	
-	foreach(QString key, themer()->get_builtin_themes()) {
-		themeSelecterCombo->insertItem(0, key, "builtintheme");
+
+        foreach(QString theme, themer()->get_builtin_themes()) {
+                themeSelecterCombo->addItem(theme, "builtintheme");
 	}
 	
 	QDir themedir(path);
@@ -615,7 +615,7 @@ void AppearenceConfigPage::update_theme_combobox(const QString& path)
                 themeName = themeName.remove(".xml");
                 QString filename = path + "/" + themeName;
                 if (QFile::exists(filename + ".xml") ) {
-                        themeSelecterCombo->insertItem(0, themeName);
+                        themeSelecterCombo->addItem(themeName);
 		}
 	}
 	
