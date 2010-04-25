@@ -58,6 +58,7 @@ void PluginSlider::paintEvent(QPaintEvent *)
 	if (m_xpos <= 1) m_xpos = 2;
 	
 	painter.setBrush(background);
+        painter.setPen(themer()->get_color("PluginSlider:text"));
 	QRectF rect(0.0, 0.0, width() - 0.5, height() - 0.5);
 	painter.drawRect(rect);
 	painter.fillRect(1, 1, m_xpos - 2, height() - 2, QBrush(color));
