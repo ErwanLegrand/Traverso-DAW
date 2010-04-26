@@ -17,14 +17,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QComboBox" name="colorComboBox"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="colorPushButton">
-       <property name="text">
-        <string>Change</string>
-       </property>
-      </widget>
+      <widget class="QListWidget" name="listWidget"/>
      </item>
     </layout>
    </item>

@@ -6,7 +6,9 @@
 #include <QColor>
 #include <QDialog>
 
+
 class QColorDialog;
+class QListWidgetItem;
 
 
 class ThemeModifierDialog : public QDialog, protected Ui::ThemeModifierDialog
@@ -14,18 +16,19 @@ class ThemeModifierDialog : public QDialog, protected Ui::ThemeModifierDialog
         Q_OBJECT
 
 public:
-            ThemeModifierDialog(QWidget* parent);
+        ThemeModifierDialog(QWidget* parent);
 
 private:
-            QColorDialog* m_colorDialog;
+        QColorDialog*   m_colorDialog;
+        QString         m_currentColor;
+
 
 public slots:
         void accept();
 
 private slots:
         void current_color_changed(const QColor &);
-        void color_push_botton_clicked();
-        void color_combo_box_index_changed(const QString& text);
+        void list_widget_item_changed(QListWidgetItem* item, QListWidgetItem*);
 };
 
 #endif // ThemeModifierDialog_H

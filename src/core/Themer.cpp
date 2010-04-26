@@ -120,6 +120,8 @@ void Themer::save( )
         fileName +=  "/.traverso/themes/editedtheme.xml";
 	QFile data( fileName );
 
+        m_watcher->removePath(fileName);
+
 	if (data.open( QIODevice::WriteOnly ) ) {
                 QDomElement themerNode = doc.createElement("Themer");
                 doc.appendChild(themerNode);
@@ -161,6 +163,8 @@ void Themer::save( )
 	} else {
 		PWARN("Could not open Themer properties file for writing! (%s)", QS_C(fileName));
 	}
+
+        m_watcher->addPath(fileName);
 }
 
 void Themer::load( )

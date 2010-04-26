@@ -3,47 +3,42 @@
 #include "Themer.h"
 
 #include <QColorDialog>
-#include <QPushButton>
+#include <QListWidgetItem>
 
 ThemeModifierDialog::ThemeModifierDialog(QWidget* parent)
         : QDialog(parent)
 {
         setupUi(this);
 
+        listWidget->setMinimumWidth(300);
+
         m_colorDialog = new QColorDialog();
+        m_colorDialog->setWindowFlags(Qt::Widget);
+        m_colorDialog->setOptions(QColorDialog::NoButtons | QColorDialog::ShowAlphaChannel);
 
         QList<QString> colors = themer()->get_colors();
         qSort(colors.begin(), colors.end());
 
         foreach(const QString& color, colors) {
-                colorComboBox->addItem(color);
+                listWidget->addItem(color);
         }
 
-        color_combo_box_index_changed(colorComboBox->currentText());
+        horizontalLayout->addWidget(m_colorDialog);
 
         connect(m_colorDialog, SIGNAL(currentColorChanged(const QColor&)), this, SLOT(current_color_changed(const QColor&)));
-        connect(colorPushButton, SIGNAL(clicked()), this, SLOT(color_push_botton_clicked()));
-        connect(colorComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(color_combo_box_index_changed(const QString&)));
+        connect(listWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)), this, SLOT(list_widget_item_changed(QListWidgetItem*, QListWidgetItem*)));
 }
 
 void ThemeModifierDialog::current_color_changed(const QColor& color)
 {
-        QPalette p(color);
-        colorPushButton->setPalette(p);
-        themer()->set_color(colorComboBox->currentText(), color);
+        themer()->set_color(m_currentColor, color);
 }
 
-void ThemeModifierDialog::color_push_botton_clicked()
+void ThemeModifierDialog::list_widget_item_changed(QListWidgetItem* item, QListWidgetItem*)
 {
-        m_colorDialog->setCurrentColor(themer()->get_color(colorComboBox->currentText()));
-        m_colorDialog->show();
-}
-
-void ThemeModifierDialog::color_combo_box_index_changed(const QString& text)
-{
-        QColor color = themer()->get_color(text);
-        QPalette p(color);
-        colorPushButton->setPalette(p);
+        m_currentColor = item->text();
+        QColor color = themer()->get_color(m_currentColor);
+        m_colorDialog->setCurrentColor(color);
 }
 
 void ThemeModifierDialog::accept()
