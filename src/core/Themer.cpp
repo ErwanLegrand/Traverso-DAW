@@ -105,7 +105,9 @@ Themer::Themer()
 	
 	if (usestylepallete) {
 		QApplication::setPalette(QApplication::style()->standardPalette());
-	}
+        }
+
+        load_defaults();
 	
 	connect(m_watcher, SIGNAL(fileChanged(const QString&)), this, SLOT(reload_on_themefile_change(const QString&)));
 }
@@ -300,7 +302,10 @@ void Themer::load( )
 	
 	m_cursors.insert("LRUD", QCursor(find_pixmap(":/cursorHoldLrud")));
 	m_cursors.insert("LR", QCursor(find_pixmap(":/cursorHoldLr")));
-	m_cursors.insert("UD", QCursor(find_pixmap(":/cursorHoldUd")));
+        m_cursors.insert("UD", QCursor(find_pixmap(":/cursorHoldUd")));
+
+        validate_loaded_theme();
+
 	emit themeLoaded();
 }
 
@@ -309,7 +314,6 @@ QColor Themer::get_color(const QString& name) const
 	if (m_colors.contains(name)) {
 		return m_colors.value(name);
 	} else {
-		printf("Colour %s was requested, but no such element was found in the theme file\n", QS_C(name));
 		return themer()->get_default_color(name);
 	}
 }
@@ -425,145 +429,153 @@ void Themer::use_builtin_theme(const QString & theme)
 
 QColor Themer::get_default_color(const QString & name)
 {
-	QPalette p = QApplication::style()->standardPalette();
-	QColor c = Qt::black;
+        if (!m_defaultColors.contains(name)) {
+                printf("Default color %s was requested, but no such default color does exist, please add it to the themer!\n", QS_C(name));
+                return QColor(Qt::blue);
+        }
 
-		if (name == "Text:light") c = p.color(QPalette::BrightText);
-		if (name == "Text:dark")  c = p.color(QPalette::Text);
-		
-		if (name == "AudioClip:wavemacroview:outline") c = p.color(QPalette::WindowText);
-		if (name == "AudioClip:wavemacroview:outline:curvemode") c = p.color(QPalette::WindowText);
-		if (name == "AudioClip:wavemacroview:outline:muted") c = p.color(QPalette::WindowText);
-		if (name == "AudioClip:wavemacroview:brush") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:hover") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:muted") c = p.color(QPalette::Base);
-		if (name == "AudioClip:wavemacroview:brush:curvemode") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemacroview:brush:curvemode:hover") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemicroview") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:wavemicroview:curvemode") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:background:muted") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:recording") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:muted:mousehover") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:selected") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:background:selected:mousehover") c = p.color(QPalette::Highlight);
-		if (name == "AudioClip:background") c = p.color(QPalette::Base);
-		if (name == "AudioClip:background:mousehover") c = p.color(QPalette::Base);
-		if (name == "AudioClip:channelseperator") c = p.color(QPalette::WindowText);
-		if (name == "AudioClip:channelseperator:selected") c = p.color(QPalette::WindowText);
-		if (name == "AudioClip:contour") c = p.color(QPalette::WindowText);
-		if (name == "AudioClip:clipinfobackground") c = p.color(QPalette::AlternateBase);
-		if (name == "AudioClip:clipinfobackground:inactive") c = p.color(QPalette::AlternateBase);
-		if (name == "AudioClip:sampleoverload") c = Qt::red;
-		if (name == "AudioClip:invalidreadsource") c = Qt::red;
-
-		if (name == "Curve:active") c = p.color(QPalette::BrightText);
-		if (name == "Curve:inactive") c = p.color(QPalette::BrightText);
-		
-		if (name == "CurveNode:default") c = p.color(QPalette::BrightText);
-		if (name == "CurveNode:blink") c = p.color(QPalette::BrightText);
-		
-		if (name == "Fade:default") {
-			c = p.color(QPalette::Highlight);
-			c.setAlpha(150);
-		}
-		if (name == "Fade:bypassed") {
-			c = p.color(QPalette::Highlight);
-			c.setAlpha(50);
-		}
-
-		if (name == "CorrelationMeter:margin") c = p.color(QPalette::Window);
-		if (name == "CorrelationMeter:background") c = p.color(QPalette::Base);
-		if (name == "CorrelationMeter:grid") c = p.color(QPalette::Dark);
-		if (name == "CorrelationMeter:foreground:center") c = p.color(QPalette::Link);
-		if (name == "CorrelationMeter:foreground:side") c = p.color(QPalette::LinkVisited);
-		if (name == "CorrelationMeter:centerline") c = p.color(QPalette::Highlight);
-		if (name == "CorrelationMeter:text") c = p.color(QPalette::WindowText);
-		
-
-                if (name == "GainSlider:6db") c = Qt::red;
-                if (name == "GainSlider:0db") c = Qt::yellow;
-                if (name == "GainSlider:-6db") c = Qt::green;
-                if (name == "GainSlider:-60db") c = Qt::blue;
-
-		if (name == "FFTMeter:margin") c = p.color(QPalette::Window);
-		if (name == "FFTMeter:background") c = p.color(QPalette::Base);
-		if (name == "FFTMeter:grid") c = p.color(QPalette::Dark);
-		if (name == "FFTMeter:foreground") c = p.color(QPalette::Link);
-		if (name == "FFTMeter:curve:average") c = p.color(QPalette::LinkVisited);
-		if (name == "FFTMeter:tickmarks:main") c = p.color(QPalette::Dark);
-		if (name == "FFTMeter:tickmarks:sub") c = p.color(QPalette::Mid);
-		if (name == "FFTMeter:text") c = p.color(QPalette::WindowText);
-		
-		if (name == "VUMeter:background:widget") c = p.color(QPalette::Window);
-		if (name == "VUMeter:background:bar") c = p.color(QPalette::Base);
-		if (name == "VUMeter:foreground:6db") c = Qt::red;
-		if (name == "VUMeter:foreground:0db") c = Qt::yellow;
-		if (name == "VUMeter:foreground:-6db") c = Qt::green;
-		if (name == "VUMeter:foreground:-60db") c = Qt::blue;
-		if (name == "VUMeter:font:active") c = p.color(QPalette::WindowText);
-		if (name == "VUMeter:font:inactive") c = p.color(QPalette::WindowText);
-		if (name == "VUMeter:overled:active") c = Qt::red;
-		if (name == "VUMeter:overled:inactive") c = p.color(QPalette::Base);
-                if (name == "VUMeter:levelseparator") c = p.color(QPalette::Mid);
-		
-		if (name == "InfoWidget:background") c = p.color(QPalette::Window);
-
-                if (name == "PanSlider:-1") c = Qt::red;
-                if (name == "PanSlider:0") c = p.color(QPalette::Base);
-                if (name == "PanSlider:1") c = Qt::red;
-
-                if (name == "Playhead:active") c = QColor(255, 0, 0, 180);
-		if (name == "Playhead:inactive") c = QColor(255, 0, 0, 120);
-		
-		if (name == "Plugin:background") c = p.color(QPalette::Button);
-		if (name == "Plugin:background:bypassed") c = p.color(QPalette::Light);
-		if (name == "Plugin:text") c = p.color(QPalette::WindowText);
-		if (name == "PluginSlider:background") c = p.color(QPalette::Mid);
-		if (name == "PluginSlider:value") c = p.color(QPalette::Highlight);
-		
-		if (name == "ResourcesBin:alternaterowcolor") c = p.color(QPalette::AlternateBase);
-
-		if (name == "Sheet:background") c = p.color(QPalette::Base);
-		if (name == "SheetPanel:background") c = p.color(QPalette::Window);
-		
-		if (name == "Timeline:background") c = p.color(QPalette::Window);
-		if (name == "Timeline:text") c = p.color(QPalette::WindowText);
-		
-		if (name == "Track:cliptopoffset") c = p.color(QPalette::Dark);
-		if (name == "Track:clipbottomoffset") c = p.color(QPalette::Dark);
-		if (name == "Track:background") c = p.color(QPalette::Base);
-                if (name == "Track:mousehover") c = p.color((QPalette::Highlight));
-		
-		if (name == "TrackPanel:background") c = p.color(QPalette::Window);
-                if (name == "TrackPanel:text") c = p.color(QPalette::WindowText);
-                if (name == "TrackPanel:sliderborder") c = p.color(QPalette::WindowText);
-                if (name == "TrackPanel:slider:background") c = p.color(QPalette::Button);
-		if (name == "TrackPanel:head:active") c = p.color(QPalette::Highlight);
-		if (name == "TrackPanel:head:inactive") c = p.color(QPalette::Highlight);
-		if (name == "TrackPanel:muteled") c = Qt::yellow;
-		if (name == "TrackPanel:sololed") c = Qt::green;
-		if (name == "TrackPanel:recled") c = Qt::red;
-		if (name == "TrackPanel:led:inactive") c = p.color(QPalette::Button);
-		if (name == "TrackPanel:trackseparation") c = p.color(QPalette::WindowText);
-		if (name == "TrackPanel:led:margin:active") c = p.color(QPalette::Dark);
-		if (name == "TrackPanel:led:margin:inactive") c = p.color(QPalette::Dark);
-		if (name == "TrackPanel:led:font:active") c = p.color(QPalette::WindowText);
-		if (name == "TrackPanel:led:font:inactive") c = p.color(QPalette::WindowText);
-		
-		if (name == "TrackPanel:bus:font") c = p.color(QPalette::WindowText);
-		if (name == "TrackPanel:bus:background") c = p.color(QPalette::Button);
-		if (name == "TrackPanel:bus:margin") c = p.color(QPalette::Dark);
-
-                if (name == "SubGroup:background") c = p.color(QPalette::Background);
-                if (name == "SubGroupPanel:background") c = p.color(QPalette::Background);
-
-                if (name == "Workcursor:default") c = QColor(100, 50, 100, 180);
-		
-		if (name == "Marker:default") c = Qt::red;
-		if (name == "Marker:blink") c = p.color(QPalette::Highlight);
-		if (name == "Marker:end") c = Qt::blue;
-		if (name == "Marker:blinkend") c = p.color(QPalette::Highlight);
-
-	return c;
+        return m_defaultColors.value(name);
 }
 
+void Themer::load_defaults()
+{
+        QPalette p = QApplication::style()->standardPalette();
+        QColor c = Qt::black;
+        QString name;
+
+        m_defaultColors.insert("Text:light", p.color(QPalette::BrightText));
+        m_defaultColors.insert("Text:dark", p.color(QPalette::Text));
+        m_defaultColors.insert("AudioClip:wavemacroview:outline", p.color(QPalette::WindowText));
+        m_defaultColors.insert("AudioClip:wavemacroview:outline:curvemode", p.color(QPalette::WindowText));
+        m_defaultColors.insert("AudioClip:wavemacroview:outline:muted", p.color(QPalette::WindowText));
+        m_defaultColors.insert("AudioClip:wavemacroview:brush", p.color(QPalette::Highlight));
+        m_defaultColors.insert("AudioClip:wavemacroview:brush:hover", p.color(QPalette::Highlight));
+        m_defaultColors.insert("AudioClip:wavemacroview:brush:muted", p.color(QPalette::Base));
+        m_defaultColors.insert("AudioClip:wavemacroview:brush:curvemode", p.color(QPalette::Highlight));
+        m_defaultColors.insert("AudioClip:wavemacroview:brush:curvemode:hover", p.color(QPalette::Highlight));
+        m_defaultColors.insert("AudioClip:wavemicroview", p.color(QPalette::Highlight));
+        m_defaultColors.insert("AudioClip:wavemicroview:curvemode", p.color(QPalette::Highlight));
+        m_defaultColors.insert("AudioClip:background:muted", p.color(QPalette::Base));
+        m_defaultColors.insert("AudioClip:background:recording", p.color(QPalette::Base));
+        m_defaultColors.insert("AudioClip:background:muted:mousehover", p.color(QPalette::Base));
+        m_defaultColors.insert("AudioClip:background:selected", p.color(QPalette::Highlight));
+        m_defaultColors.insert("AudioClip:background:selected:mousehover", p.color(QPalette::Highlight));
+        m_defaultColors.insert("AudioClip:background", p.color(QPalette::Base));
+        m_defaultColors.insert("AudioClip:background:mousehover", p.color(QPalette::Base));
+        m_defaultColors.insert("AudioClip:channelseperator", p.color(QPalette::WindowText));
+        m_defaultColors.insert("AudioClip:channelseperator:selected", p.color(QPalette::WindowText));
+        m_defaultColors.insert("AudioClip:contour", p.color(QPalette::WindowText));
+        m_defaultColors.insert("AudioClip:clipinfobackground", p.color(QPalette::AlternateBase));
+        m_defaultColors.insert("AudioClip:clipinfobackground:inactive", p.color(QPalette::AlternateBase));
+        m_defaultColors.insert("AudioClip:sampleoverload", QColor(Qt::red));
+        m_defaultColors.insert("AudioClip:invalidreadsource", QColor(Qt::red));
+        m_defaultColors.insert("Curve:active", p.color(QPalette::BrightText));
+        m_defaultColors.insert("Curve:inactive", p.color(QPalette::BrightText));
+        m_defaultColors.insert("CurveNode:default", p.color(QPalette::BrightText));
+        m_defaultColors.insert("CurveNode:blink", p.color(QPalette::BrightText));
+        c = p.color(QPalette::Highlight);
+        c.setAlpha(150);
+        m_defaultColors.insert("Fade:default", c);
+        c = p.color(QPalette::Highlight);
+        c.setAlpha(50);
+        m_defaultColors.insert("Fade:bypassed", c);
+        m_defaultColors.insert("CorrelationMeter:margin", p.color(QPalette::Window));
+        m_defaultColors.insert("CorrelationMeter:background", p.color(QPalette::Base));
+        m_defaultColors.insert("CorrelationMeter:grid", p.color(QPalette::Dark));
+        m_defaultColors.insert("CorrelationMeter:foreground:center", p.color(QPalette::Link));
+        m_defaultColors.insert("CorrelationMeter:foreground:side", p.color(QPalette::LinkVisited));
+        m_defaultColors.insert("CorrelationMeter:centerline", p.color(QPalette::Highlight));
+        m_defaultColors.insert("CorrelationMeter:text", p.color(QPalette::WindowText));
+        m_defaultColors.insert("GainSlider:6db", QColor(Qt::red));
+        m_defaultColors.insert("GainSlider:0db", QColor(Qt::yellow));
+        m_defaultColors.insert("GainSlider:-6db", QColor(Qt::green));
+        m_defaultColors.insert("GainSlider:-60db", QColor(Qt::blue));
+        m_defaultColors.insert("FFTMeter:margin", p.color(QPalette::Window));
+        m_defaultColors.insert("FFTMeter:background", p.color(QPalette::Base));
+        m_defaultColors.insert("FFTMeter:grid", p.color(QPalette::Dark));
+        m_defaultColors.insert("FFTMeter:foreground", p.color(QPalette::Link));
+        m_defaultColors.insert("FFTMeter:curve:average", p.color(QPalette::LinkVisited));
+        m_defaultColors.insert("FFTMeter:tickmarks:main", p.color(QPalette::Dark));
+        m_defaultColors.insert("FFTMeter:tickmarks:sub", p.color(QPalette::Mid));
+        m_defaultColors.insert("FFTMeter:text", p.color(QPalette::WindowText));
+        m_defaultColors.insert("VUMeter:background:widget", p.color(QPalette::Window));
+        m_defaultColors.insert("VUMeter:background:bar", p.color(QPalette::Base));
+        m_defaultColors.insert("VUMeter:foreground:6db", QColor(Qt::red));
+        m_defaultColors.insert("VUMeter:foreground:0db", QColor(Qt::yellow));
+        m_defaultColors.insert("VUMeter:foreground:-6db", QColor(Qt::green));
+        m_defaultColors.insert("VUMeter:foreground:-60db", QColor(Qt::blue));
+        m_defaultColors.insert("VUMeter:font:active", p.color(QPalette::WindowText));
+        m_defaultColors.insert("VUMeter:font:inactive", p.color(QPalette::WindowText));
+        m_defaultColors.insert("VUMeter:overled:active", QColor(Qt::red));
+        m_defaultColors.insert("VUMeter:overled:inactive", p.color(QPalette::Base));
+        m_defaultColors.insert("VUMeter:levelseparator", p.color(QPalette::Mid));
+        m_defaultColors.insert("InfoWidget:background", p.color(QPalette::Window));
+        m_defaultColors.insert("PanSlider:-1", QColor(Qt::red));
+        m_defaultColors.insert("PanSlider:0", p.color(QPalette::Base));
+        m_defaultColors.insert("PanSlider:1", QColor(Qt::red));
+        m_defaultColors.insert("Playhead:active", QColor(255, 0, 0, 180));
+        m_defaultColors.insert("Playhead:inactive", QColor(255, 0, 0, 120));
+        m_defaultColors.insert("Plugin:background", p.color(QPalette::Button));
+        m_defaultColors.insert("Plugin:background:bypassed", p.color(QPalette::Light));
+        m_defaultColors.insert("Plugin:text", p.color(QPalette::WindowText));
+        m_defaultColors.insert("PluginSlider:background", p.color(QPalette::Mid));
+        m_defaultColors.insert("PluginSlider:value", p.color(QPalette::Highlight));
+        m_defaultColors.insert("PluginSlider:text", p.color(QPalette::WindowText));
+        m_defaultColors.insert("ResourcesBin:alternaterowcolor", p.color(QPalette::AlternateBase));
+        m_defaultColors.insert("Sheet:background", p.color(QPalette::Base));
+        m_defaultColors.insert("SheetPanel:background", p.color(QPalette::Window));
+        m_defaultColors.insert("Timeline:background", p.color(QPalette::Window));
+        m_defaultColors.insert("Timeline:text", p.color(QPalette::WindowText));
+        m_defaultColors.insert("Track:cliptopoffset", p.color(QPalette::Dark));
+        m_defaultColors.insert("Track:clipbottomoffset", p.color(QPalette::Dark));
+        m_defaultColors.insert("Track:background", p.color(QPalette::Base));
+        m_defaultColors.insert("Track:mousehover", p.color((QPalette::Highlight)));
+        m_defaultColors.insert("TrackPanel:background", p.color(QPalette::Window));
+        m_defaultColors.insert("TrackPanel:text", p.color(QPalette::WindowText));
+        m_defaultColors.insert("TrackPanel:sliderborder", p.color(QPalette::WindowText));
+        m_defaultColors.insert("TrackPanel:slider:background", p.color(QPalette::Button));
+        m_defaultColors.insert("TrackPanel:slider:border", p.color(QPalette::Window));
+        m_defaultColors.insert("TrackPanel:head:active", p.color(QPalette::Highlight));
+        m_defaultColors.insert("TrackPanel:head:inactive", p.color(QPalette::Highlight));
+        m_defaultColors.insert("TrackPanel:muteled", QColor(Qt::yellow));
+        m_defaultColors.insert("TrackPanel:sololed", QColor(Qt::green));
+        m_defaultColors.insert("TrackPanel:recled", QColor(Qt::red));
+        m_defaultColors.insert("TrackPanel:led:inactive", p.color(QPalette::Button));
+        m_defaultColors.insert("TrackPanel:trackseparation", p.color(QPalette::WindowText));
+        m_defaultColors.insert("TrackPanel:led:margin:active", p.color(QPalette::Dark));
+        m_defaultColors.insert("TrackPanel:led:margin:inactive", p.color(QPalette::Dark));
+        m_defaultColors.insert("TrackPanel:led:font:active", p.color(QPalette::WindowText));
+        m_defaultColors.insert("TrackPanel:led:font:inactive", p.color(QPalette::WindowText));
+        m_defaultColors.insert("TrackPanel:bus:font", p.color(QPalette::WindowText));
+        m_defaultColors.insert("TrackPanel:bus:background", p.color(QPalette::Button));
+        m_defaultColors.insert("TrackPanel:bus:margin", p.color(QPalette::Dark));
+        m_defaultColors.insert("SubGroup:background", p.color(QPalette::Background));
+        m_defaultColors.insert("SubGroupPanel:background", p.color(QPalette::Background));
+        m_defaultColors.insert("Workcursor:default", QColor(100, 50, 100, 180));
+        m_defaultColors.insert("Marker:default", QColor(Qt::red));
+        m_defaultColors.insert("Marker:blink", p.color(QPalette::Highlight));
+        m_defaultColors.insert("Marker:end", QColor(Qt::blue));
+        m_defaultColors.insert("Marker:blinkend", p.color(QPalette::Highlight));
+}
+
+void Themer::validate_loaded_theme()
+{
+        QStringList list;
+        foreach(const QString& key, m_defaultColors.keys()) {
+                if (!m_colors.contains(key)) {
+                        QColor color = m_defaultColors.value(key);
+                        list << tr("<color name=\"%1\"  red=\"%2\" green=\"%3\" blue=\"%4\"  alpha=\"%5\" />").
+                                        arg(key).arg(color.red()).arg(color.green()).arg(color.blue()).arg(color.alpha());
+                }
+        }
+
+        if (list.size()) {
+                printf("\n");
+                printf("Themer: the following entries are missing, please add those to theme file: %s\n", QS_C(m_themefile));
+
+                foreach(QString string, list) {
+                        printf("%s\n", QS_C(string));
+                }
+                printf("\nAnd adjust the red/green/blue/alpha values to fit in your theme. Thanks\n\n");
+        }
+}

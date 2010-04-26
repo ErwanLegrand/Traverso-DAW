@@ -98,6 +98,12 @@ void SpectralMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
+
+        // re-draw the background pixmap
+        if (bgPixmap.width() != int(m_boundingRect.width()) || bgPixmap.height() != int(m_boundingRect.height())) {
+                update_background();
+        }
+
 	
 	painter->drawPixmap(0, 0, bgPixmap);
 
@@ -170,6 +176,7 @@ void SpectralMeterView::resize()
 
 void SpectralMeterView::update_background()
 {
+        PENTER3;
 	// draw the background image
 	bgPixmap = QPixmap((int)m_boundingRect.width(), (int)m_boundingRect.height());
 
@@ -238,8 +245,8 @@ void SpectralMeterView::load_theme_data()
 	m_penFont.setColor(themer()->get_color("FFTMeter:text"));
 	m_penGrid.setColor(themer()->get_color("FFTMeter:grid"));
 
-	// re-draw the background pixmap
-	update_background();
+        // force the bgPixmap to be recreated on the first paint event.
+        bgPixmap = QPixmap();
 }
 
 void SpectralMeterView::update_data()

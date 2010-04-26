@@ -45,7 +45,8 @@ public:
         void set_path_and_theme(const QString& path, const QString& theme);
 	void use_builtin_theme(const QString& theme);
 	void set_color_adjust_value(int value);
-        
+        void validate_loaded_theme();
+
 	QColor get_color(const QString& name) const;
 	QFont get_font(const QString& fontname) const;
 	QVariant get_property(const QString& propertyname, const QVariant& defaultValue=0) const;
@@ -60,8 +61,11 @@ public:
 private:
         Themer();
 
-	QHash<QString, QColor>	 m_colors;
-	QHash<QString, QLinearGradient> m_gradients;
+        void load_defaults();
+
+        QHash<QString, QColor>	 m_colors;
+        QHash<QString, QColor>	 m_defaultColors;
+        QHash<QString, QLinearGradient> m_gradients;
 	QHash<QString, QVariant> m_properties;
 	QHash<QString, QFont>	m_fonts;
 	QHash<QString, QCursor>	m_cursors;
