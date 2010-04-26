@@ -158,8 +158,9 @@ void Themer::load( )
                 m_themefile.append(".xml");
                 file.setFileName(m_themefile);
                 if (!file.exists()) {
-                        printf("File %s doesn't exit, falling back to default (TraversoLight) theme\n", QS_C(m_themefile));
-                        file.setFileName(":/themes/Traverso Light");
+                        m_themefile = ":/themes/Traverso Light";
+                        printf("File %s doesn't exit, falling back to default (Traverso Light) theme\n", QS_C(m_themefile));
+                        file.setFileName(m_themefile);
                 }
         }
 
