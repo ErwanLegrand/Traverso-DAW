@@ -117,12 +117,27 @@ void Themer::save( )
 {
 	QDomDocument doc("TraversoTheming");
 	QString fileName = QDir::homePath();
-	fileName +=  "/.traverso/themes/default.xml";
+        fileName +=  "/.traverso/themes/editedtheme.xml";
 	QFile data( fileName );
 
 	if (data.open( QIODevice::WriteOnly ) ) {
-		QDomElement colorManagerNode = doc.createElement("Themer");
-		doc.appendChild(colorManagerNode);
+                QDomElement themerNode = doc.createElement("Themer");
+                doc.appendChild(themerNode);
+
+                QDomElement properties = doc.createElement("properties");
+                QHash<QString, QVariant>::ConstIterator propertiesIt = m_properties.begin();
+                while (propertiesIt != m_properties.end()) {
+                        QDomElement e = doc.createElement("property");
+                        e.setAttribute("name", propertiesIt.key());
+                        e.setAttribute("value", propertiesIt.value().toString());
+                        properties.appendChild(e);
+                        ++propertiesIt;
+                }
+
+                themerNode.appendChild(properties);
+
+                QDomElement colors = doc.createElement("colors");
+                themerNode.appendChild(colors);
 
 		QHash<QString, QColor>::ConstIterator it = m_colors.begin();
 		while (it != m_colors.end()) {
@@ -137,7 +152,7 @@ void Themer::save( )
 			v = color;
 			colorProperty.setAttribute("color", color.name());
 			++it;
-			colorManagerNode.appendChild(colorProperty);
+                        colors.appendChild(colorProperty);
 		}
 
 		QTextStream stream(&data);
@@ -580,4 +595,15 @@ void Themer::validate_loaded_theme()
                 }
                 printf("\nAnd adjust the red/green/blue/alpha values to fit in your theme. Thanks\n\n");
         }
+}
+
+QList<QString> Themer::get_colors()
+{
+        return m_colors.keys();
+}
+
+void Themer::set_color(const QString &name, const QColor &color)
+{
+        m_colors.insert(name, color);
+        emit themeLoaded();
 }

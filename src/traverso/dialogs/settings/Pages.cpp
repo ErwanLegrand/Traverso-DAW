@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStyleFactory>
 
 #include "Pages.h"
+#include "dialogs/ThemeModifierDialog.h"
 #include <AudioDevice.h>
 #if defined (ALSA_SUPPORT)
 #include <AlsaDriver.h>
@@ -528,6 +529,7 @@ AppearenceConfigPage::AppearenceConfigPage(QWidget * parent)
 	setupUi(this);
 	
 	themeSelecterCombo->setInsertPolicy(QComboBox::InsertAlphabetically);
+        m_colorModifierDialog = 0;
 	
 	languageComboBox->addItem(tr("Default Language"), "");
 	foreach(const QString &lang, find_qm_files()) {
@@ -550,6 +552,7 @@ void AppearenceConfigPage::create_connections()
 	connect(dbGridCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
 	connect(paintAudioWithOutlineCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
         connect(trackVUOrientationCheckBox, SIGNAL(toggled(bool)), this, SLOT(theme_option_changed()));
+        connect(editThemePushButton, SIGNAL(clicked()), this, SLOT(edit_theme_button_clicked()));
 }
 
 void AppearenceConfigPage::style_index_changed(const QString& text)
@@ -631,7 +634,13 @@ void AppearenceConfigPage::theme_option_changed()
         themer()->load();
 }
 
-
+void AppearenceConfigPage::edit_theme_button_clicked()
+{
+        if (!m_colorModifierDialog) {
+                m_colorModifierDialog = new ThemeModifierDialog(this);
+        }
+        m_colorModifierDialog->show();
+}
 
 
 

@@ -48,6 +48,8 @@ public:
         void validate_loaded_theme();
 
 	QColor get_color(const QString& name) const;
+        void set_color(const QString& name, const QColor& color);
+        QList<QString> get_colors();
 	QFont get_font(const QString& fontname) const;
 	QVariant get_property(const QString& propertyname, const QVariant& defaultValue=0) const;
 	QPalette system_palette() const {return m_systempallete;}

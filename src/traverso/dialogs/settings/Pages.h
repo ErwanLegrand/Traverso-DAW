@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_AlsaDevicesPage.h"
 #include "ui_PaDriverPage.h"
 
-
+class ThemeModifierDialog;
 
 class AlsaDevicesPage : public QWidget, private Ui::AlsaDevicesPage
 {
@@ -111,6 +111,7 @@ private:
 	void update_theme_combobox(const QString& path);
 	void create_connections();
 	QString supportedIconSizes;
+        ThemeModifierDialog* m_colorModifierDialog;
 
 private slots:
 	void dirselect_button_clicked();
@@ -119,6 +120,7 @@ private slots:
 	void use_selected_styles_pallet_checkbox_toggled(bool);
 	void color_adjustbox_changed(int);
 	void theme_option_changed();
+        void edit_theme_button_clicked();
 };
 
 
