@@ -432,7 +432,8 @@ IF(UNIX)
 	
 	IF(NOT WANT_DEBUG AND DETECT_HOST_CPU_FEATURES)
 #		Detect the architecture we are compiling on
-		execute_process(
+                MESSAGE("\nDetecting host cpu features")
+                execute_process(
 			COMMAND uname -m
 			OUTPUT_VARIABLE uname_invoke_result
 			RESULT_VARIABLE uname_failed
@@ -448,7 +449,8 @@ IF(UNIX)
 		SET(HOST_SUPPORTS_SSE FALSE)
 		
 		IF(cat_invoke_result MATCHES sse)
-			SET(HOST_SUPPORTS_SSE TRUE)
+                        MESSAGE("Host cpu is sse capable")
+                        SET(HOST_SUPPORTS_SSE TRUE)
 			LIST(APPEND TRAVERSO_DEFINES -DSSE_OPTIMIZATIONS)
 		ENDIF(cat_invoke_result MATCHES sse)
 		
@@ -457,11 +459,13 @@ IF(UNIX)
 		ENDIF(cat_invoke_result MATCHES 3dnow)
 				
 		IF(uname_invoke_result MATCHES i586)
-			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -march=i586")
+                        MESSAGE("Host cpu is i586")
+                        SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -march=i586")
 		ENDIF(uname_invoke_result MATCHES i586)
 				
 		IF(uname_invoke_result MATCHES i686)
-			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -march=i686")
+                        MESSAGE("Host cpu is i686")
+                        SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -march=i686")
 			IF(HOST_SUPPORTS_SSE)
 				SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
 				LIST(APPEND TRAVERSO_DEFINES -DUSE_XMMINTRIN)
@@ -469,7 +473,8 @@ IF(UNIX)
 		ENDIF(uname_invoke_result MATCHES i686)
 				
 		IF(uname_invoke_result MATCHES x86_64)
-			IF(HOST_SUPPORTS_SSE)
+                        MESSAGE("Host cpu is x86_64")
+                        IF(HOST_SUPPORTS_SSE)
 				SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
 				LIST(APPEND TRAVERSO_DEFINES -DUSE_XMMINTRIN -DUSE_X86_64_ASM)
 				SET(IS_ARCH_X86_64 TRUE)
