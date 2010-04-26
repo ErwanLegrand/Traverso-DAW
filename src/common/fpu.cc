@@ -29,18 +29,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 FPU::FPU ()
 {
+        unsigned long cpuflags = 0;
+
         _flags = Flags (0);
 
 #ifndef ARCH_X86
         return;
-
-#else
-
-        /* asm notes: although we explicitly save&restore ebx/rbx (stack pointer), we must tell
-           gcc that ebx,rbx is clobbered so that it doesn't try to use it as an intermediate
-           register when storing edx/rdx. gcc 4.3 didn't make this "mistake", but gcc 4.4
-           does, at least on x86_64.
-        */
+#endif
 
 #ifndef USE_X86_64_ASM
         asm volatile (
@@ -51,7 +46,7 @@ FPU::FPU ()
                 "popl %%ebx\n"
                 : "=r" (cpuflags)
                 :
-                : "%eax", "%ebx", "%ecx", "%edx"
+                : "%eax", "%ecx", "%edx", "memory"
                 );
 
 #else
@@ -64,7 +59,7 @@ FPU::FPU ()
                 "popq %%rbx\n"
                 : "=r" (cpuflags)
                 :
-                : "%rax", "%rbx", "%rcx", "%rdx"
+                : "%rax", "%rcx", "%rdx", "memory"
                 );
 
 #endif /* USE_X86_64_ASM */
@@ -80,17 +75,16 @@ FPU::FPU ()
         if (cpuflags & (1 << 24)) {
 
                 char* fxbuf = 0;
+                char** temp = &fxbuf;
 
 #ifdef NO_POSIX_MEMALIGN
                 if ((fxbuf = (char *) malloc(512)) == 0)
 #else
-                if (posix_memalign ((void**)&fxbuf, 16, 512))
+                if (posix_memalign ((void**)temp, 16, 512))
 #endif
                 {
-                        error << _("cannot allocate 16 byte aligned buffer for h/w feature detection") << endmsg;
+                        printf("FPU() ERROR: cannot allocate 16 byte aligned buffer for h/w feature detection");
                 } else {
-
-                        memset (fxbuf, 0, 512);
 
                         asm volatile (
                                 "fxsave (%0)"
@@ -114,7 +108,6 @@ FPU::FPU ()
                         free (fxbuf);
                 }
         }
-#endif  // ARCH_X86
 }
 
 FPU::~FPU ()
