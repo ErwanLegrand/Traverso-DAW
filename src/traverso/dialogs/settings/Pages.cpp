@@ -421,7 +421,7 @@ void AppearenceConfigPage::load_config()
 	// used style, using the classname minus Q and Style seems to do the trick.
 	QString systemstyle = QString(QApplication::style()->metaObject()->className()).remove("Q").remove("Style");
 	QString style = config().get_property("Themer", "style", systemstyle).toString();
-	QString theme  = config().get_property("Themer", "currenttheme", "TraversoLight").toString();
+        QString theme  = config().get_property("Themer", "currenttheme", "Traverso Light").toString();
 	int coloradjust = config().get_property("Themer", "coloradjust", 100).toInt();
 	bool usestylepallete = config().get_property("Themer", "usestylepallet", "").toBool();
 	bool paintRectified = config().get_property("Themer", "paintaudiorectified", false).toBool();
@@ -503,7 +503,7 @@ void AppearenceConfigPage::reset_default_config()
 	styleCombo->clear();
 	
 	config().set_property("Themer", "themepath", QString(QDir::homePath()).append("/.traverso/themes"));
-	config().set_property("Themer", "currenttheme", "TraversoLight");
+        config().set_property("Themer", "currenttheme", "Traverso Light");
 	config().set_property("Themer", "coloradjust", 100);
 	QString systemstyle = QString(QApplication::style()->metaObject()->className()).remove("Q").remove("Style");
 	config().set_property("Themer", "style", systemstyle);

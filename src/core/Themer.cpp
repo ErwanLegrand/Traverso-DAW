@@ -87,9 +87,9 @@ Themer::Themer()
 		if (currentStyle  == "Cleanlooks") {
 			m_currentTheme = "ubuntu";
 		} else if (currentStyle == "Plastique") {
-			m_currentTheme = "TraversoLight";
+                        m_currentTheme = "Traverso Light";
 		} else {
-			m_currentTheme = "TraversoLight";
+                        m_currentTheme = "Traverso Light";
 		}
 		config().set_property("Themer", "currenttheme", m_currentTheme);
 	}
@@ -158,8 +158,9 @@ void Themer::load( )
                 m_themefile.append(".xml");
                 file.setFileName(m_themefile);
                 if (!file.exists()) {
-                        m_themefile = ":/themes/Traverso Light";
                         printf("File %s doesn't exit, falling back to default (Traverso Light) theme\n", QS_C(m_themefile));
+                        m_themefile = ":/themes/Traverso Light";
+                        config().set_property("Themer", "currenttheme", "Traverso Light");
                         file.setFileName(m_themefile);
                 }
         }
