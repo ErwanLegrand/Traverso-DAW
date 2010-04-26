@@ -935,7 +935,7 @@ void SheetView::browse_to_track(Track *track)
                         center_in_view(view, Qt::AlignVCenter);
 
 
-                        QPoint point = m_tpvp->mapToGlobal(m_tpvp->mapFromScene(view->scenePos().x() - m_tpvp->width() / 2,
+                        QPoint point = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(m_sheet->get_work_location() / timeref_scalefactor,
                                                              view->scenePos().y() + view->boundingRect().height() / 2));
 
                         printf("moving mouse to: x, y : %d, %d\n", point.x(), point.y());
@@ -978,7 +978,9 @@ void SheetView::browse_to_audio_clip(AudioClip *clip)
         set_hscrollbar_value(acv->pos().x() - (m_clipsViewPort->width() / 3));
         QCursor::setPos(m_clipsViewPort->mapToGlobal(
                         m_clipsViewPort->mapFromScene(
-                        acv->scenePos().x() + 30, acv->scenePos().y() + acv->boundingRect().height() / 2)));
+                        acv->scenePos().x() + acv->boundingRect().width() / 2, acv->scenePos().y() + acv->boundingRect().height() / 2)));
+
+        m_sheet->set_work_at(TimeRef((acv->scenePos().x() + acv->boundingRect().width() / 2) * timeref_scalefactor));
 
         cpointer().set_active_context_items_by_keyboard_input(activeList);
 }
@@ -996,7 +998,14 @@ Command* SheetView::to_upper_context_level()
         if (atv) {
                 QList<AudioClipView*> clipsViews = atv->get_clipviews();
                 if (clipsViews.size()) {
-                        browse_to_audio_clip(clipsViews.first()->get_clip());
+                        foreach(AudioClipView* clipview, clipsViews) {
+                                TimeRef work = m_sheet->get_work_location();
+                                if (clipview->get_clip()->get_track_start_location() < work &&
+                                    clipview->get_clip()->get_track_end_location() > work) {
+                                        browse_to_audio_clip(clipview->get_clip());
+                                }
+                        }
+
                         return 0;
                 }
         }
