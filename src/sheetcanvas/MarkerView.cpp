@@ -183,17 +183,15 @@ void MarkerView::update_drawing()
 
 void MarkerView::set_dragging(bool dragging)
 {
-	if (dragging) {
-		if (! m_posIndicator) {
-			m_posIndicator = new PositionIndicator(this);
-                        m_posIndicator->set_position(- (m_posIndicator->boundingRect().width() + 4), 0);
-		}
-	} else {
-		if (m_posIndicator) {
-			scene()->removeItem(m_posIndicator);
-			delete m_posIndicator;
-			m_posIndicator = 0;
-		}
+        if (! m_posIndicator) {
+                m_posIndicator = new PositionIndicator(this);
+        }
+
+        if (dragging) {
+                m_posIndicator->set_position(- (m_posIndicator->boundingRect().width() + 4), 0);
+                m_posIndicator->show();
+        } else {
+                m_posIndicator->hide();
 	}
 	
 	m_dragging = dragging;

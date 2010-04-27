@@ -31,7 +31,7 @@ class PositionIndicator : public ViewItem
 	
 public:
 	PositionIndicator(ViewItem* parent);
-	~PositionIndicator() {}
+        ~PositionIndicator() {}
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
