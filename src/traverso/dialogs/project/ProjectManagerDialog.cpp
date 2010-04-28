@@ -57,6 +57,7 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
 	connect(treeSheetWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(sheetitem_clicked(QTreeWidgetItem*,int)));
+        connect(sheetsAreTrackFolderCheckBox, SIGNAL(stateChanged(int)), this, SLOT(sheets_are_track_folder_check_box_state_changed(int)));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
@@ -86,6 +87,7 @@ void ProjectManagerDialog::set_project(Project* project)
 		comboBoxGenre->setCurrentIndex(m_project->get_genre());
 		redoButton->setText(m_project->get_history_stack()->redoText());
 		undoButton->setText(m_project->get_history_stack()->undoText());
+                sheetsAreTrackFolderCheckBox->setChecked(m_project->sheets_are_track_folder());
 	} else {
 		setWindowTitle("Manage Project - No Project loaded!");
 		treeSheetWidget->clear();
@@ -101,6 +103,19 @@ void ProjectManagerDialog::set_project(Project* project)
 	}
 	
 	update_sheet_list();
+}
+
+void ProjectManagerDialog::sheets_are_track_folder_check_box_state_changed(int state)
+{
+        if (!m_project) {
+                return;
+        }
+
+        if (state == Qt::Checked) {
+                m_project->set_sheets_are_tracks_folder(true);
+        } else {
+                m_project->set_sheets_are_tracks_folder(false);
+        }
 }
 
 

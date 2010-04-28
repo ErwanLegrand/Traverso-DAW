@@ -54,6 +54,7 @@ private slots:
 	void on_redoButton_clicked();
 	void on_sheetsExportButton_clicked();
 	void on_exportTemplateButton_clicked();
+        void sheets_are_track_folder_check_box_state_changed(int state);
 	
 	void accept();
 	void reject();

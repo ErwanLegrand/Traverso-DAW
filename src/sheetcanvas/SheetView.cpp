@@ -1157,7 +1157,7 @@ Command* SheetView::browse_to_previous_context_item()
         }
 
         if (atv && ! acv) {
-                to_lower_context_level();
+                to_upper_context_level();
                 return 0;
         }
 

@@ -84,6 +84,8 @@ public :
         void set_export_message(QString message);
 	void set_current_sheet(qint64 id);
 	void set_import_dir(const QString& dir);
+        void set_sheets_are_tracks_folder(bool isFolder);
+        void set_work_at(TimeRef worklocation);
 
 	
 	Command* add_sheet(Sheet* sheet, bool historable=true);
@@ -92,6 +94,7 @@ public :
 	bool has_changed();
 	bool is_save_to_close() const;
 	bool is_recording() const;
+        bool sheets_are_track_folder() const {return m_sheetsAreTrackFolder;}
 	
 	int save(bool autosave=false);
 	int load(QString projectfile = "");
@@ -135,6 +138,7 @@ private:
 	int		m_rate;
 	int		m_bitDepth;
 	bool		m_useResampling;
+        bool            m_sheetsAreTrackFolder;
 
 	int		overallExportProgress;
 	int 		renderedSheets;

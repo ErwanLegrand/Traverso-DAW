@@ -378,6 +378,11 @@ void Interface::show_sheet(Sheet* sheet)
 		m_followAction->setEnabled(true);
 	}
 
+        if (m_currentSheetWidget && m_project && m_project->sheets_are_track_folder()) {
+                sheetWidget->get_sheet()->set_hzoom(m_currentSheetWidget->get_sheet()->get_hzoom());
+                sheetWidget->get_sheetview()->set_hscrollbar_value(m_currentSheetWidget->get_sheetview()->hscrollbar_value());
+        }
+
         m_currentSheetWidget = sheetWidget;
 
         m_centerAreaWidget->setCurrentWidget(m_currentSheetWidget);

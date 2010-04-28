@@ -208,8 +208,7 @@ int Sheet::set_state( const QDomNode & node )
 	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	
 	bool ok;
-	TimeRef location(e.attribute( "m_workLocation", "0").toLongLong(&ok));
-	set_work_at(location);
+        m_workLocation = e.attribute( "m_workLocation", "0").toLongLong(&ok);
 	m_transportLocation = TimeRef(e.attribute( "transportlocation", "0").toLongLong(&ok));
 	
 	// Start seeking to the 'old' transport pos
@@ -682,8 +681,13 @@ void Sheet::set_first_visible_frame(nframes_t pos)
 	emit firstVisibleFrameChanged();
 }
 
-void Sheet::set_work_at(const TimeRef& location)
+void Sheet::set_work_at(const TimeRef& location, bool isFolder)
 {
+        if ((! isFolder) && m_project->sheets_are_track_folder()) {
+                return m_project->set_work_at(location);
+        }
+
+
         if (location < TimeRef()) {
                 // do nothing
                 return;
@@ -693,6 +697,11 @@ void Sheet::set_work_at(const TimeRef& location)
                 m_snaplist->mark_dirty();
 	}
 	emit workingPosChanged();
+}
+
+void Sheet::set_work_at_for_sheet_as_track_folder(const TimeRef &location)
+{
+        set_work_at(location, true);
 }
 
 Command* Sheet::toggle_snap()
