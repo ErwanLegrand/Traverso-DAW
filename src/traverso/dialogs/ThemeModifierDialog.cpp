@@ -31,7 +31,7 @@ ThemeModifierDialog::ThemeModifierDialog(QWidget* parent)
 
 void ThemeModifierDialog::current_color_changed(const QColor& color)
 {
-        themer()->set_color(m_currentColor, color);
+        themer()->set_new_theme_color(m_currentColor, color);
 }
 
 void ThemeModifierDialog::list_widget_item_changed(QListWidgetItem* item, QListWidgetItem*)

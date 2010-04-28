@@ -585,6 +585,9 @@ void Themer::validate_loaded_theme()
         foreach(const QString& key, m_defaultColors.keys()) {
                 if (!m_colors.contains(key)) {
                         QColor color = m_defaultColors.value(key);
+                        // add the missing color from default colors
+                        // so the theme editor will be able to save those too.
+                        m_colors.insert(key, color);
                         list << tr("<color name=\"%1\"  red=\"%2\" green=\"%3\" blue=\"%4\"  alpha=\"%5\" />").
                                         arg(key).arg(color.red()).arg(color.green()).arg(color.blue()).arg(color.alpha());
                 }
@@ -592,21 +595,30 @@ void Themer::validate_loaded_theme()
 
         if (list.size()) {
                 printf("\n");
-                printf("Themer: the following entries are missing, please add those to theme file: %s\n", QS_C(m_themefile));
+                printf("Themer: the following entries are missing, please edit theme: %s\n", QS_C(m_themefile));
 
                 foreach(QString string, list) {
                         printf("%s\n", QS_C(string));
                 }
-                printf("\nAnd adjust the red/green/blue/alpha values to fit in your theme. Thanks\n\n");
+                printf("\nAnd adjust the color(s) to fit your theme, using the edit theme button in the Appearance config page!\n"
+                       "The edited theme will be saved to ~/.traverso/themes/editedtheme.xml\n\n");
         }
 }
 
 QList<QString> Themer::get_colors()
 {
-        return m_colors.keys();
+        QList<QString> colors = m_colors.keys();
+        // if the current theme misses some colors, add them here.
+        foreach(QString color, m_defaultColors.keys()) {
+                if (!colors.contains(color)) {
+                        colors.append(color);
+                }
+        }
+
+        return colors;
 }
 
-void Themer::set_color(const QString &name, const QColor &color)
+void Themer::set_new_theme_color(const QString &name, const QColor &color)
 {
         m_colors.insert(name, color);
         emit themeLoaded();
