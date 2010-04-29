@@ -122,47 +122,83 @@ void Themer::save( )
 
         m_watcher->removePath(fileName);
 
-	if (data.open( QIODevice::WriteOnly ) ) {
-                QDomElement themerNode = doc.createElement("Themer");
-                doc.appendChild(themerNode);
+        if (!data.open( QIODevice::WriteOnly ) ) {
+                PWARN("Could not open Themer properties file for writing! (%s)", QS_C(fileName));
+                return;
+        }
 
-                QDomElement properties = doc.createElement("properties");
-                QHash<QString, QVariant>::ConstIterator propertiesIt = m_properties.begin();
-                while (propertiesIt != m_properties.end()) {
-                        QDomElement e = doc.createElement("property");
-                        e.setAttribute("name", propertiesIt.key());
-                        e.setAttribute("value", propertiesIt.value().toString());
-                        properties.appendChild(e);
-                        ++propertiesIt;
+        QDomElement themerNode = doc.createElement("Themer");
+        doc.appendChild(themerNode);
+
+        QDomElement properties = doc.createElement("properties");
+        QHash<QString, QVariant>::ConstIterator propertiesIt = m_properties.begin();
+        while (propertiesIt != m_properties.end()) {
+                QDomElement e = doc.createElement("property");
+                e.setAttribute("name", propertiesIt.key());
+                e.setAttribute("value", propertiesIt.value().toString());
+                properties.appendChild(e);
+                ++propertiesIt;
+        }
+
+        themerNode.appendChild(properties);
+
+
+        QDomElement fonts = doc.createElement("fonts");
+        QHash<QString, QFont>::ConstIterator fontsIt = m_fonts.begin();
+        while (fontsIt != m_fonts.end()) {
+                QDomElement e = doc.createElement("font");
+                e.setAttribute("name", fontsIt.key());
+                QFont font = fontsIt.value();
+                e.setAttribute("value", font.pointSize());
+                fonts.appendChild(e);
+                ++fontsIt;
+        }
+
+        themerNode.appendChild(fonts);
+
+
+        QDomElement colors = doc.createElement("colors");
+        themerNode.appendChild(colors);
+
+        QHash<QString, QColor>::ConstIterator it = m_colors.begin();
+        while (it != m_colors.end()) {
+                QColor color = it.value();
+                QDomElement colorProperty = doc.createElement("color");
+                colorProperty.setAttribute("red", color.red());
+                colorProperty.setAttribute("green", color.green());
+                colorProperty.setAttribute("blue", color.blue());
+                colorProperty.setAttribute("alpha", color.alpha() );
+                colorProperty.setAttribute("name", it.key() );
+                ++it;
+                colors.appendChild(colorProperty);
+        }
+
+
+        QDomElement gradients = doc.createElement("gradients");
+        QHash<QString, QLinearGradient>::ConstIterator gradientsIt = m_gradients.begin();
+        while(gradientsIt != m_gradients.end()) {
+                QDomElement e = doc.createElement("gradient");
+                e.setAttribute("name", gradientsIt.key());
+                QLinearGradient gradient = gradientsIt.value();
+                foreach(QGradientStop gradientstop, gradient.stops()) {
+                        QDomElement stopNode = doc.createElement("stop");
+                        stopNode.setAttribute("value", gradientstop.first);
+                        QColor color = gradientstop.second;
+                        stopNode.setAttribute("red", color.red());
+                        stopNode.setAttribute("green", color.green());
+                        stopNode.setAttribute("blue", color.blue());
+                        stopNode.setAttribute("alpha", color.alpha() );
+                        e.appendChild(stopNode);
                 }
+                gradients.appendChild(e);
+                ++gradientsIt;
+        }
 
-                themerNode.appendChild(properties);
+        themerNode.appendChild(gradients);
 
-                QDomElement colors = doc.createElement("colors");
-                themerNode.appendChild(colors);
-
-		QHash<QString, QColor>::ConstIterator it = m_colors.begin();
-		while (it != m_colors.end()) {
-			QColor color = it.value();
-			QDomElement colorProperty = doc.createElement("color");
-			colorProperty.setAttribute("red", color.red());
-			colorProperty.setAttribute("green", color.green());
-			colorProperty.setAttribute("blue", color.blue());
-			colorProperty.setAttribute("alpha", color.alpha() );
-			colorProperty.setAttribute("name", it.key() );
-			QVariant v;
-			v = color;
-			colorProperty.setAttribute("color", color.name());
-			++it;
-                        colors.appendChild(colorProperty);
-		}
-
-		QTextStream stream(&data);
-		doc.save(stream, 4);
-		data.close();
-	} else {
-		PWARN("Could not open Themer properties file for writing! (%s)", QS_C(fileName));
-	}
+        QTextStream stream(&data);
+        doc.save(stream, 4);
+        data.close();
 
         m_watcher->addPath(fileName);
 }
