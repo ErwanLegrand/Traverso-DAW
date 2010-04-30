@@ -424,8 +424,8 @@ IF(UNIX)
 
                         CHECK_INCLUDE_FILE("jack/session.h" HAVE_JACK_SESSION_H)
                         IF(HAVE_JACK_SESSION_H)
-                                MESSAGE("-- Jack session support found")
-                        ENDIF(NOT HAVE_JACK_SESSION_H)
+                                MESSAGE("-- Jack session support found OK")
+                        ENDIF(HAVE_JACK_SESSION_H)
 
                         IF(JACK_SESSION_FOUND)
                                 LIST(APPEND TRAVERSO_DEFINES -DJACK_SESSION_SUPPORT)
