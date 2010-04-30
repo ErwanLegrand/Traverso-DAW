@@ -78,6 +78,12 @@ class SheetView : public ViewItem
         Q_CLASSINFO("toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
         Q_CLASSINFO("activate_previous_track", tr("To Previous Track"));
         Q_CLASSINFO("activate_next_track", tr("To Next Track"));
+        Q_CLASSINFO("to_upper_context_level", tr("One Context Layer Up"));
+        Q_CLASSINFO("to_lower_context_level", tr("One Context Layer Down"));
+        Q_CLASSINFO("browse_to_previous_context_item", tr("To Previous Context Item"));
+        Q_CLASSINFO("browse_to_next_context_item", tr("To Next Context Item"));
+        Q_CLASSINFO("browse_to_context_item_above", tr("To Context Item Above"));
+        Q_CLASSINFO("browse_to_context_item_below", tr("To Context Item Below"));
 
 public :
 
