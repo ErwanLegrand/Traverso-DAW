@@ -97,6 +97,7 @@
 		<color name="CorrelationMeter:centerline" red="0" green="0" blue="0" alpha="50"/>
 		<color name="CorrelationMeter:text" red="0" green="0" blue="0" alpha="255"/>
 		
+		<color name="FFTMeter:foreground"  red="155" green="0" blue="0"  alpha="150" />
 		<color name="FFTMeter:margin" red="200" green="200" blue="200"  alpha="255" />
 		<color name="FFTMeter:background" red="195" green="195" blue="195" alpha="255" />
 		<color name="FFTMeter:grid" red="128" green="128" blue="128" alpha="255" />
@@ -188,10 +189,6 @@
 			<stop value="0.0" red="48" green="48" blue="48" alpha="100"/>
 			<stop value="0.5" red="255" green="0" blue="0" alpha="150"/>
 			<stop value="1.0" red="48" green="48" blue="48" alpha="100"/>
-		</gradient>
-		<gradient name="FFTMeter:foreground">
-			<stop value="1.0" red="48" green="48" blue="48" alpha="150"/>
-			<stop value="0.0" red="255" green="0" blue="0" alpha="150"/>
 		</gradient>
 	</gradients>
 </Themer> 
