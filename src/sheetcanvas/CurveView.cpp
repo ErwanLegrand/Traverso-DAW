@@ -93,7 +93,12 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	int height = int(m_boundingRect.height());
 	int offset = int(m_startoffset / m_sv->timeref_scalefactor);
 	
-	QPen pen;
+
+        if (m_curve->has_active_context()) {
+                painter->fillRect(option->exposedRect, QColor(255,255,255,70));
+        }
+
+        QPen pen;
 	
 	if (m_sv->get_sheet()->get_mode() == Sheet::EFFECTS) {
 		pen.setColor(themer()->get_color("Curve:active"));
@@ -197,7 +202,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 		painter->setFont(themer()->get_font("CurveView:fontscale:label"));
 		painter->drawText(10, (int)(m_boundingRect.height() - 14), "Gain Curve");
 	}
-	
+
 	painter->restore();
 }
 
@@ -272,6 +277,8 @@ void CurveView::active_context_changed()
                 }
 
         }
+
+        update(m_boundingRect);
 }
 
 	
@@ -518,6 +525,27 @@ Command * CurveView::remove_all_nodes()
 	}
 
 	return group;
-
 }
 
+CurveNodeView* CurveView::get_node_view_before(TimeRef location) const
+{
+        for (int i = m_nodeViews.size() - 1; i>=0; --i) {
+                CurveNodeView* nodeview = m_nodeViews.at(i);
+                if (nodeview->get_curve_node()->get_when() < location) {
+                        return nodeview;
+                }
+        }
+
+        return 0;
+}
+
+CurveNodeView* CurveView::get_node_view_after(TimeRef location) const
+{
+        foreach(CurveNodeView* nodeview, m_nodeViews) {
+                if (nodeview->get_curve_node()->get_when() > location) {
+                        return nodeview;
+                }
+        }
+
+        return 0;
+}

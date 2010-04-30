@@ -34,6 +34,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "Interface.h"
 
 #include "AudioClipView.h"
+#include "CurveView.h"
+#include "CurveNodeView.h"
 #include "SheetView.h"
 #include "SheetWidget.h"
 #include "AudioTrackView.h"
@@ -970,16 +972,51 @@ void SheetView::browse_to_audio_clip_view(AudioClipView* acv)
 
         m_sheet->set_work_at(TimeRef((acv->scenePos().x() + acv->boundingRect().width() / 2) * timeref_scalefactor));
 
-        acv->setCursor(themer()->get_cursor("AudioClip"));
+        cpointer().set_active_context_items_by_keyboard_input(activeList);
+}
+
+void SheetView::browse_to_curve_view(CurveView *curveView)
+{
+        QList<ContextItem*> activeList;
+        AudioClipView* acv = static_cast<AudioClipView*>(curveView->parentItem());
+        activeList.append(curveView);
+        activeList.append(acv);
+        activeList.append(acv->get_audio_track_view());
+        activeList.append(this);
+        cpointer().set_active_context_items_by_keyboard_input(activeList);
+}
+
+void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
+{
+        QList<ContextItem*> activeList;
+        CurveView* curveView = nodeView->get_curve_view();
+
+        AudioClipView* acv = static_cast<AudioClipView*>(curveView->parentItem());
+        activeList.append(curveView);
+        activeList.append(acv);
+        activeList.append(acv->get_audio_track_view());
+        activeList.append(this);
+
+        QCursor::setPos(m_clipsViewPort->mapToGlobal(
+                        m_clipsViewPort->mapFromScene(
+                        nodeView->scenePos().x() + nodeView->boundingRect().width() / 2,
+                        nodeView->scenePos().y() + nodeView->boundingRect().height() / 2)));
+
+        m_sheet->set_work_at(TimeRef(nodeView->get_curve_node()->get_when()));
 
 
         cpointer().set_active_context_items_by_keyboard_input(activeList);
+
 }
 
 
 void SheetView::collect_item_browser_data(ItemBrowserData &data)
 {
         QList<QObject*> list = cpointer().get_context_items();
+
+        if (list.size()) {
+                data.currentContext = list.first()->metaObject()->className();
+        }
 
         foreach(QObject* obj, list) {
                 if (!data.tv) {
@@ -991,6 +1028,9 @@ void SheetView::collect_item_browser_data(ItemBrowserData &data)
                 if (!data.acv) {
                         data.acv = qobject_cast<AudioClipView*>(obj);
                 }
+                if (!data.curveView) {
+                        data.curveView = qobject_cast<CurveView*>(obj);
+                }
         }
 
 }
@@ -1000,13 +1040,13 @@ Command* SheetView::to_upper_context_level()
         ItemBrowserData data;
         collect_item_browser_data(data);
 
-        if (data.acv) {
-
-        } else if (data.atv) {
+        if (data.currentContext == "AudioTrackView") {
                 AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_sheet->get_work_location());
                 if (nearestClipView) {
                         browse_to_audio_clip_view(nearestClipView);
                 }
+        } else if (data.currentContext == "AudioClipView") {
+                browse_to_curve_view(data.acv->get_gain_curve_view());
         }
 
         return 0;
@@ -1017,9 +1057,10 @@ Command* SheetView::to_lower_context_level()
         ItemBrowserData data;
         collect_item_browser_data(data);
 
-        if (data.acv) {
-                AudioTrackView* atv = data.acv->get_audio_track_view();
-                browse_to_track(atv->get_track());
+        if (data.currentContext == "CurveView") {
+                browse_to_audio_clip_view(data.acv);
+        } else if (data.currentContext == "AudioClipView") {
+                browse_to_track(data.acv->get_audio_track_view()->get_track());
         }
 
         return 0;
@@ -1030,6 +1071,10 @@ Command* SheetView::browse_to_context_item_below()
 {
         ItemBrowserData data;
         collect_item_browser_data(data);
+
+        if (data.currentContext == "CurveView") {
+                return 0;
+        }
 
         if (data.acv) {
                 while (data.atv) {
@@ -1076,6 +1121,10 @@ Command* SheetView::browse_to_context_item_above()
         ItemBrowserData data;
         collect_item_browser_data(data);
 
+        if (data.currentContext == "CurveView") {
+                return 0;
+        }
+
         if (data.acv) {
                 while (data.atv) {
                         int index = get_track_views().indexOf(data.atv);
@@ -1115,7 +1164,16 @@ Command* SheetView::browse_to_next_context_item()
         ItemBrowserData data;
         collect_item_browser_data(data);
 
-        if (data.acv) {
+        if (data.currentContext == "CurveView") {
+                CurveNodeView* nodeView = data.curveView->get_node_view_after(m_sheet->get_work_location());
+                if (!nodeView) {
+                        return 0;
+                }
+                browse_to_curve_node_view(nodeView);
+                return 0;
+        }
+
+        if (data.currentContext == "AudioClipView") {
                 QList<AudioClipView*> views = data.atv->get_clipviews();
                 int index = views.indexOf(data.acv);
                 if (index < (views.size() - 1)) {
@@ -1125,7 +1183,7 @@ Command* SheetView::browse_to_next_context_item()
                 }
         }
 
-        if (data.atv && ! data.acv) {
+        if (data.currentContext == "AudioTrackView") {
                 to_upper_context_level();
                 return 0;
         }
@@ -1148,7 +1206,16 @@ Command* SheetView::browse_to_previous_context_item()
         ItemBrowserData data;
         collect_item_browser_data(data);
 
-        if (data.acv) {
+        if (data.currentContext == "CurveView") {
+                CurveNodeView* nodeView = data.curveView->get_node_view_before(m_sheet->get_work_location());
+                if (!nodeView) {
+                        return 0;
+                }
+                browse_to_curve_node_view(nodeView);
+                return 0;
+        }
+
+        if (data.currentContext == "AudioClipView") {
                 QList<AudioClipView*> views = data.atv->get_clipviews();
                 int index = views.indexOf(data.acv);
                 if (index > 0) {
@@ -1160,7 +1227,7 @@ Command* SheetView::browse_to_previous_context_item()
                 }
         }
 
-        if (data.atv && ! data.acv) {
+        if (data.currentContext == "AudioTrackView") {
                 to_upper_context_level();
                 return 0;
         }

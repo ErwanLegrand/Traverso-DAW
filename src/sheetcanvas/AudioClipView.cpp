@@ -83,13 +83,13 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
                 add_new_fadeview(curve);
         }
 
-        curveView = new CurveView(m_sv, this, m_clip->get_plugin_chain()->get_fader()->get_curve());
+        m_gainCurveView = new CurveView(m_sv, this, m_clip->get_plugin_chain()->get_fader()->get_curve());
         // CurveViews don't 'get' their start offset, it's only a property for AudioClips..
         // So to be sure the CurveNodeViews start offset get updated as well,
         // we call curveviews calculate_bounding_rect() function!
-        curveView->set_start_offset(m_clip->get_source_start_location());
-        curveView->calculate_bounding_rect();
-        connect(curveView, SIGNAL(curveModified()), m_sv, SLOT(stop_follow_play_head()));
+        m_gainCurveView->set_start_offset(m_clip->get_source_start_location());
+        m_gainCurveView->calculate_bounding_rect();
+        connect(m_gainCurveView, SIGNAL(curveModified()), m_sv, SLOT(stop_follow_play_head()));
 
         connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
         connect(m_clip, SIGNAL(stateChanged()), this, SLOT(clip_state_changed()));
@@ -251,16 +251,16 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
         float* pixeldata[channels];
         float curveDefaultValue = 1.0;
         int mixcurvedata = 0;
-        mixcurvedata |= curveView->has_nodes();
+        mixcurvedata |= m_gainCurveView->has_nodes();
         int offset = (int)(m_clip->get_source_start_location() / m_sv->timeref_scalefactor);
 
         if (!mixcurvedata) {
-                curveDefaultValue = curveView->get_default_value();
+                curveDefaultValue = m_gainCurveView->get_default_value();
         }
 
         float curvemixdown[peakdatacount];
         if (mixcurvedata) {
-                mixcurvedata |= curveView->get_vector(qRound(xstart) + offset, peakdatacount, curvemixdown);
+                mixcurvedata |= m_gainCurveView->get_vector(qRound(xstart) + offset, peakdatacount, curvemixdown);
         }
 
         for (int i = 0; i < m_fadeViews.size(); ++i) {
@@ -798,7 +798,7 @@ void AudioClipView::position_changed()
         // the calculate_bounding_rect() will update AudioClipViews children, so
         // the CurveView and it's nodes get updated as well, no need to set
         // the start offset for those manually!
-        curveView->set_start_offset(m_clip->get_source_start_location());
+        m_gainCurveView->set_start_offset(m_clip->get_source_start_location());
         calculate_bounding_rect();
         update();
 }
@@ -865,7 +865,7 @@ void AudioClipView::finish_recording()
         m_recordingTimer.stop();
         prepareGeometryChange();
         m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
-        curveView->calculate_bounding_rect();
+        m_gainCurveView->calculate_bounding_rect();
         update();
 }
 

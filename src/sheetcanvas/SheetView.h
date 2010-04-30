@@ -30,6 +30,8 @@ class Sheet;
 class AudioClipView;
 class AudioTrackView;
 class ClipsViewPort;
+class CurveView;
+class CurveNodeView;
 class TrackPanelViewPort;
 class TimeLineViewPort;
 class TrackView;
@@ -45,11 +47,14 @@ struct ItemBrowserData {
                 acv = 0;
                 atv = 0;
                 tv = 0;
+                curveView = 0;
         }
 
         AudioClipView* acv;
         AudioTrackView* atv;
         TrackView* tv;
+        CurveView* curveView;
+        QString currentContext;
 };
 
 class SheetView : public ViewItem
@@ -125,6 +130,8 @@ public :
 
         void browse_to_track(Track* track);
         void browse_to_audio_clip_view(AudioClipView* acv);
+        void browse_to_curve_view(CurveView* curveView);
+        void browse_to_curve_node_view(CurveNodeView* nodeView);
         void center_in_view(ViewItem* item, enum Qt::AlignmentFlag = Qt::AlignHCenter);
 
 	qint64		timeref_scalefactor;

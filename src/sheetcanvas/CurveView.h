@@ -53,6 +53,8 @@ public:
 
 	void set_start_offset(const TimeRef& offset);
 	const TimeRef& get_start_offset() const {return m_startoffset;}
+        CurveNodeView* get_node_view_after(TimeRef location) const;
+        CurveNodeView* get_node_view_before(TimeRef location) const;
 	
 
 private:
