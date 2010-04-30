@@ -168,7 +168,6 @@
 		<keyfact type="FKEY" key1="U" >
 			<Objects>
                                 <Object objectname="ProcessingData" slotsignature="mute" modes="All" sortorder="4" />
-				<Object objectname="AudioClip" slotsignature="mute" modes="All" sortorder="12" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="X" >
@@ -388,6 +387,11 @@
                 <keyfact type="FKEY2" key1="I" key2="O" >
                         <Objects>
                                 <Object objectname="Interface" modes="All" sortorder="13"  slotsignature="audio_io_dialog" />
+                        </Objects>
+                </keyfact>
+                <keyfact type="FKEY2" key1="T" key2="U" >
+                        <Objects>
+                                <Object objectname="Track" slotsignature="mute" modes="All" sortorder="4" />
                         </Objects>
                 </keyfact>
 
