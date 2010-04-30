@@ -36,7 +36,6 @@ public:
 
         QDomNode get_state(QDomDocument doc, bool istemplate=false);
         virtual int set_state( const QDomNode & node );
-        void set_height(int h);
         int process(nframes_t nframes);
 
 protected:

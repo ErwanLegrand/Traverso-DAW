@@ -117,7 +117,6 @@ bool Track::is_muted_by_solo()
 void Track::set_height(int h)
 {
         m_height = h;
-        emit heightChanged();
 }
 
 

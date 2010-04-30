@@ -105,8 +105,6 @@ signals:
         void stateChanged();
         void audibleStateChanged();
         void panChanged();
-
-        void heightChanged();
         void muteChanged(bool isMuted);
 
 };

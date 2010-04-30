@@ -114,12 +114,3 @@ int SubGroup::process(nframes_t nframes)
 
         return 1;
 }
-
-void SubGroup::set_height(int h)
-{
-        m_height = h;
-        if (m_height > 60) {
-                m_height = 60;
-        }
-        emit heightChanged();
-}

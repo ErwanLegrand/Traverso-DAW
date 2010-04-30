@@ -85,7 +85,7 @@ int Zoom::begin_hold()
         m_verticalJogZoomLastY = cpointer().y();
         m_horizontalJogZoomLastX = cpointer().x();
         m_origPos = cpointer().scene_pos();
-	
+
 	return 1;
 }
 
@@ -109,7 +109,7 @@ void Zoom::set_cursor_shape( int useX, int useY )
 	} else if (useY) {
 		cpointer().get_viewport()->set_holdcursor(":/cursorZoomVertical");
 	}
-	
+
         m_mousePos = QCursor::pos();
 }
 
@@ -132,7 +132,7 @@ int Zoom::jog()
 	} 
 	
 	if (m_jogHorizontal) {
-		int x = cpointer().x();
+                int x = cpointer().x();
                 int dx = x - m_horizontalJogZoomLastX;
 		
 		// TODO
@@ -149,7 +149,7 @@ int Zoom::jog()
 			m_sv->center();
 		}
 	}
-	
+
         cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
 	
         return 1;
