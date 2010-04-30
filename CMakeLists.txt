@@ -421,6 +421,16 @@ IF(UNIX)
 			SET(JACK_LIBS ${JACK_LIBRARIES})
 			LIST(APPEND JACK_LIB_DIR ${JACK_LIBDIR} ${JACK_LIBRARY_DIRS})
 			LIST(APPEND JACK_INC_DIR ${JACK_INCLUDEDIR} ${JACK_INCLUDE_DIRS})
+
+                        CHECK_INCLUDE_FILE("jack/session.h" HAVE_JACK_SESSION_H)
+                        IF(HAVE_JACK_SESSION_H)
+                                MESSAGE("-- Jack session support found")
+                        ENDIF(NOT HAVE_JACK_SESSION_H)
+
+                        IF(JACK_SESSION_FOUND)
+                                LIST(APPEND TRAVERSO_DEFINES -DJACK_SESSION_SUPPORT)
+                        ENDIF(JACK_SESSION_FOUND)
+
 		ELSE(JACK_FOUND)
 			MESSAGE(FATAL_ERROR "jack support requested, but jack libraries could not be found!\nPlease install the jack runtime libraries, remove CMakeCache.txt and run cmake again")
 		ENDIF(JACK_FOUND)
