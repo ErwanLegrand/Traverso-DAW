@@ -203,7 +203,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="N" >
 			<Objects>
-                                <Object objectname="AudioClip" modes="All" sortorder="17" pluginname="TraversoCommands" commandname="NormalizeClip" />
+                                <Object objectname="CurveView" slotsignature="add_node" modes="All" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="B" >
@@ -241,11 +241,6 @@
 		<keyfact type="FKEY" key1="R" >
 			<Objects>
 				<Object objectname="FadeCurve" slotsignature="toggle_raster" modes="All" sortorder="11" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY" key1="C" >
-			<Objects>
-				<Object objectname="CurveView" slotsignature="add_node" modes="All" />
 			</Objects>
 		</keyfact>
                 <keyfact type="FKEY" key1="MouseButtonLeft" >
@@ -392,6 +387,11 @@
                 <keyfact type="FKEY2" key1="T" key2="U" >
                         <Objects>
                                 <Object objectname="Track" slotsignature="mute" modes="All" sortorder="4" />
+                        </Objects>
+                </keyfact>
+                <keyfact type="FKEY2" key1="G" key2="N" >
+                        <Objects>
+                                <Object objectname="AudioClip" modes="All" sortorder="17" pluginname="TraversoCommands" commandname="NormalizeClip" />
                         </Objects>
                 </keyfact>
 
