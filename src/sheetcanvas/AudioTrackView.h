@@ -37,11 +37,12 @@ class AudioTrackView : public TrackView
 
 public:
         AudioTrackView(SheetView* sv, AudioTrack* track);
-        ~AudioTrackView() {};
+        ~AudioTrackView() {}
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
         AudioTrack* get_track() const {return m_track;}
+        AudioClipView* get_nearest_audioclip_view(TimeRef location) const;
         QList<AudioClipView* > get_clipviews() {return m_clipViews;}
 	
         int get_childview_y_offset() const;

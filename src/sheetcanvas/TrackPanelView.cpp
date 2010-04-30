@@ -140,7 +140,7 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
                 return;
         }
 
-        PENTER;
+        PENTER3;
 
 
         if (m_trackView->is_moving() || m_track->has_active_context()) {

@@ -156,7 +156,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 	// For now, we ignore such events....
 	if (event->pos() == m_oldMousePos) {
 		return;
-	}
+        }
 
         m_oldMousePos = event->pos();
 
@@ -167,7 +167,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
                 QList<ContextItem*> activeContextItems;
 
 		if (itemsUnderCursor.size()) {
-			itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
+                        itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
 
 
                         foreach(QGraphicsItem* item, itemsUnderCursor) {

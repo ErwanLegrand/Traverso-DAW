@@ -934,7 +934,6 @@ void SheetView::browse_to_track(Track *track)
 
                         center_in_view(view, Qt::AlignVCenter);
 
-
                         QPoint point = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(m_sheet->get_work_location() / timeref_scalefactor,
                                                              view->scenePos().y() + view->boundingRect().height() / 2));
 
@@ -946,29 +945,16 @@ void SheetView::browse_to_track(Track *track)
                         list.append(view);
                         list.append(this);
                         cpointer().set_active_context_items_by_keyboard_input(list);
-                        
+
+                        m_clipsViewPort->setCursor(themer()->get_cursor("Track"));
+
                         return;
                 }
         }
 }
 
-void SheetView::browse_to_audio_clip(AudioClip *clip)
+void SheetView::browse_to_audio_clip_view(AudioClipView* acv)
 {
-        // find related AudioClipView
-        AudioClipView* acv = 0;
-        foreach(TrackView* atv, m_audioTrackViews) {
-                foreach(AudioClipView* view, ((AudioTrackView*)atv)->get_clipviews()) {
-                        if (view->get_clip() == clip) {
-                               acv = view;
-                               break;
-                        }
-                }
-        }
-
-        if (!acv) {
-                return;
-        }
-
         QList<ContextItem*> activeList;
 
         activeList.append(acv);
@@ -976,37 +962,50 @@ void SheetView::browse_to_audio_clip(AudioClip *clip)
         activeList.append(this);
 
         set_hscrollbar_value(acv->pos().x() - (m_clipsViewPort->width() / 3));
+        center_in_view(acv->get_audio_track_view(), Qt::AlignVCenter);
+
         QCursor::setPos(m_clipsViewPort->mapToGlobal(
                         m_clipsViewPort->mapFromScene(
                         acv->scenePos().x() + acv->boundingRect().width() / 2, acv->scenePos().y() + acv->boundingRect().height() / 2)));
 
         m_sheet->set_work_at(TimeRef((acv->scenePos().x() + acv->boundingRect().width() / 2) * timeref_scalefactor));
 
+        acv->setCursor(themer()->get_cursor("AudioClip"));
+
+
         cpointer().set_active_context_items_by_keyboard_input(activeList);
 }
 
 
-Command* SheetView::to_upper_context_level()
+void SheetView::collect_item_browser_data(ItemBrowserData &data)
 {
         QList<QObject*> list = cpointer().get_context_items();
 
-        if (!list.size()) {
-                return 0;
+        foreach(QObject* obj, list) {
+                if (!data.tv) {
+                        data.tv = qobject_cast<TrackView*>(obj);
+                }
+                if (!data.atv) {
+                        data.atv = qobject_cast<AudioTrackView*>(obj);
+                }
+                if (!data.acv) {
+                        data.acv = qobject_cast<AudioClipView*>(obj);
+                }
         }
 
-        AudioTrackView* atv = qobject_cast<AudioTrackView*>(list.first());
-        if (atv) {
-                QList<AudioClipView*> clipsViews = atv->get_clipviews();
-                if (clipsViews.size()) {
-                        foreach(AudioClipView* clipview, clipsViews) {
-                                TimeRef work = m_sheet->get_work_location();
-                                if (clipview->get_clip()->get_track_start_location() < work &&
-                                    clipview->get_clip()->get_track_end_location() > work) {
-                                        browse_to_audio_clip(clipview->get_clip());
-                                }
-                        }
+}
 
-                        return 0;
+Command* SheetView::to_upper_context_level()
+{
+        ItemBrowserData data;
+        collect_item_browser_data(data);
+
+        if (data.acv) {
+
+        } else if (data.atv) {
+                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_sheet->get_work_location());
+                if (nearestClipView) {
+                        browse_to_audio_clip_view(nearestClipView);
                 }
         }
 
@@ -1015,18 +1014,12 @@ Command* SheetView::to_upper_context_level()
 
 Command* SheetView::to_lower_context_level()
 {
-        QList<QObject*> list = cpointer().get_context_items();
+        ItemBrowserData data;
+        collect_item_browser_data(data);
 
-        if (!list.size()) {
-                return 0;
-        }
-
-        AudioClipView* acv = qobject_cast<AudioClipView*>(list.first());
-        if (acv) {
-                AudioTrackView* atv = static_cast<AudioTrackView*>(acv->parentItem());
-                if (atv) {
-                        browse_to_track(atv->get_track());
-                }
+        if (data.acv) {
+                AudioTrackView* atv = data.acv->get_audio_track_view();
+                browse_to_track(atv->get_track());
         }
 
         return 0;
@@ -1035,28 +1028,43 @@ Command* SheetView::to_lower_context_level()
 
 Command* SheetView::browse_to_context_item_below()
 {
-        QPointF point;
-        point.setX(10);
-        point.setY(cpointer().scene_y());
-        TrackView* view = get_trackview_under(point);
-        QList<TrackView*> views = get_track_views();
+        ItemBrowserData data;
+        collect_item_browser_data(data);
 
-        // if the mouse cursor is below all tracks, we don't get a
-        // pointed track, so browse to the nearest.
-        if (!view && views.size()) {
-                browse_to_track(views.last()->get_track());
-                return 0;
-        }
+        if (data.acv) {
+                while (data.atv) {
+                        QList<TrackView*> views = get_track_views();
+                        int index = views.indexOf(data.atv);
+                        if (index < views.size()) {
+                                data.atv = qobject_cast<AudioTrackView*>(views.at(index + 1));
+                                if (!data.atv) {
+                                        return 0;
+                                }
+                                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_sheet->get_work_location());
+                                if (nearestClipView) {
+                                        browse_to_audio_clip_view(nearestClipView);
+                                        return 0;
+                                }
+                        } else {
+                                data.atv = 0;
+                        }
+                }
 
-        if (view) {
-                int index = views.indexOf(view);
+
+        } else if (data.tv) {
+                QList<TrackView*> views = get_track_views();
+                int index = views.indexOf(data.tv);
                 if (index < views.size()) {
                         index += 1;
                         if (index < views.size()) {
-                                view = views.at(index);
-                                browse_to_track(view->get_track());
-                                return 0;
+                                browse_to_track(views.at(index)->get_track());
                         }
+                }
+        } else {
+                // Where not yet in the viewport, at least not upon a track,
+                // browse to top most track
+                if (get_track_views().size()) {
+                        browse_to_track(get_track_views().first()->get_track());
                 }
         }
 
@@ -1065,25 +1073,35 @@ Command* SheetView::browse_to_context_item_below()
 
 Command* SheetView::browse_to_context_item_above()
 {
-        QPointF point;
-        point.setX(10);
-        point.setY(cpointer().scene_y());
-        TrackView* view = get_trackview_under(point);
-        QList<TrackView*> views = get_track_views();
+        ItemBrowserData data;
+        collect_item_browser_data(data);
 
-        // if the mouse cursor is below all tracks, we don't get a
-        // pointed track, so browse to the nearest.
-        if (!view && views.size()) {
-                browse_to_track(views.last()->get_track());
-                return 0;
-        }
+        if (data.acv) {
+                while (data.atv) {
+                        int index = get_track_views().indexOf(data.atv);
+                        if (index >= 1) {
+                                data.atv = (AudioTrackView*)get_track_views().at(index -1);
+                                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_sheet->get_work_location());
+                                if (nearestClipView) {
+                                        browse_to_audio_clip_view(nearestClipView);
+                                        return 0;
+                                }
+                        } else {
+                                data.atv = 0;
+                        }
+                }
 
-        if (view) {
-                int index = get_track_views().indexOf(view);
+
+        } else if (data.tv) {
+                int index = get_track_views().indexOf(data.tv);
                 if (index >= 1) {
-                        view = get_track_views().at(index -1);
-                        browse_to_track(view->get_track());
-                        return 0;
+                        browse_to_track(get_track_views().at(index -1)->get_track());
+                }
+        } else {
+                // Where not yet in the viewport, at least not upon a track,
+                // browse to bottom most track
+                if (get_track_views().size()) {
+                        browse_to_track(get_track_views().last()->get_track());
                 }
         }
 
@@ -1092,29 +1110,22 @@ Command* SheetView::browse_to_context_item_above()
 
 Command* SheetView::browse_to_next_context_item()
 {
-        QList<QObject*> list = cpointer().get_context_items();
         QList<ContextItem*> activeList;
 
-        AudioClipView* acv = qobject_cast<AudioClipView*>(list.first());
-        AudioTrackView* atv = 0;
-        foreach(QObject* obj, list) {
-                AudioTrackView* view = qobject_cast<AudioTrackView*>(obj);
-                if (view) {
-                        atv = view;
-                }
-        }
+        ItemBrowserData data;
+        collect_item_browser_data(data);
 
-        if (acv) {
-                QList<AudioClipView*> views = atv->get_clipviews();
-                int index = views.indexOf(acv);
+        if (data.acv) {
+                QList<AudioClipView*> views = data.atv->get_clipviews();
+                int index = views.indexOf(data.acv);
                 if (index < (views.size() - 1)) {
-                        acv = views.at(index + 1);
-                        browse_to_audio_clip(acv->get_clip());
+                        data.acv = views.at(index + 1);
+                        browse_to_audio_clip_view(data.acv);
                         return 0;
                 }
         }
 
-        if (atv && ! acv) {
+        if (data.atv && ! data.acv) {
                 to_upper_context_level();
                 return 0;
         }
@@ -1132,31 +1143,24 @@ Command* SheetView::browse_to_next_context_item()
 
 Command* SheetView::browse_to_previous_context_item()
 {
-        QList<QObject*> list = cpointer().get_context_items();
         QList<ContextItem*> activeList;
 
-        AudioClipView* acv = qobject_cast<AudioClipView*>(list.first());
-        AudioTrackView* atv = 0;
-        foreach(QObject* obj, list) {
-                AudioTrackView* view = qobject_cast<AudioTrackView*>(obj);
-                if (view) {
-                        atv = view;
-                }
-        }
+        ItemBrowserData data;
+        collect_item_browser_data(data);
 
-        if (acv) {
-                QList<AudioClipView*> views = atv->get_clipviews();
-                int index = views.indexOf(acv);
+        if (data.acv) {
+                QList<AudioClipView*> views = data.atv->get_clipviews();
+                int index = views.indexOf(data.acv);
                 if (index > 0) {
-                        acv = views.at(index - 1);
-                        browse_to_audio_clip(acv->get_clip());
+                        data.acv = views.at(index - 1);
+                        browse_to_audio_clip_view(data.acv);
                         return 0;
                 } else {
-                        acv = 0;
+                        data.acv = 0;
                 }
         }
 
-        if (atv && ! acv) {
+        if (data.atv && ! data.acv) {
                 to_upper_context_level();
                 return 0;
         }

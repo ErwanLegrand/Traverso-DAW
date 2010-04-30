@@ -27,6 +27,7 @@
 
 class AudioClip;
 class Sheet;
+class AudioClipView;
 class AudioTrackView;
 class ClipsViewPort;
 class TrackPanelViewPort;
@@ -38,6 +39,18 @@ class Track;
 class PlayHead;
 class WorkCursor;
 class Curve;
+
+struct ItemBrowserData {
+        ItemBrowserData() {
+                acv = 0;
+                atv = 0;
+                tv = 0;
+        }
+
+        AudioClipView* acv;
+        AudioTrackView* atv;
+        TrackView* tv;
+};
 
 class SheetView : public ViewItem
 {
@@ -75,7 +88,7 @@ public :
 	  		Sheet* sheet);
         ~SheetView();
 	
-	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) {};
+        void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) {}
 	QRectF boundingRect() const {return QRectF();}
 	
 	Sheet* get_sheet() const {return m_sheet;}
@@ -105,7 +118,7 @@ public :
         void set_vscrollbar_value(int value);
 
         void browse_to_track(Track* track);
-        void browse_to_audio_clip(AudioClip* clip);
+        void browse_to_audio_clip_view(AudioClipView* acv);
         void center_in_view(ViewItem* item, enum Qt::AlignmentFlag = Qt::AlignHCenter);
 
 	qint64		timeref_scalefactor;
@@ -141,6 +154,7 @@ private:
 	
 	void layout_tracks();
         void update_tracks_bounding_rect();
+        void collect_item_browser_data(ItemBrowserData& data);
 
 
 public slots:

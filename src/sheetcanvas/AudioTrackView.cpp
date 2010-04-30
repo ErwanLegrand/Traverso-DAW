@@ -142,3 +142,43 @@ void AudioTrackView::to_front(AudioClipView * view)
 	view->setZValue(zValue() + 2);
 }
 
+AudioClipView* AudioTrackView::get_nearest_audioclip_view(TimeRef location) const
+{
+        PENTER;
+        if (!m_clipViews.size()) {
+                return (AudioClipView*) 0;
+        }
+
+        AudioClipView* nearestClipView = 0;
+        TimeRef shortestDistance(LONG_LONG_MAX);
+
+        foreach(AudioClipView* clipview, m_clipViews) {
+                AudioClip* clip = clipview->get_clip();
+
+                // check if location is in the clipviews start/end range
+                // if so, we found the 'nearest' clipview, so return it.
+                if (clip->get_track_start_location() < location &&
+                    clip->get_track_end_location() > location) {
+                        return clipview;
+                }
+
+                // this clip is left of of location.
+                if (clip->get_track_end_location() < location) {
+                        TimeRef diff = location - clip->get_track_end_location();
+                        if (diff < shortestDistance) {
+                                shortestDistance = diff;
+                                nearestClipView = clipview;
+                        }
+                }
+                // this clip is right of location
+                if (clip->get_track_start_location() > location) {
+                        TimeRef diff = clip->get_track_start_location() - location;
+                        if (diff < shortestDistance) {
+                                shortestDistance = diff;
+                                nearestClipView = clipview;
+                        }
+                }
+        }
+
+        return nearestClipView;
+}
