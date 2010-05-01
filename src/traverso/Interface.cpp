@@ -582,7 +582,7 @@ void Interface::create_menus( )
 
         action = menu->addAction(tr("&Close Project"));
         m_projectMenuToolbarActions.append(action);
-        action->setShortcuts(QKeySequence::Close);
+        action->setShortcuts(QKeySequence::Cut);
         action->setIcon(QIcon(":/exit"));
         connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(close_current_project()));
 

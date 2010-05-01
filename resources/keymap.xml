@@ -96,19 +96,18 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="V">
 			<Objects>
-                                <Object objectname="SheetView" slotsignature="touch_play_cursor" modifierkeys="SHIFT" modes="All" sortorder="2" submenu="Playhead" />
-                                <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modifierkeys="SHIFT" modes="All" sortorder="2" />
-                                <Object objectname="SheetView" slotsignature="playhead_to_workcursor" modifierkeys="ALT" modes="All" sortorder="12" submenu="Playhead" />
+                                <Object objectname="SheetView" slotsignature="touch_play_cursor" modifierkeys="CTRL" modes="All" sortorder="2" submenu="Playhead" />
+                                <Object objectname="SheetView" slotsignature="playhead_to_workcursor" modifierkeys="SHIFT" modes="All" sortorder="12" submenu="Playhead" />
 				<Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="CTRL" submenu="Playhead" />
+                                <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modifierkeys="SHIFT" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" isholdmodifier="1" />
                                 <Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" isholdmodifier="1" />
 			</Objects>
 		</keyfact>
                 <keyfact type="FKEY" key1="W" >
                         <Objects>
-                                <Object objectname="PlayHeadMove" slotsignature="workcursor_to_playhead" modes="All" sortorder="3" submenu="Work Cursor" isholdmodifier="1" />
-                                <Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="ALT" modes="All" sortorder="5" submenu="Work Cursor" />
-                                <Object objectname="SheetView" slotsignature="touch" modifierkeys="SHIFT" modes="All" sortorder="2" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="workcursor_to_playhead" modifierkeys="SHIFT" modes="All" sortorder="3" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="touch" modifierkeys="CTRL" modes="All" sortorder="2" submenu="Work Cursor" />
                         </Objects>
                 </keyfact>
                 <keyfact type="FKEY" key1="HOME" >
@@ -311,10 +310,6 @@
                                 <Object objectname="CurveView" slotsignature="remove_node" modes="All" />
                                 <Object objectname="PluginView" slotsignature="remove_plugin" modes="All" />
                                 <Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" />
-                        </Objects>
-                </keyfact>
-                <keyfact type="FKEY" key1="RETURN" >
-                        <Objects>
                         </Objects>
                 </keyfact>
 
