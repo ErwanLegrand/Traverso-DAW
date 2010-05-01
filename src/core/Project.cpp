@@ -276,6 +276,54 @@ int Project::load(QString projectfile)
 	return 1;
 }
 
+int Project::save_from_template_to_project_file(const QString& templateFile, const QString& projectName)
+{
+        QFile file(templateFile);
+        QString saveFileName = m_rootDir + "/project.tpf";
+
+        QDomDocument doc("Project");
+
+        if (!file.open(QIODevice::ReadOnly)) {
+                m_errorString = tr("Project %1: Cannot open project.tpf file! (Reason: %2)").arg(m_title).arg(file.errorString());
+                info().critical(m_errorString);
+                return PROJECT_FILE_COULD_NOT_BE_OPENED;
+        }
+
+        // Start setting and parsing the content of the xml file
+        QString errorMsg;
+        if (!doc.setContent(&file, &errorMsg)) {
+                m_errorString = tr("Project %1: Failed to parse project.tpf file! (Reason: %2)").arg(m_title).arg(errorMsg);
+                info().critical(m_errorString);
+                return SETTING_XML_CONTENT_FAILED;
+        }
+
+        QDomElement docElem = doc.documentElement();
+        QDomNode propertiesNode = docElem.firstChildElement("Properties");
+        QDomElement e = propertiesNode.toElement();
+
+        if (e.attribute("projectfileversion", "-1").toInt() != PROJECT_FILE_VERSION) {
+                m_errorString = tr("Project File Version does not match, unable to load Project!");
+                info().warning(m_errorString);
+                return PROJECT_FILE_VERSION_MISMATCH;
+        }
+
+        e.setAttribute("title", projectName);
+
+        QFile data( saveFileName );
+
+        if (!data.open( QIODevice::WriteOnly ) ) {
+                QString errorstring = FileHelper::fileerror_to_string(data.error());
+                info().critical( tr("Couldn't open Project properties file for writing! (File %1. Reason: %2)").arg(saveFileName).arg(errorstring) );
+                return -1;
+        }
+
+        QTextStream stream(&data);
+        doc.save(stream, 4);
+        data.close();
+
+        return 1;
+}
+
 
 int Project::save(bool autosave)
 {
@@ -615,6 +663,11 @@ void Project::set_current_sheet(qint64 id)
 	
 	if (!newcurrent) {
 		info().information( tr("Sheet '%1' doesn't exist!").arg(id) );
+                // fallback to the first sheet.
+                if (m_sheets.size()) {
+                        set_current_sheet(m_sheets.first()->get_id());
+                }
+
 		emit currentSheetChanged(0);
 		return;
 	}

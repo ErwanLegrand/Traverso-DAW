@@ -88,6 +88,7 @@ public :
         void set_sheets_are_tracks_folder(bool isFolder);
         void set_work_at(TimeRef worklocation);
         void set_keyboard_arrow_key_navigation_speed(int speed) {m_keyboardArrowNavigationSpeed = speed;}
+        int save_from_template_to_project_file(const QString& file, const QString& projectName);
 
 	
 	Command* add_sheet(Sheet* sheet, bool historable=true);

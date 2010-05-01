@@ -158,20 +158,24 @@ void NewProjectDialog::accept( )
 		if (usetemplate) {
 			project = pm().create_new_project(QDir::homePath() + "/.traverso/ProjectTemplates/" + 
 					templateComboBox->itemText(index) + ".tpt", title);
-		
+                        if (! project) {
+                                info().warning(tr("Couldn't create project (%1)").arg(title) );
+                                return;
+                        }
 		} else {
 			project = pm().create_new_project(numSheets, numTracks, title);
+                        if (! project) {
+                                info().warning(tr("Couldn't create project (%1)").arg(title) );
+                                return;
+                        }
+
+                        project->set_description(descriptionTextEdit->toPlainText());
+                        project->set_engineer(newProjectEngineer->text());
+                        project->save();
 		}
 	}
 
-	if (! project) {
-		info().warning(tr("Couldn't create project (%1)").arg(title) );
-		return;
-	}
 	
-	project->set_description(descriptionTextEdit->toPlainText());
-	project->set_engineer(newProjectEngineer->text());
-	project->save();
 	delete project;
 	
 	pm().load_project(title);

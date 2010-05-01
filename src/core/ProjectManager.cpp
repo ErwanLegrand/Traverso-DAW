@@ -188,13 +188,10 @@ Project* ProjectManager::create_new_project(const QString& templatefile, const Q
 		return 0;
 	}
 	
-	if (newProject->load(templatefile) < 0) {
+        if (newProject->save_from_template_to_project_file(templatefile, projectName) < 0) {
 		return 0;
 	}
 	
-	// title gets overwritten in newProject->load()
-	newProject->set_title(projectName);
-
         emit projectsListChanged();
 	
 	return newProject;
