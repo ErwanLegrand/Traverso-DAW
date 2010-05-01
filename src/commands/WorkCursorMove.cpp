@@ -59,8 +59,16 @@ int WorkCursorMove::finish_hold()
 
 int WorkCursorMove::begin_hold()
 {
-        cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), -20));
-        ViewPort* port = ((ViewPort*)cpointer().get_viewport());
+        if (m_sheet->is_transport_rolling()) {
+		m_playCursor->disable_follow();
+	}
+
+	m_sheet->get_work_snap()->set_snappable(false);
+	m_sv->start_shuttle(true, true);
+	m_origPos = m_sheet->get_work_location();
+
+        ClipsViewPort* port = m_sv->get_clips_viewport();
+        port->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), -20));
         int x = port->mapFromScene(m_workCursor->scenePos()).x();
 
         if (x < 0 || x > port->width()) {
@@ -71,14 +79,6 @@ int WorkCursorMove::begin_hold()
                         port->mapFromScene(
                         m_workCursor->scenePos().x(), m_holdCursorSceneY)));
 
-        if (m_sheet->is_transport_rolling()) {
-		m_playCursor->disable_follow();
-	}
-
-	m_sheet->get_work_snap()->set_snappable(false);
-	m_sv->start_shuttle(true, true);
-	m_origPos = m_sheet->get_work_location();
-        
 	return 1;
 }
 
