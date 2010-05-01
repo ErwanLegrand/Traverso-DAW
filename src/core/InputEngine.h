@@ -73,7 +73,8 @@ struct IEAction
 		int sortorder;
                 int autorepeatInterval;
                 int autorepeatStartDelay;
-	};
+                bool isHoldModifierKey;
+        };
 
         QHash<QString, Data*> objects;
 	QHash<QString, Data*> objectUsingModifierKeys;

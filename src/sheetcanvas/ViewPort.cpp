@@ -421,6 +421,6 @@ void HoldCursor::set_pos(QPointF p)
         p.setY(p.y() - m_pixmap.width() / 2);
 
 	
-	setPos(p);
+        setPos(p);
 }
 

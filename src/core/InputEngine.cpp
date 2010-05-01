@@ -1147,6 +1147,11 @@ int InputEngine::find_index_for_instant_hold_key(int key)
                 return -1;
         }
 
+        // if modifier keys are pressed, this can't be an instant hold key!
+        if (m_activeModifierKeys.size()) {
+                return -1;
+        }
+
         foreach(IEAction* action, m_ieActions) {
 
                 if (action->type == HOLDKEY) {
@@ -1159,11 +1164,13 @@ int InputEngine::find_index_for_instant_hold_key(int key)
                         // enabled objects, so we are sure we can ignore this action.
                         // this on the other hand does't work if key1 is a
                         // 'modifier key for hold commands'... who do we solve that?
-                        if (action->objects.isEmpty()) {
-                                continue;
+                        foreach(IEAction::Data* data, action->objects) {
+                                if (!data->isHoldModifierKey) {
+                                        PMESG2("InputEngine::is_instant_hold_key: Found a conflict (%s) (slot: %s) \n",
+                                              action->keySequence.data(), QS_C(data->slotsignature));
+                                        return -1;
+                                }
                         }
-                        PMESG("Found a conflict (%s) for instantaneous keyfact key=%d", action->keySequence.data(), key);
-                        return -1;
                 }
         }
 
@@ -1631,6 +1638,7 @@ int InputEngine::init_map(const QString& keymap)
 			data->sortorder = e.attribute( "sortorder", "0").toInt();
                         data->autorepeatInterval = e.attribute("autorepeatinterval", "40").toInt();
                         data->autorepeatStartDelay = e.attribute("autorepeatstartdelay", "100").toInt();
+                        data->isHoldModifierKey = e.attribute("isholdmodifier", 0).toInt();
 			mouseHint = e.attribute( "mousehint", "" );
 			QString args = e.attribute("arguments", "");
 			modifierKeys = e.attribute("modifierkeys", "");

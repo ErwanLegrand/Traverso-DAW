@@ -98,18 +98,17 @@
 			<Objects>
                                 <Object objectname="SheetView" slotsignature="touch_play_cursor" modifierkeys="SHIFT" modes="All" sortorder="2" submenu="Playhead" />
                                 <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modifierkeys="SHIFT" modes="All" sortorder="2" />
-                                <Object objectname="SheetView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" />
+                                <Object objectname="SheetView" slotsignature="playhead_to_workcursor" modifierkeys="ALT" modes="All" sortorder="12" submenu="Playhead" />
 				<Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="CTRL" submenu="Playhead" />
-                                <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" />
-				<Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" />
+                                <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" isholdmodifier="1" />
+                                <Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" isholdmodifier="1" />
 			</Objects>
 		</keyfact>
                 <keyfact type="FKEY" key1="W" >
                         <Objects>
+                                <Object objectname="PlayHeadMove" slotsignature="workcursor_to_playhead" modes="All" sortorder="3" submenu="Work Cursor" isholdmodifier="1" />
+                                <Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="ALT" modes="All" sortorder="5" submenu="Work Cursor" />
                                 <Object objectname="SheetView" slotsignature="touch" modifierkeys="SHIFT" modes="All" sortorder="2" submenu="Work Cursor" />
-                                <Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="CTRL" modes="All" sortorder="5" submenu="Work Cursor" />
-                                <Object objectname="SheetView" slotsignature="workcursor_to_playhead" modifierkeys="CTRL;ALT" modes="All" sortorder="3" submenu="Work Cursor" />
-                                <Object objectname="ProjectManager" slotsignature="close_current_project" modifierkeys="ALT" modes="All" />
                         </Objects>
                 </keyfact>
                 <keyfact type="FKEY" key1="HOME" >
@@ -332,7 +331,7 @@
 				<Object objectname="Sheet" slotsignature="toggle_snap" modes="All" sortorder="36" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY2" key1="Z" key2="V" >
+                <keyfact type="FKEY2" key1="Z" key2="" >
 			<Objects>
 				<Object objectname="SheetView" modes="All" sortorder="45" submenu="Zoom" pluginname="TraversoCommands" commandname="VZoomOut" arguments="VZoom;1;0.2" />
 			</Objects>
@@ -362,7 +361,7 @@
                                 <Object objectname="AudioTrackView" modes="All" sortorder="13"  slotsignature="insert_silence" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY2" key1="V" key2="B" >
+                <keyfact type="FKEY2" key1="" key2="B" >
 			<Objects>
 				<Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" submenu="Playhead" />
 			</Objects>
@@ -547,7 +546,7 @@
 				<Object objectname="AudioClipView" mousehint="UD" modes="All" pluginname="TraversoCommands" commandname="MoveClip" arguments="move;true" />
 			</Objects>
 		</keyfact>
-		<keyfact type="HKEY2" key1="Z" key2="V" >
+                <keyfact type="HKEY2" key1="Z" key2="" >
 			<Objects>
 				<Object objectname="SheetView" mousehint="UD" modes="All" sortorder="2" submenu="Zoom" pluginname="TraversoCommands" commandname="VJogZoom" arguments="VJogZoom;1.2;0.2" />
 			</Objects>
@@ -627,11 +626,6 @@
 		<keyfact type="D_FKEY" key1="F" >
 			<Objects>
 				<Object objectname="AudioClipView" slotsignature="reset_fade" modes="All" sortorder="37" submenu="Fade In/Out" />
-			</Objects>
-		</keyfact>
-                <keyfact type="D_FKEY" key1="V">
-			<Objects>
-				<Object objectname="SheetView" slotsignature="play_to_begin" modes="All" sortorder="30" submenu="Playhead" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="S">
