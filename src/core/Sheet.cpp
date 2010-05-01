@@ -681,21 +681,23 @@ void Sheet::set_first_visible_frame(nframes_t pos)
 	emit firstVisibleFrameChanged();
 }
 
-void Sheet::set_work_at(const TimeRef& location, bool isFolder)
+void Sheet::set_work_at(TimeRef location, bool isFolder)
 {
         if ((! isFolder) && m_project->sheets_are_track_folder()) {
                 return m_project->set_work_at(location);
         }
 
-
+        // catch location < 0
         if (location < TimeRef()) {
-                // do nothing
-                return;
+                location = TimeRef();
         }
+
 	m_workLocation = location;
+
         if (m_workSnap->is_snappable()) {
                 m_snaplist->mark_dirty();
 	}
+
 	emit workingPosChanged();
 }
 

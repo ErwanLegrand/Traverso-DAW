@@ -115,7 +115,7 @@ public:
 	void set_artists(const QString& pArtistis);
         void set_name(const QString& name);
 	void set_first_visible_frame(nframes_t pos);
-        void set_work_at(const TimeRef& location, bool isFolder=false);
+        void set_work_at(TimeRef location, bool isFolder=false);
         void set_work_at_for_sheet_as_track_folder(const TimeRef& location);
 	void set_hzoom(qreal hzoom);
 	void set_snapping(bool snap);
