@@ -34,7 +34,7 @@ class PlayHeadMove : public MoveCommand
 
 public :
 	PlayHeadMove(PlayHead* cursor, SheetView* sv);
-	~PlayHeadMove(){};
+        ~PlayHeadMove(){}
 
 	int finish_hold();
 	int begin_hold();
@@ -44,7 +44,7 @@ public :
 	void set_cursor_shape(int useX, int useY);
 
 private :
-	PlayHead*	m_cursor;
+	PlayHead*	m_playhead;
 	Sheet*		m_sheet;
 	SheetView*	m_sv;
 	bool		m_resync;
