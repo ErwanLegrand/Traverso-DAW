@@ -98,7 +98,7 @@
 			<Objects>
                                 <Object objectname="SheetView" slotsignature="touch_play_cursor" modifierkeys="CTRL" modes="All" sortorder="2" submenu="Playhead" />
                                 <Object objectname="SheetView" slotsignature="playhead_to_workcursor" modifierkeys="SHIFT" modes="All" sortorder="12" submenu="Playhead" />
-				<Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="CTRL" submenu="Playhead" />
+                                <Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="ALT" submenu="Playhead" />
                                 <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modifierkeys="SHIFT" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" isholdmodifier="1" />
                                 <Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" isholdmodifier="1" />

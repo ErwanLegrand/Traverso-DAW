@@ -703,7 +703,7 @@ void Interface::create_menus( )
 	m_editToolBar->addAction(m_effectAction);
 	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
 
-	menu = menuBar()->addMenu(tr("&View"));
+        menu = menuBar()->addMenu(tr("Vi&ew"));
         menu->installEventFilter(this);
 
 	menu->addAction(historyDW->toggleViewAction());
