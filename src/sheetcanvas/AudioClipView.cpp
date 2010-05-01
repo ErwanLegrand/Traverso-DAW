@@ -828,7 +828,10 @@ void AudioClipView::load_theme_data()
 void AudioClipView::active_context_changed()
 {
         if (ie().is_holding()) {
-                return;
+                // TODO: find out if we still need to bail out
+                // when holding is active, say for moving a clip with [ D ]
+                // or something else?
+//                return;
         }
 
         if (m_clip->has_active_context()) {

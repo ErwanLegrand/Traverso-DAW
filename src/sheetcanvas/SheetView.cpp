@@ -1179,12 +1179,17 @@ Command* SheetView::browse_to_next_context_item()
         }
 
         if (data.currentContext == "AudioClipView") {
-                QList<AudioClipView*> views = data.atv->get_clipviews();
-                int index = views.indexOf(data.acv);
-                if (index < (views.size() - 1)) {
-                        data.acv = views.at(index + 1);
-                        browse_to_audio_clip_view(data.acv);
+                AudioClip* nextClip = data.atv->get_track()->get_clip_after(data.acv->get_clip()->get_track_start_location());
+                if (!nextClip) {
                         return 0;
+                }
+
+                QList<AudioClipView*> views = data.atv->get_clipviews();
+                foreach(AudioClipView* view, views) {
+                        if (view->get_clip() == nextClip) {
+                                browse_to_audio_clip_view(view);
+                                return 0;
+                        }
                 }
         }
 
@@ -1221,14 +1226,17 @@ Command* SheetView::browse_to_previous_context_item()
         }
 
         if (data.currentContext == "AudioClipView") {
-                QList<AudioClipView*> views = data.atv->get_clipviews();
-                int index = views.indexOf(data.acv);
-                if (index > 0) {
-                        data.acv = views.at(index - 1);
-                        browse_to_audio_clip_view(data.acv);
+                AudioClip* nextClip = data.atv->get_track()->get_clip_before(data.acv->get_clip()->get_track_start_location());
+                if (!nextClip) {
                         return 0;
-                } else {
-                        data.acv = 0;
+                }
+
+                QList<AudioClipView*> views = data.atv->get_clipviews();
+                foreach(AudioClipView* view, views) {
+                        if (view->get_clip() == nextClip) {
+                                browse_to_audio_clip_view(view);
+                                return 0;
+                        }
                 }
         }
 

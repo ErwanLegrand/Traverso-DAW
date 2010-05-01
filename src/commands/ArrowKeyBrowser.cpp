@@ -60,6 +60,15 @@ int ArrowKeyBrowser::finish_hold()
         return -1;
 }
 
+void ArrowKeyBrowser::set_cursor_shape(int useX, int useY)
+{
+        if (useX) {
+                cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+        }
+        if (useY) {
+                cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
+        }
+}
 
 void ArrowKeyBrowser::browse()
 {

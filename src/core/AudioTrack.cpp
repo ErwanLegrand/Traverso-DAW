@@ -395,15 +395,22 @@ AudioClip* AudioTrack::get_clip_after(const TimeRef& pos)
         return (AudioClip*) 0;
 }
 
-
 AudioClip* AudioTrack::get_clip_before(const TimeRef& pos)
 {
+        TimeRef shortestDistance(LONG_LONG_MAX);
+        AudioClip* nearest = 0;
+
         apill_foreach(AudioClip* clip, AudioClip, m_clips) {
                 if (clip->get_track_start_location() < pos) {
-                        return clip;
+                        TimeRef diff = pos - clip->get_track_start_location();
+                        if (diff < shortestDistance) {
+                                shortestDistance = diff;
+                                nearest = clip;
+                        }
                 }
         }
-        return (AudioClip*) 0;
+
+        return nearest;
 }
 
 

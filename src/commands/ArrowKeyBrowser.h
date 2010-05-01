@@ -36,6 +36,8 @@ public:
         int begin_hold();
         int finish_hold();
 
+        void set_cursor_shape(int useX, int useY);
+
 
 private:
         int             m_arrow;
