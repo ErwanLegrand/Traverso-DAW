@@ -50,7 +50,6 @@
                                 <Object objectname="SheetView" slotsignature="browse_to_previous_context_item" modes="All" sortorder="3" submenu="Navigate" />
                                 <Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
                                 <Object objectname="Zoom" slotsignature="hzoom_out" modes="All" sortorder="4" />
-                                <Object objectname="Sheet" slotsignature="prev_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
                                 <Object objectname="MoveCommand" slotsignature="move_left" autorepeatinterval="50" autorepeatstartdelay="200" modes="All" sortorder="5" />
                         </Objects>
 		</keyfact>
@@ -60,7 +59,6 @@
                                 <Object objectname="SheetView" slotsignature="browse_to_next_context_item" modes="All" sortorder="4" submenu="Navigate" />
                                 <Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="hzoom_in" modes="All" sortorder="5" />
-                                <Object objectname="Sheet" slotsignature="next_skip_pos" modes="All" sortorder="5" modifierkeys="CTRL" submenu="Playhead" />
                                 <Object objectname="MoveCommand" slotsignature="move_right" autorepeatinterval="50" autorepeatstartdelay="200" modes="All" sortorder="4" />
                         </Objects>
 		</keyfact>
@@ -354,11 +352,6 @@
                 <keyfact type="FKEY2" key1="I" key2="S" >
 			<Objects>
                                 <Object objectname="AudioTrackView" modes="All" sortorder="13"  slotsignature="insert_silence" />
-			</Objects>
-		</keyfact>
-                <keyfact type="FKEY2" key1="" key2="B" >
-			<Objects>
-				<Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" submenu="Playhead" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="E" key2="P" >
@@ -656,11 +649,6 @@
 			</Objects>
 		</keyfact>
 		
-		
-                <keyfact type="S_FKEY_FKEY" key1="" key2="" >
-			<Objects>
-			</Objects>
-		</keyfact>
                 <keyfact type="S_FKEY_FKEY" key1="" key2="" >
 			<Objects>
 			</Objects>
