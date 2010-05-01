@@ -204,7 +204,7 @@ void ContextPointer::set_active_context_items_by_mouse_movement(const QList<Cont
 {
         if (m_keyboardOnlyInput) {
                 QPoint diff = m_globalMousePos - QCursor::pos();
-                if (diff.manhattanLength() > 250) {
+                if (diff.manhattanLength() > 50) {
                         m_keyboardOnlyInput = false;
                 } else {
                         return;
