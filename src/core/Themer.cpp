@@ -142,6 +142,7 @@ void Themer::save( )
 
         themerNode.appendChild(properties);
 
+        QFont basefont = QApplication::font();
 
         QDomElement fonts = doc.createElement("fonts");
         QHash<QString, QFont>::ConstIterator fontsIt = m_fonts.begin();
@@ -149,7 +150,7 @@ void Themer::save( )
                 QDomElement e = doc.createElement("font");
                 e.setAttribute("name", fontsIt.key());
                 QFont font = fontsIt.value();
-                e.setAttribute("value", font.pointSize());
+                e.setAttribute("value", font.pointSizeF() / basefont.pointSizeF());
                 fonts.appendChild(e);
                 ++fontsIt;
         }
