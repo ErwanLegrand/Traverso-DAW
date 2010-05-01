@@ -6,6 +6,7 @@
 	<ModifierKeys>
 		<key key="CTRL" />
 		<key key="ALT" />
+                <key key="SHIFT" />
 	</ModifierKeys>
 	<Modes>
 		<mode name="All" id="0" />
@@ -72,7 +73,7 @@
                                 <Object objectname="MoveClip" slotsignature="move_up" modes="All" modifierkeys="CTRL" sortorder="1" />
                                 <Object objectname="Zoom" slotsignature="track_vzoom_out" modes="All" sortorder="1" />
                                 <Object objectname="SheetView" slotsignature="browse_to_context_item_above" modes="All" sortorder="5" submenu="Navigate" />
-                                <Object objectname="SheetView" slotsignature="to_upper_context_level" modifierkeys="CTRL" modes="All" sortorder="8" submenu="Navigate" />
+                                <Object objectname="SheetView" slotsignature="to_upper_context_level" modifierkeys="SHIFT" modes="All" sortorder="8" submenu="Navigate" />
                                 <Object objectname="Interface" slotsignature="browse_to_first_track_in_active_sheet" modes="All" sortorder="10" />
                                 <Object objectname="MoveCommand" slotsignature="move_faster" modes="All" sortorder="6" />
                                 <Object objectname="Shuttle" slotsignature="move_up"  modifierkeys="CTRL" modes="All" sortorder="3" />
@@ -87,34 +88,31 @@
                                 <Object objectname="MoveClip" slotsignature="move_down" modifierkeys="CTRL" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="track_vzoom_in" modes="All" sortorder="2" />
                                 <Object objectname="SheetView" slotsignature="browse_to_context_item_below" modes="All" sortorder="5" submenu="Navigate" />
-                                <Object objectname="SheetView" slotsignature="to_lower_context_level" modifierkeys="CTRL" modes="All" sortorder="9" submenu="Navigate"  />
+                                <Object objectname="SheetView" slotsignature="to_lower_context_level" modifierkeys="SHIFT" modes="All" sortorder="9" submenu="Navigate"  />
                                 <Object objectname="Interface" slotsignature="browse_to_last_track_in_active_sheet" modes="All" sortorder="10"/>
                                 <Object objectname="MoveCommand" slotsignature="move_slower" modes="All" sortorder="7" />
                                 <Object objectname="Shuttle" slotsignature="move_down" modifierkeys="CTRL" modes="All" sortorder="4" />
                         </Objects>
 		</keyfact>
-		<keyfact type="FKEY" key1="SHIFT" >
-			<Objects>
-				<Object objectname="SheetView" slotsignature="touch_play_cursor" modes="All" sortorder="2" submenu="Playhead" />
-				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
-			</Objects>
-		</keyfact>
 		<keyfact type="FKEY" key1="V">
 			<Objects>
-				<Object objectname="SheetView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" />
+                                <Object objectname="SheetView" slotsignature="touch_play_cursor" modifierkeys="SHIFT" modes="All" sortorder="2" submenu="Playhead" />
+                                <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modifierkeys="SHIFT" modes="All" sortorder="2" />
+                                <Object objectname="SheetView" slotsignature="playhead_to_workcursor" modes="All" sortorder="12" submenu="Playhead" />
 				<Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="CTRL" submenu="Playhead" />
                                 <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" />
 				<Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY" key1="W" >
-			<Objects>
-                                <Object objectname="SheetView" slotsignature="touch"  modes="All" sortorder="2" submenu="Work Cursor" />
+                <keyfact type="FKEY" key1="W" >
+                        <Objects>
+                                <Object objectname="SheetView" slotsignature="touch" modifierkeys="SHIFT" modes="All" sortorder="2" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="CTRL" modes="All" sortorder="5" submenu="Work Cursor" />
                                 <Object objectname="SheetView" slotsignature="workcursor_to_playhead" modifierkeys="CTRL;ALT" modes="All" sortorder="3" submenu="Work Cursor" />
                                 <Object objectname="ProjectManager" slotsignature="close_current_project" modifierkeys="ALT" modes="All" />
                         </Objects>
-		</keyfact>
-		<keyfact type="FKEY" key1="HOME" >
+                </keyfact>
+                <keyfact type="FKEY" key1="HOME" >
 			<Objects>
                                 <Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="CTRL" modes="All" sortorder="5" submenu="Work Cursor" />
                                 <Object objectname="SheetView" slotsignature="play_to_begin" modes="All" sortorder="30" submenu="Playhead" />
@@ -459,6 +457,9 @@
                                 <Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="Effects" sortorder="3" />
                                 <Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
                                 <Object objectname="MarkerView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
+                                <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="20" pluginname="TraversoCommands" modifierkeys="SHIFT" commandname="FoldSheet" arguments="fold_sheet" />
+                                <Object objectname="TimeLineView" mousehint="LR" modes="All" sortorder="7" pluginname="TraversoCommands" modifierkeys="SHIFT" commandname="FoldMarkers" arguments="fold_markers" />
+                                <Object objectname="AudioTrackView" mousehint="LR" modes="All" sortorder="6" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="FoldTrack" arguments="fold_track" />
                         </Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="B" >
@@ -476,7 +477,7 @@
                                 <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="6" pluginname="TraversoCommands" commandname="Shuttle" />
                         </Objects>
 		</keyfact>
-		<keyfact type="HKEY" key1="SHIFT" >
+                <keyfact type="HKEY" key1="V" >
 			<Objects>
 				<Object objectname="SheetView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="8" submenu="Playhead" />
 				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
@@ -540,17 +541,10 @@
 				<Object objectname="SheetView" modes="All" sortorder="4" pluginname="TraversoCommands" commandname="Gain" />
 			</Objects>
 		</keyfact>
-		<keyfact type="HKEY2" key1="D" key2="V" >
+                <keyfact type="HKEY2" key1="" key2="" >
 			<Objects>
 				<Object objectname="CurveView" mousehint="UD" slotsignature="drag_node_vertical_only" modes="Effects" sortorder="4" />
 				<Object objectname="AudioClipView" mousehint="UD" modes="All" pluginname="TraversoCommands" commandname="MoveClip" arguments="move;true" />
-			</Objects>
-		</keyfact>
-		<keyfact type="HKEY2" key1="D" key2="F" >
-			<Objects>
-				<Object objectname="SheetView" mousehint="LR" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="FoldSheet" arguments="fold_sheet" />
-				<Object objectname="TimeLineView" mousehint="LR" modes="All" sortorder="7" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="FoldMarkers" arguments="fold_markers" />
-                                <Object objectname="AudioTrackView" mousehint="LR" modes="All" sortorder="6" pluginname="TraversoCommands" modifierkeys="CTRL" commandname="FoldTrack" arguments="fold_track" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="Z" key2="V" >
@@ -635,12 +629,7 @@
 				<Object objectname="AudioClipView" slotsignature="reset_fade" modes="All" sortorder="37" submenu="Fade In/Out" />
 			</Objects>
 		</keyfact>
-		<keyfact type="D_FKEY" key1="W">
-			<Objects>
-				<Object objectname="SheetView" slotsignature="goto_begin" modes="All" sortorder="5" submenu="Work Cursor" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY" key1="SHIFT">
+                <keyfact type="D_FKEY" key1="V">
 			<Objects>
 				<Object objectname="SheetView" slotsignature="play_to_begin" modes="All" sortorder="30" submenu="Playhead" />
 			</Objects>
@@ -675,11 +664,11 @@
 		</keyfact>
 		
 		
-		<keyfact type="S_FKEY_FKEY" key1="W" key2="E" >
+                <keyfact type="S_FKEY_FKEY" key1="" key2="" >
 			<Objects>
 			</Objects>
 		</keyfact>
-		<keyfact type="S_FKEY_FKEY" key1="W" key2="Q" >
+                <keyfact type="S_FKEY_FKEY" key1="" key2="" >
 			<Objects>
 			</Objects>
 		</keyfact>

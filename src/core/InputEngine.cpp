@@ -733,6 +733,15 @@ void InputEngine::process_press_event(int eventcode)
         if (m_isFirstFact && !m_isHolding) {
 		cpointer().inputengine_first_input_event();
                 if (m_eventStack[0] == 0) {
+                        // Here we jump straight to the [K] command if "K" is unambiguously a HOLDKEY
+                        int holdKeyIndex = find_index_for_instant_hold_key(eventcode);
+                        if (holdKeyIndex >= 0) {
+                                push_event(PRESS_EVENT, eventcode);
+                                press_checker();
+                                assume_hold();
+                                return;
+                        }
+
 			// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
 			int fkey_index = find_index_for_instant_fkey(eventcode);
 			if (fkey_index >= 0) {
@@ -854,7 +863,6 @@ void InputEngine::assume_hold() // no release so far ? so consider it a hold...
 {
         PENTER3;
         PMESG3("No release so far (waited %d ms). Assuming this is a hold and dispatching it", m_assumeHoldTime);
-        m_holdTimer.stop(); // quit the holding check..
         m_isHolding = true;
         dispatch_hold();
 }
@@ -1131,6 +1139,36 @@ int InputEngine::find_index_for_instant_fkey( int key )
 	return fkey_index;
 }
 
+int InputEngine::find_index_for_instant_hold_key(int key)
+{
+        PENTER;
+        int holdKeyIndex = find_index_for_single_fact(HOLDKEY, key, 0);
+        if (holdKeyIndex < 0) {
+                return -1;
+        }
+
+        foreach(IEAction* action, m_ieActions) {
+
+                if (action->type == HOLDKEY) {
+                        continue;
+                }
+
+                if (action->fact1_key1==key || action->fact1_key2==key) {
+                        // if this action doesn't have any 'normal' objects, then
+                        // the only objects available for this ieaction are modifier key
+                        // enabled objects, so we are sure we can ignore this action.
+                        // this on the other hand does't work if key1 is a
+                        // 'modifier key for hold commands'... who do we solve that?
+                        if (action->objects.isEmpty()) {
+                                continue;
+                        }
+                        PMESG("Found a conflict (%s) for instantaneous keyfact key=%d", action->keySequence.data(), key);
+                        return -1;
+                }
+        }
+
+        return holdKeyIndex;
+}
 
 // Only return a valid index if there is an FKEY2 defined for key1, key2, and there are no
 // other conflicting keyfacts (HOLDKEY2, etc)
@@ -1678,8 +1716,8 @@ int InputEngine::init_map(const QString& keymap)
 	PMESG2("Optimizing map for best performance ...");
 	int optimizedActions=0;
 	foreach(IEAction* action, m_ieActions) {
-		int c1A = action->fact1_key1;
-		int c2A = action->fact1_key2;
+                int key1 = action->fact1_key1;
+                int key2 = action->fact1_key2;
 
 		if ( (action->type == FKEY) ) {
 			bool alone = true;
@@ -1689,7 +1727,7 @@ int InputEngine::init_map(const QString& keymap)
 				int tt    = aloneAction->type;
 				int t1A   = aloneAction->fact1_key1;
 				if  (
-					(t1A==c1A)  &&
+                                        (t1A==key1)  &&
 					(
 						(tt==D_FKEY)       ||
 						(tt==FHKEY)        ||
@@ -1716,18 +1754,15 @@ int InputEngine::init_map(const QString& keymap)
 				int tt    = aloneAction->type;
 				int t1A   = aloneAction->fact1_key1;
 				int t2A   = aloneAction->fact1_key2;
-				if (
-					((t1A==c1A) && (t2A==c2A)) &&
-					(
-						(tt==HOLDKEY)         ||
-						(tt==D_FKEY2)      ||
-						(tt==S_FKEY2_FKEY) ||
-						(tt==S_FKEY2_FKEY2)||
-						(tt==S_FKEY2_HKEY) ||
-						(tt==S_FKEY2_HKEY2)
-					)
-				)
+                                if ( ((t1A==key1) && (t2A==key2)) &&
+                                      ( (tt==HOLDKEY)      ||
+                                        (tt==D_FKEY2)      ||
+                                        (tt==S_FKEY2_FKEY) ||
+                                        (tt==S_FKEY2_FKEY2)||
+                                        (tt==S_FKEY2_HKEY) ||
+                                        (tt==S_FKEY2_HKEY2)) ) {
 					alone=false;
+                                }
 			}
 			if (alone) {
 				PMESG3("Setting <KK> fact (slot=%s) for instantaneous response", action->keySequence.data());
