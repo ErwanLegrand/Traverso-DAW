@@ -13,6 +13,7 @@ ${QT_QTXML_INCLUDE_DIR}
 )
 
 SET(TRAVERSO_COMMANDS_SOURCES
+ArrowKeyBrowser.cpp
 AudioClipExternalProcessing.cpp
 AddRemove.cpp
 ClipSelection.cpp
@@ -41,6 +42,7 @@ MoveCommand.cpp
 )
 
 SET(TRAVERSO_COMMANDS_MOC_CLASSES
+ArrowKeyBrowser.h
 Crop.h
 ExternalProcessingDialog.h
 Fade.h

@@ -925,6 +925,8 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 			modifierkey += "ALT+";
 		} else if (key == Qt::Key_Control) {
 			modifierkey += "CTRL+";
+                } else if (key == Qt::Key_Shift) {
+                        modifierkey += "SHIFT+";
 		} else {
 			QKeySequence seq(key);
 			modifierkey += seq.toString() + " +";

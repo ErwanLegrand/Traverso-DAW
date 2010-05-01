@@ -64,6 +64,7 @@ class TraversoCommands : public CommandPlugin
 	Q_CLASSINFO("ScrollDownHold", tr("Down"))
         Q_CLASSINFO("Shuttle", tr("Shuttle"))
         Q_CLASSINFO("NormalizeClip", tr("Normalize"))
+        Q_CLASSINFO("ArrowKeyBrowser", tr("Arrow Key Browser"))
 
 public:
 	TraversoCommands();
@@ -90,7 +91,8 @@ private:
   		ZoomCommand,
                 ScrollCommand,
                 ShuttleCommand,
-                NormalizeClipCommand
+                NormalizeClipCommand,
+                ArrowKeyBrowserCommand
 	};
 };
 

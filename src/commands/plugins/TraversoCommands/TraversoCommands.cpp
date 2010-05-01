@@ -137,6 +137,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ScrollDownHold", ScrollCommand);
         m_dict.insert("Shuttle", ShuttleCommand);
         m_dict.insert("NormalizeClip", NormalizeClipCommand);
+        m_dict.insert("ArrowKeyBrowser", ArrowKeyBrowserCommand);
 }
 
 Command* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
@@ -399,6 +400,17 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
 			}
 			return new Scroll(view, arguments);
 		}
+
+                case ArrowKeyBrowserCommand:
+                {
+                        SheetView* view = qobject_cast<SheetView*>(obj);
+                        if (!view) {
+                                PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+                                                "ScrollCommand needs an SheetView as argument");
+                                return 0;
+                        }
+                        return new ArrowKeyBrowser(view, arguments);
+                }
 
                 case ShuttleCommand:
                 {
