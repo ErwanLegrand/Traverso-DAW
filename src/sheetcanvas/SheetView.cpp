@@ -1002,7 +1002,7 @@ void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
                         nodeView->scenePos().x() + nodeView->boundingRect().width() / 2,
                         nodeView->scenePos().y() + nodeView->boundingRect().height() / 2)));
 
-        m_sheet->set_work_at(TimeRef(nodeView->get_curve_node()->get_when()));
+        m_sheet->set_work_at(TimeRef((nodeView->scenePos().x() + nodeView->boundingRect().width() / 2) * timeref_scalefactor));
 
 
         cpointer().set_active_context_items_by_keyboard_input(activeList);
@@ -1076,7 +1076,7 @@ Command* SheetView::browse_to_context_item_below()
                 return 0;
         }
 
-        if (data.acv) {
+        if (data.currentContext == "AudioClipView") {
                 while (data.atv) {
                         QList<TrackView*> views = get_track_views();
                         int index = views.indexOf(data.atv);
@@ -1095,8 +1095,11 @@ Command* SheetView::browse_to_context_item_below()
                         }
                 }
 
+                return 0;
 
-        } else if (data.tv) {
+        }
+
+        if (data.currentContext == "AudioTrackView" || data.currentContext == "SubGroupView") {
                 QList<TrackView*> views = get_track_views();
                 int index = views.indexOf(data.tv);
                 if (index < views.size()) {
@@ -1105,12 +1108,14 @@ Command* SheetView::browse_to_context_item_below()
                                 browse_to_track(views.at(index)->get_track());
                         }
                 }
-        } else {
-                // Where not yet in the viewport, at least not upon a track,
-                // browse to top most track
-                if (get_track_views().size()) {
-                        browse_to_track(get_track_views().first()->get_track());
-                }
+
+                return 0;
+        }
+
+        // Where not yet in the viewport, at least not upon a track,
+        // browse to top most track
+        if (get_track_views().size()) {
+                browse_to_track(get_track_views().first()->get_track());
         }
 
         return 0;

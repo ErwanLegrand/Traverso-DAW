@@ -378,15 +378,15 @@ void HoldCursor::set_text( const QString & text )
 
 void HoldCursor::set_type( const QString & type )
 {
-	m_pixmap = find_pixmap(type);
+        m_pixmap = find_pixmap(type);
 	int x = (int) pos().x();
-	int y = (int) pos().y();
-	setPos(x - m_pixmap.width() / 2, y - m_pixmap.height() / 2);
+        int y = (int) pos().y();
+        setPos(x - m_pixmap.width() / 2, y - m_pixmap.height() / 2);
 }
 
 QRectF HoldCursor::boundingRect( ) const
 {
-	return QRectF(0, 0, 130, 40);
+        return QRectF(0, 0, 130, 40);
 }
 
 void HoldCursor::reset()

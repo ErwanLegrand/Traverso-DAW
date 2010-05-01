@@ -35,7 +35,7 @@ class MoveCommand : public Command
 public :
         MoveCommand (const QString& description);
         MoveCommand (ContextItem* item, const QString& description);
-        virtual ~MoveCommand (){};
+        virtual ~MoveCommand (){}
 
 protected :
         int             m_speed;

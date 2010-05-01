@@ -208,8 +208,10 @@ void WorkCursorMove::browse_to_next_marker()
 {
         QList<Marker*> markers = m_sheet->get_timeline()->get_markers();
         QList<ContextItem*> contexts = cpointer().get_active_context_items();
+        MarkerView* view;
         foreach(ContextItem* item, contexts) {
-                if (item->inherits("MarkerView")) {
+                view = qobject_cast<MarkerView*>(item);
+                if (view) {
                         cpointer().remove_from_active_context_list(item);
                         contexts.removeAll(item);
                 }
@@ -241,8 +243,10 @@ void WorkCursorMove::browse_to_previous_marker()
 {
         QList<Marker*> markers = m_sheet->get_timeline()->get_markers();
         QList<ContextItem*> contexts = cpointer().get_active_context_items();
+        MarkerView* view;
         foreach(ContextItem* item, contexts) {
-                if (item->inherits("MarkerView")) {
+                view = qobject_cast<MarkerView*>(item);
+                if (view) {
                         cpointer().remove_from_active_context_list(item);
                         contexts.removeAll(item);
                 }
