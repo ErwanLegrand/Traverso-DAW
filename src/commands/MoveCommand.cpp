@@ -21,19 +21,21 @@
 
 #include "MoveCommand.h"
 
+#include "Project.h"
+#include "ProjectManager.h"
 
 MoveCommand::MoveCommand(const QString &description)
         : Command(description)
-        , m_speed(1)
         , m_doSnap(false)
 {
+        m_speed = pm().get_project()->get_keyboard_arrow_key_navigation_speed();
 }
 
 MoveCommand::MoveCommand(ContextItem* item, const QString &description)
         : Command(item, description)
-        , m_speed(1)
         , m_doSnap(false)
 {
+        m_speed = pm().get_project()->get_keyboard_arrow_key_navigation_speed();
 }
 
 void MoveCommand::move_faster(bool autorepeat)
@@ -49,6 +51,8 @@ void MoveCommand::move_faster(bool autorepeat)
         } else if (m_speed == 16) {
                 m_speed = 32;
         }
+
+        pm().get_project()->set_keyboard_arrow_key_navigation_speed(m_speed);
 }
 
 
@@ -65,6 +69,8 @@ void MoveCommand::move_slower(bool autorepeat)
         } else if (m_speed == 2) {
                 m_speed = 1;
         }
+
+        pm().get_project()->set_keyboard_arrow_key_navigation_speed(m_speed);
 }
 
 void MoveCommand::toggle_snap_on_off(bool autorepeat)

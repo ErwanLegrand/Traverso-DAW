@@ -66,6 +66,7 @@ public :
 	Sheet* get_current_sheet() const ;
 	Sheet* get_sheet(qint64 id) const;
 	int get_sheet_index(qint64 id) const;
+        int get_keyboard_arrow_key_navigation_speed() const {return m_keyboardArrowNavigationSpeed;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 
 
@@ -86,6 +87,7 @@ public :
 	void set_import_dir(const QString& dir);
         void set_sheets_are_tracks_folder(bool isFolder);
         void set_work_at(TimeRef worklocation);
+        void set_keyboard_arrow_key_navigation_speed(int speed) {m_keyboardArrowNavigationSpeed = speed;}
 
 	
 	Command* add_sheet(Sheet* sheet, bool historable=true);
@@ -137,6 +139,7 @@ private:
 
 	int		m_rate;
 	int		m_bitDepth;
+        int             m_keyboardArrowNavigationSpeed;
 	bool		m_useResampling;
         bool            m_sheetsAreTrackFolder;
 

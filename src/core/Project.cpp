@@ -66,6 +66,7 @@ Project::Project(const QString& title)
 	m_currentSheetId = 0;
 	m_exportThread = 0;
 	engineer = "";
+        m_keyboardArrowNavigationSpeed = 4;
 
 	m_useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
 	m_rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
