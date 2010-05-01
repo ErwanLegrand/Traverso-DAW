@@ -135,6 +135,10 @@ bool ViewPort::event(QEvent * event)
 			keyPressEvent(ke);
 			return true;
 		}
+                if (ke->key() == Qt::Key_Alt) {
+                        keyPressEvent(ke);
+                        return true;
+                }
 	}
 	if (event->type() == QEvent::KeyRelease) {
 		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
@@ -142,7 +146,11 @@ bool ViewPort::event(QEvent * event)
 			keyReleaseEvent(ke);
 			return true;
 		}
-	}
+                if (ke->key() == Qt::Key_Alt) {
+                        keyReleaseEvent(ke);
+                        return true;
+                }
+        }
 	return QGraphicsView::event(event);
 }
 
