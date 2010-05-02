@@ -342,7 +342,6 @@ void Sheet::schedule_for_deletion()
 void Sheet::audiodevice_client_removed(Client* client )
 {
 	PENTER;
-        usleep(10000);
         if (m_audiodeviceClient == client) {
                 if (m_scheduledForDeletion) {
                         // added audiodevice().disconnect(this) here, reason see:

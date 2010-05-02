@@ -83,7 +83,7 @@ public slots:
 
 
 private:
-	ProjectManager();
+        ProjectManager();
 	ProjectManager(const ProjectManager&);
 
 	Project* currentProject;

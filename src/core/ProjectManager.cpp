@@ -138,7 +138,7 @@ void ProjectManager::set_current_project(Project* project)
                 // free the audiodevice, but only if we don't want to quit.
                 audiodevice().set_parameters(AudioDeviceSetup());
         }
-	
+
 	if ( ! oldprojectname.isEmpty() ) {
 		cleanup_backupfiles_for_project(oldprojectname);
 	}

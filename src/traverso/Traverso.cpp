@@ -120,7 +120,7 @@ Traverso::~Traverso()
 	PENTERDES;
 	delete Interface::instance();
 	delete themer();
-	config().save();
+        config().save();
 }
 
 void Traverso::create_interface( )
