@@ -963,14 +963,13 @@ void SheetView::browse_to_audio_clip_view(AudioClipView* acv)
         activeList.append(acv->get_audio_track_view());
         activeList.append(this);
 
-        set_hscrollbar_value(acv->pos().x() - (m_clipsViewPort->width() / 3));
+        m_sheet->set_work_at(TimeRef((acv->scenePos().x() + acv->boundingRect().width() / 2) * timeref_scalefactor));
+        set_hscrollbar_value(acv->pos().x()  + acv->boundingRect().width() / 2 - (m_clipsViewPort->width() / 2));
         center_in_view(acv->get_audio_track_view(), Qt::AlignVCenter);
 
         QCursor::setPos(m_clipsViewPort->mapToGlobal(
                         m_clipsViewPort->mapFromScene(
                         acv->scenePos().x() + acv->boundingRect().width() / 2, acv->scenePos().y() + acv->boundingRect().height() / 2)));
-
-        m_sheet->set_work_at(TimeRef((acv->scenePos().x() + acv->boundingRect().width() / 2) * timeref_scalefactor));
 
         cpointer().set_active_context_items_by_keyboard_input(activeList);
 }
