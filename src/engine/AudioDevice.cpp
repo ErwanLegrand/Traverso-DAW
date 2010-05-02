@@ -212,13 +212,13 @@ AudioDevice::~AudioDevice()
 	
 	delete m_cpuTime;
 
-	free_memory();
+        free_memory();
 }
 
 void AudioDevice::free_memory()
 {
         foreach(AudioBus* bus, m_buses) {
-		delete bus;
+                delete bus;
 	}
 
         m_buses.clear();
@@ -507,9 +507,9 @@ int AudioDevice::shutdown( )
 	PENTER;
 	int r = 1;
 
-	emit stopped();
+        emit stopped();
 
-	m_runAudioThread = 0;
+        m_runAudioThread = 0;
 	
         if (m_audioThread) {
                 disconnect(m_audioThread, SIGNAL(finished()), this, SLOT(audiothread_finished()));
@@ -537,7 +537,7 @@ int AudioDevice::shutdown( )
                 m_driver = 0;
 	}
 	
-	free_memory();
+        free_memory();
 
 	return r;
 }

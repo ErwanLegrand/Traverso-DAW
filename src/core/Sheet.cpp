@@ -172,8 +172,8 @@ void Sheet::init()
         m_workSnap->set_snap_list(m_snaplist);
 
 	m_realtimepath = false;
-	m_scheduledForDeletion = false;
-	m_isSnapOn=true;
+        m_scheduledForDeletion = false;
+        m_isSnapOn=true;
 	m_changed = m_rendering = m_recording = m_prepareRecording = false;
         m_firstVisibleFrame=0;
 	m_workLocation = TimeRef();
@@ -311,9 +311,11 @@ void Sheet::disconnect_from_audiodevice()
 {
 	PENTER;
 	if (is_transport_rolling()) {
-		m_transport = false;
-		emit transportStopped();
-	}
+                m_transport = false;
+                emit transportStopped();
+        }
+
+        // FIXME: this wasn't needed before, why is it now????
 
         // Disconnect the busConfigChanged signal from audiodevice for all
         // Track objects, we don't want them anymore since Sheet and all it's
@@ -328,23 +330,28 @@ void Sheet::disconnect_from_audiodevice()
         }
         audiodevice().disconnect(m_masterOut);
 
-	audiodevice().remove_client(m_audiodeviceClient);
+        audiodevice().remove_client(m_audiodeviceClient);
 }
 
 void Sheet::schedule_for_deletion()
 {
-	m_scheduledForDeletion = true;
-	pm().scheduled_for_deletion(this);
+        m_scheduledForDeletion = true;
+        pm().scheduled_for_deletion(this);
 }
 
 void Sheet::audiodevice_client_removed(Client* client )
 {
 	PENTER;
-	if (m_audiodeviceClient == client) {
-		if (m_scheduledForDeletion) {
-			pm().delete_sheet(this);
-		}
-	}
+        usleep(10000);
+        if (m_audiodeviceClient == client) {
+                if (m_scheduledForDeletion) {
+                        // added audiodevice().disconnect(this) here, reason see:
+                        // void Sheet::disconnect_from_audiodevice()
+                        audiodevice().disconnect(this);
+
+                        pm().delete_sheet(this);
+                }
+        }
 }
 
 Command* Sheet::add_track(Track* track, bool historable)
@@ -1154,11 +1161,11 @@ Command* Sheet::start_transport()
 // So ALL functions called here need to be RT thread save!!
 int Sheet::transport_control(transport_state_t state)
 {
-	if (m_scheduledForDeletion) {
-		return true;
-	}
-	
-	switch(state.transport) {
+        if (m_scheduledForDeletion) {
+                return true;
+        }
+
+        switch(state.transport) {
 	case TransportStopped:
                 if (state.location != m_transportLocation) {
                         initiate_seek_start(state.location);

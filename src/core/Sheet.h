@@ -144,12 +144,12 @@ public:
 	bool realtime_path() const {return m_realtimepath;}
         bool is_changed() const {return m_changed;}
 	bool is_snap_on() const	{return m_isSnapOn;}
-	bool is_recording() const {return m_recording;}
+        bool is_recording() const {return m_recording;}
 	bool is_smaller_then(APILinkedListNode* node) {Q_UNUSED(node); return false;}
 
 	void disconnect_from_audiodevice();
 	void connect_to_audiodevice();
-	void schedule_for_deletion();
+        void schedule_for_deletion();
 
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		readbuffer;
@@ -206,8 +206,8 @@ private:
 	bool		m_resumeTransport;
 	bool 		m_stopTransport;
 	bool		m_realtimepath;
-	bool		m_scheduledForDeletion;
-	bool		m_recording;
+        bool		m_scheduledForDeletion;
+        bool		m_recording;
 	bool		m_prepareRecording;
 	bool		m_readyToRecord;
         SnapList*	m_snaplist;

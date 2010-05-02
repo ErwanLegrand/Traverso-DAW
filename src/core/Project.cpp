@@ -87,9 +87,9 @@ Project::~Project()
 	cpointer().remove_contextitem(this);
 
 	foreach(Sheet* sheet, m_sheets) {
-		sheet->schedule_for_deletion();
-		sheet->disconnect_from_audiodevice();
-	}
+                sheet->schedule_for_deletion();
+                sheet->disconnect_from_audiodevice();
+        }
 
 	delete m_hs;
 }
