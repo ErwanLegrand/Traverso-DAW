@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class AudioDeviceThread;
 class Driver;
-class Client;
+class AudioDeviceClient;
 class AudioChannel;
 class AudioBus;
 #if defined (JACK_SUPPORT)
@@ -57,12 +57,12 @@ class AudioDevice : public QObject
 public:
         void set_parameters(AudioDeviceSetup ads);
 
-	void add_client(Client* client);
-	void remove_client(Client* client);
+	void add_client(AudioDeviceClient* client);
+	void remove_client(AudioDeviceClient* client);
 	
-	void transport_start(Client* client);
-        void transport_stop(Client* client, TimeRef location);
-	int transport_seek_to(Client* client, TimeRef location);
+	void transport_start(AudioDeviceClient* client);
+        void transport_stop(AudioDeviceClient* client, TimeRef location);
+	int transport_seek_to(AudioDeviceClient* client, TimeRef location);
 
         AudioDeviceSetup get_device_setup() {return m_setup;}
         AudioBus* get_playback_bus(const QString& name) const;
@@ -234,7 +234,7 @@ signals:
 	 *        This signal will be emited after succesfull Client removal from within the GUI Thread!
 	 * @param  The Client \a client which as been removed from the AudioDevice
 	 */
-	void clientRemoved(Client*);
+	void clientRemoved(AudioDeviceClient*);
 	
 	void xrunStormDetected();
 	
@@ -243,8 +243,8 @@ signals:
         void busConfigChanged();
 
 private slots:
-	void private_add_client(Client* client);
-	void private_remove_client(Client* client);
+	void private_add_client(AudioDeviceClient* client);
+	void private_remove_client(AudioDeviceClient* client);
         void private_set_bus_config(QList<BusConfig> config);
 	void audiothread_finished();
 	void switch_to_null_driver();

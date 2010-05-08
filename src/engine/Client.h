@@ -29,13 +29,13 @@ $Id: Client.h,v 1.7 2007/11/19 11:18:54 r_sijrier Exp $
 
 #include "defines.h"
 
-class Client : public QObject, public APILinkedListNode
+class AudioDeviceClient : public QObject, public APILinkedListNode
 {
 	Q_OBJECT
 
 public:
-	Client(const QString& name);
-	~Client();
+        AudioDeviceClient(const QString& name);
+        ~AudioDeviceClient();
 
 	void set_process_callback(ProcessCallback call);
 	void set_transport_control_callback(TransportControlCallback call);

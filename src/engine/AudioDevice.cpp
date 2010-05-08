@@ -284,7 +284,7 @@ int AudioDevice::run_one_cycle( nframes_t nframes, float  )
 		return -1;
 	}
 
-	apill_foreach(Client* client, Client, m_clients) {
+        apill_foreach(AudioDeviceClient* client, AudioDeviceClient, m_clients) {
 		client->process(nframes);
 	}
 	
@@ -925,12 +925,12 @@ void AudioDevice::post_process( )
 	tsar().process_events();
 }
 
-void AudioDevice::private_add_client(Client* client)
+void AudioDevice::private_add_client(AudioDeviceClient* client)
 {
 	m_clients.prepend(client);
 }
 
-void AudioDevice::private_remove_client(Client* client)
+void AudioDevice::private_remove_client(AudioDeviceClient* client)
 {
 	if (!m_clients.remove(client)) {
 		printf("AudioDevice:: Client was not in clients list, failed to remove it!\n");
@@ -942,9 +942,9 @@ void AudioDevice::private_remove_client(Client* client)
 
  * WARNING: This function assumes the Clients callback function is set to an existing objects function!
  */
-void AudioDevice::add_client( Client * client )
+void AudioDevice::add_client( AudioDeviceClient * client )
 {
-	THREAD_SAVE_INVOKE(this, client, private_add_client(Client*));
+        THREAD_SAVE_INVOKE(this, client, private_add_client(AudioDeviceClient*));
 }
 
 /**
@@ -953,9 +953,9 @@ void AudioDevice::add_client( Client * client )
  * The clientRemoved(Client* client); signal will be emited after succesfull removal
  * from within the GUI Thread!
  */
-void AudioDevice::remove_client( Client * client )
+void AudioDevice::remove_client( AudioDeviceClient * client )
 {
-	THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, client, private_remove_client(Client*), clientRemoved(Client*));
+        THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, client, private_remove_client(AudioDeviceClient*), clientRemoved(AudioDeviceClient*));
 }
 
 void AudioDevice::mili_sleep(int msec)
@@ -1022,14 +1022,14 @@ int AudioDevice::transport_control(transport_state_t state)
 
 	int result = 0;
 	
-	apill_foreach(Client* client, Client, m_clients) {
+        apill_foreach(AudioDeviceClient* client, AudioDeviceClient, m_clients) {
 		result = client->transport_control(state);
 	}
 	
 	return result;
 }
 
-void AudioDevice::transport_start(Client * client)
+void AudioDevice::transport_start(AudioDeviceClient * client)
 {
 #if defined (JACK_SUPPORT)
 	JackDriver* jackdriver = slaved_jack_driver();
@@ -1049,7 +1049,7 @@ void AudioDevice::transport_start(Client * client)
 	client->transport_control(state);
 }
 
-void AudioDevice::transport_stop(Client * client, TimeRef location)
+void AudioDevice::transport_stop(AudioDeviceClient * client, TimeRef location)
 {
 #if defined (JACK_SUPPORT)
 	JackDriver* jackdriver = slaved_jack_driver();
@@ -1070,7 +1070,7 @@ void AudioDevice::transport_stop(Client * client, TimeRef location)
 }
 
 // return 0 if valid request, non-zero otherwise.
-int AudioDevice::transport_seek_to(Client* client, TimeRef location)
+int AudioDevice::transport_seek_to(AudioDeviceClient* client, TimeRef location)
 {
 #if defined (JACK_SUPPORT)
 	JackDriver* jackdriver = slaved_jack_driver();

@@ -36,7 +36,7 @@ class AudioTrack;
 class AudioClip;
 class DiskIO;
 class AudioClipManager;
-class Client;
+class AudioDeviceClient;
 class AudioBus;
 class SnapList;
 class TimeLine;
@@ -168,7 +168,7 @@ private:
 	QTimer			m_skipTimer;
 	Project*		m_project;
 	WriteSource*		m_exportSource;
-	Client* 		m_audiodeviceClient;
+	AudioDeviceClient* 		m_audiodeviceClient;
 	AudioBus*		m_renderBus;
 	AudioBus*		m_clipRenderBus;
 	DiskIO*			m_diskio;
@@ -231,7 +231,7 @@ private:
 
 public slots :
 	void seek_finished();
-	void audiodevice_client_removed(Client* );
+	void audiodevice_client_removed(AudioDeviceClient* );
 	void audiodevice_params_changed();
         void set_gain(float gain);
 	void set_transport_pos(TimeRef location);

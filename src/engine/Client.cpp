@@ -42,14 +42,14 @@ $Id: Client.cpp,v 1.5 2007/06/21 14:31:10 r_sijrier Exp $
  * 
  * @param name The name of the Client, this should be a unique name
  */
-Client::Client(const QString& name )
+AudioDeviceClient::AudioDeviceClient(const QString& name )
 {
 	PENTERCONS;
 	
 	m_name = name;
 }
 
-Client::~ Client( )
+AudioDeviceClient::~ AudioDeviceClient( )
 {
 	PENTERDES;
 }
@@ -64,12 +64,12 @@ Client::~ Client( )
  *
  * @param call The FastDelegate \a call to use as the callback function 
  */
-void Client::set_process_callback( ProcessCallback call)
+void AudioDeviceClient::set_process_callback( ProcessCallback call)
 {
 	process = call;
 }
 
-void Client::set_transport_control_callback(TransportControlCallback callback)
+void AudioDeviceClient::set_transport_control_callback(TransportControlCallback callback)
 {
 	transport_control = callback;
 }

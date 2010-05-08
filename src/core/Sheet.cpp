@@ -151,7 +151,7 @@ void Sheet::init()
 
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
-	connect(&audiodevice(), SIGNAL(clientRemoved(Client*)), this, SLOT (audiodevice_client_removed(Client*)));
+	connect(&audiodevice(), SIGNAL(clientRemoved(AudioDeviceClient*)), this, SLOT (audiodevice_client_removed(AudioDeviceClient*)));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
@@ -187,7 +187,7 @@ void Sheet::init()
 	
 	m_skipTimer.setSingleShot(true);
 	
-	m_audiodeviceClient = new Client("sheet_" + QByteArray::number(get_id()));
+	m_audiodeviceClient = new AudioDeviceClient("sheet_" + QByteArray::number(get_id()));
 	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Sheet::process) );
 	m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Sheet::transport_control) );
 }
@@ -339,7 +339,7 @@ void Sheet::schedule_for_deletion()
         pm().scheduled_for_deletion(this);
 }
 
-void Sheet::audiodevice_client_removed(Client* client )
+void Sheet::audiodevice_client_removed(AudioDeviceClient* client )
 {
 	PENTER;
         if (m_audiodeviceClient == client) {
