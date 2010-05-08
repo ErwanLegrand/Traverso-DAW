@@ -78,7 +78,7 @@ Themer::Themer()
 	}
 	
 	if (style != currentStyle) {
-		QApplication::setStyle(style);
+                QApplication::setStyle(style);
 		currentStyle = style;
 		config().set_property("Themer", "style", currentStyle);
 	}

@@ -146,7 +146,7 @@ void AudioClipGroup::remove_all_clips_from_tracks()
 
 void AudioClipGroup::check_valid_track_index_delta(int & delta)
 {
-	if (m_clips.isEmpty()) {
+        if (m_clips.isEmpty()) {
 		return;
 	}
 	

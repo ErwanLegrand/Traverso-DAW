@@ -62,7 +62,7 @@ struct TimeRef {
 		m_position = 0;
 	}
 	explicit TimeRef(qint64 position) : m_position(position) {}
-	explicit TimeRef(double position) : m_position(qint64(position)) {}
+        explicit TimeRef(double position) : m_position(qint64(position)) {}
 	
 	TimeRef(nframes_t frame, int rate) {
 		m_position = (UNIVERSAL_SAMPLE_RATE / rate) * frame;
