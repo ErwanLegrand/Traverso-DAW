@@ -191,7 +191,7 @@ void TrackPanelView::draw_panel_name(QPainter* painter)
 
         if (m_track->get_height() < SMALL_HEIGHT) {
                 QFontMetrics fm(themer()->get_font("TrackPanel:fontscale:name"));
-                title = fm.elidedText(title, Qt::ElideMiddle, 90);
+                title = fm.elidedText(title, Qt::ElideMiddle, 110);
         }
 
         painter->save();
