@@ -184,3 +184,11 @@ void PlayHeadMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
         cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_newTransportLocation, m_sv->timeref_scalefactor));
         cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_playhead->scenePos().x(), m_holdCursorSceneY));
 }
+
+void PlayHeadMove::move_to_work_cursor(bool autorepeat)
+{
+        if (autorepeat) {
+                return;
+        }
+        do_keyboard_move(m_sheet->get_work_location());
+}

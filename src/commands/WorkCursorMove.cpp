@@ -285,3 +285,12 @@ void WorkCursorMove::remove_markers_from_active_context()
                 }
         }
 }
+
+void WorkCursorMove::move_to_play_cursor(bool autorepeat)
+{
+        if (autorepeat) {
+                return;
+        }
+
+        do_keyboard_move(m_sheet->get_transport_location());
+}

@@ -433,6 +433,9 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			} else {
                                 delegatedobject = metaobject->className();
 				if (m_activeModifierKeys.size() > 0) {
+                                        //FIXME: objectsusingmodifierkeys has values inserted with insertMulti()
+                                        // do we have to use values(delegatedobject) instead of value(delegatedobject)
+                                        // here too?
 					delegatingdata = action->objectUsingModifierKeys.value(delegatedobject);
 				} else {
 					delegatingdata = action->objects.value(delegatedobject);
@@ -1133,8 +1136,8 @@ int InputEngine::find_index_for_instant_fkey( int key )
 		if (action->fact1_key1==key || action->fact1_key2==key) {
 			PMESG3("Found a conflict (%s) for instantaneous keyfact key=%d", action->keySequence.data(), key);
 			return -1;
-		}
-	}
+                }
+        }
 
 	return fkey_index;
 }

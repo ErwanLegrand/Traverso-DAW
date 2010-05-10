@@ -100,12 +100,14 @@
                                 <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modifierkeys="SHIFT" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" isholdmodifier="1" />
                                 <Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" isholdmodifier="1" />
+                                <Object objectname="WorkCursorMove" slotsignature="move_to_play_cursor" modes="All" sortorder="10" isholdmodifier="1" />
                         </Objects>
 		</keyfact>
                 <keyfact type="FKEY" key1="W" >
                         <Objects>
                                 <Object objectname="SheetView" slotsignature="workcursor_to_playhead" modifierkeys="SHIFT" modes="All" sortorder="3" submenu="Work Cursor" />
                                 <Object objectname="SheetView" slotsignature="touch" modifierkeys="CTRL" modes="All" sortorder="2" submenu="Work Cursor" />
+                                <Object objectname="PlayHeadMove" slotsignature="move_to_work_cursor" modes="All" sortorder="10" isholdmodifier="1" />
                         </Objects>
                 </keyfact>
                 <keyfact type="FKEY" key1="HOME" >

@@ -31,6 +31,7 @@ class PlayHead;
 class PlayHeadMove : public MoveCommand
 {
         Q_OBJECT;
+        Q_CLASSINFO("move_to_work_cursor", tr("To Play Cursor"))
 
 public :
 	PlayHeadMove(PlayHead* cursor, SheetView* sv);
@@ -61,6 +62,7 @@ public slots:
         void move_right(bool autorepeat);
         void next_snap_pos(bool autorepeat);
         void prev_snap_pos(bool autorepeat);
+        void move_to_work_cursor(bool autorepeat);
 };
 
 #endif

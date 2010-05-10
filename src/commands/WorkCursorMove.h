@@ -39,6 +39,7 @@ class WorkCursorMove : public MoveCommand
         Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
         Q_CLASSINFO("move_faster", tr("Move Faster"));
         Q_CLASSINFO("move_slower", tr("Move Slower"));
+        Q_CLASSINFO("move_to_play_cursor", tr("To Play Cursor"))
 
 public :
 	WorkCursorMove (WorkCursor* wc, PlayHead* cursor, SheetView* sv);
@@ -71,6 +72,7 @@ public slots:
         void next_snap_pos(bool autorepeat);
         void prev_snap_pos(bool autorepeat);
         void toggle_browse_markers(bool autorepeat);
+        void move_to_play_cursor(bool autorepeat);
 
 };
 
