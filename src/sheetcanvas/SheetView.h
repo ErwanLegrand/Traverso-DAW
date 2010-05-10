@@ -133,6 +133,7 @@ public :
         void browse_to_curve_view(CurveView* curveView);
         void browse_to_curve_node_view(CurveNodeView* nodeView);
         void center_in_view(ViewItem* item, enum Qt::AlignmentFlag = Qt::AlignHCenter);
+        void move_edit_point_to(TimeRef location, int sceneY);
 
 	qint64		timeref_scalefactor;
 

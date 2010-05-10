@@ -1263,6 +1263,23 @@ void SheetView::center_in_view(ViewItem *item, enum Qt::AlignmentFlag flag)
         }
 }
 
+void SheetView::move_edit_point_to(TimeRef location, int sceneY)
+{
+        int x = m_clipsViewPort->mapFromScene(m_workCursor->scenePos()).x();
+
+        if (x < 0 || x > m_clipsViewPort->width()) {
+                center_in_view(m_workCursor, Qt::AlignHCenter);
+        }
+
+        QPoint point = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(location / timeref_scalefactor, sceneY));
+        QCursor::setPos(point);
+
+        m_clipsViewPort->set_holdcursor_text(timeref_to_text(location, timeref_scalefactor));
+        m_clipsViewPort->set_holdcursor_pos(QPointF(location / timeref_scalefactor, sceneY));
+
+        m_sheet->set_work_at(location);
+}
+
 
 QList<TrackView*> SheetView::get_track_views() const
 {
