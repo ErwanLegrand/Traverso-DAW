@@ -1871,7 +1871,7 @@ void InputEngine::create_menudata_for_metaobject(const QMetaObject * mo, QList< 
 					
 		QList<IEAction::Data*> datalist;
 		datalist.append(ieaction->objects.value(classname));
-		datalist.append(ieaction->objectUsingModifierKeys.value(classname));
+                datalist.append(ieaction->objectUsingModifierKeys.values(classname));
 			
 		foreach(IEAction::Data* iedata, datalist) {
 					

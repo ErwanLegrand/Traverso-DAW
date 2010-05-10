@@ -100,7 +100,7 @@
                                 <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modifierkeys="SHIFT" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" isholdmodifier="1" />
                                 <Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" isholdmodifier="1" />
-			</Objects>
+                        </Objects>
 		</keyfact>
                 <keyfact type="FKEY" key1="W" >
                         <Objects>
