@@ -40,10 +40,11 @@ class WorkCursorMove : public MoveCommand
         Q_CLASSINFO("move_faster", tr("Move Faster"));
         Q_CLASSINFO("move_slower", tr("Move Slower"));
         Q_CLASSINFO("move_to_play_cursor", tr("To Play Cursor"))
+        Q_CLASSINFO("toggle_browse_markers", tr("Toggle Snap to Markers On/Off"))
 
 public :
 	WorkCursorMove (WorkCursor* wc, PlayHead* cursor, SheetView* sv);
-	~WorkCursorMove (){};
+        ~WorkCursorMove (){}
 
 	int finish_hold();
 	int begin_hold();
@@ -61,7 +62,7 @@ private :
         int             m_holdCursorSceneY;
         bool            m_browseMarkers;
 
-        void do_keyboard_move(TimeRef newLocation, bool centerInView = false);
+        void do_keyboard_move(TimeRef newLocation);
         void browse_to_next_marker();
         void browse_to_previous_marker();
         void remove_markers_from_active_context();
@@ -72,6 +73,7 @@ public slots:
         void next_snap_pos(bool autorepeat);
         void prev_snap_pos(bool autorepeat);
         void toggle_browse_markers(bool autorepeat);
+        void toggle_snap_on_off(bool autorepeat);
         void move_to_play_cursor(bool autorepeat);
 
 };

@@ -63,21 +63,9 @@ int WorkCursorMove::begin_hold()
 		m_playCursor->disable_follow();
 	}
 
-	m_sheet->get_work_snap()->set_snappable(false);
+        m_sheet->get_work_snap()->set_snappable(false);
 	m_sv->start_shuttle(true, true);
 	m_origPos = m_sheet->get_work_location();
-
-        ClipsViewPort* port = m_sv->get_clips_viewport();
-        port->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), -20));
-        int x = port->mapFromScene(m_workCursor->scenePos()).x();
-
-        if (x < 0 || x > port->width()) {
-                m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
-        }
-
-        QCursor::setPos(port->mapToGlobal(
-                        port->mapFromScene(
-                        m_workCursor->scenePos().x(), m_holdCursorSceneY)));
 
 	return 1;
 }
@@ -94,6 +82,7 @@ void WorkCursorMove::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+        do_keyboard_move(m_sheet->get_work_location());
 }
 
 int WorkCursorMove::jog()
@@ -168,31 +157,26 @@ void WorkCursorMove::move_right(bool autorepeat)
 void WorkCursorMove::next_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        do_keyboard_move(m_sheet->get_snap_list()->next_snap_pos(m_sheet->get_work_location()), true);
+        do_keyboard_move(m_sheet->get_snap_list()->next_snap_pos(m_sheet->get_work_location()));
 }
 
 void WorkCursorMove::prev_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        do_keyboard_move(m_sheet->get_snap_list()->prev_snap_pos(m_sheet->get_work_location()), true);
+        do_keyboard_move(m_sheet->get_snap_list()->prev_snap_pos(m_sheet->get_work_location()));
 }
 
-void WorkCursorMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
+void WorkCursorMove::do_keyboard_move(TimeRef newLocation)
 {
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 
-        m_sheet->set_work_at(newLocation);
+        m_sv->move_edit_point_to(newLocation, m_holdCursorSceneY);
+}
 
-        if (centerInView) {
-                m_sv->center_in_view(m_workCursor, Qt::AlignHCenter);
-        }
-
-        ClipsViewPort* port = m_sv->get_clips_viewport();
-        QPoint point = port->mapToGlobal(port->mapFromScene(m_sheet->get_work_location() / m_sv->timeref_scalefactor, cpointer().scene_y()));
-        QCursor::setPos(point);
-
-        cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_sheet->get_work_location(), m_sv->timeref_scalefactor));
-        cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), m_holdCursorSceneY));
+void WorkCursorMove::toggle_snap_on_off(bool autorepeat)
+{
+        m_browseMarkers = false;
+        MoveCommand::toggle_snap_on_off(autorepeat);
 }
 
 void WorkCursorMove::toggle_browse_markers(bool autorepeat)
@@ -202,6 +186,10 @@ void WorkCursorMove::toggle_browse_markers(bool autorepeat)
         }
 
         m_browseMarkers = !m_browseMarkers;
+
+        if (m_doSnap) {
+                MoveCommand::toggle_snap_on_off(autorepeat);
+        }
 }
 
 void WorkCursorMove::browse_to_next_marker()
