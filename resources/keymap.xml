@@ -68,12 +68,11 @@
                                 <Object objectname="MoveTrack" slotsignature="move_up" modes="All" sortorder="1" />
                                 <Object objectname="MoveCurveNode" slotsignature="move_up" modes="Effects" sortorder="3" />
 				<Object objectname="SheetView" slotsignature="scroll_up" modes="All" sortorder="4" submenu="Scroll" />
-                                <Object objectname="MoveClip" slotsignature="move_up" modes="All" modifierkeys="CTRL" sortorder="1" />
+                                <Object objectname="MoveClip" slotsignature="move_up" modes="All" sortorder="1" />
                                 <Object objectname="Zoom" slotsignature="track_vzoom_out" modes="All" sortorder="1" />
                                 <Object objectname="SheetView" slotsignature="browse_to_context_item_above" modes="All" sortorder="5" submenu="Navigate" />
                                 <Object objectname="Interface" slotsignature="browse_to_first_track_in_active_sheet" modes="All" sortorder="10" />
-                                <Object objectname="MoveCommand" slotsignature="move_faster" modes="All" sortorder="6" />
-                                <Object objectname="Shuttle" slotsignature="move_up"  modifierkeys="CTRL" modes="All" sortorder="3" />
+                                <Object objectname="Shuttle" slotsignature="move_up" modes="All" sortorder="3" />
                                 <Object objectname="SheetView" slotsignature="to_lower_context_level" modifierkeys="SHIFT" modes="All" sortorder="9" submenu="Navigate"  />
                         </Objects>
 		</keyfact>
@@ -84,14 +83,23 @@
                                 <Object objectname="MoveTrack" slotsignature="move_down" modes="All" sortorder="2" />
                                 <Object objectname="MoveCurveNode" slotsignature="move_down" modes="Effects" sortorder="4" />
 				<Object objectname="SheetView" slotsignature="scroll_down" modes="All" sortorder="4" submenu="Scroll" />
-                                <Object objectname="MoveClip" slotsignature="move_down" modifierkeys="CTRL" modes="All" sortorder="2" />
+                                <Object objectname="MoveClip" slotsignature="move_down" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="track_vzoom_in" modes="All" sortorder="2" />
                                 <Object objectname="SheetView" slotsignature="browse_to_context_item_below" modes="All" sortorder="5" submenu="Navigate" />
                                 <Object objectname="Interface" slotsignature="browse_to_last_track_in_active_sheet" modes="All" sortorder="10"/>
-                                <Object objectname="MoveCommand" slotsignature="move_slower" modes="All" sortorder="7" />
-                                <Object objectname="Shuttle" slotsignature="move_down" modifierkeys="CTRL" modes="All" sortorder="4" />
+                                <Object objectname="Shuttle" slotsignature="move_down" modes="All" sortorder="4" />
                         </Objects>
 		</keyfact>
+                <keyfact type="FKEY" key1="PAGEUP" >
+                        <Objects>
+                                <Object objectname="MoveCommand" slotsignature="move_faster" modes="All" sortorder="7" />
+                        </Objects>
+                </keyfact>
+                <keyfact type="FKEY" key1="PAGEDOWN" >
+                        <Objects>
+                                <Object objectname="MoveCommand" slotsignature="move_slower" modes="All" sortorder="7" />
+                        </Objects>
+                </keyfact>
 		<keyfact type="FKEY" key1="V">
 			<Objects>
                                 <Object objectname="SheetView" slotsignature="touch_play_cursor" modifierkeys="CTRL" modes="All" sortorder="2" submenu="Playhead" />
