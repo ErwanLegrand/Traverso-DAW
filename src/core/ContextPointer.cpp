@@ -175,6 +175,14 @@ void ContextPointer::reset_cursor( )
         m_port->reset_cursor();
 }
 
+void ContextPointer::move_hardware_mouse_cursor_to(QPoint pos)
+{
+        QCursor::setPos(pos);
+        m_globalMousePos = pos;
+        ie().update_jog_bypass_pos();
+        m_jogEvent = false;
+}
+
 QList< QObject * > ContextPointer::get_contextmenu_items() const
 {
 	return m_contextMenuItems;
@@ -187,6 +195,12 @@ void ContextPointer::set_contextmenu_items(QList< QObject * > list)
 
 void ContextPointer::update_jog()
 {
+        if (m_keyboardOnlyInput) {
+                // no need or desire to call the current's
+                // Hold Command::jog() function, were moving by keyboard now!
+                return;
+        }
+
 	if (m_jogEvent) {
 		ie().jog();
 		m_jogEvent = false;
@@ -197,7 +211,7 @@ void ContextPointer::set_current_viewport(AbstractViewPort *vp)
 {
         PENTER;
         m_port = vp;
-        m_keyboardOnlyInput = false;
+        set_keyboard_only_input(false);
 }
 
 void ContextPointer::set_active_context_items_by_mouse_movement(const QList<ContextItem *> &items)
@@ -205,7 +219,7 @@ void ContextPointer::set_active_context_items_by_mouse_movement(const QList<Cont
         if (m_keyboardOnlyInput) {
                 QPoint diff = m_globalMousePos - QCursor::pos();
                 if (diff.manhattanLength() > 50) {
-                        m_keyboardOnlyInput = false;
+                        set_keyboard_only_input(false);
                 } else {
                         return;
                 }
@@ -216,7 +230,7 @@ void ContextPointer::set_active_context_items_by_mouse_movement(const QList<Cont
 
 void ContextPointer::set_active_context_items_by_keyboard_input(const QList<ContextItem *> &items)
 {
-        m_keyboardOnlyInput = true;
+        set_keyboard_only_input(true);
         m_globalMousePos = QCursor::pos();
 
         set_active_context_items(items);
@@ -250,3 +264,8 @@ void ContextPointer::about_to_delete(ContextItem *item)
         m_onFirstInputEventActiveContextItems.removeAll(item);
 }
 
+void ContextPointer::set_keyboard_only_input(bool keyboardOnly)
+{
+        printf("turning keyboard navigation to %d \n", keyboardOnly);
+        m_keyboardOnlyInput = keyboardOnly;
+}

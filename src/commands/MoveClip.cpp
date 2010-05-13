@@ -200,8 +200,11 @@ int MoveClip::begin_hold()
 	m_group.set_as_moving(true);
 	
 	d->sv->stop_follow_play_head();
-	d->sv->start_shuttle(true, true);
+        if (!cpointer().keyboard_only_input()) {
+                d->sv->start_shuttle(true, true);
+        }
 	d->sceneXStartPos = cpointer().on_first_input_event_scene_x();
+        d->relativeWorkCursorPos = m_sheet->get_work_location() - m_group.get_track_start_location();
 	
 	return 1;
 }
@@ -480,9 +483,19 @@ void MoveClip::toggle_vertical_only(bool autorepeat)
 }
 
 void MoveClip::do_move()
-{
+{       
 	m_group.move_to(m_newTrackIndex, m_trackStartLocation + m_posDiff);
 	if (d) {
-		cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_trackStartLocation + m_posDiff, d->sv->timeref_scalefactor));
+                TrackView* tv = d->sv->get_track_views().at(m_newTrackIndex);
+                int sceneY = tv->scenePos().y() + tv->boundingRect().height() / 2;
+                d->sv->move_edit_point_to(m_trackStartLocation + m_posDiff + d->relativeWorkCursorPos, sceneY);
+                cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_trackStartLocation + m_posDiff, d->sv->timeref_scalefactor));
 	}
+}
+
+void MoveClip::set_jog_bypassed(bool bypassed)
+{
+        if (d && bypassed) {
+                d->sv->start_shuttle(false);
+        }
 }

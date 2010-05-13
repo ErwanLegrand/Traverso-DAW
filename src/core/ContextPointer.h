@@ -140,8 +140,9 @@ public:
 	
         void jog_start();
         void jog_finished();
-	void reset_cursor();
- 
+        void reset_cursor();
+        void move_hardware_mouse_cursor_to(QPoint pos);
+
         inline AbstractViewPort* get_viewport() const {
                 if (m_port) {
                         return m_port;
@@ -163,6 +164,8 @@ public:
 	void set_contextmenu_items(QList<QObject* > list);
         void set_active_context_items_by_mouse_movement(const QList<ContextItem*>& items);
         void set_active_context_items_by_keyboard_input(const QList<ContextItem*>& items);
+
+        bool keyboard_only_input() const {return m_keyboardOnlyInput;}
 
 
 private:
@@ -203,6 +206,8 @@ private:
                 m_onFirstInputEventY = m_y;
                 m_onFirstInputEventActiveContextItems = m_activeContextItems;
         }
+
+        void set_keyboard_only_input(bool keyboardOnly);
 
 	
 private slots:

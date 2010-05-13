@@ -134,6 +134,7 @@ public:
 
         void jog();
         void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=50);
+        void update_jog_bypass_pos();
 
         void activate();
         void suspend();

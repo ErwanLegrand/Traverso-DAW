@@ -48,6 +48,7 @@ public :
         virtual void set_cursor_shape(int useX, int useY);
 	virtual void cancel_action();
 	virtual void set_collected_number(const QString& collected);
+        virtual void set_jog_bypassed(bool /*bypassed*/) {}
         
 	void undo() {undo_action();}
 	void redo() {do_action();}

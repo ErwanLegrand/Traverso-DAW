@@ -66,6 +66,7 @@ public :
         int jog();
 
 	void set_cursor_shape(int useX, int useY);
+        void set_jog_bypassed(bool bypassed);
 	
 private :
 	enum ActionType {
@@ -93,6 +94,7 @@ private :
 		int		pointedTrackIndex;
 		bool		verticalOnly;
 		Zoom*		zoom;
+                TimeRef         relativeWorkCursorPos;
 	};
 	
 	Data* d;

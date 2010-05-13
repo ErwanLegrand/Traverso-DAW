@@ -617,7 +617,9 @@ void SheetView::start_shuttle(bool start, bool drag)
 		m_shuttleYfactor = m_shuttleXfactor = 0;
 		stop_follow_play_head();
 	} else {
-		m_shuttletimer.stop();
+                if (m_shuttletimer.isActive()) {
+                        m_shuttletimer.stop();
+                }
 	}
 }
 
@@ -936,12 +938,10 @@ void SheetView::browse_to_track(Track *track)
 
                         center_in_view(view, Qt::AlignVCenter);
 
-                        QPoint point = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(m_sheet->get_work_location() / timeref_scalefactor,
+                        QPoint pos = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(m_sheet->get_work_location() / timeref_scalefactor,
                                                              view->scenePos().y() + view->boundingRect().height() / 2));
 
-                        printf("moving mouse to: x, y : %d, %d\n", point.x(), point.y());
-
-                        QCursor::setPos(point);
+                        cpointer().move_hardware_mouse_cursor_to(pos);
 
                         QList<ContextItem*> list;
                         list.append(view);
@@ -967,9 +967,11 @@ void SheetView::browse_to_audio_clip_view(AudioClipView* acv)
         set_hscrollbar_value(acv->pos().x()  + acv->boundingRect().width() / 2 - (m_clipsViewPort->width() / 2));
         center_in_view(acv->get_audio_track_view(), Qt::AlignVCenter);
 
-        QCursor::setPos(m_clipsViewPort->mapToGlobal(
-                        m_clipsViewPort->mapFromScene(
-                        acv->scenePos().x() + acv->boundingRect().width() / 2, acv->scenePos().y() + acv->boundingRect().height() / 2)));
+        QPoint pos = m_clipsViewPort->mapToGlobal(
+                     m_clipsViewPort->mapFromScene(
+                        acv->scenePos().x() + acv->boundingRect().width() / 2,
+                        acv->scenePos().y() + acv->boundingRect().height() / 2));
+        cpointer().move_hardware_mouse_cursor_to(pos);
 
         cpointer().set_active_context_items_by_keyboard_input(activeList);
 }
@@ -996,10 +998,11 @@ void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
         activeList.append(acv->get_audio_track_view());
         activeList.append(this);
 
-        QCursor::setPos(m_clipsViewPort->mapToGlobal(
+        QPoint pos = m_clipsViewPort->mapToGlobal(
                         m_clipsViewPort->mapFromScene(
                         nodeView->scenePos().x() + nodeView->boundingRect().width() / 2,
-                        nodeView->scenePos().y() + nodeView->boundingRect().height() / 2)));
+                        nodeView->scenePos().y() + nodeView->boundingRect().height() / 2));;
+        cpointer().move_hardware_mouse_cursor_to(pos);
 
         m_sheet->set_work_at(TimeRef((nodeView->scenePos().x() + nodeView->boundingRect().width() / 2) * timeref_scalefactor));
 
@@ -1271,8 +1274,8 @@ void SheetView::move_edit_point_to(TimeRef location, int sceneY)
                 center_in_view(m_workCursor, Qt::AlignHCenter);
         }
 
-        QPoint point = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(location / timeref_scalefactor, sceneY));
-        QCursor::setPos(point);
+        QPoint pos = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(location / timeref_scalefactor, sceneY));
+        cpointer().move_hardware_mouse_cursor_to(pos);
 
         m_clipsViewPort->set_holdcursor_text(timeref_to_text(location, timeref_scalefactor));
         m_clipsViewPort->set_holdcursor_pos(QPointF(location / timeref_scalefactor, sceneY));

@@ -584,6 +584,7 @@ void InputEngine::jog()
 				QPoint diff = m_jogBypassPos - cpointer().pos();
 				if (diff.manhattanLength() > m_unbypassJogDistance) {
 					m_bypassJog = false;
+                                        m_holdingCommand->set_jog_bypassed(m_bypassJog);
 				} else {
 					return;
 				}
@@ -600,6 +601,14 @@ void InputEngine::bypass_jog_until_mouse_movements_exceeded_manhattenlength(int 
 	m_unbypassJogDistance = length;
 	m_bypassJog = true;
 	m_jogBypassPos = cpointer().pos();
+        if (m_holdingCommand) {
+                m_holdingCommand->set_jog_bypassed(m_bypassJog);
+        }
+}
+
+void InputEngine::update_jog_bypass_pos()
+{
+        m_jogBypassPos = cpointer().pos();
 }
 
 void InputEngine::set_jogging(bool jog)
