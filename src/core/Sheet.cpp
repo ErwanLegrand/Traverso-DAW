@@ -1015,6 +1015,7 @@ AudioClipManager * Sheet::get_audioclip_manager( ) const
 QString Sheet::get_audio_sources_dir() const
 {
         if (m_audioSourcesDir.isEmpty() || m_audioSourcesDir.isNull()) {
+                printf("no audio sources dir set, returning projects one\n");
                 return m_project->get_audiosources_dir();
         }
 
@@ -1029,7 +1030,9 @@ void Sheet::set_audio_sources_dir(const QString &dir)
         }
 
         // We're having our own audio sources dir, do the usual checks.
-        m_audioSourcesDir = dir;
+        m_audioSourcesDir = dir + "/";
+
+
 
         QDir asDir;
 
