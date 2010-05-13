@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QHeaderView>
 #include <QTextStream>
 #include <QFile>
+#include <QFileDialog>
 #include <QDir>
 #include <QMessageBox>
 #include <dialogs/project/NewSheetDialog.h>
@@ -40,6 +41,9 @@ ProjectManagerDialog::ProjectManagerDialog( QWidget * parent )
 	: QDialog(parent)
 {
 	setupUi(this);
+
+        QIcon icon = QApplication::style()->standardIcon(QStyle::SP_DirClosedIcon);
+        sheetAudioSourcesPushButton->setIcon(icon);
 
 	treeSheetWidget->setColumnCount(3);
 	treeSheetWidget->header()->resizeSection(0, 160);
@@ -87,7 +91,13 @@ void ProjectManagerDialog::set_project(Project* project)
 		comboBoxGenre->setCurrentIndex(m_project->get_genre());
 		redoButton->setText(m_project->get_history_stack()->redoText());
 		undoButton->setText(m_project->get_history_stack()->undoText());
+
                 sheetsAreTrackFolderCheckBox->setChecked(m_project->sheets_are_track_folder());
+                if (m_project->sheets_are_track_folder()) {
+                        sheetAudioSourcesFrame->show();
+                } else {
+                        sheetAudioSourcesFrame->hide();
+                }
 	} else {
 		setWindowTitle("Manage Project - No Project loaded!");
 		treeSheetWidget->clear();
@@ -100,7 +110,8 @@ void ProjectManagerDialog::set_project(Project* project)
 		lineEditSongwriter->clear();
 		lineEditMessage->clear();
 		comboBoxGenre->setCurrentIndex(0);
-	}
+                sheetAudioSourcesFrame->hide();
+        }
 	
 	update_sheet_list();
 }
@@ -113,8 +124,11 @@ void ProjectManagerDialog::sheets_are_track_folder_check_box_state_changed(int s
 
         if (state == Qt::Checked) {
                 m_project->set_sheets_are_tracks_folder(true);
+                sheetAudioSourcesFrame->show();
+
         } else {
                 m_project->set_sheets_are_tracks_folder(false);
+                sheetAudioSourcesFrame->hide();
         }
 }
 
@@ -293,6 +307,38 @@ void ProjectManagerDialog::on_exportTemplateButton_clicked()
 		info().critical( tr("Couldn't open file %1 for writing!").arg(fileName));
 	}
 	
+}
+
+
+void ProjectManagerDialog::on_sheetAudioSourcesPushButton_clicked()
+{
+        if (!m_project) {
+                return;
+        }
+
+        QString path = m_project->get_audiosources_dir();
+        QString newPath = QFileDialog::getExistingDirectory(this,
+                        tr("Choose or create a new Audio Sources Directory"), path);
+
+        if (newPath.isEmpty() || newPath.isNull()) {
+                return;
+        }
+
+        QTreeWidgetItem* item = treeSheetWidget->currentItem();
+
+        if ( ! item ) {
+                return;
+        }
+
+        qint64 id = item->data(0, Qt::UserRole).toLongLong();
+
+        Sheet* sheet = m_project->get_sheet(id);
+
+        if (!sheet) {
+                return;
+        }
+
+        sheet->set_audio_sources_dir(newPath);
 }
 
 void ProjectManagerDialog::accept()

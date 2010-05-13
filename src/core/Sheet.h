@@ -110,6 +110,7 @@ public:
         Track* get_track(qint64 id);
         AudioTrack* get_audio_track_for_index(int index);
         SubGroup* get_subgroup(const QString& name);
+        QString get_audio_sources_dir() const;
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
@@ -122,6 +123,7 @@ public:
 	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
 	int set_state( const QDomNode & node );
 	void set_recording(bool recording, bool realtime);
+        void set_audio_sources_dir(const QString& dir);
 
 	void skip_to_start();
 	void skip_to_end();
@@ -175,6 +177,7 @@ private:
 	AudioClipManager*	m_acmanager;
 	TimeLine*		m_timeline;
 	QList<TimeRef>		m_xposList;
+        QString                 m_audioSourcesDir;
 
 	// The following data could be read/written by multiple threads
 	// (gui, audio and m_diskio thread). Therefore they should have 

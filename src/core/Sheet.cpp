@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QTextStream>
 #include <QString>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QList>
@@ -201,6 +202,7 @@ int Sheet::set_state( const QDomNode & node )
 
         m_name = e.attribute( "title", "" );
         m_artists = e.attribute( "artists", "" );
+        set_audio_sources_dir(e.attribute("audiosourcesdir", ""));
 	qreal zoom = e.attribute("hzoom", "4096").toDouble();
 	set_hzoom(zoom);
 	m_sbx = e.attribute("sbx", "0").toInt();
@@ -262,6 +264,7 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	QDomElement properties = doc.createElement("Properties");
         properties.setAttribute("title", m_name);
         properties.setAttribute("artists", m_artists);
+        properties.setAttribute("audiosourcesdir", m_audioSourcesDir);
         properties.setAttribute("firstVisibleFrame", m_firstVisibleFrame);
 	properties.setAttribute("m_workLocation", m_workLocation.universal_frame());
 	properties.setAttribute("transportlocation", m_transportLocation.universal_frame());
@@ -1007,6 +1010,37 @@ DiskIO * Sheet::get_diskio( ) const
 AudioClipManager * Sheet::get_audioclip_manager( ) const
 {
 	return m_acmanager;
+}
+
+QString Sheet::get_audio_sources_dir() const
+{
+        if (m_audioSourcesDir.isEmpty() || m_audioSourcesDir.isNull()) {
+                return m_project->get_audiosources_dir();
+        }
+
+        return m_audioSourcesDir;
+}
+
+void Sheet::set_audio_sources_dir(const QString &dir)
+{
+        if (dir.isEmpty() || dir.isNull()) {
+                m_audioSourcesDir = m_project->get_audiosources_dir();
+                return;
+        }
+
+        // We're having our own audio sources dir, do the usual checks.
+        m_audioSourcesDir = dir;
+
+        QDir asDir;
+
+        if (!asDir.exists(m_audioSourcesDir)) {
+                printf("creating new audio sources dir: %s\n", dir.toAscii().data());
+                if (asDir.mkdir(m_audioSourcesDir) < 0) {
+                        info().critical(tr("Cannot create dir %1").arg(m_audioSourcesDir));
+                }
+        }
+
+        printf("created new audiosrouces dir here: %s\n", m_audioSourcesDir.toAscii().data());
 }
 
 void Sheet::handle_diskio_readbuffer_underrun( )

@@ -46,6 +46,7 @@ private slots:
 	void on_renameSheetButton_clicked();
         void on_deleteSheetButton_clicked();
         void on_createSheetButton_clicked();
+        void on_sheetAudioSourcesPushButton_clicked();
 	
 	void redo_text_changed(const QString& text);
 	void undo_text_changed(const QString& text);

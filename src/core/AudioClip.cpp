@@ -570,7 +570,7 @@ int AudioClip::init_recording()
 	m_recordingStatus = RECORDING;
 	
 	ReadSource* rs = resources_manager()->create_recording_source(
-				pm().get_project()->get_root_dir() + "/audiosources/",
+                                m_sheet->get_audio_sources_dir(),
 				m_name, channelcount, m_sheet->get_id());
 	
 	resources_manager()->set_source_for_clip(this, rs);
