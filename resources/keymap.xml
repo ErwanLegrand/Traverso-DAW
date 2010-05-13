@@ -100,7 +100,17 @@
                                 <Object objectname="MoveCommand" slotsignature="move_slower" modes="All" sortorder="7" />
                         </Objects>
                 </keyfact>
-		<keyfact type="FKEY" key1="V">
+                <keyfact type="FKEY" key1="PLUS" >
+                        <Objects>
+                                <Object objectname="MoveCommand" slotsignature="move_faster" modes="All" sortorder="7" />
+                        </Objects>
+                </keyfact>
+                <keyfact type="FKEY" key1="MINUS" >
+                        <Objects>
+                                <Object objectname="MoveCommand" slotsignature="move_slower" modes="All" sortorder="7" />
+                        </Objects>
+                </keyfact>
+                <keyfact type="FKEY" key1="V">
 			<Objects>
                                 <Object objectname="SheetView" slotsignature="touch_play_cursor" modifierkeys="CTRL" modes="All" sortorder="2" submenu="Playhead" />
                                 <Object objectname="SheetView" slotsignature="playhead_to_workcursor" modifierkeys="SHIFT" modes="All" sortorder="12" submenu="Playhead" />

@@ -150,6 +150,10 @@ static bool set_hexcode(int & variable, const QString& text)
                                                         variable = Qt::Key_PageUp;
                                                 } else if ( text == "PAGEDOWN") {
                                                         variable = Qt::Key_PageDown;
+                                                } else if (text == "MINUS") {
+                                                        variable = Qt::Key_Minus;
+                                                } else if (text == "PLUS") {
+                                                        variable = Qt::Key_Plus;
                                                 } else {
 							PERROR("No HEX code found for %s", QS_C(text));
                                                         return false;

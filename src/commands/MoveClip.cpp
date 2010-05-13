@@ -486,14 +486,3 @@ void MoveClip::do_move()
 		cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_trackStartLocation + m_posDiff, d->sv->timeref_scalefactor));
 	}
 }
-
-
-void MoveClip::set_collected_number(const QString & collected)
-{
-        // This is just a try, but horribly broken, so return for now!
-        return;
-        m_trackStartLocation = TimeRef();
-        m_posDiff = TimeRef(nframes_t(collected.toLongLong()), 44100);
-        do_move();
-        cpointer().get_viewport()->set_holdcursor_text(QString("Sample: %1").arg(QString::number(m_posDiff.to_frame(44100))));
-}

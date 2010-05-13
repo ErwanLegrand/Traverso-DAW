@@ -37,6 +37,8 @@ public :
         MoveCommand (ContextItem* item, const QString& description);
         virtual ~MoveCommand (){}
 
+        void set_collected_number(const QString & collected);
+
 protected :
         int             m_speed;
         bool            m_doSnap;
