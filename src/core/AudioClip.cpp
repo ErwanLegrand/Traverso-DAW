@@ -579,7 +579,7 @@ int AudioClip::init_recording()
 	
 	ExportSpecification* spec = new ExportSpecification;
 
-	spec->exportdir = pm().get_project()->get_root_dir() + "/audiosources/";
+        spec->exportdir = m_sheet->get_audio_sources_dir();
 	
 	QString recordFormat = config().get_property("Recording", "FileFormat", "wav").toString();
 	if (recordFormat == "wavpack") {
