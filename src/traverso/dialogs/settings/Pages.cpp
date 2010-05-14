@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDomDocument>
 #include <QPrinter>
 #include <QPrintDialog>
-#include <QTextEdit>
+#include <QTextDocument>
 
 #if defined (JACK_SUPPORT)
 RELAYTOOL_JACK
@@ -838,9 +838,9 @@ void KeyboardConfigPage::on_printButton_clicked()
 	QPrinter printer(QPrinter::ScreenResolution);
 	QPrintDialog printDialog(&printer, Interface::instance());
 	if (printDialog.exec() == QDialog::Accepted) {
-		QTextEdit edit;
-		edit.insertHtml(kmap);
-		edit.document()->print(&printer);
+                QTextDocument doc;
+                doc.setHtml(kmap);
+                doc.print(&printer);
 	}
 }
 

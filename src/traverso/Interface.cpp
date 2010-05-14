@@ -1007,13 +1007,20 @@ Command * Interface::get_keymap(QString &str)
         objects.insert("Magnetic Cut", croplist);
 
 	
-	str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body><h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>";
+        str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
+              "<style type=\"text/css\">\n"
+              "H1 {text-align: left; font-size: 20px;}\n"
+              "table {font-size: 12px; border: solid; border-width: 1px; width: 600px;}\n"
+              ".object {background-color: #ccc; font-size: 16px; font-weight: bold;}\n"
+              ".description {background-color: #ddd; width: 300px; padding: 2px; font-size: 12px; font-weight: bold;}\n"
+              "</style>\n"
+              "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
 	
 	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
 		QString name = objects.key(objectlist);
 		
-		str += "<h3>" + name + "</h3>";
-		str += "<table><tr><td width=220>" + tr("<b>Description</b>") + "</td><td>" + tr("<b>Key Sequence</b>") + "</td></tr>";
+                str += "<table><tr class=\"object\">\n<td colspan=\"2\">" + name + "</td></tr>\n";
+                str += "<tr><td class=\"description\">" +tr("Description") + "</td><td class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
 		
 		QStringList result;
 		
@@ -1044,7 +1051,7 @@ Command * Interface::get_keymap(QString &str)
                                                                 QString keyfact = strings.at(2);
                                                                 keyfact.replace("<", "&lt;");
                                                                                 
-                                                                result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>";
+                                                                result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
                                                         }
                                                 }
                                         }
@@ -1056,10 +1063,10 @@ Command * Interface::get_keymap(QString &str)
 		result.sort();
                 result.removeDuplicates();
 		str += result.join("");
-		str += "</table></br></br>";
+                str += "</table>\n<p></p><p></p>\n";
 	}
 	
-	str += "</body></html>";
+        str += "</body>\n</html>";
 	
 	return 0;
 }
