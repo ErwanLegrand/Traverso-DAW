@@ -9,8 +9,8 @@ class ContextItem;
 class AbstractViewPort
 {
 public:
-        AbstractViewPort() {};
-        ~AbstractViewPort() {};
+        AbstractViewPort() {}
+        ~AbstractViewPort() {}
 
         virtual void grab_mouse() = 0;
         virtual void release_mouse() = 0;
@@ -21,6 +21,8 @@ public:
         virtual void set_holdcursor(const QString& cursorName) = 0;
         virtual void set_holdcursor_text(const QString& text) = 0;
         virtual void set_holdcursor_pos(QPointF pos) = 0;
+        virtual void hide_mouse_cursor() = 0;
+        virtual void update_holdcursor_shape() = 0;
 };
 
 #endif // ABSTRACTVIEWPORT_H

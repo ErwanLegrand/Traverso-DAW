@@ -51,8 +51,10 @@ public :
 	void set_holdcursor(const QString& cursorName);
 	void set_holdcursor_text(const QString& text);
         void set_holdcursor_pos(QPointF pos);
+        void update_holdcursor_shape();
 	void set_current_mode(int mode);
         void set_cursor_shape(const QString& cursor);
+        void hide_mouse_cursor();
         virtual void set_sheetview(SheetView* view) {m_sv = view;}
 
 	void reset_cursor();
@@ -111,6 +113,9 @@ public:
 	void set_text(const QString& text);
 	void set_type(const QString& type);
         void set_pos(QPointF pos);
+
+        // returns the real cursor position, i.e. the center of the cursor.
+        QPointF get_scene_pos();
 	void reset();
 
 	QRectF boundingRect() const;

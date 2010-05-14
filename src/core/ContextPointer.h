@@ -92,12 +92,7 @@ public:
 	 * @param x The ViewPort's mouse x coordinate
 	 * @param y The ViewPort's mouse y coordinate
 	 */
-	inline void set_point(int x, int y)
-        {
-		m_x = x;
-                m_y = y;
-                m_jogEvent = true;
-        }
+        void set_mouse_cursor_position(int x, int y);
 	
 	/**
 	 *        Returns the ViewPort x coordinate on first input event.

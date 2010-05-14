@@ -918,6 +918,9 @@ void SheetView::set_vscrollbar_value(int value)
 	if (value > m_vScrollBar->maximum()) {
 		value = m_vScrollBar->maximum();
 	}
+        if (value < 0) {
+                value = 0;
+        }
 	m_clipsViewPort->verticalScrollBar()->setValue(value);
 	m_vScrollBar->setValue(value);
 	m_sheet->set_scrollbar_xy(m_hScrollBar->value(), m_vScrollBar->value());
@@ -935,20 +938,13 @@ void SheetView::browse_to_track(Track *track)
 
         foreach(TrackView* view, views) {
                 if (view->get_track() == track) {
-
-                        center_in_view(view, Qt::AlignVCenter);
-
-                        QPoint pos = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(m_sheet->get_work_location() / timeref_scalefactor,
-                                                             view->scenePos().y() + view->boundingRect().height() / 2));
-
-                        cpointer().move_hardware_mouse_cursor_to(pos);
-
                         QList<ContextItem*> list;
                         list.append(view);
                         list.append(this);
+
                         cpointer().set_active_context_items_by_keyboard_input(list);
 
-                        m_clipsViewPort->setCursor(themer()->get_cursor("Track"));
+                        move_edit_point_to(m_sheet->get_work_location(), view->scenePos().y() + view->boundingRect().height() / 2);
 
                         return;
                 }
@@ -963,15 +959,7 @@ void SheetView::browse_to_audio_clip_view(AudioClipView* acv)
         activeList.append(acv->get_audio_track_view());
         activeList.append(this);
 
-        m_sheet->set_work_at(TimeRef((acv->scenePos().x() + acv->boundingRect().width() / 2) * timeref_scalefactor));
-        set_hscrollbar_value(acv->pos().x()  + acv->boundingRect().width() / 2 - (m_clipsViewPort->width() / 2));
-        center_in_view(acv->get_audio_track_view(), Qt::AlignVCenter);
-
-        QPoint pos = m_clipsViewPort->mapToGlobal(
-                     m_clipsViewPort->mapFromScene(
-                        acv->scenePos().x() + acv->boundingRect().width() / 2,
-                        acv->scenePos().y() + acv->boundingRect().height() / 2));
-        cpointer().move_hardware_mouse_cursor_to(pos);
+        move_edit_point_to(TimeRef((acv->scenePos().x() + acv->boundingRect().width() / 2) * timeref_scalefactor), acv->scenePos().y() + acv->boundingRect().height() / 2);
 
         cpointer().set_active_context_items_by_keyboard_input(activeList);
 }
@@ -991,6 +979,7 @@ void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
 {
         QList<ContextItem*> activeList;
         CurveView* curveView = nodeView->get_curve_view();
+        curveView->update_softselected_node(nodeView->scenePos());
 
         AudioClipView* acv = static_cast<AudioClipView*>(curveView->parentItem());
         activeList.append(curveView);
@@ -998,14 +987,8 @@ void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
         activeList.append(acv->get_audio_track_view());
         activeList.append(this);
 
-        QPoint pos = m_clipsViewPort->mapToGlobal(
-                        m_clipsViewPort->mapFromScene(
-                        nodeView->scenePos().x() + nodeView->boundingRect().width() / 2,
-                        nodeView->scenePos().y() + nodeView->boundingRect().height() / 2));;
-        cpointer().move_hardware_mouse_cursor_to(pos);
-
-        m_sheet->set_work_at(TimeRef((nodeView->scenePos().x() + nodeView->boundingRect().width() / 2) * timeref_scalefactor));
-
+        move_edit_point_to(TimeRef(nodeView->get_curve_node()->get_when()),
+                           nodeView->scenePos().y() + nodeView->boundingRect().height() / 2);
 
         cpointer().set_active_context_items_by_keyboard_input(activeList);
 
@@ -1260,27 +1243,36 @@ Command* SheetView::browse_to_previous_context_item()
 void SheetView::center_in_view(ViewItem *item, enum Qt::AlignmentFlag flag)
 {
         if (flag == Qt::AlignHCenter) {
-                set_hscrollbar_value(item->pos().x() - m_clipsViewPort->width() / 2);
+                set_hscrollbar_value(item->scenePos().x() - m_clipsViewPort->width() / 2);
         } else if (flag == Qt::AlignVCenter) {
-                set_vscrollbar_value(item->pos().y() - (m_tpvp->height() / 2) + item->boundingRect().height());
+                set_vscrollbar_value(item->scenePos().y() - (m_clipsViewPort->height() / 2) + item->boundingRect().height());
         }
 }
 
 void SheetView::move_edit_point_to(TimeRef location, int sceneY)
 {
+        m_sheet->set_work_at(location);
+
         int x = m_clipsViewPort->mapFromScene(m_workCursor->scenePos()).x();
+        int y = m_clipsViewPort->mapFromScene(0, sceneY).y();
 
         if (x < 0 || x > m_clipsViewPort->width()) {
                 center_in_view(m_workCursor, Qt::AlignHCenter);
         }
 
+        // y is the translation of sceneY to the viewport. if y is outside the
+        // viewport area, then use sceneY (!!) to set the vertical scrollbar
+        // since the vertical scrollbar range == scene height range.
+        if (y < 0 || y > m_clipsViewPort->height()) {
+                set_vscrollbar_value(sceneY - m_clipsViewPort->height() / 2);
+        }
+
         QPoint pos = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(location / timeref_scalefactor, sceneY));
-        cpointer().move_hardware_mouse_cursor_to(pos);
+//        cpointer().move_hardware_mouse_cursor_to(pos);
 
         m_clipsViewPort->set_holdcursor_text(timeref_to_text(location, timeref_scalefactor));
         m_clipsViewPort->set_holdcursor_pos(QPointF(location / timeref_scalefactor, sceneY));
 
-        m_sheet->set_work_at(location);
 }
 
 

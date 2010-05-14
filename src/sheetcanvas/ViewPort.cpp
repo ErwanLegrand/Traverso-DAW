@@ -135,10 +135,6 @@ bool ViewPort::event(QEvent * event)
 			keyPressEvent(ke);
 			return true;
 		}
-                if (ke->key() == Qt::Key_Alt) {
-                        keyPressEvent(ke);
-                        return true;
-                }
 	}
 	if (event->type() == QEvent::KeyRelease) {
 		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
@@ -146,10 +142,6 @@ bool ViewPort::event(QEvent * event)
 			keyReleaseEvent(ke);
 			return true;
 		}
-                if (ke->key() == Qt::Key_Alt) {
-                        keyReleaseEvent(ke);
-                        return true;
-                }
         }
 	return QGraphicsView::event(event);
 }
@@ -157,6 +149,16 @@ bool ViewPort::event(QEvent * event)
 void ViewPort::mouseMoveEvent(QMouseEvent* event)
 {
         PENTER4;
+
+        // tells the context pointer where we are, so command object can 'get' the
+        // scene position in their jog function from cpointer, or view items that
+        // accept mouse hover move 'events'
+        cpointer().set_mouse_cursor_position(event->x(), event->y());
+
+        if (cpointer().keyboard_only_input()) {
+                event->accept();
+                return;
+        }
 
 	// Qt generates mouse move events when the scrollbars move
 	// since a mouse move event generates a jog() call for the 
@@ -210,11 +212,6 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 		}
 	}
 
-        // tells the context pointer where we are, so command object can 'get' the
-        // scene position in their jog function from cpointer, or view items that
-        // accept mouse hover move 'events'
-	cpointer().set_point(event->x(), event->y());
-
         foreach(ViewItem* item, mouseTrackingItems) {
                 item->mouse_hover_move_event();
         }
@@ -222,12 +219,13 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 	event->accept();
 }
 
+
 void ViewPort::tabletEvent(QTabletEvent * event)
 {
 	PMESG("ViewPort tablet event:: x, y: %d, %d", (int)event->x(), (int)event->y());
 	PMESG("ViewPort tablet event:: high resolution x, y: %d, %d", 
 	      (int)event->hiResGlobalX(), (int)event->hiResGlobalY());
-	cpointer().set_point((int)event->x(), (int)event->y());
+        cpointer().set_mouse_cursor_position((int)event->x(), (int)event->y());
 	
 	QGraphicsView::tabletEvent(event);
 }
@@ -294,7 +292,10 @@ void ViewPort::reset_cursor( )
 	viewport()->unsetCursor();
 	m_holdcursor->hide();
 	m_holdcursor->reset();
-	m_holdCursorActive = false;
+        m_holdCursorActive = false;
+
+        QPoint pos = mapToGlobal(mapFromScene(m_holdcursor->get_scene_pos()));
+        QCursor::setPos(pos);
 }
 
 void ViewPort::set_cursor_shape(const QString &cursor)
@@ -307,7 +308,7 @@ void ViewPort::set_holdcursor( const QString & cursorName )
 	viewport()->setCursor(Qt::BlankCursor);
 	
 	if (!m_holdCursorActive) {
-		m_holdcursor->setPos(cpointer().scene_pos());
+                m_holdcursor->set_pos(cpointer().scene_pos());
 		m_holdcursor->show();
 	}
 	m_holdcursor->set_type(cursorName);
@@ -322,6 +323,29 @@ void ViewPort::set_holdcursor_text( const QString & text )
 void ViewPort::set_holdcursor_pos(QPointF pos)
 {
         m_holdcursor->set_pos(pos);
+}
+
+void ViewPort::update_holdcursor_shape()
+{
+        QList<ContextItem*> items = cpointer().get_active_context_items();
+
+        if (cpointer().keyboard_only_input() && items.size()) {
+                if (items.first()->metaObject()->className() == QString("AudioClipView")) {
+                        set_holdcursor(":/cursorFloatOverClip");
+                }
+                if (items.first()->metaObject()->className() == QString("AudioTrackView")) {
+                        set_holdcursor(":/cursorFloatOverTrack");
+                }
+                if (items.first()->metaObject()->className() == QString("CurveView")) {
+                        set_holdcursor(":/cursorFloat");
+                }
+        }
+
+}
+
+void ViewPort::hide_mouse_cursor()
+{
+        viewport()->setCursor(Qt::BlankCursor);
 }
 
 void ViewPort::set_current_mode(int mode)
@@ -340,7 +364,7 @@ void ViewPort::release_mouse()
         viewport()->releaseMouse();
         // This issues a mouse move event, so the cursor
         // will change to the item that's below it....
-        QCursor::setPos(QCursor::pos()-QPoint(1,1));
+//        QCursor::setPos(QCursor::pos()-QPoint(1,1));
 }
 
 
@@ -386,15 +410,16 @@ void HoldCursor::set_text( const QString & text )
 
 void HoldCursor::set_type( const QString & type )
 {
+        QPointF origPos = scenePos();
+        origPos.setX(origPos.x() + (qreal(m_pixmap.width()) / 2));
+        origPos.setY(origPos.y() + (qreal(m_pixmap.height()) / 2));
         m_pixmap = find_pixmap(type);
-	int x = (int) pos().x();
-        int y = (int) pos().y();
-        setPos(x - m_pixmap.width() / 2, y - m_pixmap.height() / 2);
+        set_pos(origPos);
 }
 
 QRectF HoldCursor::boundingRect( ) const
 {
-        return QRectF(0, 0, 130, 40);
+        return QRectF(0, 0, m_pixmap.width(), m_pixmap.height());
 }
 
 void HoldCursor::reset()
@@ -425,10 +450,14 @@ void HoldCursor::set_pos(QPointF p)
 		m_textItem->setPos(m_pixmap.width() + 8, yoffset);
 	}
 
-        p.setX(p.x() - m_pixmap.width() / 2);
-        p.setY(p.y() - m_pixmap.width() / 2);
+        p.setX(p.x() - (qreal(m_pixmap.width()) / 2));
+        p.setY(p.y() - (qreal(m_pixmap.height()) / 2));
 
-	
         setPos(p);
 }
 
+QPointF HoldCursor::get_scene_pos()
+{
+        QPointF holdcursorShapeAdjust(boundingRect().width() / 2, boundingRect().height() / 2);
+        return scenePos() + holdcursorShapeAdjust;
+}

@@ -171,8 +171,12 @@ void ContextPointer::jog_finished()
 void ContextPointer::reset_cursor( )
 {
         Q_ASSERT(m_port);
-		
-        m_port->reset_cursor();
+
+        if (keyboard_only_input()) {
+                m_port->update_holdcursor_shape();
+        } else {
+                m_port->reset_cursor();
+        }
 }
 
 void ContextPointer::move_hardware_mouse_cursor_to(QPoint pos)
@@ -214,8 +218,13 @@ void ContextPointer::set_current_viewport(AbstractViewPort *vp)
         set_keyboard_only_input(false);
 }
 
-void ContextPointer::set_active_context_items_by_mouse_movement(const QList<ContextItem *> &items)
+
+void ContextPointer::set_mouse_cursor_position(int x, int y)
 {
+        m_x = x;
+        m_y = y;
+        m_jogEvent = true;
+
         if (m_keyboardOnlyInput) {
                 QPoint diff = m_globalMousePos - QCursor::pos();
                 if (diff.manhattanLength() > 50) {
@@ -224,7 +233,10 @@ void ContextPointer::set_active_context_items_by_mouse_movement(const QList<Cont
                         return;
                 }
         }
+}
 
+void ContextPointer::set_active_context_items_by_mouse_movement(const QList<ContextItem *> &items)
+{
         set_active_context_items(items);
 }
 
@@ -250,6 +262,8 @@ void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
                 m_activeContextItems.append(item);
                 item->set_has_active_context(true);
         }
+
+        m_port->update_holdcursor_shape();
 }
 
 void ContextPointer::remove_from_active_context_list(ContextItem *item)
@@ -266,6 +280,22 @@ void ContextPointer::about_to_delete(ContextItem *item)
 
 void ContextPointer::set_keyboard_only_input(bool keyboardOnly)
 {
-        printf("turning keyboard navigation to %d \n", keyboardOnly);
+        if (m_keyboardOnlyInput == keyboardOnly) {
+                return;
+        }
+
         m_keyboardOnlyInput = keyboardOnly;
+
+        // Mouse cursor is taking over, let it look like it started
+        // from the edit point :)
+        if (!keyboardOnly) {
+                QCursor::setPos(m_globalMousePos);
+                if (m_port) {
+                        m_port->reset_cursor();
+                }
+        }  else {
+                if (m_port) {
+                        m_port->hide_mouse_cursor();
+                }
+        }
 }

@@ -56,6 +56,7 @@ public:
         CurveNodeView* get_node_view_after(TimeRef location) const;
         CurveNodeView* get_node_view_before(TimeRef location) const;
 	
+        void update_softselected_node(QPointF pos);
 
 private:
 	Curve*		m_curve;
@@ -67,7 +68,6 @@ private:
 	QList<CurveNodeView*>	m_nodeViews;
 	TimeRef		m_startoffset;
 	
-        void update_softselected_node(QPointF pos);
 
 public slots:
 	Command* add_node();
