@@ -21,6 +21,7 @@
 
 #include "MoveCommand.h"
 
+#include "InputEngine.h"
 #include "Project.h"
 #include "ProjectManager.h"
 
@@ -30,14 +31,24 @@ MoveCommand::MoveCommand(const QString &description)
         : Command(description)
         , m_doSnap(false)
 {
-        m_speed = pm().get_project()->get_keyboard_arrow_key_navigation_speed();
+        QString collected = ie().get_collected_number();
+        if (collected.size()) {
+                set_collected_number(collected);
+        } else {
+                m_speed = pm().get_project()->get_keyboard_arrow_key_navigation_speed();
+        }
 }
 
 MoveCommand::MoveCommand(ContextItem* item, const QString &description)
         : Command(item, description)
         , m_doSnap(false)
 {
-        m_speed = pm().get_project()->get_keyboard_arrow_key_navigation_speed();
+        QString collected = ie().get_collected_number();
+        if (collected.size()) {
+                set_collected_number(collected);
+        } else {
+                m_speed = pm().get_project()->get_keyboard_arrow_key_navigation_speed();
+        }
 }
 
 void MoveCommand::move_faster(bool autorepeat)
