@@ -1019,7 +1019,7 @@ QString Sheet::get_audio_sources_dir() const
                 return m_project->get_audiosources_dir();
         }
 
-        return m_audioSourcesDir;
+        return m_audioSourcesDir + "/";
 }
 
 void Sheet::set_audio_sources_dir(const QString &dir)
@@ -1030,7 +1030,7 @@ void Sheet::set_audio_sources_dir(const QString &dir)
         }
 
         // We're having our own audio sources dir, do the usual checks.
-        m_audioSourcesDir = dir + "/";
+        m_audioSourcesDir = dir;
 
 
 
