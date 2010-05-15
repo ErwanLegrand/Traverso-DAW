@@ -93,6 +93,7 @@ public:
 	 * @param y The ViewPort's mouse y coordinate
 	 */
         void set_mouse_cursor_position(int x, int y);
+        void set_edit_point_position(int x, int y);
 	
 	/**
 	 *        Returns the ViewPort x coordinate on first input event.

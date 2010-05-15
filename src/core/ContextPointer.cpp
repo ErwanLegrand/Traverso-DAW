@@ -218,6 +218,11 @@ void ContextPointer::set_current_viewport(AbstractViewPort *vp)
         set_keyboard_only_input(false);
 }
 
+void ContextPointer::set_edit_point_position(int x, int y)
+{
+        m_x = x;
+        m_y = y;
+}
 
 void ContextPointer::set_mouse_cursor_position(int x, int y)
 {

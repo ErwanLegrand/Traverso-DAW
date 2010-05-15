@@ -1267,8 +1267,8 @@ void SheetView::move_edit_point_to(TimeRef location, int sceneY)
                 set_vscrollbar_value(sceneY - m_clipsViewPort->height() / 2);
         }
 
-        QPoint pos = m_clipsViewPort->mapToGlobal(m_clipsViewPort->mapFromScene(location / timeref_scalefactor, sceneY));
-//        cpointer().move_hardware_mouse_cursor_to(pos);
+        QPoint pos = m_clipsViewPort->mapFromScene(location / timeref_scalefactor, sceneY);
+        cpointer().set_edit_point_position(pos.x(), pos.y());
 
         m_clipsViewPort->set_holdcursor_text(timeref_to_text(location, timeref_scalefactor));
         m_clipsViewPort->set_holdcursor_pos(QPointF(location / timeref_scalefactor, sceneY));
