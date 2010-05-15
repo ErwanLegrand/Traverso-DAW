@@ -51,10 +51,11 @@ public:
 	void load_theme_data();
         void mouse_hover_move_event();
 
-	void set_start_offset(const TimeRef& offset);
-	const TimeRef& get_start_offset() const {return m_startoffset;}
+        void set_start_offset(TimeRef offset);
+        TimeRef get_start_offset() const {return m_startoffset;}
         CurveNodeView* get_node_view_after(TimeRef location) const;
         CurveNodeView* get_node_view_before(TimeRef location) const;
+        Curve* get_curve() const {return m_curve;}
 	
         void update_softselected_node(QPointF pos);
 

@@ -72,6 +72,9 @@ public:
 	}
 	
 	void clear_curve() {m_nodes.clear();}
+        void set_start_offset(TimeRef offset) {m_startoffset = offset;}
+        TimeRef get_start_offset() const {return m_startoffset;}
+
 
 protected:
 	Sheet* m_sheet;
@@ -83,10 +86,11 @@ private :
 		std::pair<CurveNode*, CurveNode*> range;
 		
 	};
-	LookupCache m_lookup_cache;
-	bool m_changed;
-	double m_defaultValue;
-	
+        LookupCache     m_lookup_cache;
+        bool            m_changed;
+        double          m_defaultValue;
+        TimeRef		m_startoffset;
+
 	
 	double multipoint_eval (double x);
 	void x_scale(double factor);

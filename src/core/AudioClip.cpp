@@ -150,8 +150,6 @@ int AudioClip::set_state(const QDomNode& node)
 	m_sourceStartLocation = TimeRef(e.attribute( "sourcestart", "" ).toLongLong(&ok));
 	m_length = TimeRef(e.attribute( "length", "0" ).toLongLong(&ok));
 	m_sourceEndLocation = m_sourceStartLocation + m_length;
-	TimeRef location(e.attribute( "trackstart", "" ).toLongLong(&ok));
-	set_track_start_location(location);
 	
 	emit stateChanged();
 	
@@ -179,7 +177,13 @@ int AudioClip::set_state(const QDomNode& node)
 	if (!pluginChainNode.isNull()) {
 		m_pluginChain->set_state(pluginChainNode);
 	}
-	
+
+        // Curves rely on our start position, so only set the start location
+        // after curves (those created in plugins too!) are inited and having
+        // their state set.
+        TimeRef location(e.attribute( "trackstart", "" ).toLongLong(&ok));
+        set_track_start_location(location);
+
 	return 1;
 }
 
@@ -343,6 +347,7 @@ void AudioClip::set_track_start_location(const TimeRef& location)
 {
 	PENTER2;
 	m_trackStartLocation = location;
+        m_fader->get_curve()->set_start_offset(m_trackStartLocation);
 	
 	// set_track_end_location will emit positionChanged(), so we 
 	// don't emit it in this function to avoid emitting it twice

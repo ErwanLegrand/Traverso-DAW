@@ -987,7 +987,8 @@ void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
         activeList.append(acv->get_audio_track_view());
         activeList.append(this);
 
-        move_edit_point_to(TimeRef(nodeView->get_curve_node()->get_when()),
+        printf("curve start offset: %d\n", curveView->get_curve()->get_start_offset().to_frame(44100));
+        move_edit_point_to(TimeRef(nodeView->get_curve_node()->get_when()) + curveView->get_curve()->get_start_offset(),
                            nodeView->scenePos().y() + nodeView->boundingRect().height() / 2);
 
         cpointer().set_active_context_items_by_keyboard_input(activeList);

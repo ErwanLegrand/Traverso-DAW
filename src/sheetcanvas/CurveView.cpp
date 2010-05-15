@@ -501,7 +501,7 @@ void CurveView::load_theme_data()
 	calculate_bounding_rect();
 }
 
-void CurveView::set_start_offset(const TimeRef& offset)
+void CurveView::set_start_offset(TimeRef offset)
 {
 	m_startoffset = offset;
 }
@@ -529,9 +529,12 @@ Command * CurveView::remove_all_nodes()
 
 CurveNodeView* CurveView::get_node_view_before(TimeRef location) const
 {
+        TimeRef curveStartOffset = m_curve->get_start_offset();
+
         for (int i = m_nodeViews.size() - 1; i>=0; --i) {
                 CurveNodeView* nodeview = m_nodeViews.at(i);
-                if (nodeview->get_curve_node()->get_when() < location) {
+                TimeRef absoluteLocation = TimeRef(nodeview->get_curve_node()->get_when()) + curveStartOffset;
+                if (absoluteLocation < location) {
                         return nodeview;
                 }
         }
@@ -541,8 +544,11 @@ CurveNodeView* CurveView::get_node_view_before(TimeRef location) const
 
 CurveNodeView* CurveView::get_node_view_after(TimeRef location) const
 {
+        TimeRef curveStartOffset = m_curve->get_start_offset();
+
         foreach(CurveNodeView* nodeview, m_nodeViews) {
-                if (nodeview->get_curve_node()->get_when() > location) {
+                TimeRef absoluteLocation = TimeRef(nodeview->get_curve_node()->get_when()) + curveStartOffset;
+                if (absoluteLocation > location) {
                         return nodeview;
                 }
         }
