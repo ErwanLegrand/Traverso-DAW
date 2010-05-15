@@ -364,7 +364,7 @@ void ViewPort::update_holdcursor_shape()
                         set_holdcursor(":/cursorFloatOverTrack");
                 }
                 if (items.first()->metaObject()->className() == QString("CurveView")) {
-                        set_holdcursor(":/cursorFloat");
+                        set_holdcursor(":/cursorDragNode");
                 }
         }
 
