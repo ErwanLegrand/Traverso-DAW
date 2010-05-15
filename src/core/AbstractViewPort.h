@@ -23,6 +23,7 @@ public:
         virtual void set_holdcursor_pos(QPointF pos) = 0;
         virtual void hide_mouse_cursor() = 0;
         virtual void update_holdcursor_shape() = 0;
+        virtual void set_edit_point_position(QPointF pos) = 0;
 };
 
 #endif // ABSTRACTVIEWPORT_H

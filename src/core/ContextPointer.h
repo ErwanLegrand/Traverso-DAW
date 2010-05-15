@@ -138,6 +138,9 @@ public:
         void jog_finished();
         void reset_cursor();
         void move_hardware_mouse_cursor_to(QPoint pos);
+        void set_jog_bypass_distance(int distance);
+        void set_left_mouse_click_bypasses_jog(bool bypassOnLeftMouseClick);
+        void mouse_button_left_pressed();
 
         inline AbstractViewPort* get_viewport() const {
                 if (m_port) {
@@ -162,6 +165,7 @@ public:
         void set_active_context_items_by_keyboard_input(const QList<ContextItem*>& items);
 
         bool keyboard_only_input() const {return m_keyboardOnlyInput;}
+        bool left_mouse_click_bypasses_jog() const {return m_mouseLeftClickBypassesJog;}
 
 
 private:
@@ -174,16 +178,18 @@ private:
 
         int m_x;
         int m_y;
+        int m_onFirstInputEventX;
+        int m_onFirstInputEventY;
+        int m_jogBypassDistance;
 
+        QTimer m_jogTimer;
         QPoint  m_globalMousePos;
+
         bool    m_keyboardOnlyInput;
+        bool    m_jogEvent;
+        bool    m_mouseLeftClickBypassesJog;
 	
-	bool m_jogEvent;
 	
-	QTimer m_jogTimer;
-	
-	int m_onFirstInputEventX;
-	int m_onFirstInputEventY;
 	
         AbstractViewPort* m_port;
         QList<QObject* > m_contextItemsList;

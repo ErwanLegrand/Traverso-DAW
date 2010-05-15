@@ -693,6 +693,9 @@ void InputEngine::catch_key_release( QKeyEvent * e)
 
 void InputEngine::catch_mousebutton_press( QMouseEvent * e )
 {
+        if (e->button() == Qt::LeftButton) {
+                cpointer().mouse_button_left_pressed();
+        }
 	process_press_event(e->button());
 }
 

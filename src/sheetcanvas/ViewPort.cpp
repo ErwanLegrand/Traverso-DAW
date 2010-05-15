@@ -325,6 +325,33 @@ void ViewPort::set_holdcursor_pos(QPointF pos)
         m_holdcursor->set_pos(pos);
 }
 
+QPointF ViewPort::get_hold_cursor_pos() const
+{
+        return m_holdcursor->get_scene_pos();
+}
+
+void ViewPort::set_edit_point_position(QPointF pos)
+{
+        QList<QGraphicsItem *> itemsUnderCursor = scene()->items(pos);
+        QList<ContextItem*> activeContextItems;
+
+        foreach(QGraphicsItem* item, itemsUnderCursor) {
+                if (ViewItem::is_viewitem(item)) {
+                        ViewItem* vItem = (ViewItem*)item;
+                        activeContextItems.append(vItem);
+                }
+        }
+        if (m_sv) {
+                activeContextItems.append(m_sv);
+        }
+
+        cpointer().set_active_context_items_by_keyboard_input(activeContextItems);
+
+        m_holdcursor->show();
+        set_holdcursor_pos(pos);
+        update_holdcursor_shape();
+}
+
 void ViewPort::update_holdcursor_shape()
 {
         QList<ContextItem*> items = cpointer().get_active_context_items();

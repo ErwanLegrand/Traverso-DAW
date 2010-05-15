@@ -51,6 +51,7 @@ public :
 	void set_holdcursor(const QString& cursorName);
 	void set_holdcursor_text(const QString& text);
         void set_holdcursor_pos(QPointF pos);
+        void set_edit_point_position(QPointF pos);
         void update_holdcursor_shape();
 	void set_current_mode(int mode);
         void set_cursor_shape(const QString& cursor);
@@ -60,6 +61,7 @@ public :
 	void reset_cursor();
 	
 	int get_current_mode() const {return m_mode;}
+        QPointF get_hold_cursor_pos() const;
 
         void grab_mouse();
         void release_mouse();

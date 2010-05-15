@@ -1272,7 +1272,6 @@ void SheetView::move_edit_point_to(TimeRef location, int sceneY)
 
         m_clipsViewPort->set_holdcursor_text(timeref_to_text(location, timeref_scalefactor));
         m_clipsViewPort->set_holdcursor_pos(QPointF(location / timeref_scalefactor, sceneY));
-
 }
 
 

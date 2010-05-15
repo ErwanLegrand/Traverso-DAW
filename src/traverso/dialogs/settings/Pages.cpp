@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Utils.h>
 #include <Themer.h>
 #include <InputEngine.h>
+#include "ContextPointer.h"
 #include "Interface.h"
 #include <QDomDocument>
 #include <QPrinter>
@@ -746,9 +747,18 @@ void KeyboardConfigPage::load_config()
 {
         int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 220).toInt();
         int holdTimeout = config().get_property("CCE", "holdTimeout", 180).toInt();
+        int jogByPassDistance = config().get_property("CCE", "jobbypassdistance", 70).toInt();
+        int mouseClickTakesOverKeyboardNavigation = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
 	
 	doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
 	holdTimeoutSpinBox->setValue(holdTimeout);
+        mouseTreshHoldSpinBox->setValue(jogByPassDistance);
+
+        if (mouseClickTakesOverKeyboardNavigation) {
+                leftMouseClickRadioButton->setChecked(true);
+        } else {
+                mouseMoveRadioButton->setChecked(true);
+        }
 	
 	QString defaultkeymap = config().get_property("CCE", "keymap", "default").toString();
 	int index = keymapComboBox->findText(defaultkeymap);
@@ -765,9 +775,14 @@ void KeyboardConfigPage::save_config()
 	config().set_property("CCE", "doublefactTimeout", doubleFactTimeoutSpinBox->value());
 	config().set_property("CCE", "holdTimeout", holdTimeoutSpinBox->value());
 	config().set_property("CCE", "keymap", newkeymap);
-	
+        config().set_property("CCE", "jobbypassdistance", mouseTreshHoldSpinBox->value());
+        config().set_property("CCE", "mouseclicktakesoverkeyboardnavigation", leftMouseClickRadioButton->isChecked());
+
 	ie().set_double_fact_interval(doubleFactTimeoutSpinBox->value());
 	ie().set_hold_sensitiveness(holdTimeoutSpinBox->value());
+        cpointer().set_jog_bypass_distance(mouseTreshHoldSpinBox->value());
+        cpointer().set_left_mouse_click_bypasses_jog(leftMouseClickRadioButton->isChecked());
+
 	if (currentkeymap != newkeymap) {
 		ie().init_map(newkeymap);
 	}
@@ -778,7 +793,9 @@ void KeyboardConfigPage::reset_default_config()
         config().set_property("CCE", "doublefactTimeout", 220);
         config().set_property("CCE", "holdTimeout", 180);
 	config().set_property("CCE", "keymap", "default");
-	load_config();
+        config().set_property("CCE", "jobbypassdistance", 70);
+        config().set_property("CCE", "mouseclicktakesoverkeyboardnavigation", false);
+        load_config();
 }
 
 
