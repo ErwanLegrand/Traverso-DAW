@@ -445,6 +445,7 @@ int ReadSource::rb_file_read(DecodeBuffer* buffer, nframes_t cnt)
 		// We either passed the end of the file, or our audio reader
 		// is doing weird things, is broken, invalid or something else
 		// Set the rinbuffer file readpos to m_length so processing stops here!
+                printf("rb_file_read(): Set the rinbuffer file readpos to m_length so processing stops here! for source %s\n", m_fileName.toAscii().data());
 		m_rbFileReadPos = m_length;
 	}
 
