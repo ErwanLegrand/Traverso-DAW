@@ -70,6 +70,8 @@ ContextPointer::ContextPointer()
 	m_jogEvent = false;
         m_port = 0;
         m_keyboardOnlyInput = false;
+
+        m_mouseLeftClickBypassesJog = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
 	
 	connect(&m_jogTimer, SIGNAL(timeout()), this, SLOT(update_jog()));
 }
@@ -187,6 +189,23 @@ void ContextPointer::move_hardware_mouse_cursor_to(QPoint pos)
         m_jogEvent = false;
 }
 
+void ContextPointer::set_jog_bypass_distance(int distance)
+{
+        m_jogBypassDistance = distance;
+}
+
+void ContextPointer::set_left_mouse_click_bypasses_jog(bool bypassOnLeftMouseClick)
+{
+        m_mouseLeftClickBypassesJog = bypassOnLeftMouseClick;
+}
+
+void ContextPointer::mouse_button_left_pressed()
+{
+        if (m_mouseLeftClickBypassesJog) {
+                set_keyboard_only_input(false);
+        }
+}
+
 QList< QObject * > ContextPointer::get_contextmenu_items() const
 {
 	return m_contextMenuItems;
@@ -215,7 +234,6 @@ void ContextPointer::set_current_viewport(AbstractViewPort *vp)
 {
         PENTER;
         m_port = vp;
-        set_keyboard_only_input(false);
 }
 
 void ContextPointer::set_edit_point_position(int x, int y)
@@ -230,9 +248,9 @@ void ContextPointer::set_mouse_cursor_position(int x, int y)
         m_y = y;
         m_jogEvent = true;
 
-        if (m_keyboardOnlyInput) {
+        if (m_keyboardOnlyInput && !m_mouseLeftClickBypassesJog) {
                 QPoint diff = m_globalMousePos - QCursor::pos();
-                if (diff.manhattanLength() > 50) {
+                if (diff.manhattanLength() > m_jogBypassDistance) {
                         set_keyboard_only_input(false);
                 } else {
                         return;
