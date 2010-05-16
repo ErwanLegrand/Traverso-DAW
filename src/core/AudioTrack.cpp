@@ -170,6 +170,7 @@ bool AudioTrack::armed()
         return m_isArmed;
 }
 
+#include "Project.h"
 AudioClip* AudioTrack::init_recording()
 {
         PENTER2;
@@ -185,13 +186,7 @@ AudioClip* AudioTrack::init_recording()
                 return 0;
         }
 
-        int number = m_sortIndex + 1;
-        QString snumber = QString::number(number);
-        if (number < 10) {
-                snumber.prepend("0");
-        }
-        QString name = 	"track-" + snumber +
-                        "_take-" + QString::number(++m_numtakes);
+        QString name = 	m_sheet->get_name() + "-" + m_name + "-take-" + QString::number(++m_numtakes);
 
         AudioClip* clip = resources_manager()->new_audio_clip(name);
         clip->set_sheet(m_sheet);

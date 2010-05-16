@@ -1484,16 +1484,6 @@ AudioTrack * Sheet::get_audio_track_for_index(int index)
 }
 
 
-QString Sheet::get_index()
-{
-        int id = m_project->get_sheet_index(m_id);
-        QString number = QString::number(id);
-        if (id < 10) {
-                number.prepend("0");
-        }
-        return number;
-}
-
 // the timer is used to allow 'hopping' to the left from snap position to snap position
 // even during playback.
 Command* Sheet::prev_skip_pos()
