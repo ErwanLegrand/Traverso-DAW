@@ -874,7 +874,7 @@ int Sheet::process( nframes_t nframes )
 	}
 
         if (m_seeking) {
-                printf("process: still seeking, not processing!\n");
+                return 0;
         }
 	
 	// If no need for playback/record, return.
