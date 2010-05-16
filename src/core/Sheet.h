@@ -94,6 +94,7 @@ public:
 	
         QString get_artists() const {return m_artists;}
         QString get_name() const {return m_name;}
+        QString get_index();
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
         QList<AudioTrack*> get_audio_tracks() const;
         QList<SubGroup*> get_subgroups() const;

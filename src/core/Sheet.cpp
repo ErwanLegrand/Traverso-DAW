@@ -1200,7 +1200,7 @@ int Sheet::transport_control(transport_state_t state)
         switch(state.transport) {
 	case TransportStopped:
                 if (state.location != m_transportLocation) {
-                        initiate_seek_start(state.location);
+//                        initiate_seek_start(state.location);
                 }
                 if (is_transport_rolling()) {
 			stop_transport_rolling();
@@ -1483,6 +1483,16 @@ AudioTrack * Sheet::get_audio_track_for_index(int index)
 	return 0;
 }
 
+
+QString Sheet::get_index()
+{
+        int id = m_project->get_sheet_index(m_id);
+        QString number = QString::number(id);
+        if (id < 10) {
+                number.prepend("0");
+        }
+        return number;
+}
 
 // the timer is used to allow 'hopping' to the left from snap position to snap position
 // even during playback.
