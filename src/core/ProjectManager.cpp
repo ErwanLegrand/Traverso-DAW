@@ -190,7 +190,7 @@ Project* ProjectManager::create_new_project(const QString& templatefile, const Q
 	
         if (newProject->save_from_template_to_project_file(templatefile, projectName) < 0) {
 		return 0;
-	}
+        }
 	
         emit projectsListChanged();
 	

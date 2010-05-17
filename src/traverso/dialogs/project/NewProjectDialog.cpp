@@ -146,8 +146,7 @@ void NewProjectDialog::accept( )
 	// settings in the "empty project" tab. Else use settings from "empty project" tab.
 	int items = treeWidgetFiles->topLevelItemCount();
 	bool loadFiles = false;
-	if (items > 0)
-	{
+        if (items > 0) {
 		//there are items in the treeWidgetFiles
 		loadFiles = true;
 		numSheets = 1;

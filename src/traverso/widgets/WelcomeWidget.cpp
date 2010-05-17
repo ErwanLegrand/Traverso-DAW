@@ -37,10 +37,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
         : QWidget(parent)
 {
         setupUi(this);
-        setFocusPolicy(Qt::StrongFocus);
-
         welcomeTextBrowser->setOpenExternalLinks(true);
-        loadPreviousProjectButton->setDefault(true);
 
         update_previous_project_line_edit();
         update_projects_directory_line_edit();
@@ -53,6 +50,8 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
         connect(&pm(), SIGNAL(projectDirChangeDetected()), this, SLOT(update_projects_combo_box()));
         connect(&pm(), SIGNAL(projectsListChanged()), this, SLOT(update_projects_combo_box()));
         connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
+
+        loadPreviousProjectButton->setFocus(Qt::TabFocusReason);
 }
 
 
@@ -187,7 +186,18 @@ void WelcomeWidget::on_changeProjectsDirButton_clicked()
 void WelcomeWidget::keyPressEvent(QKeyEvent *event)
 {
         if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
-                loadPreviousProjectButton->animateClick();
+                if (loadPreviousProjectButton->hasFocus()) {
+                        loadPreviousProjectButton->animateClick();
+                }
+                if (loadExistingProjectButton->hasFocus() || projectsComboBox->hasFocus()) {
+                        loadExistingProjectButton->animateClick();
+                }
+                if (createProjectPushbutton->hasFocus()) {
+                        createProjectPushbutton->animateClick();
+                }
+                if (changeProjectsDirButton->hasFocus()) {
+                        changeProjectsDirButton->animateClick();
+                }
                 return;
         }
 
