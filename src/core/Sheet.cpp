@@ -1204,7 +1204,7 @@ int Sheet::transport_control(transport_state_t state)
         switch(state.transport) {
 	case TransportStopped:
                 if (state.location != m_transportLocation) {
-                        initiate_seek_start(state.location);
+//                        initiate_seek_start(state.location);
                 }
                 if (is_transport_rolling()) {
 			stop_transport_rolling();
