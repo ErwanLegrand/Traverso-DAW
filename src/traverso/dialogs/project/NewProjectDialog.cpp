@@ -152,7 +152,7 @@ void NewProjectDialog::accept( )
 		loadFiles = true;
 		numSheets = 1;
 		numTracks = items;
-		project = pm().create_new_project(numSheets, numTracks, title);
+                project = pm().create_new_project(numSheets, numTracks, title);
 	} else {
 		//no items in the treeWidgetFiles
 		if (usetemplate) {
@@ -168,12 +168,17 @@ void NewProjectDialog::accept( )
                                 info().warning(tr("Couldn't create project (%1)").arg(title) );
                                 return;
                         }
-
-                        project->set_description(descriptionTextEdit->toPlainText());
-                        project->set_engineer(newProjectEngineer->text());
-                        project->save();
 		}
 	}
+
+        // template loads do it all by itself, but for non-template project creation
+        // we have to save the project and load if afterwards.. maybe it should be handled
+        // by ProjectManager?
+        if (!usetemplate) {
+                project->set_description(descriptionTextEdit->toPlainText());
+                project->set_engineer(newProjectEngineer->text());
+                project->save();
+        }
 
 	
 	delete project;
