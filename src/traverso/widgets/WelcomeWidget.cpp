@@ -50,8 +50,6 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
         connect(&pm(), SIGNAL(projectDirChangeDetected()), this, SLOT(update_projects_combo_box()));
         connect(&pm(), SIGNAL(projectsListChanged()), this, SLOT(update_projects_combo_box()));
         connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-
-        loadPreviousProjectButton->setFocus(Qt::TabFocusReason);
 }
 
 
@@ -186,18 +184,17 @@ void WelcomeWidget::on_changeProjectsDirButton_clicked()
 void WelcomeWidget::keyPressEvent(QKeyEvent *event)
 {
         if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
-                if (loadPreviousProjectButton->hasFocus()) {
-                        loadPreviousProjectButton->animateClick();
-                }
                 if (loadExistingProjectButton->hasFocus() || projectsComboBox->hasFocus()) {
                         loadExistingProjectButton->animateClick();
-                }
-                if (createProjectPushbutton->hasFocus()) {
+                } else if (createProjectPushbutton->hasFocus()) {
                         createProjectPushbutton->animateClick();
-                }
-                if (changeProjectsDirButton->hasFocus()) {
+                } else if (changeProjectsDirButton->hasFocus()) {
                         changeProjectsDirButton->animateClick();
+                } else {
+                        loadPreviousProjectButton->animateClick();
                 }
+
+
                 return;
         }
 
