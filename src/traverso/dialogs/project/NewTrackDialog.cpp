@@ -111,7 +111,16 @@ void NewTrackDialog::create_track()
         }
 
         if (isSubGroup->isChecked()) {
-                track = new SubGroup(sheet, title, 2);
+                // FIXME: when using jack, subgroups and their output bus have identical names
+                // setting that subgroup as output 'bus' for an audiotrack finds the subs output bus,
+                // not the subgroup itself!
+                // Temp fix: force unique subgroup name.
+                if (driver == "Jack") {
+                        track = new SubGroup(sheet, title + "-sub", 2);
+                } else {
+                        track = new SubGroup(sheet, title, 2);
+                }
+
         } else {
                 track = new AudioTrack(sheet, title, AudioTrack::INITIAL_HEIGHT);
         }
