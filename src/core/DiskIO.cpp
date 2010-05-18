@@ -210,6 +210,8 @@ void DiskIO::seek()
 	// Now, fill the buffers like normal
 	do_work();
 	
+        t_atomic_int_set(&m_readBufferFillStatus, 0);
+
 	m_seeking = false;
 
 	emit seekFinished();
@@ -508,6 +510,10 @@ int DiskIO::get_write_buffers_fill_status( )
  */
 int DiskIO::get_read_buffers_fill_status( )
 {
+        if (m_seeking) {
+                return 0;
+        }
+
 	int status = 100 - t_atomic_int_get(&m_readBufferFillStatus);
 	t_atomic_int_set(&m_readBufferFillStatus, 0);
 	
