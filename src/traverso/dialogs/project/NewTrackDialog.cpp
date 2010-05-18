@@ -79,6 +79,11 @@ void NewTrackDialog::create_track()
         if (driver == "Jack") {
                 AudioDeviceSetup setup = audiodevice().get_device_setup();
                 for (int i=0; i<2; i++) {
+                        // subgroups don't have input ports, so skip those.
+                        if (isSubGroup->isChecked() && i == 1) {
+                                continue;
+                        }
+
                         QStringList channelnames;
                         BusConfig busconfig;
 
@@ -103,22 +108,24 @@ void NewTrackDialog::create_track()
                 }
 
                 audiodevice().set_parameters(setup);
+        }
 
-                track = new AudioTrack(sheet, title, AudioTrack::INITIAL_HEIGHT);
+        if (isSubGroup->isChecked()) {
+                track = new SubGroup(sheet, title, 2);
         } else {
-
-                if (isSubGroup->isChecked()) {
-                        track = new SubGroup(sheet, title, 2);
-                } else {
-                        track = new AudioTrack(sheet, title, AudioTrack::INITIAL_HEIGHT);
-                        track->set_input_bus(inputBuses->currentText());
-                }
+                track = new AudioTrack(sheet, title, AudioTrack::INITIAL_HEIGHT);
         }
 
         if (driver == "Jack") {
+                // subgroups don't have input ports, so skip those.
+                if (!isSubGroup->isChecked()) {
+                        track->set_input_bus(title);
+                }
                 track->set_output_bus(title);
-                track->set_input_bus(title);
         } else {
+                if (!isSubGroup->isChecked()) {
+                        track->set_input_bus(inputBuses->currentText());
+                }
                 track->set_output_bus(outputBuses->currentText());
         }
 
