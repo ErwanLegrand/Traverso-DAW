@@ -109,7 +109,7 @@ SET(MINIMAL_PULSAUDIO_VERSION 0.9)
 SET(HAVE_COREAUDIO FALSE)
 
 SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -Wall ${CXX_FLAGS}")
-SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -g3 -Wall -fPIC ${CXX_FLAGS}")
+SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fPIC ${CXX_FLAGS}")
 
 # Detect the flags to be used for large file support
 execute_process(
