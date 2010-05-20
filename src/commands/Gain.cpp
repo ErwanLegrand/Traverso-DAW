@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <ViewPort.h>
 #include <Track.h>
 #include "Sheet.h"
+#include "SubGroup.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -72,9 +73,15 @@ Gain::Gain(ContextItem* context, QVariantList args)
                 m_newGain = 1.0;
 	} else {
 		Sheet* sheet = qobject_cast<Sheet*>(context);
-                if (sheet && m_origGain == 0.5) {
-                        m_newGain = 1.0;
-		}
+                if (sheet) {
+                        // if context == sheet, then use sheets master out
+                        // as the gain object as sheet itself doesn't apply any gain.
+                        m_gainObject = sheet->get_master_out();
+                        if (m_origGain == 0.5) {
+                                m_newGain = 1.0;
+                        }
+                }
+
 	}
 }
 
