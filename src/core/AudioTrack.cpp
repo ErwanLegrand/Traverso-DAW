@@ -217,34 +217,34 @@ void AudioTrack::set_gain(float gain)
 void AudioTrack::set_armed( bool armed )
 {
         m_isArmed = armed;
-        AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
-        if (bus) {
-                if (!m_isArmed) {
-                        for (int i=0; i<bus->get_channel_count(); i++) {
-                                bus->get_channel(i)->remove_monitor(m_vumonitors.at(i));
-                        }
-                } else {
-                        for (int i=0; i<bus->get_channel_count(); i++) {
-                                bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
-                        }
-                }
-        }
+//        AudioBus* bus = audiodevice().get_capture_bus(m_busInName);
+//        if (bus) {
+//                if (!m_isArmed) {
+//                        for (int i=0; i<bus->get_channel_count(); i++) {
+//                                bus->get_channel(i)->remove_monitor(m_vumonitors.at(i));
+//                        }
+//                } else {
+//                        for (int i=0; i<bus->get_channel_count(); i++) {
+//                                bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
+//                        }
+//                }
+//        }
 
         emit armedChanged(m_isArmed);
 }
 
 void AudioTrack::set_input_bus(AudioBus *bus)
 {
-        if (m_inputBus && m_isArmed) {
+        if (m_inputBus/* && m_isArmed*/) {
                 for (int i=0; i<m_inputBus->get_channel_count(); i++) {
                         m_inputBus->get_channel(i)->remove_monitor(m_vumonitors.at(i));
                 }
         }
-        if (m_isArmed) {
+//        if (m_isArmed) {
                 for (int i=0; i<bus->get_channel_count(); i++) {
                         bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
                 }
-        }
+//        }
         ProcessingData::set_input_bus(bus);
 }
 
