@@ -41,6 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Mixer.h>
 #include <Gain.h>
 #include <TrackPan.h>
+#include "Project.h"
+#include "ProjectManager.h"
 #include "Sheet.h"
 #include "SubGroup.h"
 #include "Track.h"
@@ -679,7 +681,14 @@ Command* TrackPanelBus::select_bus()
         QMenu menu;
 
         Sheet* sheet = m_track->get_sheet();
-        SubGroup* masterOut = sheet->get_master_out();
+
+        SubGroup* sheetMaster = 0;
+        SubGroup* projectMaster = pm().get_project()->get_master_out();
+
+        if (sheet) {
+                sheetMaster = sheet->get_master_out();
+        }
+
         QAction* action;
 
         if (m_type == BUSOUT) {
@@ -691,14 +700,19 @@ Command* TrackPanelBus::select_bus()
 
 
 
-                if (!(m_track == masterOut)) {
-                        menu.addAction(masterOut->get_name());
+                if (sheetMaster && !(m_track == sheetMaster)) {
+                        menu.addAction(sheetMaster->get_name());
+                }
+                if (!(m_track == projectMaster)) {
+                        menu.addAction(projectMaster->get_name());
                 }
 
-                QList<SubGroup*> subgroups = sheet->get_subgroups();
-                if (!m_track->get_type() == Track::SUBGROUP && subgroups.size()) {
-                        foreach(SubGroup* sub, subgroups) {
-                                menu.addAction(sub->get_name());
+                if (sheet) {
+                        QList<SubGroup*> subgroups = sheet->get_subgroups();
+                        if (!m_track->get_type() == Track::SUBGROUP && subgroups.size()) {
+                                foreach(SubGroup* sub, subgroups) {
+                                        menu.addAction(sub->get_name());
+                                }
                         }
                 }
         }

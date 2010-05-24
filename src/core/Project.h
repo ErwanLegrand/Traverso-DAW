@@ -26,12 +26,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QList>
 #include <QDomNode>
 #include "ContextItem.h"
+#include "APILinkedList.h"
+
 #include "defines.h"
 
 class Sheet;
 class ResourcesManager;
 struct ExportSpecification;
 class ExportThread;
+class AudioDeviceClient;
+class SubGroup;
 
 class Project : public ContextItem
 {
@@ -40,6 +44,9 @@ class Project : public ContextItem
 public :
 	~Project();
 
+        int process(nframes_t nframes);
+        // jackd only feature
+        int transport_control(transport_state_t state);
 
 	// Get functions
 	int get_current_sheet_id() const;
@@ -48,6 +55,7 @@ public :
 	int get_bitdepth() const;
 	
 	ResourcesManager* get_audiosource_manager() const;
+        SubGroup* get_master_out() const {return m_masterOut;}
 	QString get_title() const;
 	QString get_engineer() const;
 	QString get_description() const;
@@ -65,7 +73,7 @@ public :
 	QList<Sheet* > get_sheets() const;
 	Sheet* get_current_sheet() const ;
 	Sheet* get_sheet(qint64 id) const;
-	int get_sheet_index(qint64 id) const;
+        int get_sheet_index(qint64 id);
         int get_keyboard_arrow_key_navigation_speed() const {return m_keyboardArrowNavigationSpeed;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 
@@ -119,9 +127,13 @@ public slots:
 private:
 	Project(const QString& title);
 	
-	QList<Sheet* >	m_sheets;
+        APILinkedList           m_sheets;
 	ResourcesManager* 	m_resourcesManager;
-	ExportThread* 	m_exportThread;
+        ExportThread*           m_exportThread;
+        AudioDeviceClient*	m_audiodeviceClient;
+        SubGroup*               m_masterOut;
+
+
 
 	QString 	m_title;
 	QString 	m_rootDir;

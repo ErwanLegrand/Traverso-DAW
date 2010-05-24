@@ -67,10 +67,7 @@ int JackDriver::_read( nframes_t nframes )
                         continue;
                 }
 
-                if (!pcpair->channel->has_data()) {
-                        continue;
-                }
-                memcpy (pcpair->channel->get_data(), jack_port_get_buffer (pcpair->jackport, nframes), sizeof (jack_default_audio_sample_t) * nframes);
+                pcpair->channel->read_from_hardware_port((audio_sample_t*)jack_port_get_buffer (pcpair->jackport, nframes), nframes);
         }
         return 1;
 }
@@ -86,7 +83,7 @@ int JackDriver::_write( nframes_t nframes )
                         continue;
                 }
 
-                memcpy (jack_port_get_buffer (pcpair->jackport, nframes), pcpair->channel->get_data(), sizeof (jack_default_audio_sample_t) * nframes);
+                memcpy (jack_port_get_buffer (pcpair->jackport, nframes), pcpair->channel->get_buffer(nframes), sizeof (jack_default_audio_sample_t) * nframes);
                 pcpair->channel->silence_buffer(nframes);
         }
         return 1;

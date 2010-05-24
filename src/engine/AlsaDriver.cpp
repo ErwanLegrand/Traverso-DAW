@@ -1462,13 +1462,10 @@ int AlsaDriver::_read(nframes_t nframes)
                 for (int i=0; i<m_captureChannels.size(); ++i) {
                         AudioChannel* channel = m_captureChannels.at(i);
 			
-			if (!channel->has_data()) {
-				//no-copy optimization
-				continue;
-			}
-			buf = channel->get_data();
+                        buf = channel->get_buffer(nframes);
 			read_from_channel (channel->get_number(), buf + nread, contiguous);
-		}
+                        channel->read_from_hardware_port(buf, nframes);
+                }
 
 		if ((err = snd_pcm_mmap_commit (capture_handle, offset, contiguous)) < 0) {
 			PERROR ("ALSA: could not complete read of %ld frames: error = %d\n", contiguous, err);
@@ -1515,10 +1512,7 @@ int AlsaDriver::_write(nframes_t nframes)
 
                 for (int i=0; i<m_playbackChannels.size(); ++i) {
                         AudioChannel* channel = m_playbackChannels.at(i);
-			if (!channel->has_data()) {
-				continue;
-			}
-			buf = channel->get_data();
+                        buf = channel->get_buffer(nframes);
 			write_to_channel (channel->get_number(), buf + nwritten, contiguous);
 			channel->silence_buffer(nframes);
 		}

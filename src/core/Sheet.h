@@ -99,6 +99,7 @@ public:
         QList<SubGroup*> get_subgroups() const;
         QList<Track*> get_tracks() const;
 	
+        Project* get_project() const {return m_project;}
 	DiskIO*	get_diskio() const;
 	AudioClipManager* get_audioclip_manager() const;
 	AudioBus* get_render_bus() const {return m_renderBus;}

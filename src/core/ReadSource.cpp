@@ -620,16 +620,19 @@ void ReadSource::prepare_rt_buffers( )
 
 	float size = config().get_property("Hardware", "readbuffersize", 1.0).toDouble();
 
-	m_bufferSize = (int) (size * m_outputRate);
+        m_bufferSize = (int) (size * m_outputRate);
 
-	m_chunkSize = m_bufferSize / DiskIO::bufferdividefactor;
+        // TODO: reading is done in chunkSizes, mayb it's more performant to
+        // have chunck sizes that are multiples of 4KB ?
+        m_chunkSize = m_bufferSize / DiskIO::bufferdividefactor;
 
 	for (int i=0; i<m_channelCount; ++i) {
 		m_buffers.append(new RingBufferNPT<float>(m_bufferSize));
 	}
 
-	TimeRef synclocation = m_clip->get_sheet()->get_work_location();
-	start_resync(synclocation);
+        // FIXME: does this really make sense to do still ? :
+        TimeRef synclocation = m_clip->get_sheet()->get_transport_location();
+        start_resync(synclocation);
 }
 
 BufferStatus* ReadSource::get_buffer_status()

@@ -97,6 +97,11 @@ int Track::set_state( const QDomNode & node )
 
 Command* Track::solo(  )
 {
+        // Not all Tracks have a sheet (e.g. Project Master)
+        if (!m_sheet) {
+                return 0;
+        }
+
         m_sheet->solo_track(this);
         return (Command*) 0;
 }

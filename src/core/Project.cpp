@@ -27,6 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <cfloat>
 
+#include "AudioBus.h"
+#include "AudioChannel.h"
+#include "Client.h"
 #include "Project.h"
 #include "Sheet.h"
 #include "ProjectManager.h"
@@ -41,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AddRemove.h>
 #include "FileHelpers.h"
 #include "TimeLine.h"
+#include "SubGroup.h"
 
 #define PROJECT_FILE_VERSION 	3
 
@@ -77,6 +81,23 @@ Project::Project(const QString& title)
 	m_resourcesManager = new ResourcesManager(this);
 	m_hs = new QUndoStack(pm().get_undogroup());
 
+        m_audiodeviceClient = new AudioDeviceClient("sheet_" + QByteArray::number(get_id()));
+        m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Project::process) );
+        m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Project::transport_control) );
+
+        audiodevice().add_client(m_audiodeviceClient);
+
+        m_masterOut = new MasterOutSubGroup((Sheet*) 0, tr("Project Master"));
+
+        AudioBus* bus = m_masterOut->get_process_bus();
+        for(int i=0; i<bus->get_channel_count(); i++) {
+                if (AudioChannel* chan = bus->get_channel(i)) {
+                        chan->set_buffer_size(2048);
+                }
+        }
+
+        audiodevice().set_master_out_bus(m_masterOut->get_process_bus());
+
 	cpointer().add_contextitem(this);
 }
 
@@ -86,12 +107,18 @@ Project::~Project()
 	PENTERDES;
 	cpointer().remove_contextitem(this);
 
-	foreach(Sheet* sheet, m_sheets) {
-                sheet->schedule_for_deletion();
-                sheet->disconnect_from_audiodevice();
-        }
+        // FIXME: sheets need to be deleted!
+//        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+//                sheet->schedule_for_deletion();
+//                sheet->disconnect_from_audiodevice();
+//        }
 
 	delete m_hs;
+
+        audiodevice().remove_client(m_audiodeviceClient);
+        usleep(50000);
+
+//        delete m_masterOut;
 }
 
 
@@ -125,7 +152,7 @@ int Project::create(int sheetcount, int numtracks)
 	}
 
 	if (m_sheets.size()) {
-		set_current_sheet(m_sheets.first()->get_id());
+                set_current_sheet(((Sheet*)m_sheets.first())->get_id());
 	}
 	
 	m_id = create_id();
@@ -238,11 +265,13 @@ int Project::load(QString projectfile)
 	m_importDir = e.attribute("importdir", QDir::homePath()); 
 
 
-
-
         prepare_audio_device(doc);
 
-	
+        QDomNode masterOutNode = docElem.firstChildElement("MasterOut");
+        m_masterOut->set_state(masterOutNode.firstChildElement());
+        // Force the proper name for our Master Bus
+        m_masterOut->set_name(tr("Project Master"));
+
 	// Load all the AudioSources for this project
 	QDomNode asmNode = docElem.firstChildElement("ResourcesManager");
 	m_resourcesManager->set_state(asmNode);
@@ -263,7 +292,7 @@ int Project::load(QString projectfile)
 	
 	if ( id == 0) {
 		if (m_sheets.size()) {
-			id = m_sheets.first()->get_id();
+                        id = ((Sheet*)m_sheets.first())->get_id();
 		}
 	}
 			
@@ -413,11 +442,16 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
                 bus.setAttribute("channels", conf.channelNames.join(";"));
                 bus.setAttribute("type", conf.type);
                 bus.setAttribute("channelcount", conf.channelcount);
+                bus.setAttribute("id", conf.id);
                 busesElement.appendChild(bus);
         }
         systemConfig.appendChild(busesElement);
 
         projectNode.appendChild(audioIO);
+
+        QDomNode masterOutNode = doc.createElement("MasterOut");
+        masterOutNode.appendChild(m_masterOut->get_state(doc, istemplate));
+        projectNode.appendChild(masterOutNode);
 
 
 	doc.appendChild(projectNode);
@@ -430,7 +464,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	// Get all the Sheets
 	QDomNode sheetsNode = doc.createElement("Sheets");
 
-	foreach(Sheet* sheet, m_sheets) {
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
 		sheetsNode.appendChild(sheet->get_state(doc, istemplate));
 	}
 
@@ -478,6 +512,7 @@ void Project::prepare_audio_device(QDomDocument doc)
                 conf.channelNames = e.attribute("channels", "").split(";");
                 conf.type = e.attribute("type", "");
                 conf.channelcount = e.attribute("channelcount", "2").toInt();
+                conf.id = e.attribute("id", "-1").toLongLong();
                 busConfigs.append(conf);
                 busNode = busNode.nextSibling();
         }
@@ -620,8 +655,8 @@ void Project::set_genre(int pGenre)
 
 bool Project::has_changed()
 {
-	foreach(Sheet* sheet, m_sheets) {
-		if(sheet->is_changed())
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                if(sheet->is_changed())
 			return true;
 	}
 	return false;
@@ -654,8 +689,8 @@ void Project::set_current_sheet(qint64 id)
 	
 	Sheet* newcurrent = 0;
 	
-	foreach(Sheet* sheet, m_sheets) {
-		if (sheet->get_id() == id) {
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                if (sheet->get_id() == id) {
 			newcurrent = sheet;
 			break;
 		}
@@ -665,7 +700,7 @@ void Project::set_current_sheet(qint64 id)
 		info().information( tr("Sheet '%1' doesn't exist!").arg(id) );
                 // fallback to the first sheet.
                 if (m_sheets.size()) {
-                        set_current_sheet(m_sheets.first()->get_id());
+                        set_current_sheet(((Sheet*)m_sheets.first())->get_id());
                 }
 
 		emit currentSheetChanged(0);
@@ -682,8 +717,8 @@ Sheet* Project::get_current_sheet() const
 {
 	Sheet* current = 0;
 	
-	foreach(Sheet* sheet, m_sheets) {
-		if (sheet->get_id() == m_currentSheetId) {
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                if (sheet->get_id() == m_currentSheetId) {
 			current = sheet;
 			break;
 		}
@@ -697,8 +732,8 @@ Sheet* Project::get_sheet(qint64 id) const
 {
 	Sheet* current = 0;
 	
-	foreach(Sheet* sheet, m_sheets) {
-		if (sheet->get_id() == id) {
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                if (sheet->get_id() == id) {
 			current = sheet;
 			break;
 		}
@@ -771,8 +806,8 @@ int Project::start_export(ExportSpecification* spec)
 
         // determine which sheets to export, store them in sheetsToRender
 	if (spec->allSheets) {
-		foreach(Sheet* sheet, m_sheets) {
-			sheetsToRender.append(sheet);
+                apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                        sheetsToRender.append(sheet);
 		}
 	} else {
 		Sheet* sheet = get_current_sheet();
@@ -784,8 +819,8 @@ int Project::start_export(ExportSpecification* spec)
         // process each sheet in the list sheetsToRender. here we set the renderpass mode,
         // and then call Sheet::repare_export() and Sheet::render(), which do the actual
         // processing.
-	foreach(Sheet* sheet, sheetsToRender) {
-		PMESG("Starting export for sheet %lld", sheet->get_id());
+        apill_foreach(Sheet* sheet, Sheet, sheetsToRender) {
+                PMESG("Starting export for sheet %lld", sheet->get_id());
 		emit exportStartedForSheet(sheet);
 		spec->resumeTransport = false;
                 spec->resumeTransportLocation = sheet->get_transport_location();
@@ -864,7 +899,7 @@ TimeRef Project::get_cd_totaltime(ExportSpecification* spec)
         spec->renderpass = ExportSpecification::CREATE_CDRDAO_TOC;
 
         if (spec->allSheets) {
-                foreach(Sheet* sheet, m_sheets) {
+                apill_foreach(Sheet* sheet, Sheet, m_sheets) {
                         sheet->prepare_export(spec);
                         totalTime += spec->totalTime;
                 }
@@ -883,8 +918,8 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 	QString filename = spec->exportdir;
 	
 	if (spec->allSheets) {
-		foreach(Sheet* sheet, m_sheets) {
-			sheets.append(sheet);
+                apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                        sheets.append(sheet);
 		}
 
                 // filename of the toc file is "project-name.toc"
@@ -953,7 +988,7 @@ Command* Project::select()
 {
 	int index = ie().collected_number();
 	if (index <= m_sheets.size() && index > 0) {
-		set_current_sheet(m_sheets.at(index - 1)->get_id());
+                set_current_sheet(((Sheet*)m_sheets.at(index - 1))->get_id());
 	}
 	return (Command*) 0;
 }
@@ -990,13 +1025,19 @@ void Project::set_export_message(QString message)
 
 QList<Sheet* > Project::get_sheets( ) const
 {
-	return m_sheets;
+        QList<Sheet*> list;
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                list.append(sheet);
+        }
+
+        return list;
 }
 
-int Project::get_sheet_index(qint64 id) const
+int Project::get_sheet_index(qint64 id)
 {
 	for (int i=0; i<m_sheets.size(); ++i) {
-		if (m_sheets.at(i)->get_id() == id) {
+                Sheet* sheet = (Sheet*) m_sheets.at(i);
+                if (sheet->get_id() == id) {
 			return i + 1;
 		}
 	}
@@ -1091,7 +1132,7 @@ void Project::private_add_sheet(Sheet * sheet)
 void Project::private_remove_sheet(Sheet * sheet)
 {
 	PENTER;
-	m_sheets.removeAll(sheet);
+        m_sheets.remove(sheet);
 	
 	if (m_sheets.isEmpty()) {
 		m_currentSheetId = -1;
@@ -1100,7 +1141,7 @@ void Project::private_remove_sheet(Sheet * sheet)
 	qint64 newcurrent = 0;
 		
 	if (m_sheets.size() > 0) {
-		newcurrent = m_sheets.last()->get_id();
+                newcurrent = ((Sheet*)m_sheets.last())->get_id();
 	}
 		
 	set_current_sheet(newcurrent);
@@ -1132,8 +1173,8 @@ bool Project::is_save_to_close() const
 
 bool Project::is_recording() const
 {
-	foreach(Sheet* sheet, m_sheets) {
-		if (sheet->is_recording() && sheet->is_transport_rolling()) {
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                if (sheet->is_recording() && sheet->is_transport_rolling()) {
 			return true;
 		}
 	}
@@ -1142,7 +1183,7 @@ bool Project::is_recording() const
 
 void Project::set_work_at(TimeRef worklocation)
 {
-        foreach(Sheet* sheet, m_sheets) {
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
                 sheet->set_work_at_for_sheet_as_track_folder(worklocation);
         }
 }
@@ -1157,3 +1198,29 @@ void Project::set_sheets_are_tracks_folder(bool isFolder)
         }
 }
 
+
+int Project::process( nframes_t nframes )
+{
+        int result = 0;
+
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                result |= sheet->process(nframes);
+        }
+
+
+        // Mix the result into the AudioDevice "physical" buffers
+        m_masterOut->process(nframes);
+
+        return result;
+}
+
+int Project::transport_control(transport_state_t state)
+{
+        bool result = true;
+
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                result = sheet->transport_control(state);
+        }
+
+        return result;
+}

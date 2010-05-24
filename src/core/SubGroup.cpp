@@ -36,7 +36,7 @@ SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
         m_busOutName = "Playback 1";
         m_fader->set_gain(1.0);
 
-        init();
+        create_process_bus();
 }
 
 SubGroup::SubGroup(Sheet *sheet, QDomNode /*node*/)
@@ -70,15 +70,24 @@ int SubGroup::set_state( const QDomNode & node )
         bool ok;
         m_channelCount = e.attribute("channelcount", "2").toInt(&ok);
 
-        init();
+        create_process_bus();
 
         return 1;
 }
 
-void SubGroup::init()
+void SubGroup::create_process_bus()
 {
+        // avoid creating the bus twice!
+        if (m_processBus) {
+                return;
+        }
         m_type = SUBGROUP;
-        m_processBus = new AudioBus(m_name, m_channelCount, ChannelIsOutput);
+        BusConfig busConfig;
+        busConfig.name = m_name;
+        busConfig.channelcount = m_channelCount;
+        busConfig.type = "output";
+        busConfig.isInternalBus = true;
+        m_processBus = new AudioBus(busConfig);
 }
 
 int SubGroup::process(nframes_t nframes)
@@ -105,7 +114,7 @@ int SubGroup::process(nframes_t nframes)
 
 
 //        if (m_processBus->is_monitoring_peaks()) {
-                m_processBus->monitor_peaks(m_vumonitors);
+                m_processBus->process_monitoring(m_vumonitors);
 //        }
 
         send_to_output_buses(nframes);

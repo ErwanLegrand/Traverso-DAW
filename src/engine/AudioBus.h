@@ -35,21 +35,13 @@ class AudioBus : public QObject
 	Q_OBJECT
 
 public:
-        AudioBus(const QString& name, int type);
-        AudioBus(const QString& name, int channelCount, int type);
+        AudioBus(const BusConfig& config);
 	~AudioBus();
 
 
 	void add_channel(AudioChannel* chan);
-	int get_channel_count()
-	{
-                return m_channelCount;
-	}
-	
-	QString get_name()
-	{
-		return m_name;
-	}
+        int get_channel_count()	{return m_channelCount;}
+        QString get_name() {return m_name;}
 	
 	AudioChannel* get_channel(int channelNumber);
 
@@ -59,27 +51,25 @@ public:
 	 * @param nframes The buffer size to get
 	 * @return 
 	 */
-	audio_sample_t* get_buffer(int channel, nframes_t nframes)
-	{
-		return channels.at(channel)->get_buffer(nframes);
+        audio_sample_t* get_buffer(int channel, nframes_t nframes) {
+                return m_channels.at(channel)->get_buffer(nframes);
 	}
 
-	void set_monitor_peaks(bool monitor);
-	void reset_monitor_peaks();
-	bool is_monitoring_peaks() const {return m_monitors;}
+        void set_monitoring(bool monitor);
         bool is_input() {return m_type == ChannelIsInput;}
         bool is_output() {return m_type == ChannelIsOutput;}
         int get_type() const {return m_type;}
+        qint64 get_id() const {return m_id;}
 
-        void monitor_peaks() {
-		for (int i=0; i<channels.size(); ++i) {
-			channels.at(i)->monitor_peaks();
+        void process_monitoring() {
+                for (int i=0; i<m_channels.size(); ++i) {
+                        m_channels.at(i)->process_monitoring();
 		}
 	}
 
-        void monitor_peaks(VUMonitors vumonitors) {
-                for (int i=0; i<channels.size(); ++i) {
-                        channels.at(i)->monitor_peaks(vumonitors.at(i));
+        void process_monitoring(VUMonitors vumonitors) {
+                for (int i=0; i<m_channels.size(); ++i) {
+                        m_channels.at(i)->process_monitoring(vumonitors.at(i));
                 }
         }
 
@@ -89,24 +79,22 @@ public:
 	 */
 	void silence_buffers(nframes_t nframes)
 	{
-		for (int i=0; i<channels.size(); ++i) {
-			channels.at(i)->silence_buffer(nframes);
+                for (int i=0; i<m_channels.size(); ++i) {
+                        m_channels.at(i)->silence_buffer(nframes);
 		}
 	}
 
 
 private:
-	QList<AudioChannel* >	channels;
-	QString			deviceName;
+        QList<AudioChannel* >	m_channels;
 	QString			m_name;
 	
+        bool			m_isMonitoring;
+        bool                    m_isInternalBus;
         int 			m_channelCount;
-	int			m_monitors;
         int                     m_type;
+        qint64                  m_id;
 
-        void init(const QString& name, int type);
-
-	
 signals:
 	void monitoringPeaksStarted();
 	void monitoringPeaksStopped();
@@ -122,7 +110,7 @@ signals:
 inline AudioChannel * AudioBus::get_channel( int channelNumber )
 {
         if (channelNumber < m_channelCount) {
-                return channels.at(channelNumber);
+                return m_channels.at(channelNumber);
         }
         return 0;
 }

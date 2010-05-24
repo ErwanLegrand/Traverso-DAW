@@ -73,6 +73,8 @@ public:
 
         void set_bus_config(QList<BusConfig> configs);
         void set_channel_config(QList<ChannelConfig> configs);
+        void set_master_out_bus(AudioBus* bus);
+        void send_to_master_out(AudioChannel* channel, nframes_t nframes);
 
 	QStringList get_capture_buses_names() const;
 	QStringList get_playback_buses_names() const;
@@ -130,6 +132,7 @@ private:
 
         AudioDeviceSetup        m_setup;
         AudioDeviceSetup        m_fallBackSetup;
+        AudioBus*               m_masterOutBus;
         Driver* 		m_driver;
         AudioDeviceThread* 	m_audioThread;
         APILinkedList		m_clients;

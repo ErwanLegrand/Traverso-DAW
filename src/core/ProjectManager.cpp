@@ -336,6 +336,7 @@ Command* ProjectManager::exit()
 		} else if (currentProject->is_save_to_close()) {
 			m_exitInProgress = true;
 			set_current_project(0);
+                        QApplication::exit();
 		} else {
 			return 0;
 		}

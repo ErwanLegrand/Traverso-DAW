@@ -53,7 +53,7 @@ AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
         m_pan = m_numtakes = 0;
 
         m_busInName = "Capture 1";
-        m_busOutName = tr("Master Out");
+        m_busOutName = tr("Sheet Master");
 
         init();
 }
@@ -118,7 +118,7 @@ int AudioTrack::set_state( const QDomNode & node )
         Track::set_state(node);
 
         ProcessingData::set_input_bus(e.attribute( "InputBus", "Capture 1"));
-        set_output_bus(e.attribute( "OutputBus", tr("Master Out")));
+        set_output_bus(e.attribute( "OutputBus", tr("Sheet Master")));
         m_numtakes = e.attribute( "numtakes", "").toInt();
 
         QDomElement ClipsNode = node.firstChildElement("Clips");
@@ -313,7 +313,7 @@ int AudioTrack::process( nframes_t nframes )
         // even if processresult == 0?
         if (processResult) {
                 if (!m_isArmed) {
-                        m_processBus->monitor_peaks(m_vumonitors);
+                        m_processBus->process_monitoring(m_vumonitors);
                 }
 
                 send_to_output_buses(nframes);

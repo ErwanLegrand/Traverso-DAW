@@ -24,6 +24,7 @@ $Id: AudioBus.cpp,v 1.11 2008/01/21 16:22:15 r_sijrier Exp $
 #include "AudioChannel.h"
 #include "Mixer.h"
 #include "AudioDevice.h"
+#include "Utils.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -31,52 +32,50 @@ $Id: AudioBus.cpp,v 1.11 2008/01/21 16:22:15 r_sijrier Exp $
 
 /**
  * \class AudioBus
- * A convenience class to wrap (the likley 2) AudioChannels in the well known Bus concept.
+ * A convenience class to wrap (the likely 2) AudioChannels in the Bus concept.
  * 
  */
 
 
 /**
- * Constructs an AudioBus instance with name \a name 
- * @param name The name of the AudioBus
- * @return a new AudioBus instance
- */
-AudioBus::AudioBus(const QString& name, int type)
-		: QObject()
-{
-	PENTERCONS;
-	
-        init(name, type);
-}
-
-/**
  * Constructs an AudioBus instance with name \a name and channel \a channels
  *
  * This is a convenience constructor, which populates the AudioBus with \a channels AudioChannels
- * The buffer size of the AudioChannels is the same as the current AudioDevice::get_buffer_size() 
+ * The buffer size of the AudioChannels is the same as the current AudioDevice::get_buffer_size()
  * @param name The name of the AudioBus
  * @param channels The number of AudioChannels to add to this AudioBus
  * @return a new AudioBus instance
  */
-AudioBus::AudioBus( const QString& name, int channels, int type)
+AudioBus::AudioBus(const BusConfig& config)
 {
-	PENTERCONS;
-	
-        init(name, type);
+        m_isMonitoring = true;
 
-	for(int channelNumber=0; channelNumber<channels; ++channelNumber) {
-                AudioChannel* chan = audiodevice().create_channel(name, channelNumber, type);
-		add_channel(chan);
-	}
+        m_channelCount = 0;
+        m_name = config.name;
+        if (config.type == "input") {
+                m_type = ChannelIsInput;
+        } else {
+                m_type = ChannelIsOutput;
+        }
+
+        m_id = config.id;
+
+        // id was never created if it == -1, so create a unique one now!
+        if (m_id == -1) {
+                m_id = create_id();
+        }
+
+        m_isInternalBus = config.isInternalBus;
+
+        // This bus is an internal Bus, not a Bus used to wrap AudioChannel's from a Driver
+        // so we have to create AudioChannel's to make the Bus useful for internal routing.
+        if (m_isInternalBus) {
+                for(int channelNumber=0; channelNumber < config.channelcount; ++channelNumber) {
+                        AudioChannel* chan = audiodevice().create_channel(m_name, channelNumber, m_type);
+                        add_channel(chan);
+                }
+        }
 }
-
-void AudioBus::init(const QString& name, int type)
-{
-        m_channelCount = m_monitors = 0;
-	m_name = name;
-        m_type = type;
-}
-
 
 AudioBus::~ AudioBus( )
 {
@@ -93,7 +92,8 @@ AudioBus::~ AudioBus( )
 void AudioBus::add_channel(AudioChannel* chan)
 {
 	Q_ASSERT(chan);
-	channels.append(chan);
+        printf("adding channel\n");
+        m_channels.append(chan);
         m_channelCount++;
 }
 
@@ -104,30 +104,13 @@ void AudioBus::add_channel(AudioChannel* chan)
  * Get the peak value with AudioChannel::get_peak_value()
  * @param monitor 
  */
-void AudioBus::set_monitor_peaks( bool monitor )
+void AudioBus::set_monitoring( bool monitor )
 {
-	if (monitor) {
-		m_monitors++;
-	} else {
-		m_monitors--;
-	}
+        m_isMonitoring = monitor;
 	
-	for (int i=0; i<channels.size(); ++i) {
-		channels.at(i)->set_monitor_peaks(m_monitors);
+	for (int i=0; i<m_channels.size(); ++i) {
+                m_channels.at(i)->set_monitoring(monitor);
 	}
-	
-	if (m_monitors > 0) {
-		emit monitoringPeaksStarted();
-	}
-	if (m_monitors == 0) {
-		emit monitoringPeaksStopped();
-	}
-}
-
-void AudioBus::reset_monitor_peaks()
-{
-	m_monitors = 0;
-	emit monitoringPeaksStopped();
 }
 
 //eof

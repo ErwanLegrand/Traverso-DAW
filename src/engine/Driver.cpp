@@ -71,7 +71,6 @@ int Driver::_read( nframes_t  )
 int Driver::_write( nframes_t nframes )
 {
 	foreach(AudioChannel* chan, m_playbackChannels) {
-		chan->get_data();
 		chan->silence_buffer(nframes);
 	}
 

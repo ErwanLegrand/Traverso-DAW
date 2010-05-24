@@ -77,7 +77,7 @@ QSize BusMonitor::sizeHint() const
 
 QSize BusMonitor::minimumSizeHint() const
 {
-	return QSize(50, 50);
+        return QSize(50, 50);
 }
 
 void BusMonitor::create_vu_meters( )
@@ -138,7 +138,7 @@ void BusMonitor::create_vu_meters( )
                 connect(bus, SIGNAL(monitoringPeaksStarted()), m_masterOutMeter, SLOT(peak_monitoring_started()));
                 connect(bus, SIGNAL(monitoringPeaksStopped()), m_masterOutMeter, SLOT(peak_monitoring_stopped()));
 
-                bus->set_monitor_peaks(true);
+                bus->set_monitoring(true);
 
                 m_layout->addWidget(m_masterOutMeter);
         }
@@ -149,13 +149,6 @@ void BusMonitor::set_project(Project * project)
 {
 	Q_UNUSED(project);
 	
-	QStringList list = audiodevice().get_capture_buses_names();
-	foreach(QString name, list)
-	{
-		AudioBus* bus = audiodevice().get_capture_bus(name.toAscii());
-		bus->reset_monitor_peaks();
-	}
-
         if (project) {
                 connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
         } else {

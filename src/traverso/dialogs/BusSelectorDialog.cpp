@@ -53,7 +53,7 @@ void BusSelectorDialog::update_buses_list_widget()
 
         QStringList c_names = audiodevice().get_capture_buses_names();
         QStringList p_names = audiodevice().get_playback_buses_names();
-        p_names.prepend("Master Out");
+        p_names.prepend("Sheet Master");
 
         foreach(QString name, c_names) {
                 QListWidgetItem* item = new QListWidgetItem(captureBusesListWidget);

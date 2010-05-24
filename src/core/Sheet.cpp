@@ -162,9 +162,18 @@ void Sheet::init()
 	connect(this, SIGNAL(transportStopped()), m_diskio, SLOT(stop_io()));
 
 	mixdown = gainbuffer = 0;
-        m_renderBus = new AudioBus("Render Bus", 2, ChannelIsOutput);
-        m_clipRenderBus = new AudioBus("Clip Render Bus", 2, ChannelIsOutput);
-        m_masterOut = new MasterOutSubGroup(this);
+
+        BusConfig busConfig;
+        busConfig.name = "Sheet Render Bus";
+        busConfig.channelcount = 2;
+        busConfig.type = "output";
+        busConfig.isInternalBus = true;
+        m_renderBus = new AudioBus(busConfig);
+
+        busConfig.name = "Sheet Clip Render Bus";
+        m_clipRenderBus = new AudioBus(busConfig);
+
+        m_masterOut = new MasterOutSubGroup(this, tr("Sheet Master"));
         resize_buffer(audiodevice().get_buffer_size());
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
@@ -224,7 +233,9 @@ int Sheet::set_state( const QDomNode & node )
         
         QDomNode masterOutNode = node.firstChildElement("MasterOut");
         m_masterOut->set_state(masterOutNode.firstChildElement());
-        
+        // Force the proper name for our Master Bus
+        m_masterOut->set_name(tr("Sheet Master"));
+
         QDomNode subgroupNode = subgroupsNode.firstChild();
 
         while(!subgroupNode.isNull()) {
@@ -307,7 +318,7 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 void Sheet::connect_to_audiodevice( )
 {
 	PENTER;
-	audiodevice().add_client(m_audiodeviceClient);
+//	audiodevice().add_client(m_audiodeviceClient);
 }
 
 void Sheet::disconnect_from_audiodevice()

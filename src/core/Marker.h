@@ -42,7 +42,7 @@ public:
 
 	Marker(TimeLine* tl, const TimeRef when, Type type = CDTRACK);
 	Marker(TimeLine* tl, const QDomNode node);
-	~Marker() {};
+        ~Marker() {}
 	
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode& node);
@@ -69,8 +69,8 @@ public:
 	QString get_isrc() const {return m_isrc;}
 	bool get_preemphasis();
 	bool get_copyprotect();
-	Type get_type() {return m_type;};
-	int get_index() {return m_index;};
+        Type get_type() {return m_type;}
+        int get_index() {return m_index;}
 	
 
 public slots:

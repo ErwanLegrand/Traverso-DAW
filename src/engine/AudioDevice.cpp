@@ -51,6 +51,8 @@ RELAYTOOL_JACK
 #include "AudioChannel.h"
 #include "AudioBus.h"
 #include "Tsar.h"
+#include "Mixer.h"
+
 //#include <sys/mman.h>
 #include <QDebug>
 
@@ -152,6 +154,7 @@ AudioDevice::AudioDevice()
 {
 	m_runAudioThread = false;
         m_driver = 0;
+        m_masterOutBus = 0;
         m_audioThread = 0;
 	m_bufferSize = 1024;
 	m_xrunCount = 0;
@@ -256,6 +259,10 @@ void AudioDevice::set_bit_depth( uint depth )
 
 int AudioDevice::run_cycle( nframes_t nframes, float delayed_usecs )
 {
+        if (m_masterOutBus) {
+                m_masterOutBus->silence_buffers(nframes);
+        }
+
 	nframes_t left;
 
 	if (nframes != m_bufferSize) {
@@ -626,6 +633,7 @@ QList<BusConfig> AudioDevice::get_bus_configuration()
                 BusConfig conf;
                 conf.name = bus->get_name();
                 conf.type = bus->is_input() ? "input" : "output";
+                conf.id = bus->get_id();
 
                 for (int i = 0; i < bus->get_channel_count(); ++i) {
                         conf.channelNames.append(bus->get_channel(i)->get_name());
@@ -676,6 +684,19 @@ void AudioDevice::set_channel_config(QList<ChannelConfig> channelConfigs)
 //        }
 }
 
+void AudioDevice::set_master_out_bus(AudioBus *bus)
+{
+        m_masterOutBus = bus;
+}
+
+void AudioDevice::send_to_master_out(AudioChannel* channel, nframes_t nframes)
+{
+        if (!m_masterOutBus) {
+                return;
+        }
+        Mixer::mix_buffers_no_gain(m_masterOutBus->get_buffer(0, nframes), channel->get_buffer(nframes), nframes);
+}
+
 void AudioDevice::set_bus_config(QList<BusConfig> config)
 {
 //        THREAD_SAVE_INVOKE(this, NULL, "set_bus_config()");
@@ -694,12 +715,7 @@ void AudioDevice::private_set_bus_config(QList<BusConfig> config)
         for (int j = 0; j < m_busConfigs.count(); ++j) {
                 conf = m_busConfigs.at(j);
 
-                AudioBus* bus;
-                if (conf.type == "input") {
-                        bus = new AudioBus(conf.name, ChannelIsInput);
-                } else  {
-                        bus = new AudioBus(conf.name, ChannelIsOutput);
-                }
+                AudioBus* bus = new AudioBus(conf);
 
                 for (int i = 0; i < conf.channelNames.count(); ++i) {
                         if (bus->is_input()) {
@@ -726,10 +742,12 @@ void AudioDevice::setup_default_capture_buses( )
 	QByteArray name;
 
 	AudioChannel* channel;
+        BusConfig config;
 	
         for (int i=1; i <= m_driver->get_capture_channels().size();) {
-		name = "Capture " + QByteArray::number(number++);
-                AudioBus* bus = new AudioBus(name, ChannelIsInput);
+                config.name = "Capture " + QByteArray::number(number++);
+                config.type = "input";
+                AudioBus* bus = new AudioBus(config);
                 channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
 		if (channel) {
                         bus->add_channel(channel);
@@ -745,13 +763,14 @@ void AudioDevice::setup_default_capture_buses( )
 void AudioDevice::setup_default_playback_buses( )
 {
 	int number = 1;
-	QByteArray name;
 
 	AudioChannel* channel;
+        BusConfig config;
 
         for (int i=1; i <= m_driver->get_playback_channels().size();) {
-		name = "Playback " + QByteArray::number(number++);
-                AudioBus* bus = new AudioBus(name, ChannelIsOutput);
+                config.name = "Playback " + QByteArray::number(number++);
+                config.type = "output";
+                AudioBus* bus = new AudioBus(config);
                 channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
                 if (channel) {
                         bus->add_channel(channel);

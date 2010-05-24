@@ -52,6 +52,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "PlayHeadMove.h"
 #include "WorkCursorMove.h"
 #include "Shuttle.h"
+#include "ProjectManager.h"
+#include "Project.h"
 
 #include "AudioDevice.h"
 		
@@ -145,6 +147,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
         foreach(Track* track, m_sheet->get_tracks()) {
                 add_new_track_view(track);
         }
+
+        add_new_track_view(pm().get_project()->get_master_out());
 
         // this will call layout_tracks() for us too
         // which will continue now, due m_viewportReady is true now
@@ -987,7 +991,6 @@ void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
         activeList.append(acv->get_audio_track_view());
         activeList.append(this);
 
-        printf("curve start offset: %d\n", curveView->get_curve()->get_start_offset().to_frame(44100));
         move_edit_point_to(TimeRef(nodeView->get_curve_node()->get_when()) + curveView->get_curve()->get_start_offset(),
                            nodeView->scenePos().y() + nodeView->boundingRect().height() / 2);
 

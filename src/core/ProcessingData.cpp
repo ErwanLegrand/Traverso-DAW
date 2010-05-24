@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClipManager.h"
 #include "Mixer.h"
 #include "PluginChain.h"
+#include "Project.h"
 #include "Sheet.h"
 #include "SubGroup.h"
 
@@ -94,9 +95,10 @@ void ProcessingData::set_output_bus(const QString &name)
         m_busOutName = name;
 
         AudioBus* outBus = 0;
-        if (m_busOutName == tr("Master Out")) {
+        if (m_busOutName == tr("Sheet Master")) {
                 outBus = m_sheet->get_master_out()->get_process_bus();
-
+        } else if (m_busOutName == tr("Project Master")) {
+                outBus = m_sheet->get_project()->get_master_out()->get_process_bus();
         } else {
                 outBus = audiodevice().get_playback_bus(m_busOutName);
                 if (!outBus && m_sheet) {

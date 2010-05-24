@@ -279,12 +279,20 @@ typedef struct {
         QString destination;
 } ChannelConfig;
 
-typedef struct {
+struct BusConfig {
+        BusConfig() {
+                id = -1;
+                channelcount = 0;
+                isInternalBus = false;
+        }
+
         QString name;
         QStringList channelNames;
         QString type;
         int channelcount;
-} BusConfig;
+        bool isInternalBus;
+        qint64 id;
+};
 
 struct AudioDeviceSetup {
         AudioDeviceSetup() {

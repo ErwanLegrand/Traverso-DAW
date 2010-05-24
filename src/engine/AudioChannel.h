@@ -66,26 +66,25 @@ class AudioChannel : public QObject
 
 public:
         audio_sample_t* get_buffer(nframes_t ) {
-		hasData = true;
-		return buf;
+                return m_buffer;
 	}
 
 	void set_latency(unsigned int latency);
 
         void silence_buffer(nframes_t nframes) {
-		memset (buf, 0, sizeof (audio_sample_t) * nframes);
+                memset (m_buffer, 0, sizeof (audio_sample_t) * nframes);
 	}
 
 	void set_buffer_size(nframes_t size);
-	void set_monitor_peaks(bool monitor);
-        void monitor_peaks(VUMonitor* monitor=0);
+        void set_monitoring(bool monitor);
+        void process_monitoring(VUMonitor* monitor=0);
 
         void add_monitor(VUMonitor* monitor);
         void remove_monitor(VUMonitor* monitor);
 
         QString get_name() const {return m_name;}
         uint get_number() const {return m_number;}
-        uint get_buffer_size() const {return bufSize;}
+        uint get_buffer_size() const {return m_bufferSize;}
         int get_type() const {return m_type;}
 
 private:
@@ -94,15 +93,14 @@ private:
 
         friend class AudioDevice;
 
-        APILinkedList          m_monitors;
-        audio_sample_t* 	buf;
-	uint 			bufSize;
+        APILinkedList           m_monitors;
+        audio_sample_t* 	m_buffer;
+        uint 			m_bufferSize;
 	uint 			m_latency;
 	uint 			m_number;
         int                     m_type;
-        bool 			hasData;
 	bool			mlocked;
-	bool			monitoring;
+        bool			m_monitoring;
 	QString 		m_name;
 
 	friend class JackDriver;
@@ -112,17 +110,7 @@ private:
 	friend class Driver;
 	friend class CoreAudioDriver;
 
-        int has_data()
-        {
-                return hasData || m_monitors.size();
-        }
-
-        audio_sample_t* get_data()
-        {
-                hasData = false;
-                monitor_peaks();
-                return buf;
-        }
+        void read_from_hardware_port(audio_sample_t* buf, nframes_t nframes);
 
 private slots:
         void private_add_monitor(VUMonitor* monitor);

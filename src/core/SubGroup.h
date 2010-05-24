@@ -42,7 +42,7 @@ protected:
         int m_channelCount;
 
 private:
-        void init();
+        void create_process_bus();
 };
 
 class MasterOutSubGroup : public SubGroup
@@ -50,20 +50,13 @@ class MasterOutSubGroup : public SubGroup
         Q_OBJECT
 
 public:
-        MasterOutSubGroup(Sheet* sheet) : SubGroup(sheet, tr("Master Out"), 2) {};
-        MasterOutSubGroup(Sheet* sheet, const QDomNode node) : SubGroup(sheet, node) {
-                m_name = tr("Master Out");
-        };
-        ~MasterOutSubGroup() {};
-
-        void set_name(const QString& /*name*/) {
-                // Master out can't and shouldn't be renamed!
-                m_name = tr("Master Out");
-        }
+        MasterOutSubGroup(Sheet* sheet, const QString& name) : SubGroup(sheet, name, 2) {}
+        MasterOutSubGroup(Sheet* sheet, const QDomNode node) : SubGroup(sheet, node) {}
+        ~MasterOutSubGroup() {}
 
         void set_output_bus(const QString& name) {
                 // this should not happen, but just in case...
-                if (!(name == tr("Master Out"))) {
+                if (!(name == tr("Sheet Master")) || !(name == tr("Project Master"))) {
                         ProcessingData::set_output_bus(name);
                 } else {
                         // try to be 'smart' and pick a sane default.
@@ -75,8 +68,7 @@ public:
                 SubGroup::set_state(node);
 
                 // force proper values for the following parameters that
-                // are fixed for master out:
-                m_name = tr("Master Out");
+                // are fixed for Master Buses:
                 m_channelCount = 2;
                 return 1;
         }
