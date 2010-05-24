@@ -36,6 +36,7 @@ TrackPanelViewPort.cpp
 ViewItem.cpp
 ViewPort.cpp
 dialogs/AudioClipEditDialog.cpp
+dialogs/TTrackManagerDialog.cpp
 VUMeterView.cpp
 )
 
@@ -54,6 +55,7 @@ PositionIndicator.h
 SubGroupView.h
 ViewItem.h
 dialogs/AudioClipEditDialog.h
+dialogs/TTrackManagerDialog.h
 CurveView.h
 SheetView.h
 SheetWidget.h
@@ -66,6 +68,7 @@ VUMeterView.h
 
 SET(TRAVERSO_SONGCANVAS_UI_FILES
 ui/AudioClipEditDialog.ui
+ui/TTrackManagerDialog.ui
 )
 
 QT4_WRAP_CPP(TRAVERSO_SONGCANVAS_MOC_SOURCES ${TRAVERSO_SONGCANVAS_MOC_CLASSES})
