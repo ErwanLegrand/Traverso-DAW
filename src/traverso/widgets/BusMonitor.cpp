@@ -46,7 +46,7 @@ BusMonitor::BusMonitor(QWidget* parent)
 	PENTERCONS;
 	
 	setAutoFillBackground(false);
-        m_masterOutMeter = 0;
+        m_masterOutMeter = m_projectMaster = 0;
         m_sheet = 0;
         m_layout = 0;
 	
@@ -127,20 +127,20 @@ void BusMonitor::create_vu_meters( )
 
         if (m_masterOutMeter) {
                 m_layout->removeWidget(m_masterOutMeter);
+                m_layout->removeWidget(m_projectMaster);
                 delete m_masterOutMeter;
+                delete m_projectMaster;
                 m_masterOutMeter = 0;
+                m_projectMaster = 0;
         }
 
         if (m_sheet) {
                 AudioBus* bus = m_sheet->get_master_out()->get_process_bus();
                 m_masterOutMeter = new VUMeter(this, bus);
-
-                connect(bus, SIGNAL(monitoringPeaksStarted()), m_masterOutMeter, SLOT(peak_monitoring_started()));
-                connect(bus, SIGNAL(monitoringPeaksStopped()), m_masterOutMeter, SLOT(peak_monitoring_stopped()));
-
-                bus->set_monitoring(true);
-
                 m_layout->addWidget(m_masterOutMeter);
+                bus = m_sheet->get_project()->get_master_out()->get_process_bus();
+                m_projectMaster = new VUMeter(this, bus);
+                m_layout->addWidget(m_projectMaster);
         }
 
 }
@@ -190,6 +190,7 @@ void BusMonitor::reset_vu_meters()
 	}
         if (m_masterOutMeter) {
                 m_masterOutMeter->reset();
+                m_projectMaster->reset();
         }
 }
 

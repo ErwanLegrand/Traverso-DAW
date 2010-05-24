@@ -50,6 +50,7 @@ protected:
 private:
         Sheet*                  m_sheet;
         VUMeter*                m_masterOutMeter;
+        VUMeter*                m_projectMaster;
 	QList<VUMeter* >	inMeters;
 	QList<VUMeter* >	outMeters;
         QMenu*                  m_menu;
