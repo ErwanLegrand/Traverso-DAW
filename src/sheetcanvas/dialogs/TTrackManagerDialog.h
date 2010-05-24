@@ -38,6 +38,10 @@ public:
 
 private:
         Track* m_track;
+
+private slots:
+        void accept();
+        void reject();
 };
 
 #endif

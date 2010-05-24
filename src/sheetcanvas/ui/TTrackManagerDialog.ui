@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>745</width>
-    <height>342</height>
+    <width>877</width>
+    <height>413</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,6 +74,9 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>40</width>
@@ -104,7 +107,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QFrame" name="">
+           <widget class="QFrame" name="frame">
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
               <widget class="QLabel" name="label">
@@ -121,11 +124,6 @@
                  <height>0</height>
                 </size>
                </property>
-               <item>
-                <property name="text">
-                 <string>1violins</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item>
@@ -162,7 +160,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="">
+           <widget class="QFrame" name="frame">
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
               <widget class="QLabel" name="label_2">
@@ -179,31 +177,6 @@
                  <height>0</height>
                 </size>
                </property>
-               <item>
-                <property name="text">
-                 <string>Playback 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Playback 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>-------------------</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Sheet Master</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Project Master</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item>
@@ -231,7 +204,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="RoutingOutputRemoveButton">
+              <widget class="QPushButton" name="routingOutputRemoveButton">
                <property name="text">
                 <string>Remove</string>
                </property>
@@ -246,13 +219,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="insertsAndSentsGroupBox">
+      <widget class="QGroupBox" name="insertsAndSendsGroupBox">
        <property name="title">
         <string>Inserts and Sends</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QFrame" name="">
+         <widget class="QFrame" name="frame">
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
             <widget class="QLabel" name="label_6">
@@ -362,7 +335,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="">
+         <widget class="QFrame" name="frame">
           <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>
             <widget class="QLabel" name="label_7">
@@ -379,11 +352,6 @@
                <height>0</height>
               </size>
              </property>
-             <item>
-              <property name="text">
-               <string>JConv</string>
-              </property>
-             </item>
             </widget>
            </item>
            <item>
@@ -400,7 +368,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
-               <widget class="QFrame" name="">
+               <widget class="QFrame" name="frame">
                 <layout class="QVBoxLayout" name="verticalLayout">
                  <item>
                   <widget class="QLabel" name="label_9">
@@ -595,12 +563,45 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>TTrackManagerDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>730</x>
+     <y>391</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>704</x>
+     <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>TTrackManagerDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>849</x>
+     <y>386</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>873</x>
+     <y>361</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

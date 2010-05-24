@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TTrackManagerDialog.h"
 
+#include "Track.h"
 
 TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         : QDialog(parent)
@@ -30,5 +31,30 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         setupUi(this);
 
         insertsAndSendsGroupBox->hide();
+        nameLineEdit->setText(m_track->get_name());
+
+        resize(400, 350);
+
+        if (m_track->get_type() == Track::SUBGROUP) {
+                routingInputAddNewButton->hide();
+                routingOutputAddNewButton->hide();
+        }
+        if (m_track->get_type() == Track::AUDIOTRACK) {
+                routingInputAddButton->hide();
+                routingInputRemoveButton->hide();
+                routingOutputAddButton->hide();
+                routingOutputRemoveButton->hide();
+        }
 }
 
+void TTrackManagerDialog::accept()
+{
+        QDialog::accept();
+
+        m_track->set_name(nameLineEdit->text());
+}
+
+void TTrackManagerDialog::reject()
+{
+        QDialog::reject();
+}

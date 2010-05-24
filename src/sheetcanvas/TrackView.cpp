@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Utils.h>
 
 #include <PluginSelectorDialog.h>
+#include "dialogs/TTrackManagerDialog.h"
 
 #include <Debugger.h>
 
@@ -115,6 +116,10 @@ int TrackView::get_height( )
 
 Command* TrackView::edit_properties( )
 {
+        TTrackManagerDialog manager(m_track, 0);
+        manager.exec();
+        return 0;
+
         if (m_track == m_track->get_sheet()->get_master_out()) {
                 return 0;
         }
