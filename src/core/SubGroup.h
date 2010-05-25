@@ -56,7 +56,7 @@ public:
 
         void set_output_bus(const QString& name) {
                 // this should not happen, but just in case...
-                if (!(name == tr("Sheet Master")) || !(name == tr("Project Master"))) {
+                if (!(name == tr("Sheet Master")) || !(name == tr("Master"))) {
                         ProcessingData::set_output_bus(name);
                 } else {
                         // try to be 'smart' and pick a sane default.

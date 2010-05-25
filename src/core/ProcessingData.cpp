@@ -94,10 +94,16 @@ void ProcessingData::set_output_bus(const QString &name)
 {
         m_busOutName = name;
 
+        // Master Out and Project Master were renamed to just: Master
+        if (m_busOutName == tr("Master Out") || m_busOutName == "Project Master") {
+                m_busOutName = "Master";
+        }
+
+
         AudioBus* outBus = 0;
         if (m_busOutName == tr("Sheet Master")) {
                 outBus = m_sheet->get_master_out()->get_process_bus();
-        } else if (m_busOutName == tr("Project Master")) {
+        } else if (m_busOutName == tr("Master")) {
                 outBus = m_sheet->get_project()->get_master_out()->get_process_bus();
         } else {
                 outBus = audiodevice().get_playback_bus(m_busOutName);

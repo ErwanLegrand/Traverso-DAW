@@ -87,7 +87,7 @@ Project::Project(const QString& title)
 
         audiodevice().add_client(m_audiodeviceClient);
 
-        m_masterOut = new MasterOutSubGroup((Sheet*) 0, tr("Project Master"));
+        m_masterOut = new MasterOutSubGroup((Sheet*) 0, tr("Master"));
 
         AudioBus* bus = m_masterOut->get_process_bus();
         for(int i=0; i<bus->get_channel_count(); i++) {
@@ -270,7 +270,7 @@ int Project::load(QString projectfile)
         QDomNode masterOutNode = docElem.firstChildElement("MasterOut");
         m_masterOut->set_state(masterOutNode.firstChildElement());
         // Force the proper name for our Master Bus
-        m_masterOut->set_name(tr("Project Master"));
+        m_masterOut->set_name(tr("Master"));
 
 	// Load all the AudioSources for this project
 	QDomNode asmNode = docElem.firstChildElement("ResourcesManager");
