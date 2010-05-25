@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TTrackManagerDialog.h"
 
 #include "Track.h"
+#include "SubGroup.h"
 
 TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         : QDialog(parent)
@@ -44,6 +45,12 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
                 routingInputRemoveButton->hide();
                 routingOutputAddButton->hide();
                 routingOutputRemoveButton->hide();
+        }
+
+        MasterOutSubGroup* master = qobject_cast<MasterOutSubGroup*>(m_track);
+        if (master) {
+                // Master Buses are not allowed to be renamed to avoid confusion
+                nameLineEdit->setEnabled(false);
         }
 }
 
