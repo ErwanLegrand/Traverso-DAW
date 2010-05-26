@@ -37,13 +37,15 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         resize(400, 350);
 
         if (m_track->get_type() == Track::SUBGROUP) {
+                routingInputAddButton->setText("Add Input");
+                routingOutputAddButton->setText("Add Output");
                 routingInputAddNewButton->hide();
                 routingOutputAddNewButton->hide();
         }
         if (m_track->get_type() == Track::AUDIOTRACK) {
-                routingInputAddButton->hide();
+                routingInputAddButton->setText("Set Input");
+                routingOutputAddButton->setText("Set Output");
                 routingInputRemoveButton->hide();
-                routingOutputAddButton->hide();
                 routingOutputRemoveButton->hide();
         }
 

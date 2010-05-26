@@ -101,21 +101,20 @@
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="routingInputCombo">
+              <widget class="QPushButton" name="routingInputAddButton">
                <property name="minimumSize">
                 <size>
                  <width>120</width>
                  <height>0</height>
                 </size>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="routingInputAddButton">
                <property name="text">
                 <string>Add </string>
                </property>
               </widget>
+             </item>
+             <item>
+              <widget class="QListView" name="routingInputListView"/>
              </item>
              <item>
               <widget class="QPushButton" name="routingInputAddNewButton">
@@ -123,9 +122,6 @@
                 <string>Add New</string>
                </property>
               </widget>
-             </item>
-             <item>
-              <widget class="QListView" name="routingInputListView"/>
              </item>
              <item>
               <widget class="QPushButton" name="routingInputRemoveButton">
@@ -154,26 +150,15 @@
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="routingOutputCombo">
+              <widget class="QPushButton" name="routingOutputAddButton">
                <property name="minimumSize">
                 <size>
                  <width>120</width>
                  <height>0</height>
                 </size>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="routingOutputAddButton">
                <property name="text">
                 <string>Add </string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="routingOutputAddNewButton">
-               <property name="text">
-                <string>Add New</string>
                </property>
               </widget>
              </item>
@@ -184,6 +169,13 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="routingOutputAddNewButton">
+               <property name="text">
+                <string>Add New</string>
                </property>
               </widget>
              </item>
