@@ -60,8 +60,7 @@ class Sheet : public ContextItem, public APILinkedListNode
 	Q_CLASSINFO("toggle_solo", tr("Solo: On/Off"))
 	Q_CLASSINFO("toggle_mute", tr("Mute: On/Off"))
 	Q_CLASSINFO("toggle_arm", tr("Arm: On/Off"))
-	Q_CLASSINFO("set_editing_mode", tr("Mode: Edit"))
-	Q_CLASSINFO("set_effects_mode", tr("Mode: Curve"))
+        Q_CLASSINFO("toggle_effects_mode", tr("Toggle Curve Mode: On/Off"))
 	Q_CLASSINFO("prev_skip_pos", tr("To previous snap position"))
 	Q_CLASSINFO("next_skip_pos", tr("To next snap position"))
 
@@ -253,6 +252,7 @@ public slots :
 	Command* toggle_arm();
 	Command* set_editing_mode();
 	Command* set_effects_mode();
+        Command* toggle_effects_mode();
 
 signals:
         void trackRemoved(Track* );

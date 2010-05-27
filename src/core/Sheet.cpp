@@ -1140,6 +1140,16 @@ Command* Sheet::set_effects_mode( )
 	return 0;
 }
 
+Command* Sheet::toggle_effects_mode()
+{
+        if (m_mode == EDIT) {
+                set_effects_mode();
+        } else {
+                set_editing_mode();
+        }
+        return 0;
+}
+
 void Sheet::set_temp_follow_state(bool state)
 {
 	emit tempFollowChanged(state);
