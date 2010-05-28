@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDialog>
 
 class Track;
+class QMenu;
 
 class TTrackManagerDialog : public QDialog, protected Ui::TTrackManagerDialog
 {
@@ -37,11 +38,21 @@ public:
         ~TTrackManagerDialog() {}
 
 private:
-        Track* m_track;
+        Track*  m_track;
+        QMenu*  m_routingInputMenu;
+        QMenu*  m_routingOutputMenu;
+
+        void create_routing_input_menu();
+        void create_routing_output_menu();
+
 
 private slots:
+        void update_routing_input_output_widget_view();
         void accept();
         void reject();
+
+        void routingInputMenuActionTriggered(QAction* action);
+        void routingOutputMenuActionTriggered(QAction* action);
 };
 
 #endif

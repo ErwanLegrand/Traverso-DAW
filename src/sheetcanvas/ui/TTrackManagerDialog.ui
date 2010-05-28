@@ -26,7 +26,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QLabel" name="label_5">
+         <widget class="QLabel" name="trackLabel">
           <property name="text">
            <string>Track name</string>
           </property>
@@ -94,7 +94,7 @@
            <widget class="QFrame" name="frame">
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
-              <widget class="QPushButton" name="routingInputAddButton">
+              <widget class="QPushButton" name="routingInputButton">
                <property name="minimumSize">
                 <size>
                  <width>120</width>
@@ -107,7 +107,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QListView" name="routingInputListView"/>
+              <widget class="QListWidget" name="routingInputListWidget"/>
              </item>
              <item>
               <widget class="QPushButton" name="routingInputAddNewButton">
@@ -136,7 +136,7 @@
            <widget class="QFrame" name="frame">
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
-              <widget class="QPushButton" name="routingOutputAddButton">
+              <widget class="QPushButton" name="routingOutputButton">
                <property name="minimumSize">
                 <size>
                  <width>120</width>
@@ -144,19 +144,12 @@
                 </size>
                </property>
                <property name="text">
-                <string>Add </string>
+                <string>Set Output</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QListView" name="routingOutputListView">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
+              <widget class="QListWidget" name="routingOutputListWidget"/>
              </item>
              <item>
               <widget class="QPushButton" name="routingOutputAddNewButton">
