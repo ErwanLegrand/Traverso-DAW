@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioBus.h"
 #include "AudioChannel.h"
+#include "AudioTrack.h"
 #include "Client.h"
 #include "Project.h"
 #include "Sheet.h"
@@ -1223,4 +1224,22 @@ int Project::transport_control(transport_state_t state)
         }
 
         return result;
+}
+
+QStringList Project::get_input_buses_for(SubGroup *subGroup)
+{
+        QStringList buses;
+
+        QList<AudioTrack*> audioTracks;
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                audioTracks.append(sheet->get_audio_tracks());
+        }
+
+        foreach(AudioTrack* track, audioTracks) {
+                if (track->get_bus_out_name() == subGroup->get_name()) {
+                        buses.append(track->get_name());
+                }
+        }
+
+        return buses;
 }

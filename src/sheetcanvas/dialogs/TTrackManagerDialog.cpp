@@ -108,12 +108,12 @@ void TTrackManagerDialog::create_routing_output_menu()
                 sheetMaster = sheet->get_master_out();
         }
 
-        if (sheetMaster && !(m_track == sheetMaster)) {
-                m_routingOutputMenu->addAction(sheetMaster->get_name());
-        }
-
         if (!(m_track == projectMaster)) {
                 m_routingOutputMenu->addAction(projectMaster->get_name());
+        }
+
+        if (sheetMaster && !(m_track == sheetMaster)) {
+                m_routingOutputMenu->addAction(sheetMaster->get_name());
         }
 
         if (sheet) {
@@ -166,7 +166,16 @@ void TTrackManagerDialog::routingOutputMenuActionTriggered(QAction *action)
 void TTrackManagerDialog::update_routing_input_output_widget_view()
 {
         routingInputListWidget->clear();
-        routingInputListWidget->addItem(m_track->get_bus_in_name());
+
+        if (m_track->get_type() == Track::SUBGROUP) {
+                QStringList list = pm().get_project()->get_input_buses_for(qobject_cast<SubGroup*>(m_track));
+                routingInputListWidget->addItems(list);
+        }
+
+        if (m_track->get_type() == Track::AUDIOTRACK) {
+                routingInputListWidget->addItem(m_track->get_bus_in_name());
+        }
+
 
         routingOutputListWidget->clear();
         routingOutputListWidget->addItem(m_track->get_bus_out_name());

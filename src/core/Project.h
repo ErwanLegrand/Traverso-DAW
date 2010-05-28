@@ -53,6 +53,8 @@ public :
 	int get_num_sheets() const;
 	int get_rate() const;
 	int get_bitdepth() const;
+
+        QStringList get_input_buses_for(SubGroup* subGroup);
 	
 	ResourcesManager* get_audiosource_manager() const;
         SubGroup* get_master_out() const {return m_masterOut;}
