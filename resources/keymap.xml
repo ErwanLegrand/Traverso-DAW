@@ -312,7 +312,8 @@
 		</keyfact>
                 <keyfact type="FKEY" key1="T" >
                         <Objects>
-                                <Object objectname="SheetView" modes="All" sortorder="22" slotsignature="add_track" />
+                                <Object objectname="SheetView" modes="All" sortorder="22" slotsignature="add_track" modifierkeys="CTRL" />
+                                <Object objectname="SheetView" modes="All" sortorder="23" slotsignature="browse_to_time_line" />
                         </Objects>
                 </keyfact>
                 <keyfact type="FKEY" key1="K" >
