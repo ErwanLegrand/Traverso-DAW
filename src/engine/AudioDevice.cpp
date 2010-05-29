@@ -695,6 +695,7 @@ void AudioDevice::send_to_master_out(AudioChannel* channel, nframes_t nframes)
                 return;
         }
         Mixer::mix_buffers_no_gain(m_masterOutBus->get_buffer(0, nframes), channel->get_buffer(nframes), nframes);
+        Mixer::mix_buffers_no_gain(m_masterOutBus->get_buffer(1, nframes), channel->get_buffer(nframes), nframes);
 }
 
 void AudioDevice::set_bus_config(QList<BusConfig> config)
