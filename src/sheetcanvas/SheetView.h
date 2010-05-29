@@ -32,8 +32,10 @@ class AudioTrackView;
 class ClipsViewPort;
 class CurveView;
 class CurveNodeView;
+class MarkerView;
 class TrackPanelViewPort;
 class TimeLineViewPort;
+class TimeLineView;
 class TrackView;
 class SheetWidget;
 class AudioTrackView;
@@ -48,11 +50,15 @@ struct ItemBrowserData {
                 atv = 0;
                 tv = 0;
                 curveView = 0;
+                markerView = 0;
+                timeLineView = 0;
         }
 
-        AudioClipView* acv;
-        AudioTrackView* atv;
+        TimeLineView* timeLineView;
+        MarkerView* markerView;
         TrackView* tv;
+        AudioTrackView* atv;
+        AudioClipView* acv;
         CurveView* curveView;
         QString currentContext;
 };
@@ -132,6 +138,7 @@ public :
         void browse_to_audio_clip_view(AudioClipView* acv);
         void browse_to_curve_view(CurveView* curveView);
         void browse_to_curve_node_view(CurveNodeView* nodeView);
+        void browse_to_marker_view(MarkerView* markerView);
         void center_in_view(ViewItem* item, enum Qt::AlignmentFlag = Qt::AlignHCenter);
         void move_edit_point_to(TimeRef location, int sceneY);
 
@@ -192,6 +199,7 @@ public slots:
         Command* browse_to_next_context_item();
         Command* browse_to_context_item_above();
         Command* browse_to_context_item_below();
+        Command* browse_to_time_line();
         Command* goto_begin();
         Command* goto_end();
         Command* play_to_begin();

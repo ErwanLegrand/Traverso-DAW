@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "AudioClip.h"
 #include "SnapList.h"
 #include "AudioTrack.h"
+#include "Marker.h"
 #include "SubGroup.h"
 #include "ContextPointer.h"
 #include "Themer.h"
@@ -36,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "AudioClipView.h"
 #include "CurveView.h"
 #include "CurveNodeView.h"
+#include "MarkerView.h"
 #include "SheetView.h"
 #include "SheetWidget.h"
 #include "AudioTrackView.h"
@@ -979,6 +981,28 @@ void SheetView::browse_to_curve_view(CurveView *curveView)
         cpointer().set_active_context_items_by_keyboard_input(activeList);
 }
 
+void SheetView::browse_to_marker_view(MarkerView *markerView)
+{
+        if (!markerView) {
+                return;
+        }
+
+        QList<ContextItem*> contexts = cpointer().get_active_context_items();
+        MarkerView* view;
+        foreach(ContextItem* item, contexts) {
+                view = qobject_cast<MarkerView*>(item);
+                if (view) {
+                        cpointer().remove_from_active_context_list(item);
+                        contexts.removeAll(item);
+                }
+        }
+
+        move_edit_point_to(TimeRef(markerView->get_marker()->get_when()), cpointer().scene_y());
+
+        contexts.prepend(markerView);
+        cpointer().set_active_context_items_by_keyboard_input(contexts);
+}
+
 void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
 {
         QList<ContextItem*> activeList;
@@ -998,6 +1022,15 @@ void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
 
 }
 
+Command* SheetView::browse_to_time_line()
+{
+        QList<ContextItem*> items = cpointer().get_active_context_items();
+        items.prepend(m_tlvp->get_timeline_view());
+
+        cpointer().set_active_context_items_by_keyboard_input(items);
+
+        return 0;
+}
 
 void SheetView::collect_item_browser_data(ItemBrowserData &data)
 {
@@ -1008,6 +1041,12 @@ void SheetView::collect_item_browser_data(ItemBrowserData &data)
         }
 
         foreach(QObject* obj, list) {
+                if (!data.timeLineView) {
+                        data.timeLineView = qobject_cast<TimeLineView*>(obj);
+                }
+                if (!data.markerView) {
+                        data.markerView = qobject_cast<MarkerView*>(obj);
+                }
                 if (!data.tv) {
                         data.tv = qobject_cast<TrackView*>(obj);
                 }
@@ -1029,7 +1068,9 @@ Command* SheetView::to_upper_context_level()
         ItemBrowserData data;
         collect_item_browser_data(data);
 
-        if (data.currentContext == "AudioTrackView") {
+        if (data.currentContext == "TimeLineView"|| data.currentContext == "MarkerView") {
+                browse_to_track(data.tv->get_track());
+        } else if (data.currentContext == "AudioTrackView") {
                 AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_sheet->get_work_location());
                 if (nearestClipView) {
                         browse_to_audio_clip_view(nearestClipView);
@@ -1050,6 +1091,8 @@ Command* SheetView::to_lower_context_level()
                 browse_to_audio_clip_view(data.acv);
         } else if (data.currentContext == "AudioClipView") {
                 browse_to_track(data.acv->get_audio_track_view()->get_track());
+        } else if (data.currentContext == "AudioTrackView" || data.currentContext == "SubGroupView") {
+                browse_to_time_line();
         }
 
         return 0;
@@ -1158,6 +1201,14 @@ Command* SheetView::browse_to_next_context_item()
         ItemBrowserData data;
         collect_item_browser_data(data);
 
+        if (data.currentContext == "TimeLineView" || data.currentContext == "MarkerView") {
+                MarkerView* markerView = m_tlvp->get_timeline_view()->get_marker_view_after(m_sheet->get_work_location());
+                if (!markerView) {
+                        return 0;
+                }
+                browse_to_marker_view(markerView);
+
+        }
         if (data.currentContext == "CurveView") {
                 CurveNodeView* nodeView = data.curveView->get_node_view_after(m_sheet->get_work_location());
                 if (!nodeView) {
@@ -1204,6 +1255,15 @@ Command* SheetView::browse_to_previous_context_item()
 
         ItemBrowserData data;
         collect_item_browser_data(data);
+
+        if (data.currentContext == "TimeLineView" || data.currentContext == "MarkerView") {
+                MarkerView* markerView = m_tlvp->get_timeline_view()->get_marker_view_before(m_sheet->get_work_location());
+                if (!markerView) {
+                        return 0;
+                }
+                browse_to_marker_view(markerView);
+
+        }
 
         if (data.currentContext == "CurveView") {
                 CurveNodeView* nodeView = data.curveView->get_node_view_before(m_sheet->get_work_location());

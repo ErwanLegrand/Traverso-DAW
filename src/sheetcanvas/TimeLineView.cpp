@@ -132,7 +132,11 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	
 	int height = TIMELINE_HEIGHT;
 	
-	painter->fillRect(xstart, 0,  pixelcount, height, themer()->get_color("Timeline:background") );
+        QColor backgroundColor = themer()->get_color("Timeline:background");
+        if (m_timeline->has_active_context()) {
+                backgroundColor = backgroundColor.lighter(250);
+        }
+        painter->fillRect(xstart, 0,  pixelcount, height, backgroundColor );
 	
 	painter->setPen(themer()->get_color("Timeline:text"));
 	painter->setFont( themer()->get_font("Timeline:fontscale:label") );
@@ -347,6 +351,8 @@ void TimeLineView::active_context_changed()
                 }
 
         }
+
+        update();
 }
 		
 
@@ -383,3 +389,24 @@ void TimeLineView::load_theme_data()
 	calculate_bounding_rect();
 }
 
+MarkerView* TimeLineView::get_marker_view_after(TimeRef location)
+{
+        foreach(MarkerView* markerView, m_markerViews) {
+                if (markerView->get_marker()->get_when() > location) {
+                        return markerView;
+                }
+        }
+        return 0;
+}
+
+MarkerView* TimeLineView::get_marker_view_before(TimeRef location)
+{
+        for (int i=m_markerViews.size() - 1; i>= 0; --i) {
+                MarkerView* markerView = m_markerViews.at(i);
+                if (markerView->get_marker()->get_when() < location) {
+                        return markerView;
+                }
+        }
+
+        return 0;
+}
