@@ -529,8 +529,9 @@ int Sheet::start_export(ExportSpecification* spec)
 
         for (int i = 0; i < spec->markers.size()-1; ++i) {
                 spec->progress      = 0;
-                spec->cdTrackStart  = spec->markers.at(i)->get_when();
-                spec->cdTrackEnd    = spec->markers.at(i+1)->get_when();
+                                      // round down to the start of the CD frame (75th of a sec)
+                spec->cdTrackStart  = cd_to_timeref(timeref_to_cd(spec->markers.at(i)->get_when()));
+                spec->cdTrackEnd    = cd_to_timeref(timeref_to_cd(spec->markers.at(i+1)->get_when()));
                 spec->name          = m_timeline->format_cdtrack_name(spec->markers.at(i), i+1);
                 spec->totalTime     = spec->cdTrackEnd - spec->cdTrackStart;
                 spec->pos           = spec->cdTrackStart;
