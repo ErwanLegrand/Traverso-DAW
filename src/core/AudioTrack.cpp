@@ -415,6 +415,9 @@ Command* AudioTrack::remove_clip(AudioClip* clip, bool historable, bool ismove)
         if (! ismove) {
                 m_sheet->get_audioclip_manager()->remove_clip(clip);
         }
+
+        clip->removed_from_track();
+
         return new AddRemove(this, clip, historable, m_sheet,
                 "private_remove_clip(AudioClip*)", "audioClipRemoved(AudioClip*)",
                 "private_add_clip(AudioClip*)", "audioClipAdded(AudioClip*)",

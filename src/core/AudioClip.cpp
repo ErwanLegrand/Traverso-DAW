@@ -129,6 +129,16 @@ void AudioClip::init()
 	fadeOut = 0;
 	m_fader->automate_port(0, true);
 	m_fader->set_gain(1.0);
+
+        // read in the configuration from the global configuration settings.
+        update_global_configuration();
+
+        connect(&config(), SIGNAL(configChanged()), this, SLOT(update_global_configuration()));
+}
+
+void AudioClip::update_global_configuration()
+{
+        m_syncDuringDrag = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 }
 
 int AudioClip::set_state(const QDomNode& node)
@@ -245,11 +255,10 @@ void AudioClip::set_sources_active_state()
 		return;
 	}
 	
-	bool syncDuringDrag = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
 	bool stopSyncDueMove;
-	if (m_isMoving && syncDuringDrag) {
+        if (m_isMoving && m_syncDuringDrag) {
 		stopSyncDueMove = false;
-	} else if (m_isMoving && !syncDuringDrag){
+        } else if (m_isMoving && !m_syncDuringDrag){
 		stopSyncDueMove = true;
 	} else {
 		stopSyncDueMove = false;
@@ -263,22 +272,8 @@ void AudioClip::set_sources_active_state()
 
 }
 
-void AudioClip::my_track_added_clip(AudioClip *clip)
+void AudioClip::removed_from_track()
 {
-        if (! (clip == this)) {
-                return;
-        }
-        m_readSource->set_active(true);
-        // we did add this clip back to the track, but maybe the
-        // track is muted, or muted by solo etc, which is handled by:
-        set_sources_active_state();
-}
-
-void AudioClip::my_track_removed_clip(AudioClip *clip)
-{
-        if (! (clip == this)) {
-                return;
-        }
         m_readSource->set_active(false);
 }
 
@@ -842,15 +837,11 @@ void AudioClip::set_track( AudioTrack * track )
 {
 	if (m_track) {
 		disconnect(m_track, SIGNAL(audibleStateChanged()), this, SLOT(track_audible_state_changed()));
-                disconnect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(my_track_added_clip(AudioClip*)));
-                disconnect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(my_track_removed_clip(AudioClip*)));
 	}
 	
 	m_track = track;
 	
 	connect(m_track, SIGNAL(audibleStateChanged()), this, SLOT(track_audible_state_changed()));
-        connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(my_track_added_clip(AudioClip*)));
-        connect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(my_track_removed_clip(AudioClip*)));
         set_sources_active_state();
 }
 

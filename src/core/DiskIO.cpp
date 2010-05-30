@@ -391,7 +391,7 @@ int DiskIO::stop( )
 void DiskIO::register_read_source (ReadSource* source )
 {
 	PENTER2;
-	
+
         if (source->get_channel_count() == 0) {
 		return;
 	}

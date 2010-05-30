@@ -114,8 +114,11 @@ public:
 
         float calculate_normalization_factor(float targetdB = 0.0);
 
+        void removed_from_track();
+
+
 private:
-	AudioTrack* 			m_track;
+        AudioTrack* 		m_track;
 	ReadSource*		m_readSource;
         WriteSource*		m_writer;
 	APILinkedList		m_fades;
@@ -135,6 +138,7 @@ private:
 	bool			m_isLocked;
 	bool			m_isReadSourceValid;
 	bool			m_isMoving;
+        bool                    m_syncDuringDrag;
 	RecordingStatus		m_recordingStatus;
 	
 	qint64			m_readSourceId;
@@ -179,9 +183,7 @@ public slots:
 private slots:
 	void private_add_fade(FadeCurve* fade);
 	void private_remove_fade(FadeCurve* fade);
-        void my_track_added_clip(AudioClip* clip);
-        void my_track_removed_clip(AudioClip* clip);
-
+        void update_global_configuration();
 };
 
 

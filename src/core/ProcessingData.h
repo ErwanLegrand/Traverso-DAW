@@ -63,7 +63,7 @@ public:
         virtual void set_name(const QString& name);
         void set_pan(float pan);
 
-	bool is_muted() const {return m_isMuted;}
+        bool is_muted() const {return m_isMuted;}
         virtual bool is_smaller_then(APILinkedListNode* node) = 0;
 
 

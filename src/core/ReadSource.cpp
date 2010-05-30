@@ -666,10 +666,7 @@ BufferStatus* ReadSource::get_buffer_status()
 
 void ReadSource::set_active(bool active)
 {
-	if (m_active == active)
-		return;
-
-	if (active) {
+        if (active) {
 		m_active = 1;
 	} else {
 		m_active = 0;
