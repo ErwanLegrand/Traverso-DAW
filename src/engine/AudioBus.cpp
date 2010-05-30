@@ -92,7 +92,6 @@ AudioBus::~ AudioBus( )
 void AudioBus::add_channel(AudioChannel* chan)
 {
 	Q_ASSERT(chan);
-        printf("adding channel\n");
         m_channels.append(chan);
         m_channelCount++;
 }

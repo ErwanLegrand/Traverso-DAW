@@ -263,6 +263,25 @@ void AudioClip::set_sources_active_state()
 
 }
 
+void AudioClip::my_track_added_clip(AudioClip *clip)
+{
+        if (! (clip == this)) {
+                return;
+        }
+        m_readSource->set_active(true);
+        // we did add this clip back to the track, but maybe the
+        // track is muted, or muted by solo etc, which is handled by:
+        set_sources_active_state();
+}
+
+void AudioClip::my_track_removed_clip(AudioClip *clip)
+{
+        if (! (clip == this)) {
+                return;
+        }
+        m_readSource->set_active(false);
+}
+
 void AudioClip::set_left_edge(TimeRef newLeftLocation)
 {
 	if (newLeftLocation < qint64(0)) {
@@ -823,12 +842,16 @@ void AudioClip::set_track( AudioTrack * track )
 {
 	if (m_track) {
 		disconnect(m_track, SIGNAL(audibleStateChanged()), this, SLOT(track_audible_state_changed()));
+                disconnect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(my_track_added_clip(AudioClip*)));
+                disconnect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(my_track_removed_clip(AudioClip*)));
 	}
 	
 	m_track = track;
 	
 	connect(m_track, SIGNAL(audibleStateChanged()), this, SLOT(track_audible_state_changed()));
-	set_sources_active_state();
+        connect(m_track, SIGNAL(audioClipAdded(AudioClip*)), this, SLOT(my_track_added_clip(AudioClip*)));
+        connect(m_track, SIGNAL(audioClipRemoved(AudioClip*)), this, SLOT(my_track_removed_clip(AudioClip*)));
+        set_sources_active_state();
 }
 
 bool AudioClip::is_selected( )

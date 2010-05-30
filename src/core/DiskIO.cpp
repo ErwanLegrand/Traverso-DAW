@@ -392,7 +392,7 @@ void DiskIO::register_read_source (ReadSource* source )
 {
 	PENTER2;
 	
-	if (source->get_channel_count() == 0) {
+        if (source->get_channel_count() == 0) {
 		return;
 	}
 	
@@ -428,7 +428,7 @@ void DiskIO::register_write_source( WriteSource * source )
  */
 void DiskIO::unregister_read_source( ReadSource * source )
 {
-	QMutexLocker locker(&mutex);
+        QMutexLocker locker(&mutex);
 	
 	m_readSources.removeAll(source);
 }

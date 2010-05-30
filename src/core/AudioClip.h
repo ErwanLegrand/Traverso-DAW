@@ -179,6 +179,8 @@ public slots:
 private slots:
 	void private_add_fade(FadeCurve* fade);
 	void private_remove_fade(FadeCurve* fade);
+        void my_track_added_clip(AudioClip* clip);
+        void my_track_removed_clip(AudioClip* clip);
 
 };
 
