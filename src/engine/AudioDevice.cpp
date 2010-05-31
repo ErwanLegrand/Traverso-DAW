@@ -955,6 +955,8 @@ void AudioDevice::private_remove_client(AudioDeviceClient* client)
 	if (!m_clients.remove(client)) {
 		printf("AudioDevice:: Client was not in clients list, failed to remove it!\n");
 	}
+
+        m_masterOutBus = 0;
 }
 
 /**

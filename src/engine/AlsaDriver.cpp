@@ -1464,6 +1464,8 @@ int AlsaDriver::_read(nframes_t nframes)
 			
                         buf = channel->get_buffer(nframes);
 			read_from_channel (channel->get_number(), buf + nread, contiguous);
+                        // FIXME: should AudioChannel::read_from_hardware_port() be modified
+                        // so that it also does partial buffer processing as we do here ?
                         channel->read_from_hardware_port(buf, nframes);
                 }
 
@@ -1476,7 +1478,7 @@ int AlsaDriver::_read(nframes_t nframes)
 		nread += contiguous;
 	}
 
-	return 0;
+        return 0;
 }
 
 int AlsaDriver::_write(nframes_t nframes)

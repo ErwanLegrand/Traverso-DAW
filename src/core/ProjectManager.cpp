@@ -99,9 +99,14 @@ void ProjectManager::set_current_project(Project* project)
 {
 	PENTER;
 
-	QString oldprojectname = "";
+        QString oldprojectname = "";
 	
-	if (currentProject) {
+        if (currentProject) {
+
+                // this serves as a 'project closed' signal, emiting
+                // a zero pointer as project makes the GUI to delete it's
+                // project and releated GUI objects
+                emit projectLoaded(0);
 
                 ie().abort_current_hold_actions();
 
@@ -121,19 +126,15 @@ void ProjectManager::set_current_project(Project* project)
                         }
                 }
 		
-		oldprojectname = currentProject->get_title();
-		delete currentProject;
-	}
+                oldprojectname = currentProject->get_title();
+                delete currentProject;
+        }
 
 	currentProject = project;
 
-        emit projectLoaded(currentProject);
-
-	QString title = "";
-
 	if (currentProject) {
-		title = currentProject->get_title();
-		config().set_property("Project", "current", title);
+                config().set_property("Project", "current", currentProject->get_title());
+                emit projectLoaded(currentProject);
         } else if (!m_exitInProgress) {
                 // free the audiodevice, but only if we don't want to quit.
                 audiodevice().set_parameters(AudioDeviceSetup());

@@ -86,8 +86,6 @@ Project::Project(const QString& title)
         m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Project::process) );
         m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Project::transport_control) );
 
-        audiodevice().add_client(m_audiodeviceClient);
-
         m_masterOut = new MasterOutSubGroup((Sheet*) 0, tr("Master"));
 
         AudioBus* bus = m_masterOut->get_process_bus();
@@ -99,6 +97,8 @@ Project::Project(const QString& title)
 
         audiodevice().set_master_out_bus(m_masterOut->get_process_bus());
 
+        audiodevice().add_client(m_audiodeviceClient);
+
 	cpointer().add_contextitem(this);
 }
 
@@ -108,18 +108,22 @@ Project::~Project()
 	PENTERDES;
 	cpointer().remove_contextitem(this);
 
-        // FIXME: sheets need to be deleted!
-//        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
-//                sheet->schedule_for_deletion();
-//                sheet->disconnect_from_audiodevice();
-//        }
-
-	delete m_hs;
-
         audiodevice().remove_client(m_audiodeviceClient);
-        usleep(50000);
+        usleep(100 * 1000);
 
-//        delete m_masterOut;
+        QList<Sheet*> sheets;
+        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+                sheets.append(sheet);
+        }
+
+        delete m_resourcesManager;
+
+        foreach(Sheet* sheet, sheets) {
+                delete sheet;
+        }
+
+        delete m_masterOut;
+        delete m_hs;
 }
 
 
