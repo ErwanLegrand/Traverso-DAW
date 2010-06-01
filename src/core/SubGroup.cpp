@@ -96,6 +96,8 @@ int SubGroup::process(nframes_t nframes)
                 return 0;
         }
 
+        process_pre_fader_sends(nframes);
+
         m_pluginChain->process_pre_fader(m_processBus, nframes);
 
         m_fader->process(m_processBus, nframes);
@@ -115,11 +117,9 @@ int SubGroup::process(nframes_t nframes)
 
         m_pluginChain->process_post_fader(m_processBus, nframes);
 
-//        if (m_processBus->is_monitoring_peaks()) {
-                m_processBus->process_monitoring(m_vumonitors);
-//        }
+        m_processBus->process_monitoring(m_vumonitors);
 
-        send_to_output_buses(nframes);
+        process_post_sends(nframes);
 
         m_processBus->silence_buffers(nframes);
 

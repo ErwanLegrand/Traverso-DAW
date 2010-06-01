@@ -123,7 +123,7 @@ void ProcessingData::private_set_output_bus(AudioBus* bus)
         m_outputBus = bus;
 }
 
-void ProcessingData::send_to_output_buses(nframes_t nframes, bool applyFaderGain)
+void ProcessingData::process_post_sends(nframes_t nframes)
 {
         if (!m_outputBus) {
                 return;
@@ -136,16 +136,18 @@ void ProcessingData::send_to_output_buses(nframes_t nframes, bool applyFaderGain
                 sender = m_processBus->get_channel(i);
                 receiver = m_outputBus->get_channel(i);
                 if (sender && receiver) {
-                        if (applyFaderGain) {
-                                Mixer::mix_buffers_with_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes, get_gain());
-                        } else {
-                                Mixer::mix_buffers_no_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes);
-                        }
+                        Mixer::mix_buffers_no_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes);
                 }
 
         }
 
 }
+
+void ProcessingData::process_pre_fader_sends(nframes_t nframes)
+{
+        // nothing to do here yet
+}
+
 
 void ProcessingData::audiodevice_params_changed()
 {

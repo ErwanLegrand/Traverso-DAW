@@ -316,7 +316,7 @@ int AudioTrack::process( nframes_t nframes )
                         m_processBus->process_monitoring(m_vumonitors);
                 }
 
-                send_to_output_buses(nframes);
+                process_post_sends(nframes);
         }
 
         return processResult;

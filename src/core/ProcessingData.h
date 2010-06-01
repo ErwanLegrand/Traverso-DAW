@@ -81,7 +81,8 @@ protected:
         bool            m_isMuted;
         float           m_pan;
 
-        void send_to_output_buses(nframes_t nframes, bool applyFaderGain=false);
+        void process_post_sends(nframes_t nframes);
+        void process_pre_fader_sends(nframes_t nframes);
         virtual void set_input_bus(AudioBus* bus);
 
 private:
