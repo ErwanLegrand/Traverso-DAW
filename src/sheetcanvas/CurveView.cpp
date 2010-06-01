@@ -100,11 +100,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 
         QPen pen;
 	
-	if (m_sv->get_sheet()->get_mode() == Sheet::EFFECTS) {
-		pen.setColor(themer()->get_color("Curve:active"));
-	} else {
-		pen.setColor(themer()->get_color("Curve:inactive"));
-	}
+        pen.setColor(themer()->get_color("Curve:active"));
 	
         if (m_boundingRect.height() > 40) {
                 pen.setWidth(2);

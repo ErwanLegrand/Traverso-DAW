@@ -62,9 +62,10 @@ AudioTrackView::AudioTrackView(SheetView* sv, AudioTrack * track)
                 add_new_audioclipview(clip);
         }
 
-//        CurveView* curveView = new CurveView(m_sv, this, m_track->get_plugin_chain()->get_fader()->get_curve());
-//        curveView->calculate_bounding_rect();
-//        curveView->setZValue(200);
+        m_curveView = new CurveView(m_sv, this, m_track->get_plugin_chain()->get_fader()->get_curve());
+        m_curveView->calculate_bounding_rect();
+        m_curveView->setZValue(200);
+        m_curveView->hide();
 }
 
 void AudioTrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -181,4 +182,15 @@ AudioClipView* AudioTrackView::get_nearest_audioclip_view(TimeRef location) cons
         }
 
         return nearestClipView;
+}
+
+Command* AudioTrackView::show_track_gain_curve()
+{
+        if (m_curveView->isVisible()) {
+                m_curveView->hide();
+        } else {
+                m_curveView->show();
+        }
+
+        return 0;
 }

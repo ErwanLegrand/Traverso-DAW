@@ -29,6 +29,7 @@ class AudioClipView;
 class AudioTrack;
 class AudioTrackPanelView;
 class PluginChainView;
+class CurveView;
 
 class AudioTrackView : public TrackView
 {
@@ -55,11 +56,13 @@ public:
 	
 private:
         AudioTrack*		m_track;
+        CurveView*              m_curveView;
 	QList<AudioClipView* >	m_clipViews;
 	
 
 public slots:
 	Command* insert_silence();
+        Command* show_track_gain_curve();
 
 private slots:
 	void add_new_audioclipview(AudioClip* clip);
