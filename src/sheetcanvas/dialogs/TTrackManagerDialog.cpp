@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Project.h"
 #include "Sheet.h"
 #include "SubGroup.h"
+#include "Utils.h"
 
 #include <QMenu>
 
@@ -42,8 +43,9 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         create_routing_output_menu();
 
         update_routing_input_output_widget_view();
+        update_gain_indicator();
+        update_pan_indicator();
 
-        insertsAndSendsGroupBox->hide();
         nameLineEdit->setText(m_track->get_name());
 
         resize(400, 350);
@@ -51,14 +53,11 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         if (m_track->get_type() == Track::SUBGROUP) {
                 trackLabel->setText(tr("SubGroup Bus:"));
                 routingInputButton->setText("Add Input");
-                routingInputAddNewButton->hide();
-                routingOutputAddNewButton->hide();
         }
         if (m_track->get_type() == Track::AUDIOTRACK) {
                 trackLabel->setText(tr("Audio Track:"));
                 routingInputButton->setText("Set Input");
-                routingInputRemoveButton->hide();
-                routingOutputRemoveButton->hide();
+//                routingInputRemoveButton->hide();
         }
 
         MasterOutSubGroup* master = qobject_cast<MasterOutSubGroup*>(m_track);
@@ -69,6 +68,8 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         }
 
         connect(m_track, SIGNAL(busConfigurationChanged()), this, SLOT(update_routing_input_output_widget_view()));
+        connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan_indicator()));
+        connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain_indicator()));
 }
 
 void TTrackManagerDialog::create_routing_input_menu()
@@ -179,4 +180,15 @@ void TTrackManagerDialog::update_routing_input_output_widget_view()
 
         routingOutputListWidget->clear();
         routingOutputListWidget->addItem(m_track->get_bus_out_name());
+}
+
+void TTrackManagerDialog::update_gain_indicator()
+{
+        gainLabel->setText(coefficient_to_dbstring(m_track->get_gain()));
+
+}
+
+void TTrackManagerDialog::update_pan_indicator()
+{
+        panLabel->setText(QByteArray::number(m_track->get_pan(), 'f', 2));
 }
