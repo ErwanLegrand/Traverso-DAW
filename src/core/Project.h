@@ -122,6 +122,9 @@ public :
     		PROJECT_FILE_VERSION_MISMATCH = -3
 	};
 
+        void connect_to_audio_device();
+        int disconnect_from_audio_device();
+
 
 public slots:
 	Command* select();
@@ -129,7 +132,8 @@ public slots:
 private:
 	Project(const QString& title);
 	
-        APILinkedList           m_sheets;
+        QList<Sheet*>           m_sheets;
+        APILinkedList           m_RtSheets;
 	ResourcesManager* 	m_resourcesManager;
         ExportThread*           m_exportThread;
         AudioDeviceClient*	m_audiodeviceClient;
@@ -169,18 +173,23 @@ private:
 	int create_peakfiles_dir();
 
         void prepare_audio_device(QDomDocument doc);
+        void set_current_sheet(Sheet* sheet);
 	
 	friend class ProjectManager;
 
 private slots:
 	void private_add_sheet(Sheet* sheet);
 	void private_remove_sheet(Sheet* sheet);
+        void sheet_removed(Sheet* sheet);
+        void sheet_added(Sheet* sheet);
 
 signals:
 	void currentSheetChanged(Sheet* );
+        void privateSheetAdded(Sheet*);
 	void sheetAdded(Sheet*);
-	void sheetRemoved(Sheet*);
-	void sheetExportProgressChanged(int );
+        void privateSheetRemoved(Sheet*);
+        void sheetRemoved(Sheet*);
+        void sheetExportProgressChanged(int );
 	void overallExportProgressChanged(int );
 	void exportFinished();
 	void exportStartedForSheet(Sheet* );

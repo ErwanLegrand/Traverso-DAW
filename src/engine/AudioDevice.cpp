@@ -943,11 +943,19 @@ trav_time_t AudioDevice::get_cpu_time( )
 void AudioDevice::post_process( )
 {
 	tsar().process_events();
+
+        apill_foreach(AudioDeviceClient* client, AudioDeviceClient, m_clients) {
+                if (client->wants_to_be_disconnected_from_audiodevice()) {
+                        private_remove_client(client);
+                }
+        }
 }
 
 void AudioDevice::private_add_client(AudioDeviceClient* client)
 {
 	m_clients.prepend(client);
+        m_masterOutBus = client->masterOutBus;
+        client->set_connected_to_audiodevice(1);
 }
 
 void AudioDevice::private_remove_client(AudioDeviceClient* client)
@@ -957,6 +965,7 @@ void AudioDevice::private_remove_client(AudioDeviceClient* client)
 	}
 
         m_masterOutBus = 0;
+        client->set_connected_to_audiodevice(0);
 }
 
 /**

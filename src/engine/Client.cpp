@@ -47,6 +47,8 @@ AudioDeviceClient::AudioDeviceClient(const QString& name )
 	PENTERCONS;
 	
 	m_name = name;
+        m_isConnected = 0;
+        m_disconnectFromAudioDevice = 0;
 }
 
 AudioDeviceClient::~ AudioDeviceClient( )

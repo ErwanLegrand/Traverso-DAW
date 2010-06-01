@@ -29,9 +29,11 @@ $Id: Client.h,v 1.7 2007/11/19 11:18:54 r_sijrier Exp $
 
 #include "defines.h"
 
+class AudioBus;
+
 class AudioDeviceClient : public QObject, public APILinkedListNode
 {
-	Q_OBJECT
+        Q_OBJECT
 
 public:
         AudioDeviceClient(const QString& name);
@@ -40,12 +42,21 @@ public:
 	void set_process_callback(ProcessCallback call);
 	void set_transport_control_callback(TransportControlCallback call);
 	bool is_smaller_then(APILinkedListNode* ) {return false;}
+        int is_connected() const {return m_isConnected;}
+        void set_connected_to_audiodevice(int connected) {m_isConnected = connected;}
+        void disconnect_from_audiodevice() {m_disconnectFromAudioDevice = 1;}
+        int wants_to_be_disconnected_from_audiodevice() const {return m_disconnectFromAudioDevice;}
 
 	
 	ProcessCallback process;
 	TransportControlCallback transport_control;
 	
 	QString		m_name;
+        AudioBus*       masterOutBus;
+
+private:
+        int     m_isConnected;
+        int     m_disconnectFromAudioDevice;
 
 };
 

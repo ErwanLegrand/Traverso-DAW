@@ -127,6 +127,9 @@ void ProjectManager::set_current_project(Project* project)
                 }
 		
                 oldprojectname = currentProject->get_title();
+
+                currentProject->disconnect_from_audio_device();
+
                 delete currentProject;
         }
 
@@ -230,7 +233,9 @@ int ProjectManager::load_project(const QString& projectName)
 		set_current_project(0);
 		info().critical(tr("Unable to load Project %1").arg(projectName));
 		return -1;
-	}
+        } else {
+                currentProject->connect_to_audio_device();
+        }
 	
 	return 1;
 }

@@ -124,7 +124,7 @@ Sheet::~Sheet()
 	delete m_renderBus;
 	delete m_clipRenderBus;
 	delete m_hs;
-	delete m_audiodeviceClient;
+        delete m_audiodeviceClient;
         delete m_snaplist;
         delete m_workSnap;
 }
@@ -152,7 +152,6 @@ void Sheet::init()
 
 	connect(this, SIGNAL(seekStart()), m_diskio, SLOT(seek()), Qt::QueuedConnection);
 	connect(this, SIGNAL(prepareRecording()), this, SLOT(prepare_recording()));
-	connect(&audiodevice(), SIGNAL(clientRemoved(AudioDeviceClient*)), this, SLOT (audiodevice_client_removed(AudioDeviceClient*)));
 	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 	connect(m_diskio, SIGNAL(seekFinished()), this, SLOT(seek_finished()), Qt::QueuedConnection);
 	connect (m_diskio, SIGNAL(readSourceBufferUnderRun()), this, SLOT(handle_diskio_readbuffer_underrun()));
@@ -197,9 +196,9 @@ void Sheet::init()
 	
 	m_skipTimer.setSingleShot(true);
 	
-	m_audiodeviceClient = new AudioDeviceClient("sheet_" + QByteArray::number(get_id()));
-	m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Sheet::process) );
-	m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Sheet::transport_control) );
+        m_audiodeviceClient = new AudioDeviceClient("sheet_" + QByteArray::number(get_id()));
+        m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Sheet::process) );
+        m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Sheet::transport_control) );
 }
 
 int Sheet::set_state( const QDomNode & node )
@@ -315,53 +314,6 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	return sheetNode;
 }
 
-void Sheet::connect_to_audiodevice( )
-{
-	PENTER;
-//	audiodevice().add_client(m_audiodeviceClient);
-}
-
-void Sheet::disconnect_from_audiodevice()
-{
-	PENTER;
-	if (is_transport_rolling()) {
-                m_transport = false;
-                emit transportStopped();
-        }
-
-        // FIXME: this wasn't needed before, why is it now????
-
-        // Disconnect the busConfigChanged signal from audiodevice for all
-        // Track objects, we don't want them anymore since Sheet and all it's
-        // Track objects are deleted _after_ we are disconnected from AudioDevice.
-        // If AudioDevice is re-inited after a Project got deleted/loaded again then
-        // AudioDevice can signal to objects that are being deleted.
-        apill_foreach(Track* track, Track, m_audioTracks) {
-                audiodevice().disconnect(track);
-        }
-        apill_foreach(Track* track, Track, m_subGroups) {
-                audiodevice().disconnect(track);
-        }
-        audiodevice().disconnect(m_masterOut);
-
-        audiodevice().remove_client(m_audiodeviceClient);
-}
-
-void Sheet::schedule_for_deletion()
-{
-        m_scheduledForDeletion = true;
-        pm().scheduled_for_deletion(this);
-}
-
-void Sheet::audiodevice_client_removed(AudioDeviceClient* client )
-{
-	PENTER;
-        if (m_audiodeviceClient == client) {
-                if (m_scheduledForDeletion) {
-                        pm().delete_sheet(this);
-                }
-        }
-}
 
 Command* Sheet::add_track(Track* track, bool historable)
 {

@@ -149,10 +149,6 @@ public:
         bool is_recording() const {return m_recording;}
 	bool is_smaller_then(APILinkedListNode* node) {Q_UNUSED(node); return false;}
 
-	void disconnect_from_audiodevice();
-	void connect_to_audiodevice();
-        void schedule_for_deletion();
-
 	audio_sample_t* 	mixdown;
 	audio_sample_t*		readbuffer;
 	audio_sample_t*		gainbuffer;
@@ -170,8 +166,8 @@ private:
 	QTimer			m_skipTimer;
 	Project*		m_project;
 	WriteSource*		m_exportSource;
-	AudioDeviceClient* 		m_audiodeviceClient;
-	AudioBus*		m_renderBus;
+        AudioDeviceClient* 		m_audiodeviceClient;
+        AudioBus*		m_renderBus;
 	AudioBus*		m_clipRenderBus;
 	DiskIO*			m_diskio;
 	AudioClipManager*	m_acmanager;
@@ -234,8 +230,7 @@ private:
 
 public slots :
 	void seek_finished();
-	void audiodevice_client_removed(AudioDeviceClient* );
-	void audiodevice_params_changed();
+        void audiodevice_params_changed();
         void set_gain(float gain);
 	void set_transport_pos(TimeRef location);
 	void set_temp_follow_state(bool state);
