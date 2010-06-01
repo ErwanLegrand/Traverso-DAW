@@ -480,7 +480,7 @@ void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
         painter->drawText(0, PAN_H + 1, "Pan");
 
         v = m_track->get_pan();
-	span = QByteArray::number(v,'f',1);
+        span = QByteArray::number(v, 'f', 2);
 	s = ( v > 0 ? QString("+") + span :  span );
         painter->fillRect(30, 0, sliderWidth, PAN_H, color);
         int pm= 31 + sliderWidth/2;
