@@ -459,7 +459,7 @@ void HoldCursor::set_pos(QPointF p)
 {
 	int x = m_vp->mapFromScene(pos()).x();
 	int y = m_vp->mapFromScene(pos()).y();
-        int yoffset = m_pixmap.height() - m_textItem->boundingRect().height();
+        int yoffset = m_pixmap.height() + 25;
 	
 	if (y < 0) {
 		yoffset = - y;
