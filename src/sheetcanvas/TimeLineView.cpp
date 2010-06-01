@@ -50,6 +50,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #define MARKER_SOFT_SELECTION_DISTANCE 50
 
+static bool smallerMarker(const MarkerView* left, const MarkerView* right )
+{
+        return left->get_marker()->get_when() < right->get_marker()->get_when();
+}
+
 
 TimeLineView::TimeLineView(SheetView* view)
 	: ViewItem(0, view->get_sheet()->get_timeline())
@@ -391,6 +396,9 @@ void TimeLineView::load_theme_data()
 
 MarkerView* TimeLineView::get_marker_view_after(TimeRef location)
 {
+        // FIXME: only keep this list sorted if markers are added/moved??
+        qSort(m_markerViews.begin(), m_markerViews.end(), smallerMarker);
+
         foreach(MarkerView* markerView, m_markerViews) {
                 if (markerView->get_marker()->get_when() > location) {
                         return markerView;
@@ -401,6 +409,9 @@ MarkerView* TimeLineView::get_marker_view_after(TimeRef location)
 
 MarkerView* TimeLineView::get_marker_view_before(TimeRef location)
 {
+        // FIXME: only keep this list sorted if markers are added/moved??
+        qSort(m_markerViews.begin(), m_markerViews.end(), smallerMarker);
+
         for (int i=m_markerViews.size() - 1; i>= 0; --i) {
                 MarkerView* markerView = m_markerViews.at(i);
                 if (markerView->get_marker()->get_when() < location) {
