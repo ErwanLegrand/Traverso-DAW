@@ -41,6 +41,7 @@ ProjectManager.cpp
 ProcessingData.cpp
 ReadSource.cpp
 ResourcesManager.cpp
+TSend.cpp
 Sheet.cpp
 SubGroup.cpp
 Track.cpp
