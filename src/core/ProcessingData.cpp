@@ -22,17 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ProcessingData.h"
 
-#include "AddRemove.h"
-#include "AudioBus.h"
-#include "AudioChannel.h"
-#include "AudioDevice.h"
 #include "AudioClip.h"
 #include "AudioClipManager.h"
-#include "Mixer.h"
 #include "PluginChain.h"
-#include "Project.h"
 #include "Sheet.h"
-#include "SubGroup.h"
 
 #include "Debugger.h"
 
@@ -46,116 +39,13 @@ ProcessingData::ProcessingData(Sheet *sheet)
         } else {
                 m_pluginChain = new PluginChain(this);
         }
-        m_inputBus = m_outputBus = m_processBus = 0;
+
+        m_processBus = 0;
         m_isMuted = false;
         m_pan = 0.0f;
         m_fader = m_pluginChain->get_fader();
-
-        connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
-        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_buses()), Qt::DirectConnection);
 }
 
-void ProcessingData::set_input_bus(AudioBus *bus)
-{
-        if (m_sheet && m_sheet->is_transport_rolling()) {
-                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_set_input_bus(AudioBus*), busConfigurationChanged());
-        } else {
-                private_set_input_bus(bus);
-                emit busConfigurationChanged();
-        }
-}
-
-void ProcessingData::set_output_bus(AudioBus *bus)
-{
-        if (m_sheet && m_sheet->is_transport_rolling()) {
-                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_set_output_bus(AudioBus*), busConfigurationChanged());
-        } else {
-                private_set_output_bus(bus);
-                emit busConfigurationChanged();
-        }
-}
-
-void ProcessingData::private_set_input_bus(AudioBus* bus)
-{
-        m_inputBus = bus;
-}
-
-void ProcessingData::set_input_bus(const QString &name)
-{
-        m_busInName = name;
-
-        AudioBus* inBus = audiodevice().get_capture_bus(m_busInName);
-        if (inBus) {
-                set_input_bus(inBus);
-        }
-}
-
-void ProcessingData::set_output_bus(const QString &name)
-{
-        m_busOutName = name;
-
-        // Master Out and Project Master were renamed to just: Master
-        if (m_busOutName == tr("Master Out") || m_busOutName == "Project Master") {
-                m_busOutName = "Master";
-        }
-
-
-        AudioBus* outBus = 0;
-        if (m_busOutName == tr("Sheet Master")) {
-                outBus = m_sheet->get_master_out()->get_process_bus();
-        } else if (m_busOutName == tr("Master")) {
-                outBus = m_sheet->get_project()->get_master_out()->get_process_bus();
-        } else {
-                outBus = audiodevice().get_playback_bus(m_busOutName);
-                if (!outBus && m_sheet) {
-                        SubGroup* group = m_sheet->get_subgroup(m_busOutName);
-                        if (group) {
-                                outBus = group->get_process_bus();
-                        }
-                }
-        }
-
-        set_output_bus(outBus);
-}
-
-void ProcessingData::private_set_output_bus(AudioBus* bus)
-{
-        m_outputBus = bus;
-}
-
-void ProcessingData::process_post_sends(nframes_t nframes)
-{
-        if (!m_outputBus) {
-                return;
-        }
-
-        AudioChannel* sender;
-        AudioChannel* receiver;
-
-        for (int i=0; i<m_processBus->get_channel_count(); i++) {
-                sender = m_processBus->get_channel(i);
-                receiver = m_outputBus->get_channel(i);
-                if (sender && receiver) {
-                        Mixer::mix_buffers_no_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes);
-                }
-
-        }
-
-}
-
-void ProcessingData::process_pre_fader_sends(nframes_t nframes)
-{
-        // nothing to do here yet
-}
-
-
-void ProcessingData::audiodevice_params_changed()
-{
-        AudioBus* bus = audiodevice().get_playback_bus(m_busOutName);
-        if (bus) {
-                m_outputBus = bus;
-        }
-}
 
 void ProcessingData::set_name( const QString & name )
 {
@@ -203,16 +93,6 @@ Command* ProcessingData::remove_plugin( Plugin * plugin )
         return m_pluginChain->remove_plugin(plugin);
 }
 
-void ProcessingData::rescan_buses()
-{
-        // What if the bus no longer exists? What about
-        // signalling something here so the GUI can mark
-        // it's in/out bus indicators somehow?
-        m_inputBus = 0;
-        m_outputBus = 0;
-        set_input_bus(m_busInName);
-        set_output_bus(m_busOutName);
-}
 
 void ProcessingData::set_gain(float gain)
 {

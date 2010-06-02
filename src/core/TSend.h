@@ -46,6 +46,7 @@ public:
         AudioBus* get_bus() const {return m_bus;}
         QString get_name() const;
         qint64 get_id() const {return m_id;}
+        qint64 get_bus_id() const;
         int get_type() const {return m_type;}
 
         bool is_smaller_then(APILinkedListNode* node) {return true;}

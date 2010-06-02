@@ -167,7 +167,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
     				pixelcount);
 	
 	for (int i=0; i<pixelcount; i++) {
-		polygon <<  QPointF(xstart + i, height - (vector[i] * height) );
+                polygon <<  QPointF(xstart + i, height - (vector[i] * height) );
 	}
 	
 	// Depending on the zoom level, curve nodes can end up to be aligned 
@@ -178,7 +178,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 		qreal x = view->x();
 		if ( (x > xstart) && x < (xstart + pixelcount)) {
 			polygon <<  QPointF( x + view->boundingRect().width() / 2,
-				(height - (view->get_curve_node()->get_value() * height)) );
+                                (height - (view->get_curve_node()->get_value() * height)) );
 		}
 	}
 	
@@ -188,11 +188,11 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 /*	for (int i=0; i<polygon.size(); ++i) {
 		printf("polygin %d, x=%d, y=%d\n", i, (int)polygon.at(i).x(), (int)polygon.at(i).y());
 	}*/
-	
-	QPainterPath path;
-	path.addPolygon(polygon);
-	
-	painter->drawPath(path);
+
+        QPainterPath path;
+        path.addPolygon(polygon);
+
+        painter->drawPath(path);
 	
 	if (xstart <= 100) {
 		painter->setFont(themer()->get_font("CurveView:fontscale:label"));

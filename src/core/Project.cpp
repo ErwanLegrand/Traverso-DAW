@@ -284,6 +284,8 @@ int Project::load(QString projectfile)
                 Sheet* sheet = new Sheet(this, sheetNode);
                 // add it to the non-real time safe list
                 m_sheets.append(sheet);
+                sheet->set_state(sheetNode);
+
                 // and to the real time safe list
                 m_RtSheets.append(sheet);
                 emit sheetAdded(sheet);
@@ -669,7 +671,10 @@ AudioBus* Project::get_bus(qint64 id)
                 return m_masterOut->get_process_bus();
         }
 
+        printf("sheets size %d\n", m_sheets.size());
         foreach(Sheet* sheet, m_sheets) {
+                printf("looking for sheet (master) subgroup buses\n");
+                printf("sheet master out id %lld\n", sheet->get_master_out()->get_id());
                 if (sheet->get_master_out()->get_id() == id) {
                         return sheet->get_master_out()->get_process_bus();
                 }
@@ -684,6 +689,17 @@ AudioBus* Project::get_bus(qint64 id)
                 if (bus->get_id() == id) {
                         return bus;
                 }
+        }
+
+        return 0;
+}
+
+qint64 Project::get_bus_id_for(const QString &busName)
+{
+        // if busName == Sheet Master, Master or Master Out,
+        // then return our Master bus to keep things simple.
+        if (busName == "Sheet Master" || busName == "Master Out" || busName == "Master") {
+                return m_masterOut->get_id();
         }
 
         return 0;

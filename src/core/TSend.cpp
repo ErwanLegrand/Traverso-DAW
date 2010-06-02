@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 TSend::TSend()
 {
         m_type = POSTSEND;
+        m_bus = 0;
 }
 
 TSend::TSend(AudioBus* bus)
@@ -45,8 +46,10 @@ QDomNode TSend::get_state( QDomDocument doc)
         QDomElement node = doc.createElement("Send");
 
         node.setAttribute("id", m_id);
-        node.setAttribute("bus", m_bus->get_id());
-        node.setAttribute("busname", m_bus->get_name());
+        if (m_bus) {
+                node.setAttribute("bus", m_bus->get_id());
+                node.setAttribute("busname", m_bus->get_name());
+        }
         if (m_type == POSTSEND) {
                 node.setAttribute("type", QString("post"));
         } else {
@@ -59,27 +62,35 @@ QDomNode TSend::get_state( QDomDocument doc)
 
 int TSend::set_state( const QDomNode & node )
 {
+        Project* project = pm().get_project();
+        if (!project) {
+                printf("TSend::set_state: Oh boy, no project?? Can't restore state without a project running!!\n");
+                return -1;
+        }
+
         QDomElement e = node.toElement();
 
         m_id = e.attribute("id", "0").toLongLong();
         qint64 busId = e.attribute("bus", "0").toLongLong();
         QString type = e.attribute("type", "");
+        QString busName = e.attribute("busname", "No Busname in Project file");
 
         if (type == "post" || type.isEmpty() || type.isNull()) {
                 m_type = POSTSEND;
-        } else if (type == "ppre") {
+        } else if (type == "pre") {
                 m_type = PRESEND;
         } else {
                 // default to post send if no type was stored
                 m_type = POSTSEND;
         }
 
-        Project* project = pm().get_project();
-        if (!project) {
-                return -1;
-        }
 
         m_bus = project->get_bus(busId);
+
+        if (!m_bus) {
+                printf("TSend::set_state: Project didn't return my Bus (%s)!\n", busName.toAscii().data());
+                return -1;
+        }
 
 
         return 1;
@@ -87,5 +98,17 @@ int TSend::set_state( const QDomNode & node )
 
 QString TSend::get_name() const
 {
+        if (!m_bus) {
+                return "No Bus??";
+        }
         return m_bus->get_name();
+}
+
+qint64 TSend::get_bus_id() const
+{
+        if (!m_bus) {
+                return -1;
+        }
+
+        return m_bus->get_id();
 }

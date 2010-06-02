@@ -71,7 +71,7 @@ void AudioIOPage::init(const QString &t, const QStringList &c_names)
     // add all hardware channels (columns)
     treeWidget->setHeaderLabels(headers);
 
-    const QList<BusConfig> busList = audiodevice().get_bus_configuration();
+    const QList<BusConfig> busList;// = audiodevice().get_bus_configuration();
 
         // loop over all audio busses
         for (int j = 0; j < busList.count(); ++j) {

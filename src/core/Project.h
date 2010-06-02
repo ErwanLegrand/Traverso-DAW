@@ -53,6 +53,7 @@ public :
         AudioBus* get_capture_bus(const QString& name) const;
 
         AudioBus* get_bus(qint64 id);
+        qint64 get_bus_id_for(const QString& busName);
 
         QStringList get_playback_buses_names( ) const;
         QStringList get_capture_buses_names( ) const;

@@ -42,6 +42,7 @@ SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
 SubGroup::SubGroup(Sheet *sheet, QDomNode /*node*/)
         : Track(sheet)
 {
+        create_process_bus();
 }
 
 SubGroup::~SubGroup()
@@ -52,7 +53,7 @@ SubGroup::~SubGroup()
 QDomNode SubGroup::get_state( QDomDocument doc, bool istemplate)
 {
         QDomElement node = doc.createElement("SubGroup");
-        Track::get_state(node, istemplate);
+        Track::get_state(doc, node, istemplate);
 
         node.setAttribute("channelcount", m_channelCount);
 
@@ -65,12 +66,11 @@ int SubGroup::set_state( const QDomNode & node )
 
         Track::set_state(node);
 
-        set_output_bus(e.attribute("OutputBus", "Playback 1"));
-
         bool ok;
         m_channelCount = e.attribute("channelcount", "2").toInt(&ok);
 
-        create_process_bus();
+
+        m_processBus->set_id(m_id);
 
         return 1;
 }
@@ -87,6 +87,7 @@ void SubGroup::create_process_bus()
         busConfig.channelcount = m_channelCount;
         busConfig.type = "output";
         busConfig.isInternalBus = true;
+        busConfig.id = m_id;
         m_processBus = new AudioBus(busConfig);
 }
 

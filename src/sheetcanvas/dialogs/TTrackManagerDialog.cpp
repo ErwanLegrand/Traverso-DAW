@@ -22,13 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TTrackManagerDialog.h"
 
-#include "AudioDevice.h"
+#include "AudioBus.h"
 #include "Track.h"
 #include "ProjectManager.h"
 #include "Project.h"
 #include "Sheet.h"
 #include "SubGroup.h"
 #include "Utils.h"
+#include "TSend.h"
 
 #include <QMenu>
 
@@ -67,7 +68,7 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
                 trackLabel->setText(tr("Master Bus:"));
         }
 
-        connect(m_track, SIGNAL(busConfigurationChanged()), this, SLOT(update_routing_input_output_widget_view()));
+        connect(m_track, SIGNAL(routingConfigurationChanged()), this, SLOT(update_routing_input_output_widget_view()));
         connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan_indicator()));
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain_indicator()));
 }
@@ -81,7 +82,7 @@ void TTrackManagerDialog::create_routing_input_menu()
         m_routingInputMenu = new QMenu;
 
         if (m_track->get_type() != Track::SUBGROUP) {
-                foreach(QString busName, audiodevice().get_capture_buses_names()) {
+                foreach(QString busName, pm().get_project()->get_capture_buses_names()) {
                         m_routingInputMenu->addAction(busName);
                 }
         }
@@ -99,6 +100,7 @@ void TTrackManagerDialog::create_routing_output_menu()
         }
 
         m_routingOutputMenu = new QMenu;
+        QAction* action;
 
         Sheet* sheet = m_track->get_sheet();
 
@@ -110,26 +112,32 @@ void TTrackManagerDialog::create_routing_output_menu()
         }
 
         if (!(m_track == projectMaster)) {
-                m_routingOutputMenu->addAction(projectMaster->get_name());
+                action = m_routingOutputMenu->addAction(projectMaster->get_name());
+                action->setData(projectMaster->get_id());
         }
 
         if (sheetMaster && !(m_track == sheetMaster)) {
-                m_routingOutputMenu->addAction(sheetMaster->get_name());
+                action = m_routingOutputMenu->addAction(sheetMaster->get_name());
+                action->setData(sheetMaster->get_id());
         }
 
         if (sheet) {
                 QList<SubGroup*> subgroups = sheet->get_subgroups();
                 if (!m_track->get_type() == Track::SUBGROUP && subgroups.size()) {
                         foreach(SubGroup* sub, subgroups) {
-                                m_routingOutputMenu->addAction(sub->get_name());
+                                action = m_routingOutputMenu->addAction(sub->get_name());
+                                action->setData(sub->get_id());
                         }
                 }
         }
 
         m_routingOutputMenu->addSeparator();
 
-        foreach(QString busName, audiodevice().get_playback_buses_names()) {
-                m_routingOutputMenu->addAction(busName);
+        foreach(AudioBus* bus, pm().get_project()->get_playback_buses()) {
+                if (bus->is_output()) {
+                        action = m_routingOutputMenu->addAction(bus->get_name());
+                        action->setData(bus->get_id());
+                }
         }
 
         routingOutputButton->setMenu(m_routingOutputMenu);
@@ -151,15 +159,17 @@ void TTrackManagerDialog::reject()
 
 void TTrackManagerDialog::routingInputMenuActionTriggered(QAction *action)
 {
-        if (action) {
-                m_track->set_input_bus(action->text());
+        Project* project = pm().get_project();
+        if (action && project) {
+                m_track->add_input_bus(action->data().toLongLong());
         }
 }
 
 void TTrackManagerDialog::routingOutputMenuActionTriggered(QAction *action)
 {
-        if (action) {
-                m_track->set_output_bus(action->text());
+        Project* project = pm().get_project();
+        if (action && project) {
+                m_track->add_post_send(action->data().toLongLong());
         }
 }
 
@@ -179,7 +189,26 @@ void TTrackManagerDialog::update_routing_input_output_widget_view()
 
 
         routingOutputListWidget->clear();
-        routingOutputListWidget->addItem(m_track->get_bus_out_name());
+
+        QList<TSend*> postSends = m_track->get_post_sends();
+        foreach(TSend* send, postSends) {
+                QListWidgetItem* item = new QListWidgetItem(routingOutputListWidget);
+                item->setText(send->get_name());
+                item->setData(Qt::UserRole, send->get_id());
+                routingOutputListWidget->addItem(item);
+        }
+}
+
+void TTrackManagerDialog::on_routingOutputRemoveButton_clicked()
+{
+        QList<QListWidgetItem*> selectedItems = routingOutputListWidget->selectedItems();
+        QList<qint64> toBeRemoved;
+        foreach(QListWidgetItem* item, selectedItems) {
+                qint64 id = item->data(Qt::UserRole).toLongLong();
+                toBeRemoved.append(id);
+        }
+
+        m_track->remove_post_sends(toBeRemoved);
 }
 
 void TTrackManagerDialog::update_gain_indicator()

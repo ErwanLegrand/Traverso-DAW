@@ -63,7 +63,7 @@ public :
         int process(nframes_t nframes);
 
 protected:
-        void set_input_bus(AudioBus* bus);
+        void add_input_bus(AudioBus* bus);
 
 private :
         APILinkedList 	m_clips;

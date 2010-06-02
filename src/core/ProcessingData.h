@@ -44,19 +44,12 @@ public:
         ProcessingData (Sheet* sheet=0);
         virtual ~ProcessingData () {}
 	
-        void set_input_bus(const QString& name);
-        virtual void set_output_bus(const QString& name);
-
         Command* add_plugin(Plugin* plugin);
         Command* remove_plugin(Plugin* plugin);
 
-        AudioBus* get_process_bus() const {return m_processBus;}
-        AudioBus* get_input_bus() const {return m_inputBus;}
         PluginChain* get_plugin_chain() const {return m_pluginChain;}
         Sheet* get_sheet() const {return m_sheet;}
         QString get_name() const {return m_name;}
-        QString get_bus_in_name() const {return m_busInName;}
-        QString get_bus_out_name() const{return m_busOutName;}
         float get_pan() const {return m_pan;}
 
         void set_muted(bool muted);
@@ -69,24 +62,15 @@ public:
 
 
 protected:
-        AudioBus*       m_inputBus;
-        AudioBus*       m_outputBus;
+
         AudioBus*       m_processBus;
         Sheet*          m_sheet;
         GainEnvelope*   m_fader;
         PluginChain*    m_pluginChain;
-        QString         m_busInName;
-        QString         m_busOutName;
         QString		m_name;
         bool            m_isMuted;
         float           m_pan;
 
-        void process_post_sends(nframes_t nframes);
-        void process_pre_fader_sends(nframes_t nframes);
-        virtual void set_input_bus(AudioBus* bus);
-
-private:
-        void set_output_bus(AudioBus* bus);
 
 
 public slots:
@@ -94,20 +78,12 @@ public slots:
         void set_gain(float gain);
         Command* mute();
 
-private slots:
-        void audiodevice_params_changed();
-        void private_set_input_bus(AudioBus*);
-        void private_set_output_bus(AudioBus*);    
-        void rescan_buses();
-
 
 signals:
-        void busConfigurationChanged();
-        void stateChanged();
         void audibleStateChanged();
-        void panChanged();
+        void stateChanged();
         void muteChanged(bool isMuted);
-
+        void panChanged();
 };
 
 inline float ProcessingData::get_gain( ) const

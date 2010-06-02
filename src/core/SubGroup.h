@@ -54,15 +54,15 @@ public:
         MasterOutSubGroup(Sheet* sheet, const QDomNode node) : SubGroup(sheet, node) {}
         ~MasterOutSubGroup() {}
 
-        void set_output_bus(const QString& name) {
-                // this should not happen, but just in case...
-                if (!(name == tr("Sheet Master")) || !(name == tr("Master"))) {
-                        ProcessingData::set_output_bus(name);
-                } else {
-                        // try to be 'smart' and pick a sane default.
-                        ProcessingData::set_output_bus("Playback 1");
-                }
-        }
+//        void add_output_bus(const QString& name) {
+//                // this should not happen, but just in case...
+//                if (!(name == tr("Sheet Master")) || !(name == tr("Master"))) {
+//                        Track::add_output_bus(name);
+//                } else {
+//                        // try to be 'smart' and pick a sane default.
+//                        Track::add_output_bus("Playback 1");
+//                }
+//        }
 
         int set_state( const QDomNode& node ) {
                 SubGroup::set_state(node);

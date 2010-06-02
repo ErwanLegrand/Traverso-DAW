@@ -128,14 +128,14 @@ void NewTrackDialog::create_track()
         if (driver == "Jack") {
                 // subgroups don't have input ports, so skip those.
                 if (!isSubGroup->isChecked()) {
-                        track->set_input_bus(title);
+                        track->add_input_bus(title);
                 }
-                track->set_output_bus(title);
+//                track->add_output_bus(title);
         } else {
                 if (!isSubGroup->isChecked()) {
-                        track->set_input_bus(inputBuses->currentText());
+                        track->add_input_bus(inputBuses->currentText());
                 }
-                track->set_output_bus(outputBuses->currentText());
+//                track->add_output_bus(outputBuses->currentText());
         }
 
         Command* command = sheet->add_track(track);
@@ -183,7 +183,7 @@ void NewTrackDialog::update_buses_comboboxes()
         }
 
         busNames.append(sheet->get_master_out()->get_name());
-        busNames.append(audiodevice().get_playback_buses_names());
+        busNames.append(pm().get_project()->get_playback_buses_names());
 
         foreach(QString busName, busNames) {
                 outputBuses->addItem(busName);
@@ -192,7 +192,7 @@ void NewTrackDialog::update_buses_comboboxes()
         inputBuses->clear();
 
         busNames.clear();
-        busNames.append(audiodevice().get_capture_buses_names());
+        busNames.append(pm().get_project()->get_capture_buses_names());
 
         foreach(QString busName, busNames) {
                 inputBuses->addItem(busName);

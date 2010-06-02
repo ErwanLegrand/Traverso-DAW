@@ -109,7 +109,6 @@ Sheet::Sheet(Project* project, const QDomNode node)
 	}
 
         init();
-        set_state( node );
 }
 
 Sheet::~Sheet()

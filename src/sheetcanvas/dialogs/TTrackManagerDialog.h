@@ -55,6 +55,8 @@ private slots:
 
         void routingInputMenuActionTriggered(QAction* action);
         void routingOutputMenuActionTriggered(QAction* action);
+
+        void on_routingOutputRemoveButton_clicked();
 };
 
 #endif
