@@ -120,8 +120,6 @@ private:
 
 public slots:
         void bus_changed();
-
-        Command* select_bus();
 };
 
 
