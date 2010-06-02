@@ -214,17 +214,6 @@ AudioDevice::~AudioDevice()
 	}
 	
 	delete m_cpuTime;
-
-        free_memory();
-}
-
-void AudioDevice::free_memory()
-{
-        foreach(AudioBus* bus, m_buses) {
-                delete bus;
-	}
-
-        m_buses.clear();
 }
 
 /**
@@ -327,7 +316,6 @@ void AudioDevice::set_parameters(AudioDeviceSetup ads)
 	m_xrunCount = 0;
         m_ditherShape = ads.ditherShape;
         if (!(ads.driverType == "Null Driver")) {
-                m_busConfigs = ads.busConfigs;
                 m_channelConfigs = ads.channelConfigs;
                 m_setup = ads;
         }
@@ -345,8 +333,8 @@ void AudioDevice::set_parameters(AudioDeviceSetup ads)
 	
         if (!m_busConfigs.count()) {
                 printf("setting up defaults\n");
-		setup_default_capture_buses();
-                setup_default_playback_buses();
+//		setup_default_capture_buses();
+//                setup_default_playback_buses();
         } else {
                 set_bus_config(m_busConfigs);
         }
@@ -544,45 +532,7 @@ int AudioDevice::shutdown( )
                 m_driver = 0;
 	}
 	
-        free_memory();
-
 	return r;
-}
-
-/**
- * Get the names of all the Capture Buses availble, use the names to get a Bus instance 
- * via get_capture_bus()
- *
- * @return A QStringList with all the Capture Buses names which are available, 
- *		an empty list if no Buses are available.
- */
-QStringList AudioDevice::get_capture_buses_names( ) const
-{
-	QStringList names;
-        foreach(AudioBus* bus, m_buses) {
-                if (bus->get_type() == ChannelIsInput) {
-                        names.append(bus->get_name());
-                }
-	}
-	return names;
-}
-
-/**
- * Get the names of all the Playback Buses availble, use the names to get a Bus instance 
- * via get_playback_bus()
- *
- * @return A QStringList with all the PlayBack Buses names which are available, 
- *		an empty list if no Buses are available.
- */
-QStringList AudioDevice::get_playback_buses_names( ) const
-{
-	QStringList names;
-        foreach(AudioBus* bus, m_buses) {
-                if (bus->get_type() == ChannelIsOutput) {
-                        names.append(bus->get_name());
-                }
-	}
-	return names;
 }
 
 QStringList AudioDevice::get_capture_channel_names() const
@@ -623,29 +573,29 @@ QList<ChannelConfig> AudioDevice::get_channel_configuration()
         return configs;
 }
 
-QList<BusConfig> AudioDevice::get_bus_configuration()
-{
-        if (m_busConfigs.size()) {
-                return m_busConfigs;
-        }
+//QList<BusConfig> AudioDevice::get_bus_configuration()
+//{
+//        if (m_busConfigs.size()) {
+//                return m_busConfigs;
+//        }
 	
-        foreach(AudioBus* bus, m_buses) {
-                BusConfig conf;
-                conf.name = bus->get_name();
-                conf.type = bus->is_input() ? "input" : "output";
-                conf.id = bus->get_id();
+//        foreach(AudioBus* bus, m_buses) {
+//                BusConfig conf;
+//                conf.name = bus->get_name();
+//                conf.type = bus->is_input() ? "input" : "output";
+//                conf.id = bus->get_id();
 
-                for (int i = 0; i < bus->get_channel_count(); ++i) {
-                        conf.channelNames.append(bus->get_channel(i)->get_name());
-		}
+//                for (int i = 0; i < bus->get_channel_count(); ++i) {
+//                        conf.channelNames.append(bus->get_channel(i)->get_name());
+//                }
                 
-                conf.channelcount = bus->get_channel_count();
+//                conf.channelcount = bus->get_channel_count();
 		
-                m_busConfigs.append(conf);
-	}
+//                m_busConfigs.append(conf);
+//        }
 	
-        return m_busConfigs;
-}
+//        return m_busConfigs;
+//}
 
 void AudioDevice::set_channel_config(QList<ChannelConfig> channelConfigs)
 {
@@ -700,135 +650,77 @@ void AudioDevice::send_to_master_out(AudioChannel* channel, nframes_t nframes)
 
 void AudioDevice::set_bus_config(QList<BusConfig> config)
 {
-//        THREAD_SAVE_INVOKE(this, NULL, "set_bus_config()");
-        private_set_bus_config(config);
-}
-
-void AudioDevice::private_set_bus_config(QList<BusConfig> config)
-{
-        m_busConfigs = config;
-
-        free_memory();
-
-        AudioChannel* channel;
-        BusConfig conf;
-
-        for (int j = 0; j < m_busConfigs.count(); ++j) {
-                conf = m_busConfigs.at(j);
-
-                AudioBus* bus = new AudioBus(conf);
-
-                for (int i = 0; i < conf.channelNames.count(); ++i) {
-                        if (bus->is_input()) {
-                                channel = m_driver->get_capture_channel_by_name(conf.channelNames.at(i));
-                        } else {
-                                channel = m_driver->get_playback_channel_by_name(conf.channelNames.at(i));
-                        }
-
-                        if (channel) {
-                                bus->add_channel(channel);
-                        }
-                }
-
-                m_buses.append(bus);
-        }
-
         emit driverParamsChanged();
         emit busConfigChanged();
 }
 
-void AudioDevice::setup_default_capture_buses( )
+void AudioDevice::private_set_bus_config(QList<BusConfig> config)
 {
-	int number = 1;
-	QByteArray name;
+}
 
-	AudioChannel* channel;
-        BusConfig config;
+//void AudioDevice::setup_default_capture_buses( )
+//{
+//        int number = 1;
+//        QByteArray name;
+
+//        AudioChannel* channel;
+//        BusConfig config;
 	
-        for (int i=1; i <= m_driver->get_capture_channels().size();) {
-                config.name = "Capture " + QByteArray::number(number++);
-                config.type = "input";
-                AudioBus* bus = new AudioBus(config);
-                channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
-		if (channel) {
-                        bus->add_channel(channel);
-		}
-                channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
-                if (channel) {
-			bus->add_channel(channel);
-                }
-                m_buses.append(bus);
-	}
-}
+//        for (int i=1; i <= m_driver->get_capture_channels().size();) {
+//                config.name = "Capture " + QByteArray::number(number++);
+//                config.type = "input";
+//                AudioBus* bus = new AudioBus(config);
+//                channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
+//                if (channel) {
+//                        bus->add_channel(channel);
+//                }
+//                channel = m_driver->get_capture_channel_by_name("capture_"+QByteArray::number(i++));
+//                if (channel) {
+//                        bus->add_channel(channel);
+//                }
+//                m_buses.append(bus);
+//        }
+//}
 
-void AudioDevice::setup_default_playback_buses( )
+//void AudioDevice::setup_default_playback_buses( )
+//{
+//        int number = 1;
+
+//        AudioChannel* channel;
+//        BusConfig config;
+
+//        for (int i=1; i <= m_driver->get_playback_channels().size();) {
+//                config.name = "Playback " + QByteArray::number(number++);
+//                config.type = "output";
+//                AudioBus* bus = new AudioBus(config);
+//                channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
+//                if (channel) {
+//                        bus->add_channel(channel);
+//                }
+//                channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
+//                if (channel) {
+//                        bus->add_channel(channel);
+//                }
+//                m_buses.append(bus);
+//        }
+//}
+
+
+AudioChannel* AudioDevice::get_capture_channel_by_name(const QString &name)
 {
-	int number = 1;
-
-	AudioChannel* channel;
-        BusConfig config;
-
-        for (int i=1; i <= m_driver->get_playback_channels().size();) {
-                config.name = "Playback " + QByteArray::number(number++);
-                config.type = "output";
-                AudioBus* bus = new AudioBus(config);
-                channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
-                if (channel) {
-                        bus->add_channel(channel);
-		}
-                channel = m_driver->get_playback_channel_by_name("playback_"+QByteArray::number(i++));
-                if (channel) {
-                        bus->add_channel(channel);
-		}
-                m_buses.append(bus);
-	}
-}
-
-
-/**
- * Get the Playback AudioBus instance with name \a name.
-
- * You can use this for example in your callback function to get a Playback Bus,
- * and mix audiodata into the Buses' buffers.
- * \sa get_playback_buses_names(), AudioBus::get_buffer()
- *
- * @param name The name of the Playback Bus
- * @return An AudioBus if one exists with name \a name, 0 on failure
- */
-AudioBus* AudioDevice::get_playback_bus(const QString& name) const
-{
-        foreach(AudioBus* bus, m_buses) {
-                if (bus->get_type() == ChannelIsOutput) {
-                        if (bus->get_name() == name) {
-                                return bus;
-                        }
-                }
+        if (!m_driver) {
+                return 0;
         }
-
-        return 0;
+        return m_driver->get_capture_channel_by_name(name);
 }
 
-/**
- * Get the Capture AudioBus instance with name \a name.
 
- * You can use this for example in your callback function to get a Capture Bus,
- * and read the audiodata from the Buses' buffers.
- * \sa AudioBus::get_buffer(),  get_capture_buses_names()
- *
- * @param name The name of the Capture Bus
- * @return An AudioBus if one exists with name \a name, 0 on failure
- */
-AudioBus* AudioDevice::get_capture_bus(const QString& name) const
+AudioChannel* AudioDevice::get_playback_channel_by_name(const QString &name)
 {
-        foreach(AudioBus* bus, m_buses) {
-                if (bus->get_type() == ChannelIsInput) {
-                        if (bus->get_name() == name) {
-                                return bus;
-                        }
-                }
+        if (!m_driver) {
+                return 0;
         }
-
-        return 0;
+        return m_driver->get_playback_channel_by_name(name);
 }
 
 AudioChannel* AudioDevice::create_channel(const QString& name, int channelNumber, int type)

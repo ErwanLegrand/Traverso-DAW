@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "defines.h"
 
+class AudioBus;
 class Sheet;
 class ResourcesManager;
 struct ExportSpecification;
@@ -47,6 +48,17 @@ public :
         int process(nframes_t nframes);
         // jackd only feature
         int transport_control(transport_state_t state);
+
+        AudioBus* get_playback_bus(const QString& name) const;
+        AudioBus* get_capture_bus(const QString& name) const;
+
+        AudioBus* get_bus(qint64 id);
+
+        QStringList get_playback_buses_names( ) const;
+        QStringList get_capture_buses_names( ) const;
+
+        QList<AudioBus*> get_playback_buses() const {return m_hardwareBuses;}
+
 
 	// Get functions
 	int get_current_sheet_id() const;
@@ -138,6 +150,8 @@ private:
         ExportThread*           m_exportThread;
         AudioDeviceClient*	m_audiodeviceClient;
         SubGroup*               m_masterOut;
+
+        QList<AudioBus* >       m_hardwareBuses;
 
 
 

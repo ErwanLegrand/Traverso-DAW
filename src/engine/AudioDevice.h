@@ -65,10 +65,11 @@ public:
 	int transport_seek_to(AudioDeviceClient* client, TimeRef location);
 
         AudioDeviceSetup get_device_setup() {return m_setup;}
-        AudioBus* get_playback_bus(const QString& name) const;
-        AudioBus* get_capture_bus(const QString& name) const;
 
         AudioChannel* create_channel(const QString& name, int channelNumber, int type);
+        AudioChannel* get_playback_channel_by_name(const QString& name);
+        AudioChannel* get_capture_channel_by_name(const QString& name);
+
         void delete_channel(AudioChannel* channel);
 
         void set_bus_config(QList<BusConfig> configs);
@@ -76,9 +77,6 @@ public:
         void set_master_out_bus(AudioBus* bus);
         void send_to_master_out(AudioChannel* channel, nframes_t nframes);
 
-	QStringList get_capture_buses_names() const;
-	QStringList get_playback_buses_names() const;
-	
 	QStringList get_capture_channel_names() const;
 	QStringList get_playback_channel_names() const;
 	
@@ -136,7 +134,6 @@ private:
         Driver* 		m_driver;
         AudioDeviceThread* 	m_audioThread;
         APILinkedList		m_clients;
-        QList<AudioBus* >       m_buses;
         QList<AudioChannel* >   m_channels;
         QList<BusConfig>        m_busConfigs;
         QList<ChannelConfig>    m_channelConfigs;
@@ -164,10 +161,9 @@ private:
 	int create_driver(QString driverType, bool capture, bool playback, const QString& cardDevice);
 	int transport_control(transport_state_t state);
 
-	void setup_default_capture_buses();
-	void setup_default_playback_buses();
+//	void setup_default_capture_buses();
+//	void setup_default_playback_buses();
 	void post_process();
-	void free_memory();
 
 	// These are reserved for Driver Objects only!!
 	AudioChannel* register_capture_channel(const QByteArray& busName, const QString& audioType, int flags, uint bufferSize, uint channel );

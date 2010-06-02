@@ -437,15 +437,29 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
         systemConfig.appendChild(channelsElement);
 
         QDomElement busesElement = doc.createElement("Buses");
-        QList<BusConfig> busConfig = audiodevice().get_bus_configuration();
-        foreach(BusConfig conf, busConfig) {
-                QDomElement bus = doc.createElement("Bus");
-                bus.setAttribute("name", conf.name);
-                bus.setAttribute("channels", conf.channelNames.join(";"));
-                bus.setAttribute("type", conf.type);
-                bus.setAttribute("channelcount", conf.channelcount);
-                bus.setAttribute("id", conf.id);
-                busesElement.appendChild(bus);
+
+        foreach(AudioBus* bus, m_hardwareBuses) {
+
+                BusConfig conf;
+                conf.name = bus->get_name();
+                conf.type = bus->is_input() ? "input" : "output";
+                conf.id = bus->get_id();
+
+                for (int i = 0; i < bus->get_channel_count(); ++i) {
+                        conf.channelNames.append(bus->get_channel(i)->get_name());
+                }
+
+                conf.channelcount = bus->get_channel_count();
+
+
+                QDomElement busElement = doc.createElement("Bus");
+                busElement.setAttribute("name", conf.name);
+                busElement.setAttribute("channels", conf.channelNames.join(";"));
+                busElement.setAttribute("type", conf.type);
+                busElement.setAttribute("channelcount", conf.channelcount);
+                busElement.setAttribute("id", conf.id);
+
+                busesElement.appendChild(busElement);
         }
         systemConfig.appendChild(busesElement);
 
@@ -501,24 +515,7 @@ void Project::prepare_audio_device(QDomDocument doc)
                 channelNode = channelNode.nextSibling();
         }
 
-
-        QDomNode busesConfigNode = systemConfigNode.firstChildElement("Buses");
-        QDomNode busNode = busesConfigNode.firstChild();
-
-        QList<BusConfig> busConfigs;
-
-        while (!busNode.isNull()) {
-                BusConfig conf;
-                QDomElement e = busNode.toElement();
-                conf.name = e.attribute("name", "");
-                conf.channelNames = e.attribute("channels", "").split(";");
-                conf.type = e.attribute("type", "");
-                conf.channelcount = e.attribute("channelcount", "2").toInt();
-                conf.id = e.attribute("id", "-1").toLongLong();
-                busConfigs.append(conf);
-                busNode = busNode.nextSibling();
-        }
-
+        ads.channelConfigs = channelConfigs;
 
         if (ads.driverType.isEmpty() || ads.driverType.isNull()) {
 #if defined (Q_WS_X11)
@@ -564,10 +561,43 @@ void Project::prepare_audio_device(QDomDocument doc)
         }
 #endif // end PORTAUDIO_SUPPORT
 
-        ads.busConfigs = busConfigs;
-        ads.channelConfigs = channelConfigs;
 
         audiodevice().set_parameters(ads);
+
+        QDomNode busesConfigNode = systemConfigNode.firstChildElement("Buses");
+        QDomNode busNode = busesConfigNode.firstChild();
+
+        AudioChannel* channel;
+
+        while (!busNode.isNull()) {
+                BusConfig conf;
+                QDomElement e = busNode.toElement();
+                conf.name = e.attribute("name", "");
+                conf.channelNames = e.attribute("channels", "").split(";");
+                conf.type = e.attribute("type", "");
+                conf.channelcount = e.attribute("channelcount", "2").toInt();
+                conf.id = e.attribute("id", "-1").toLongLong();
+
+                AudioBus* bus = new AudioBus(conf);
+
+                for (int i = 0; i < conf.channelNames.count(); ++i) {
+                        if (bus->is_input()) {
+                                channel = audiodevice().get_capture_channel_by_name(conf.channelNames.at(i));
+                        } else {
+                                channel = audiodevice().get_playback_channel_by_name(conf.channelNames.at(i));
+                        }
+
+                        if (channel) {
+                                bus->add_channel(channel);
+                        } else {
+                                printf("channel not found %s\n", conf.channelNames.at(i).toAscii().data());
+                        }
+                }
+
+                m_hardwareBuses.append(bus);
+
+                busNode = busNode.nextSibling();
+        }
 }
 
 void Project::connect_to_audio_device()
@@ -585,6 +615,116 @@ int Project::disconnect_from_audio_device()
 
         return 1;
 }
+
+
+/**
+ * Get the Playback AudioBus instance with name \a name.
+
+ * You can use this for example in your callback function to get a Playback Bus,
+ * and mix audiodata into the Buses' buffers.
+ * \sa get_playback_buses_names(), AudioBus::get_buffer()
+ *
+ * @param name The name of the Playback Bus
+ * @return An AudioBus if one exists with name \a name, 0 on failure
+ */
+AudioBus* Project::get_playback_bus(const QString& name) const
+{
+        foreach(AudioBus* bus, m_hardwareBuses) {
+                if (bus->get_type() == ChannelIsOutput) {
+                        if (bus->get_name() == name) {
+                                return bus;
+                        }
+                }
+        }
+
+        return 0;
+}
+
+/**
+ * Get the Capture AudioBus instance with name \a name.
+
+ * You can use this for example in your callback function to get a Capture Bus,
+ * and read the audiodata from the Buses' buffers.
+ * \sa AudioBus::get_buffer(),  get_capture_buses_names()
+ *
+ * @param name The name of the Capture Bus
+ * @return An AudioBus if one exists with name \a name, 0 on failure
+ */
+AudioBus* Project::get_capture_bus(const QString& name) const
+{
+        foreach(AudioBus* bus, m_hardwareBuses) {
+                if (bus->get_type() == ChannelIsInput) {
+                        if (bus->get_name() == name) {
+                                return bus;
+                        }
+                }
+        }
+
+        return 0;
+}
+
+AudioBus* Project::get_bus(qint64 id)
+{
+        if (m_masterOut->get_id() == id) {
+                return m_masterOut->get_process_bus();
+        }
+
+        foreach(Sheet* sheet, m_sheets) {
+                if (sheet->get_master_out()->get_id() == id) {
+                        return sheet->get_master_out()->get_process_bus();
+                }
+                foreach(SubGroup* group, sheet->get_subgroups()) {
+                        if (group->get_id() == id) {
+                                return group->get_process_bus();
+                        }
+                }
+        }
+
+        foreach(AudioBus* bus, m_hardwareBuses) {
+                if (bus->get_id() == id) {
+                        return bus;
+                }
+        }
+
+        return 0;
+}
+
+/**
+ * Get the names of all the Capture Buses availble, use the names to get a Bus instance
+ * via get_capture_bus()
+ *
+ * @return A QStringList with all the Capture Buses names which are available,
+ *		an empty list if no Buses are available.
+ */
+QStringList Project::get_capture_buses_names( ) const
+{
+        QStringList names;
+        foreach(AudioBus* bus, m_hardwareBuses) {
+                if (bus->get_type() == ChannelIsInput) {
+                        names.append(bus->get_name());
+                }
+        }
+        return names;
+}
+
+/**
+ * Get the names of all the Playback Buses availble, use the names to get a Bus instance
+ * via get_playback_bus()
+ *
+ * @return A QStringList with all the PlayBack Buses names which are available,
+ *		an empty list if no Buses are available.
+ */
+QStringList Project::get_playback_buses_names( ) const
+{
+        QStringList names;
+        foreach(AudioBus* bus, m_hardwareBuses) {
+                if (bus->get_type() == ChannelIsOutput) {
+                        names.append(bus->get_name());
+                }
+        }
+        return names;
+}
+
 
 
 void Project::set_title(const QString& title)
