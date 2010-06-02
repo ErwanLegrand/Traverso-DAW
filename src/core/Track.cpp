@@ -278,6 +278,7 @@ void Track::remove_post_sends(QList<qint64> sendIds)
                         THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, send, private_remove_post_send(TSend*), routingConfigurationChanged())
                 } else {
                         private_remove_post_send(send);
+                        emit routingConfigurationChanged();
                 }
         }
 }
