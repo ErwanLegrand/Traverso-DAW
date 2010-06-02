@@ -467,11 +467,19 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				
 				for (int j=0; j < list.size(); ++j) {
 					obj = list.at(j);
-					if (obj->metaObject()->className() == classname) {
-						PMESG("Found an item in the contextitem list that equals delegated object");
-						validobject = true;
-						break;
-					}
+                                        const QMetaObject* mo = obj->metaObject();
+                                        while (mo) {
+                                                if (mo->className() == classname) {
+                                                        PMESG("Found an item in the contextitem list that equals delegated object");
+                                                        validobject = true;
+                                                        break;
+                                                }
+                                                mo = mo->superClass();
+                                        }
+                                        if (validobject) {
+                                                break;
+                                        }
+
 				}
 				
 				if (validobject) {
