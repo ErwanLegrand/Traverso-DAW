@@ -254,7 +254,7 @@ void Track::add_post_send(qint64 busId)
 
         TSend* postSend = new TSend(bus);
 
-        if (m_sheet && m_sheet->is_transport_rolling()) {
+        if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
                 THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, postSend, private_add_post_send(TSend*), routingConfigurationChanged());
         } else {
                 private_add_post_send(postSend);
@@ -274,7 +274,7 @@ void Track::remove_post_sends(QList<qint64> sendIds)
         }
 
         foreach(TSend* send, sendsToBeRemoved) {
-                if (m_sheet && m_sheet->is_transport_rolling()) {
+                if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
                         THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, send, private_remove_post_send(TSend*), routingConfigurationChanged())
                 } else {
                         private_remove_post_send(send);
