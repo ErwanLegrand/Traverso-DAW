@@ -29,8 +29,9 @@ $Id: AudioBus.h,v 1.7 2007/06/04 20:47:16 r_sijrier Exp $
 #include <QString>
 #include "defines.h"
 #include "AudioChannel.h"
+#include "APILinkedList.h"
 
-class AudioBus : public QObject
+class AudioBus : public QObject, public APILinkedListNode
 {
 	Q_OBJECT
 
@@ -60,6 +61,7 @@ public:
         bool is_output() {return m_type == ChannelIsOutput;}
         int get_type() const {return m_type;}
         qint64 get_id() const {return m_id;}
+        void set_id(qint64 id) {m_id = id;}
 
         void process_monitoring() {
                 for (int i=0; i<m_channels.size(); ++i) {
@@ -84,6 +86,7 @@ public:
 		}
 	}
 
+        bool is_smaller_then(APILinkedListNode* node) {return true;}
 
 private:
         QList<AudioChannel* >	m_channels;
