@@ -53,7 +53,6 @@ AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
         m_pan = m_numtakes = 0;
 
         m_busInName = "Capture 1";
-        m_busOutName = tr("Master");
 
         init();
 }

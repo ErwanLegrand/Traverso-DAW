@@ -33,7 +33,6 @@ SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
         m_id = create_id();
         m_name = name;
         m_channelCount = channelCount;
-        m_busOutName = "Playback 1";
         m_fader->set_gain(1.0);
 
         create_process_bus();

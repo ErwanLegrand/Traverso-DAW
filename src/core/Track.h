@@ -71,7 +71,6 @@ public:
         AudioBus* get_input_bus() const {return m_inputBus;}
 
         QString get_bus_in_name() const {return m_busInName;}
-        QString get_bus_out_name() const{return m_busOutName;}
 
         QList<TSend*> get_post_sends() const;
 
@@ -86,14 +85,9 @@ protected:
 
         APILinkedList   m_postSends;
 
-        APILinkedList   m_inputBuses;
-        APILinkedList   m_outputBuses;
-        APILinkedList   m_preFaderBuses;
-
         AudioBus*       m_inputBus;
-        AudioBus*       m_outputBus;
         QString         m_busInName;
-        QString         m_busOutName;
+
         void process_post_sends(nframes_t nframes);
         void process_pre_fader_sends(nframes_t nframes);
         virtual void add_input_bus(AudioBus* bus);

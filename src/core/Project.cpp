@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "FileHelpers.h"
 #include "TimeLine.h"
 #include "SubGroup.h"
+#include "TSend.h"
 
 #define PROJECT_FILE_VERSION 	3
 
@@ -1415,8 +1416,12 @@ QStringList Project::get_input_buses_for(SubGroup *subGroup)
         }
 
         foreach(AudioTrack* track, audioTracks) {
-                if (track->get_bus_out_name() == subGroup->get_name()) {
-                        buses.append(track->get_name());
+                // FIXME this is a temp fix!
+                QList<TSend*> sends = track->get_post_sends();
+                foreach(TSend* send, sends) {
+                        if (send->get_bus_id() == subGroup->get_id()) {
+                                buses.append(send->get_name());
+                        }
                 }
         }
 

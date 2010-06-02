@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Sheet.h"
 #include "SubGroup.h"
 #include "Track.h"
+#include "TSend.h"
 #include "Interface.h"
 #include "VUMeterView.h"
 		
@@ -111,8 +112,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain()));
         connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
 
-        connect(m_track, SIGNAL(busConfigurationChanged()), m_inBus, SLOT(bus_changed()));
-        connect(m_track, SIGNAL(busConfigurationChanged()), m_outBus, SLOT(bus_changed()));
+        connect(m_track, SIGNAL(routingConfigurationChanged()), m_inBus, SLOT(bus_changed()));
+        connect(m_track, SIGNAL(routingConfigurationChanged()), m_outBus, SLOT(bus_changed()));
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
         connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
@@ -660,7 +661,15 @@ void TrackPanelBus::bus_changed()
 		m_boundingRect = m_pix.rect();
                 m_boundingRect.setWidth(m_pix.rect().width() + stringwidth);
 	} else {
-                m_busName = m_track->get_bus_out_name();
+                QList<TSend*> sends  = m_track->get_post_sends();
+                if (sends.size() == 0) {
+                        m_busName = "No Outputs!";
+                } else if (sends.size() == 1) {
+                        m_busName = sends.first()->get_name();
+                } else {
+                        m_busName = "Multiple";
+                }
+
                 int stringwidth = fm.width(m_busName) + 10;
                 if (stringwidth > maxbuswidth) {
                         stringwidth = maxbuswidth;

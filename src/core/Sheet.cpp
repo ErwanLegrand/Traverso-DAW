@@ -58,7 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TimeLine.h"
 #include "Marker.h"
 #include "InputEngine.h"                       
-
+#include "TSend.h"
 #include <Plugin.h>
 #include <PluginChain.h>
 
@@ -713,8 +713,11 @@ void Sheet::solo_track(Track *track)
         if ((track->get_type() == Track::SUBGROUP) && !(track == m_masterOut)) {
                 QList<AudioTrack*> subgroupAudioTracks;
                 foreach(AudioTrack* sgTrack, tracks) {
-                        if (sgTrack->get_bus_out_name() == track->get_name()) {
-                                subgroupAudioTracks.append(sgTrack);
+                        QList<TSend*> sends = sgTrack->get_post_sends();
+                        foreach(TSend* send, sends) {
+                                if (send->get_bus_id() == track->get_process_bus()->get_id()) {
+                                        subgroupAudioTracks.append(sgTrack);
+                                }
                         }
                 }
 
