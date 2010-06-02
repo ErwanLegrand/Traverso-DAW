@@ -230,7 +230,6 @@
 				<Object objectname="FadeCurve" slotsignature="toggle_bypass" modes="All" sortorder="10" />
 				<Object objectname="Plugin" slotsignature="toggle_bypass" modes="All" />
 				<Object objectname="LV2Plugin" slotsignature="toggle_bypass" modes="All" />
-                                <Object objectname="TrackView" slotsignature="select_bus" modes="All" sortorder="8" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="P" >
@@ -265,8 +264,8 @@
                 <keyfact type="FKEY" key1="MouseButtonLeft" >
 			<Objects>
 				<Object objectname="TrackPanelLed" slotsignature="toggle" modes="All" sortorder="1" />
-                                <Object objectname="TrackPanelBus" slotsignature="select_bus" modes="All" />
-				<Object objectname="AudioClipView" slotsignature="set_audio_file" modes="All" sortorder="80" />
+                                <Object objectname="TrackPanelView" slotsignature="TrackView::edit_properties" modes="All" sortorder="11" />
+                                <Object objectname="AudioClipView" slotsignature="set_audio_file" modes="All" sortorder="80" />
                                 <Object objectname="CurveView" modifierkeys="CTRL" slotsignature="add_node" modes="All" />
                         </Objects>
 		</keyfact>
