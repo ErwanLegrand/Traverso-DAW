@@ -182,10 +182,3 @@ void TrackView::load_theme_data()
         m_cliptopmargin = themer()->get_property("Track:cliptopmargin").toInt();
         m_clipbottommargin = themer()->get_property("Track:clipbottommargin").toInt();
 }
-
-
-Command* TrackView::select_bus()
-{
-        Interface::instance()->show_busselector(m_track);
-        return 0;
-}

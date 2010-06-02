@@ -69,7 +69,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/project/NewSheetDialog.h"
 #include "dialogs/project/NewTrackDialog.h"
 #include "dialogs/MarkerDialog.h"
-#include "dialogs/BusSelectorDialog.h"
 #include "dialogs/InsertSilenceDialog.h"
 #include "dialogs/RestoreProjectBackupDialog.h"
 #include "dialogs/ProjectConverterDialog.h"
@@ -239,7 +238,6 @@ Interface::Interface()
 	m_openProjectDialog = 0;
 	m_newProjectDialog = 0;
 	m_insertSilenceDialog = 0;
-	m_busSelector = 0;
 	m_newSheetDialog = 0;
 	m_newTrackDialog = 0;
 	m_quickStart = 0;
@@ -1183,15 +1181,6 @@ QMenu* Interface::create_context_menu(QObject* item, QList<MenuData >* menulist)
 	}
 	
 	return menu;
-}
-
-void Interface::show_busselector(Track* track)
-{
-	if (! m_busSelector) {
-		m_busSelector = new BusSelectorDialog(this);
-	}
-	m_busSelector->set_current_track(track);	
-	m_busSelector->show();
 }
 
 void Interface::set_insertsilence_track(AudioTrack* track)

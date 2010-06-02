@@ -66,7 +66,6 @@ class InfoToolBar;
 class SysInfoToolBar;
 class InsertSilenceDialog;
 class MarkerDialog;
-class BusSelectorDialog;
 class NewSheetDialog;
 class NewTrackDialog;
 class NewProjectDialog;
@@ -119,7 +118,6 @@ public :
 	
 	void select_fade_in_shape();
 	void select_fade_out_shape();
-        void show_busselector(Track* track);
 	void set_insertsilence_track(AudioTrack* track);
 	
         void register_vumeter_level(AbstractVUMeterLevel* level);
@@ -161,7 +159,6 @@ private:
 	InsertSilenceDialog*	m_insertSilenceDialog;
 	SysInfoToolBar* 	m_sysinfo;
 	ProgressToolBar*	m_progressBar;
-	BusSelectorDialog*	m_busSelector;
 	NewSheetDialog*		m_newSheetDialog;
 	NewTrackDialog*		m_newTrackDialog;
 	NewProjectDialog*	m_newProjectDialog;

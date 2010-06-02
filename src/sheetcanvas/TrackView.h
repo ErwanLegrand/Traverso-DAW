@@ -75,7 +75,6 @@ protected:
 public slots:
         Command* edit_properties();
         Command* add_new_plugin();
-        Command* select_bus();
 
 private slots:
         void active_context_changed() {update();}

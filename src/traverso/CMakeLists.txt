@@ -30,7 +30,6 @@ dialogs/settings/SettingsDialog.cpp
 dialogs/project/ProjectManagerDialog.cpp
 dialogs/InsertSilenceDialog.cpp
 dialogs/MarkerDialog.cpp
-dialogs/BusSelectorDialog.cpp
 dialogs/project/NewSheetDialog.cpp
 dialogs/project/NewProjectDialog.cpp
 dialogs/project/OpenProjectDialog.cpp
@@ -75,7 +74,6 @@ ui/SheetManagerDialog.ui
 ui/ProjectManagerDialog.ui
 ui/QuickStart.ui
 ui/MarkerDialog.ui
-ui/BusSelectorDialog.ui
 ui/OpenProjectDialog.ui
 ui/NewProjectDialog.ui
 ui/NewSheetDialog.ui
@@ -94,7 +92,6 @@ ui/ThemeModifierDialog.ui
 SET(TRAVERSO_GUI_MOC_CLASSES
 Interface.h
 Traverso.h
-dialogs/BusSelectorDialog.h
 dialogs/CDWritingDialog.h
 dialogs/ExportDialog.h
 dialogs/InsertSilenceDialog.h
