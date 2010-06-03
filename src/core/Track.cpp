@@ -120,7 +120,7 @@ int Track::set_state( const QDomNode & node )
         if (!sendsNode.isNull()) {
                 QDomNode sendNode = sendsNode.firstChild();
                 while (!sendNode.isNull()) {
-                        TSend* send = new TSend();
+                        TSend* send = new TSend(this);
                         if (send->set_state(sendNode) < 0) {
                                 // This send could not set it's state...
                                 printf("Track::set_state: Send could not properly restore it's state, moving on..\n");
@@ -252,7 +252,7 @@ void Track::add_post_send(qint64 busId)
                 return;
         }
 
-        TSend* postSend = new TSend(bus);
+        TSend* postSend = new TSend(this, bus);
 
         if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
                 THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, postSend, private_add_post_send(TSend*), routingConfigurationChanged());

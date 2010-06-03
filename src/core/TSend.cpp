@@ -25,15 +25,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Project.h"
 #include "ProjectManager.h"
 #include "Utils.h"
+#include "Track.h"
 
 
-TSend::TSend()
+TSend::TSend(Track* track)
+        : m_track(track)
 {
         m_type = POSTSEND;
         m_bus = 0;
 }
 
-TSend::TSend(AudioBus* bus)
+TSend::TSend(Track* track, AudioBus* bus)
+        : m_track(track)
 {
         m_bus = bus;
         m_id = create_id();
@@ -101,7 +104,17 @@ QString TSend::get_name() const
         if (!m_bus) {
                 return "No Bus??";
         }
+
+//        if (m_track->get_type() == Track::SUBGROUP) {
+//                return m_track->get_name();
+//        }
+
         return m_bus->get_name();
+}
+
+QString TSend::get_from_name() const
+{
+        return m_track->get_name();
 }
 
 qint64 TSend::get_bus_id() const

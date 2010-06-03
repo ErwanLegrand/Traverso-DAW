@@ -179,8 +179,13 @@ void TTrackManagerDialog::update_routing_input_output_widget_view()
         routingInputListWidget->clear();
 
         if (m_track->get_type() == Track::SUBGROUP) {
-                QStringList list = pm().get_project()->get_input_buses_for(qobject_cast<SubGroup*>(m_track));
-                routingInputListWidget->addItems(list);
+                QList<TSend*> inputs = pm().get_project()->get_inputs_for_subgroup(qobject_cast<SubGroup*>(m_track));
+                foreach(TSend* send, inputs) {
+                        QListWidgetItem* item = new QListWidgetItem(routingInputListWidget);
+                        item->setText(send->get_from_name());
+                        item->setData(Qt::UserRole, send->get_id());
+                        routingInputListWidget->addItem(item);
+                }
         }
 
         if (m_track->get_type() == Track::AUDIOTRACK) {

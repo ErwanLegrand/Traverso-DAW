@@ -27,16 +27,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDomElement>
 
 class AudioBus;
+class Track;
 
 class TSend : public APILinkedListNode
 {
 
 public:
-        TSend();
-        TSend(AudioBus* bus);
+        TSend(Track* track);
+        TSend(Track* track, AudioBus* bus);
 
         QDomNode get_state( QDomDocument doc);
         int set_state( const QDomNode& node );
+        QString get_from_name() const ;
 
         enum {
                 POSTSEND = 1,
@@ -53,6 +55,7 @@ public:
 
 private:
         AudioBus*       m_bus;
+        Track*          m_track;
         qint64          m_id;
         int             m_type;
 };

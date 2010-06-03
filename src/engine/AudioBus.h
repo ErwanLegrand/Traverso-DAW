@@ -62,6 +62,7 @@ public:
         int get_type() const {return m_type;}
         qint64 get_id() const {return m_id;}
         void set_id(qint64 id) {m_id = id;}
+        void set_name(const QString& name) {m_name = name;}
 
         void process_monitoring() {
                 for (int i=0; i<m_channels.size(); ++i) {
