@@ -116,19 +116,19 @@ int TrackPan::jog()
         float ofx = (float) d->origX - cpointer().x();
         float p = -2.0f *  (ofx) / w ;
 
-        if (p > 0.0f && p < 0.01) {
+        if (p > 0.0f && p < 0.01f) {
                 p = 0.01;
         }
-        if (p < 0.0f && p > -0.01) {
-                p = -0.01;
+        if (p < 0.0f && p > -0.01f) {
+                p = -0.01f;
         }
 
 	m_newPan = p + m_newPan;
 	
-	if (m_newPan < -1.0) 
-		m_newPan = -1.0;
+        if (m_newPan < -1.0f)
+                m_newPan = -1.0f;
 	if (m_newPan > 1.0) 
-		m_newPan = 1.0;
+                m_newPan = 1.0f;
 	
 	m_track->set_pan(m_newPan);
 	
@@ -143,9 +143,9 @@ void TrackPan::pan_left(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	
-	m_newPan -= 0.05;
+        m_newPan -= 0.05f;
 	if (m_newPan < -1.0) 
-		m_newPan = -1.0;
+                m_newPan = -1.0f;
 	m_track->set_pan(m_newPan);
 	
 	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
@@ -155,9 +155,9 @@ void TrackPan::pan_right(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	
-	m_newPan += 0.05;
-	if (m_newPan > 1.0) 
-		m_newPan = 1.0;
+        m_newPan += 0.05f;
+        if (m_newPan > 1.0f)
+                m_newPan = 1.0f;
 	m_track->set_pan(m_newPan);
 
 	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
