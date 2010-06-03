@@ -264,8 +264,7 @@ int AudioTrack::process( nframes_t nframes )
         int result;
         float panFactor;
 
-        m_pluginChain->process_pre_fader(m_processBus, nframes);
-
+        // Read in clip data into process bus.
         apill_foreach(AudioClip* clip, AudioClip, m_clips) {
                 if (m_isArmed && clip->recording_state() == AudioClip::NO_RECORDING) {
                         if (m_isMuted || m_mutedBySolo) {
@@ -283,6 +282,15 @@ int AudioTrack::process( nframes_t nframes )
                 processResult |= result;
         }
 
+        // Then do the pre-send:
+        process_pre_sends(nframes);
+
+
+        // Then apply the pre fader plugins;
+        m_pluginChain->process_pre_fader(m_processBus, nframes);
+
+
+        // Obviously fader here, pan, gain, gain automation
         if ( (m_processBus->get_channel_count() >= 1) && (m_pan > 0) )  {
                 panFactor = 1 - m_pan;
                 Mixer::apply_gain_to_buffer(m_processBus->get_buffer(0, nframes), nframes, panFactor);
@@ -294,7 +302,8 @@ int AudioTrack::process( nframes_t nframes )
         }
 
 
-
+        // gain automation curve only understands audio_sample_t** atm
+        // so wrap the process buffers into a audio_sample_t**
         audio_sample_t* mixdown[m_processBus->get_channel_count()];
         for(int chan=0; chan<m_processBus->get_channel_count(); chan++) {
                 mixdown[chan] = m_processBus->get_buffer(chan, nframes);
@@ -304,15 +313,18 @@ int AudioTrack::process( nframes_t nframes )
         TimeRef endlocation = location + TimeRef(nframes, audiodevice().get_sample_rate());
         m_fader->process_gain(mixdown, location, endlocation, nframes, m_processBus->get_channel_count());
 
+
+        // Post fader plugins now
         processResult |= m_pluginChain->process_post_fader(m_processBus, nframes);
 
-        // TODO: is there a situation where we still want to call send_to_output_buses
+        // TODO: is there a situation where we still want to call process_post_sends
         // even if processresult == 0?
         if (processResult) {
                 if (!m_isArmed) {
                         m_processBus->process_monitoring(m_vumonitors);
                 }
 
+        // And finally do the post sends
                 process_post_sends(nframes);
         }
 
