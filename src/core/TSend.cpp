@@ -33,6 +33,7 @@ TSend::TSend(Track* track)
 {
         m_type = POSTSEND;
         m_bus = 0;
+        init();
 }
 
 TSend::TSend(Track* track, AudioBus* bus)
@@ -40,15 +41,23 @@ TSend::TSend(Track* track, AudioBus* bus)
 {
         m_bus = bus;
         m_id = create_id();
-        m_type = POSTSEND;
+        init();
 }
 
+void TSend::init()
+{
+        m_type = POSTSEND;
+        m_gain = 1.0;
+        m_pan = 0.0;
+}
 
 QDomNode TSend::get_state( QDomDocument doc)
 {
         QDomElement node = doc.createElement("Send");
 
         node.setAttribute("id", m_id);
+        node.setAttribute("gain", m_gain);
+        node.setAttribute("pan", m_pan);
         if (m_bus) {
                 node.setAttribute("bus", m_bus->get_id());
                 node.setAttribute("busname", m_bus->get_name());
@@ -77,6 +86,8 @@ int TSend::set_state( const QDomNode & node )
         qint64 busId = e.attribute("bus", "0").toLongLong();
         QString type = e.attribute("type", "");
         QString busName = e.attribute("busname", "No Busname in Project file");
+        set_gain(e.attribute("gain", "1.0").toFloat());
+        set_pan(e.attribute("pan", "0.00").toFloat());
 
         if (type == "post" || type.isEmpty() || type.isNull()) {
                 m_type = POSTSEND;
@@ -105,10 +116,6 @@ QString TSend::get_name() const
                 return "No Bus??";
         }
 
-//        if (m_track->get_type() == Track::SUBGROUP) {
-//                return m_track->get_name();
-//        }
-
         return m_bus->get_name();
 }
 
@@ -124,4 +131,26 @@ qint64 TSend::get_bus_id() const
         }
 
         return m_bus->get_id();
+}
+
+void TSend::set_pan(float pan)
+{
+        if ( pan < -1.0 ) {
+                m_pan=-1.0;
+        } else if ( pan > 1.0 ) {
+                m_pan=1.0;
+        } else {
+                m_pan=pan;
+        }
+}
+
+void TSend::set_gain(float gain)
+{
+        if (gain < 0.0) {
+                gain = 0.0;
+        }
+        if (gain > 2.0) {
+                gain = 2.0;
+        }
+        m_gain = gain;
 }

@@ -85,6 +85,9 @@ void Track::get_state(QDomDocument& doc, QDomElement& node, bool istemplate)
         apill_foreach(TSend* send, TSend, m_postSends) {
                 sendsNode.appendChild(send->get_state(node.toDocument()));
         }
+        apill_foreach(TSend* send, TSend, m_preSends) {
+                sendsNode.appendChild(send->get_state(node.toDocument()));
+        }
 
         node.appendChild(sendsNode);
 }
@@ -128,6 +131,9 @@ int Track::set_state( const QDomNode & node )
                         } else {
                                 if (send->get_type() == TSend::POSTSEND) {
                                         private_add_post_send(send);
+                                }
+                                if (send->get_type() == TSend::PRESEND) {
+                                        private_add_pre_send(send);
                                 }
                         }
                         sendNode = sendNode.nextSibling();
@@ -253,11 +259,41 @@ void Track::add_post_send(qint64 busId)
         }
 
         TSend* postSend = new TSend(this, bus);
+        postSend->set_type(TSend::POSTSEND);
 
         if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
                 THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, postSend, private_add_post_send(TSend*), routingConfigurationChanged());
         } else {
                 private_add_post_send(postSend);
+                emit routingConfigurationChanged();
+        }
+}
+
+
+void Track::add_pre_send(qint64 busId)
+{
+        apill_foreach(TSend* send, TSend, m_preSends) {
+                if (send->get_bus_id() == busId) {
+                        printf("Track %s already has this bus (bus id: %lld) as post send\n", m_name.toAscii().data(), busId);
+                        return;
+                }
+        }
+
+        Project* project = pm().get_project();
+        AudioBus* bus = project->get_bus(busId);
+
+        if (!bus) {
+                printf("bus with id %lld could not be found by project!\n", busId);
+                return;
+        }
+
+        TSend* preSend = new TSend(this, bus);
+        preSend->set_type(TSend::PRESEND);
+
+        if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
+                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, preSend, private_add_pre_send(TSend*), routingConfigurationChanged());
+        } else {
+                private_add_pre_send(preSend);
                 emit routingConfigurationChanged();
         }
 }
@@ -283,6 +319,27 @@ void Track::remove_post_sends(QList<qint64> sendIds)
         }
 }
 
+void Track::remove_pre_sends(QList<qint64> sendIds)
+{
+        QList<TSend*> sendsToBeRemoved;
+        foreach(qint64 id, sendIds) {
+                apill_foreach(TSend* send, TSend, m_preSends) {
+                        if (send->get_id() == id) {
+                                sendsToBeRemoved.append(send);
+                        }
+                }
+        }
+
+        foreach(TSend* send, sendsToBeRemoved) {
+                if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
+                        THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, send, private_remove_pre_send(TSend*), routingConfigurationChanged())
+                } else {
+                        private_remove_pre_send(send);
+                        emit routingConfigurationChanged();
+                }
+        }
+}
+
 void Track::private_add_post_send(TSend* postSend)
 {
         m_postSends.append(postSend);
@@ -292,6 +349,17 @@ void Track::private_remove_post_send(TSend* postSend)
 {
         m_postSends.remove(postSend);
 }
+
+void Track::private_remove_pre_send(TSend* preSend)
+{
+        m_preSends.remove(preSend);
+}
+
+void Track::private_add_pre_send(TSend* preSend)
+{
+        m_preSends.append(preSend);
+}
+
 
 void Track::private_add_input_bus(AudioBus* bus)
 {
@@ -310,25 +378,50 @@ void Track::add_input_bus(const QString &name)
 
 void Track::process_post_sends(nframes_t nframes)
 {
-        AudioChannel* sender;
-        AudioChannel* receiver;
-
         apill_foreach(TSend* postSend, TSend, m_postSends) {
-                AudioBus* receiverBus = postSend->get_bus();
-                for (int i=0; i<m_processBus->get_channel_count(); i++) {
-                        sender = m_processBus->get_channel(i);
-                        receiver = receiverBus->get_channel(i);
-                        if (sender && receiver) {
-                                Mixer::mix_buffers_no_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes);
-                        }
-
-                }
+                process_send(postSend, nframes);
         }
 }
 
-void Track::process_pre_fader_sends(nframes_t nframes)
+void Track::process_pre_sends(nframes_t nframes)
 {
-        // nothing to do here yet
+        apill_foreach(TSend* preSend, TSend, m_preSends) {
+                process_send(preSend, nframes);
+        }
+}
+
+void Track::process_send(TSend *send, nframes_t nframes)
+{
+        AudioChannel* sender;
+        AudioChannel* receiver;
+        float gainFactor;
+        float panFactor;
+
+        AudioBus* receiverBus = send->get_bus();
+        for (int i=0; i<m_processBus->get_channel_count(); i++) {
+                sender = m_processBus->get_channel(i);
+                receiver = receiverBus->get_channel(i);
+                if (sender && receiver) {
+                        panFactor = 1.0f;
+                        // Left channel
+                        if (i == 0) {
+                                panFactor = 1 - send->get_pan();
+                        }
+                        // Right channel
+                        if (i == 1) {
+                                panFactor = 1 + send->get_pan();
+                        }
+
+                        gainFactor = panFactor * send->get_gain();
+
+                        if (gainFactor == 1.0f) {
+                                Mixer::mix_buffers_no_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes);
+                        } else {
+                                Mixer::mix_buffers_with_gain(receiver->get_buffer(nframes), sender->get_buffer(nframes), nframes, gainFactor);
+                        }
+                }
+
+        }
 }
 
 
@@ -348,4 +441,30 @@ QList<TSend* > Track::get_post_sends() const
                 sends.append(postSend);
         }
         return sends;
+}
+
+QList<TSend* > Track::get_pre_sends() const
+{
+        QList<TSend*> sends;
+
+        apill_foreach(TSend* preSend, TSend, m_preSends) {
+                sends.append(preSend);
+        }
+        return sends;
+}
+
+TSend* Track::get_send(qint64 sendId)
+{
+        apill_foreach(TSend* postSend, TSend, m_postSends) {
+                if (postSend->get_id() == sendId) {
+                        return postSend;
+                }
+        }
+        apill_foreach(TSend* preSend, TSend, m_preSends) {
+                if (preSend->get_id() == sendId) {
+                        return preSend;
+                }
+        }
+
+        return 0;
 }

@@ -62,7 +62,9 @@ public:
 
         void add_input_bus(const QString& name);
         void add_post_send(qint64 busId);
+        void add_pre_send(qint64 busId);
         void remove_post_sends(QList<qint64> sendIds);
+        void remove_pre_sends(QList<qint64> sendIds);
         void add_input_bus(qint64 busId);
 
 
@@ -73,6 +75,8 @@ public:
         QString get_bus_in_name() const {return m_busInName;}
 
         QList<TSend*> get_post_sends() const;
+        QList<TSend*> get_pre_sends() const;
+        TSend* get_send(qint64 sendId);
 
 
 protected:
@@ -84,13 +88,17 @@ protected:
         bool    m_isSolo;
 
         APILinkedList   m_postSends;
+        APILinkedList   m_preSends;
 
         AudioBus*       m_inputBus;
         QString         m_busInName;
 
         void process_post_sends(nframes_t nframes);
-        void process_pre_fader_sends(nframes_t nframes);
+        void process_pre_sends(nframes_t nframes);
         virtual void add_input_bus(AudioBus* bus);
+
+private:
+        void process_send(TSend* send, nframes_t nframes);
 
 public slots:
         Command* solo();
@@ -98,7 +106,9 @@ public slots:
 private slots:
         void audiodevice_params_changed();
         void private_add_post_send(TSend*);
+        void private_add_pre_send(TSend *);
         void private_remove_post_send(TSend*);
+        void private_remove_pre_send(TSend*);
         void private_add_input_bus(AudioBus*);
         void rescan_buses();
 

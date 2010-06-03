@@ -101,7 +101,7 @@ int SubGroup::process(nframes_t nframes)
                 return 0;
         }
 
-        process_pre_fader_sends(nframes);
+        process_pre_sends(nframes);
 
         m_pluginChain->process_pre_fader(m_processBus, nframes);
 

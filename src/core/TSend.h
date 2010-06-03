@@ -38,7 +38,11 @@ public:
 
         QDomNode get_state( QDomDocument doc);
         int set_state( const QDomNode& node );
-        QString get_from_name() const ;
+
+        void set_type(int type) {m_type = type;}
+        void set_gain(float gain);
+        void set_pan(float pan);
+
 
         enum {
                 POSTSEND = 1,
@@ -47,9 +51,13 @@ public:
 
         AudioBus* get_bus() const {return m_bus;}
         QString get_name() const;
+        QString get_from_name() const ;
         qint64 get_id() const {return m_id;}
         qint64 get_bus_id() const;
         int get_type() const {return m_type;}
+        float get_pan() const {return m_pan;}
+        float get_gain() const {return m_gain;}
+
 
         bool is_smaller_then(APILinkedListNode* node) {return true;}
 
@@ -58,6 +66,10 @@ private:
         Track*          m_track;
         qint64          m_id;
         int             m_type;
+        float           m_gain;
+        float           m_pan;
+
+        void init();
 };
 
 #endif // TSEND_H
