@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>970</width>
-    <height>437</height>
+    <width>936</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,16 +33,74 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="nameLineEdit"/>
+         <widget class="QLineEdit" name="nameLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>Pan</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="trackPanSlider">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimum">
+           <number>-64</number>
+          </property>
+          <property name="maximum">
+           <number>64</number>
+          </property>
+          <property name="pageStep">
+           <number>5</number>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="sliderPosition">
+           <number>0</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="panLabel">
+          <property name="text">
+           <string>0.00</string>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer_5">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>120</width>
             <height>20</height>
            </size>
           </property>
@@ -54,73 +112,16 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Preferred</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>250</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QSlider" name="trackPanSlider">
-       <property name="sliderPosition">
-        <number>50</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="panLabel">
-       <property name="text">
-        <string>dB</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Preferred</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>120</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
       <number>4</number>
      </property>
      <item>
-      <widget class="QFrame" name="frame">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Inputs</string>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Inputs</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QPushButton" name="routingInputButton">
           <property name="minimumSize">
@@ -138,7 +139,7 @@
          <widget class="QListWidget" name="routingInputListWidget">
           <property name="minimumSize">
            <size>
-            <width>170</width>
+            <width>140</width>
             <height>0</height>
            </size>
           </property>
@@ -170,17 +171,13 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="frame_2">
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>Pre Sends</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Pre Sends</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="routingOutputButton_2">
+         <widget class="QPushButton" name="preSendsButton">
           <property name="minimumSize">
            <size>
             <width>120</width>
@@ -193,10 +190,10 @@
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="routingOutputListWidget_2">
+         <widget class="QListWidget" name="preSendsListWidget">
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>140</width>
             <height>0</height>
            </size>
           </property>
@@ -212,35 +209,122 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_17">
-          <property name="text">
-           <string>Gain</string>
+         <widget class="QGroupBox" name="preSendsGainPanGroupBox">
+          <property name="title">
+           <string/>
           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <item>
+              <widget class="QLabel" name="label_17">
+               <property name="text">
+                <string>Gain</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="preSendGainLabel">
+               <property name="text">
+                <string>0 dB</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QSlider" name="preSendsGainSlider">
+             <property name="minimum">
+              <number>-600</number>
+             </property>
+             <property name="maximum">
+              <number>60</number>
+             </property>
+             <property name="singleStep">
+              <number>5</number>
+             </property>
+             <property name="pageStep">
+              <number>20</number>
+             </property>
+             <property name="sliderPosition">
+              <number>0</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::NoTicks</enum>
+             </property>
+             <property name="tickInterval">
+              <number>6</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>Pan</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="preSendPanLabel">
+               <property name="text">
+                <string>0.00</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QSlider" name="preSendsPanSlider">
+             <property name="minimum">
+              <number>-64</number>
+             </property>
+             <property name="maximum">
+              <number>64</number>
+             </property>
+             <property name="pageStep">
+              <number>5</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="horizontalSlider">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_18">
-          <property name="text">
-           <string>Pan</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="routingOutputRemoveButton_2">
+         <widget class="QPushButton" name="preSendsRemoveButton">
           <property name="minimumSize">
            <size>
             <width>120</width>
@@ -256,21 +340,17 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="pluginsFrame_2">
+      <widget class="QGroupBox" name="pluginsGroupBox_2">
        <property name="maximumSize">
         <size>
-         <width>170</width>
+         <width>250</width>
          <height>16777215</height>
         </size>
        </property>
+       <property name="title">
+        <string>Pre Fader Plugins</string>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_11">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Pre Fader Plugins</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
@@ -336,13 +416,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>140</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>170</width>
+            <width>250</width>
             <height>16777215</height>
            </size>
           </property>
@@ -407,33 +487,46 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="frame">
+      <widget class="QGroupBox" name="gainGroupBox">
+       <property name="minimumSize">
+        <size>
+         <width>75</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Gain</string>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="label_15">
-          <property name="text">
-           <string>Pan</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_16">
-          <property name="text">
-           <string>Gain</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QLabel" name="gainLabel">
           <property name="text">
-           <string>dB</string>
+           <string>0 dB</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="verticalSlider">
+         <widget class="QSlider" name="trackGainSlider">
+          <property name="minimum">
+           <number>-600</number>
+          </property>
+          <property name="maximum">
+           <number>60</number>
+          </property>
+          <property name="singleStep">
+           <number>5</number>
+          </property>
+          <property name="pageStep">
+           <number>20</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksBelow</enum>
+          </property>
+          <property name="tickInterval">
+           <number>60</number>
           </property>
          </widget>
         </item>
@@ -441,21 +534,17 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="pluginsFrame">
+      <widget class="QGroupBox" name="pluginsGroupBox">
        <property name="maximumSize">
         <size>
-         <width>170</width>
+         <width>250</width>
          <height>16777215</height>
         </size>
        </property>
+       <property name="title">
+        <string>Post Fader Plugins</string>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Post Fader Plugins</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
@@ -521,13 +610,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>150</width>
+            <width>140</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>170</width>
+            <width>250</width>
             <height>16777215</height>
            </size>
           </property>
@@ -592,15 +681,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QFrame" name="frame">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Outputs</string>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QLabel" name="label_5">
-          <property name="text">
-           <string>Outputs</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="QPushButton" name="routingOutputButton">
           <property name="minimumSize">
@@ -618,7 +703,7 @@
          <widget class="QListWidget" name="routingOutputListWidget">
           <property name="minimumSize">
            <size>
-            <width>170</width>
+            <width>140</width>
             <height>0</height>
            </size>
           </property>
@@ -634,31 +719,121 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_20">
-          <property name="text">
-           <string>Gain</string>
+         <widget class="QGroupBox" name="postSendsGainPanGroupBox">
+          <property name="title">
+           <string/>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider_4">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_19">
-          <property name="text">
-           <string>Pan</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_12">
+             <item>
+              <widget class="QLabel" name="label_21">
+               <property name="text">
+                <string>Gain</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="postSendGainLabel">
+               <property name="text">
+                <string>0 dB</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QSlider" name="postSendsGainSlider">
+             <property name="minimum">
+              <number>-600</number>
+             </property>
+             <property name="maximum">
+              <number>60</number>
+             </property>
+             <property name="singleStep">
+              <number>5</number>
+             </property>
+             <property name="pageStep">
+              <number>20</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="sliderPosition">
+              <number>0</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="tickPosition">
+              <enum>QSlider::NoTicks</enum>
+             </property>
+             <property name="tickInterval">
+              <number>6</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QLabel" name="label_22">
+               <property name="text">
+                <string>Pan</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_7">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="postSendPanLabel">
+               <property name="text">
+                <string>0.00</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QSlider" name="postSendsPanSlider">
+             <property name="minimum">
+              <number>-64</number>
+             </property>
+             <property name="maximum">
+              <number>64</number>
+             </property>
+             <property name="pageStep">
+              <number>5</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>

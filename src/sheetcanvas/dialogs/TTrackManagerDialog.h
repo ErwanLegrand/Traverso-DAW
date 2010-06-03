@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDialog>
 
 class Track;
+class TSend;
 class QMenu;
 
 class TTrackManagerDialog : public QDialog, protected Ui::TTrackManagerDialog
@@ -41,9 +42,14 @@ private:
         Track*  m_track;
         QMenu*  m_routingInputMenu;
         QMenu*  m_routingOutputMenu;
+        QMenu*  m_preSendsMenu;
+        TSend*  m_selectedPreSend;
+        TSend*  m_selectedPostSend;
 
         void create_routing_input_menu();
         void create_routing_output_menu();
+        void create_pre_sends_menu();
+        QMenu* create_sends_menu();
 
 
 private slots:
@@ -55,8 +61,20 @@ private slots:
 
         void routingInputMenuActionTriggered(QAction* action);
         void routingOutputMenuActionTriggered(QAction* action);
+        void preSendsMenuActionTriggered(QAction* action);
 
         void on_routingOutputRemoveButton_clicked();
+        void on_preSendsRemoveButton_clicked();
+
+        void pre_sends_selection_changed();
+        void post_sends_selection_changed();
+        void track_gain_value_changed(int value);
+        void track_pan_value_changed(int value);
+        void pre_sends_gain_value_changed(int value);
+        void pre_sends_pan_value_changed(int value);
+        void post_sends_gain_value_changed(int value);
+        void post_sends_pan_value_changed(int value);
+
 };
 
 #endif
