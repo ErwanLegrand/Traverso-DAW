@@ -107,7 +107,7 @@ public:
 	SnapList* get_snap_list() const;
 	TimeLine* get_timeline() const {return m_timeline;}
         Snappable* get_work_snap() {return m_workSnap;}
-        Track* get_track(qint64 id);
+        Track* get_track(qint64 id) const;
         AudioTrack* get_audio_track_for_index(int index);
         SubGroup* get_subgroup(const QString& name);
         QString get_audio_sources_dir() const;

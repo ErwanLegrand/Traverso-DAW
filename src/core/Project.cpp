@@ -728,6 +728,33 @@ QList<TSend*> Project::get_inputs_for_subgroup(SubGroup *sub) const
         return inputs;
 }
 
+QList<Track*> Project::get_tracks() const
+{
+        QList<Track*> tracks;
+        foreach(Sheet* sheet, m_sheets) {
+                tracks.append(sheet->get_tracks());
+                tracks.append(sheet->get_master_out());
+        }
+        return tracks;
+}
+
+Track* Project::get_track(qint64 id) const
+{
+        QList<Track*> tracks = get_tracks();
+        foreach(Track* track, tracks) {
+                if (track->get_id() == id) {
+                        return track;
+                }
+        }
+        return 0;
+}
+
+
+void Project::track_routing_changed()
+{
+        emit trackRoutingChanged();
+}
+
 /**
  * Get the names of all the Capture Buses availble, use the names to get a Bus instance
  * via get_capture_bus()

@@ -112,8 +112,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain()));
         connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
 
-        connect(m_track, SIGNAL(routingConfigurationChanged()), m_inBus, SLOT(bus_changed()));
-        connect(m_track, SIGNAL(routingConfigurationChanged()), m_outBus, SLOT(bus_changed()));
+        connect(pm().get_project(), SIGNAL(trackRoutingChanged()), m_inBus, SLOT(bus_changed()));
+        connect(pm().get_project(), SIGNAL(trackRoutingChanged()), m_outBus, SLOT(bus_changed()));
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
         connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
@@ -603,7 +603,7 @@ TrackPanelBus::TrackPanelBus(TrackPanelView *view, Track *track, int busType)
         , m_type(busType)
 {
 	bus_changed();
-        m_boundingRect.setWidth(84);
+        m_boundingRect = QRectF(0, 0, 84, 16);
 }
 
 void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -664,7 +664,6 @@ void TrackPanelBus::bus_changed()
                         stringwidth = maxbuswidth;
                 }
                 m_pix = find_pixmap(":/bus_in");
-		m_boundingRect = m_pix.rect();
 	} else {
                 QList<TSend*> sends  = m_track->get_post_sends();
                 if (sends.size() == 0) {
@@ -680,10 +679,7 @@ void TrackPanelBus::bus_changed()
                         stringwidth = maxbuswidth;
                 }
                 m_pix = find_pixmap(":/bus_out");
-		m_boundingRect = m_pix.rect();
 	}
-	
-	m_boundingRect.setHeight(m_boundingRect.height() + 6);
 	
 	update();
 }

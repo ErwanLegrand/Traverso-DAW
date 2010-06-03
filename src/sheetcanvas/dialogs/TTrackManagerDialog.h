@@ -65,6 +65,7 @@ private slots:
 
         void on_routingOutputRemoveButton_clicked();
         void on_preSendsRemoveButton_clicked();
+        void on_routingInputRemoveButton_clicked();
 
         void pre_sends_selection_changed();
         void post_sends_selection_changed();

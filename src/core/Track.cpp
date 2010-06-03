@@ -49,6 +49,7 @@ Track::Track(Sheet *sheet)
 
         connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
         connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_buses()), Qt::DirectConnection);
+        connect(this, SIGNAL(routingConfigurationChanged()), pm().get_project(), SLOT(track_routing_changed()));
 }
 
 Track::~Track()
@@ -245,7 +246,7 @@ void Track::add_post_send(qint64 busId)
 {
         apill_foreach(TSend* send, TSend, m_postSends) {
                 if (send->get_bus_id() == busId) {
-                        printf("Track %s already has this bus (bus id: %lld) as post send\n", m_name.toAscii().data(), busId);
+                        printf("Track %s already has this bus (bus id: %lld) as Post Send\n", m_name.toAscii().data(), busId);
                         return;
                 }
         }
@@ -274,7 +275,7 @@ void Track::add_pre_send(qint64 busId)
 {
         apill_foreach(TSend* send, TSend, m_preSends) {
                 if (send->get_bus_id() == busId) {
-                        printf("Track %s already has this bus (bus id: %lld) as post send\n", m_name.toAscii().data(), busId);
+                        printf("Track %s already has this bus (bus id: %lld) as Pre Send\n", m_name.toAscii().data(), busId);
                         return;
                 }
         }

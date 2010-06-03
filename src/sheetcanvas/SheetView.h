@@ -154,7 +154,8 @@ private:
 	TimeLineViewPort*	m_tlvp;
         QList<TrackView*>	m_audioTrackViews;
         QList<TrackView*>	m_subGroupViews;
-        TrackView*              m_masterOutView;
+        TrackView*              m_sheetMasterOutView;
+        TrackView*              m_projectMasterOutView;
         WorkCursor*		m_workCursor;
 	int			m_shuttleXfactor;
 	int			m_shuttleYfactor;

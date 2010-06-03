@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class AudioBus;
 class Sheet;
+class Track;
 class ResourcesManager;
 struct ExportSpecification;
 class ExportThread;
@@ -60,7 +61,9 @@ public :
         QStringList get_playback_buses_names( ) const;
         QStringList get_capture_buses_names( ) const;
 
-        QList<AudioBus*> get_playback_buses() const {return m_hardwareBuses;}
+        QList<AudioBus*> get_hardware_buses() const {return m_hardwareBuses;}
+        QList<Track*> get_tracks() const;
+        Track* get_track(qint64 trackId) const;
 
 
 	// Get functions
@@ -142,6 +145,7 @@ public :
 
 
 public slots:
+        void track_routing_changed();
 	Command* select();
 
 private:
@@ -212,6 +216,7 @@ signals:
 	void exportStartedForSheet(Sheet* );
 	void projectLoadFinished();
         void exportMessage(QString);
+        void trackRoutingChanged();
 };
 
 #endif

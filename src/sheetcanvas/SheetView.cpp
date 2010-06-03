@@ -89,7 +89,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
 	m_playCursor = new PlayHead(this, m_sheet, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_sheet);
-        m_masterOutView = new SubGroupView(this, m_sheet->get_master_out());
+        m_sheetMasterOutView = new SubGroupView(this, m_sheet->get_master_out());
+        m_projectMasterOutView = new SubGroupView(this, pm().get_project()->get_master_out());
 	
 	connect(m_sheet, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
 	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
@@ -149,8 +150,6 @@ SheetView::SheetView(SheetWidget* sheetwidget,
         foreach(Track* track, m_sheet->get_tracks()) {
                 add_new_track_view(track);
         }
-
-        add_new_track_view(pm().get_project()->get_master_out());
 
         // this will call layout_tracks() for us too
         // which will continue now, due m_viewportReady is true now
@@ -1344,6 +1343,7 @@ QList<TrackView*> SheetView::get_track_views() const
         QList<TrackView*> views;
         views.append(m_audioTrackViews);
         views.append(m_subGroupViews);
-        views.append(m_masterOutView);
+        views.append(m_sheetMasterOutView);
+        views.append(m_projectMasterOutView);
         return views;
 }

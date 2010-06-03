@@ -1069,7 +1069,7 @@ void Sheet::private_remove_track(Track* track)
         }
 }
 
-Track* Sheet::get_track(qint64 id)
+Track* Sheet::get_track(qint64 id) const
 {
         QList<Track*> tracks = get_tracks();
         tracks.append(m_masterOut);

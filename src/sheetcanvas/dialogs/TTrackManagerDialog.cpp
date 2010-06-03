@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TTrackManagerDialog.h"
 
 #include "AudioBus.h"
+#include "AudioTrack.h"
 #include "Track.h"
 #include "ProjectManager.h"
 #include "Project.h"
@@ -73,9 +74,10 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
                 trackLabel->setText(tr("Master Bus:"));
         }
 
-        connect(m_track, SIGNAL(routingConfigurationChanged()), this, SLOT(update_routing_input_output_widget_view()));
         connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan_indicator()));
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain_indicator()));
+
+        connect(pm().get_project(), SIGNAL(trackRoutingChanged()), this, SLOT(update_routing_input_output_widget_view()));
 
         connect(preSendsListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(pre_sends_selection_changed()));
         connect(routingOutputListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(post_sends_selection_changed()));
@@ -95,9 +97,33 @@ void TTrackManagerDialog::create_routing_input_menu()
 
         m_routingInputMenu = new QMenu;
 
-        if (m_track->get_type() != Track::SUBGROUP) {
-                foreach(QString busName, pm().get_project()->get_capture_buses_names()) {
-                        m_routingInputMenu->addAction(busName);
+        if (m_track->get_type() == Track::AUDIOTRACK) {
+                foreach(AudioBus* bus, pm().get_project()->get_hardware_buses()) {
+                        if (bus->is_input()) {
+                                QAction* action = m_routingInputMenu->addAction(bus->get_name());
+                                action->setData(bus->get_id());
+                        }
+                }
+        }
+
+        if (m_track->get_type() == Track::SUBGROUP) {
+                QList<Track*> tracks;
+                Project* project = pm().get_project();
+                if (m_track == project->get_master_out()) {
+                        tracks = project->get_tracks();
+                } else {
+                        foreach(AudioTrack* at, m_track->get_sheet()->get_audio_tracks()) {
+                                tracks.append(at);
+                        }
+                        if (m_track == m_track->get_sheet()->get_master_out()) {
+                                foreach(SubGroup* sg, m_track->get_sheet()->get_subgroups()) {
+                                        tracks.append(sg);
+                                }
+                        }
+                }
+                foreach(Track* track, tracks) {
+                        QAction* action = m_routingInputMenu->addAction(track->get_name());
+                        action->setData(track->get_id());
                 }
         }
 
@@ -169,7 +195,7 @@ QMenu* TTrackManagerDialog::create_sends_menu()
 
         menu->addSeparator();
 
-        foreach(AudioBus* bus, pm().get_project()->get_playback_buses()) {
+        foreach(AudioBus* bus, pm().get_project()->get_hardware_buses()) {
                 if (bus->is_output()) {
                         action = menu->addAction(bus->get_name());
                         action->setData(bus->get_id());
@@ -194,8 +220,24 @@ void TTrackManagerDialog::reject()
 void TTrackManagerDialog::routingInputMenuActionTriggered(QAction *action)
 {
         Project* project = pm().get_project();
-        if (action && project) {
+        if (!project) {
+                return;
+        }
+
+        if (!action) {
+                return;
+        }
+
+        if (m_track->get_type() == Track::AUDIOTRACK) {
                 m_track->add_input_bus(action->data().toLongLong());
+        }
+
+        if (m_track->get_type() == Track::SUBGROUP) {
+                qint64 senderId = action->data().toLongLong();
+                Track* sender = project->get_track(senderId);
+                if (sender) {
+                        sender->add_post_send(m_track->get_id());
+                }
         }
 }
 
@@ -255,16 +297,29 @@ void TTrackManagerDialog::update_routing_input_output_widget_view()
         }
 }
 
-void TTrackManagerDialog::on_routingOutputRemoveButton_clicked()
+void TTrackManagerDialog::on_routingInputRemoveButton_clicked()
 {
-        QList<QListWidgetItem*> selectedItems = routingOutputListWidget->selectedItems();
-        QList<qint64> toBeRemoved;
+        QList<QListWidgetItem*> selectedItems = routingInputListWidget->selectedItems();
         foreach(QListWidgetItem* item, selectedItems) {
                 qint64 id = item->data(Qt::UserRole).toLongLong();
+                QList<qint64> toBeRemoved;
                 toBeRemoved.append(id);
+                QList<Track*> tracks = pm().get_project()->get_tracks();
+                foreach(Track* track, tracks) {
+                        QList<TSend*> preSends = track->get_pre_sends();
+                        foreach(TSend* send, preSends) {
+                                if (send->get_id() == id) {
+                                        track->remove_pre_sends(toBeRemoved);
+                                }
+                        }
+                        QList<TSend*> postSends = track->get_post_sends();
+                        foreach(TSend* send, postSends) {
+                                if (send->get_id() == id) {
+                                        track->remove_post_sends(toBeRemoved);
+                                }
+                        }
+                }
         }
-
-        m_track->remove_post_sends(toBeRemoved);
 }
 
 void TTrackManagerDialog::on_preSendsRemoveButton_clicked()
@@ -277,6 +332,18 @@ void TTrackManagerDialog::on_preSendsRemoveButton_clicked()
         }
 
         m_track->remove_pre_sends(toBeRemoved);
+}
+
+void TTrackManagerDialog::on_routingOutputRemoveButton_clicked()
+{
+        QList<QListWidgetItem*> selectedItems = routingOutputListWidget->selectedItems();
+        QList<qint64> toBeRemoved;
+        foreach(QListWidgetItem* item, selectedItems) {
+                qint64 id = item->data(Qt::UserRole).toLongLong();
+                toBeRemoved.append(id);
+        }
+
+        m_track->remove_post_sends(toBeRemoved);
 }
 
 
