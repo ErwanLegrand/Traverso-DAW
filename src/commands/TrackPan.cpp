@@ -115,6 +115,14 @@ int TrackPan::jog()
         float w = 600.0;
         float ofx = (float) d->origX - cpointer().x();
         float p = -2.0f *  (ofx) / w ;
+
+        if (p > 0.0f && p < 0.01) {
+                p = 0.01;
+        }
+        if (p < 0.0f && p > -0.01) {
+                p = -0.01;
+        }
+
 	m_newPan = p + m_newPan;
 	
 	if (m_newPan < -1.0) 
