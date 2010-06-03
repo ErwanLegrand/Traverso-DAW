@@ -231,6 +231,7 @@ void TrackPanelView::layout_panel_items()
         m_gainView->setPos(GAIN_X_POS, GAIN_Y_POS + adjust);
         m_panView->setPos(PAN_X_POS, PAN_Y_POS + adjust);
 
+        m_inBus->setPos(4, 73);
         m_outBus->setPos(96, 73);
 
         m_soloLed->setPos(SOLO_X_POS, LED_Y_POS);
@@ -238,8 +239,10 @@ void TrackPanelView::layout_panel_items()
 
         if ((m_outBus->pos().y() + m_outBus->boundingRect().height()) >= height) {
                 m_outBus->hide();
+                m_inBus->hide();
         } else {
                 m_outBus->show();
+                m_inBus->show();
         }
 
         if ( (m_panView->pos().y() + m_panView->boundingRect().height()) >= height) {
@@ -306,17 +309,7 @@ void AudioTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsIte
 void AudioTrackPanelView::layout_panel_items()
 {
         TrackPanelView::layout_panel_items();
-
-        int height =  m_track->get_height();
-
         m_recLed->setPos(REC_X_POS, LED_Y_POS);
-        m_inBus->setPos(6, 73);
-
-        if ((m_inBus->pos().y() + m_inBus->boundingRect().height()) >= height) {
-                m_inBus->hide();
-        } else {
-                m_inBus->show();
-        }
 }
 
 
@@ -325,7 +318,6 @@ SubGroupPanelView::SubGroupPanelView(SubGroupView* view)
 {
         PENTERCONS;
 
-        m_inBus->hide();
         m_panView->hide();
         m_muteLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
         m_soloLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
@@ -611,6 +603,7 @@ TrackPanelBus::TrackPanelBus(TrackPanelView *view, Track *track, int busType)
         , m_type(busType)
 {
 	bus_changed();
+        m_boundingRect.setWidth(84);
 }
 
 void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
@@ -652,22 +645,34 @@ void TrackPanelBus::bus_changed()
         int maxbuswidth = 70;
 	
 	if (m_type == BUSIN) {
-                m_busName =  m_track-> get_bus_in_name();
+                if (m_track->get_type() == Track::SUBGROUP) {
+                        QList<TSend*> sends  = pm().get_project()->get_inputs_for_subgroup(qobject_cast<SubGroup*>(m_track));
+                        if (sends.size() == 0) {
+                                m_busName = "No Input";
+                        } else if (sends.size() == 1) {
+                                m_busName = sends.first()->get_from_name();
+                        } else {
+                                m_busName = "Multi" + QString(" (%1)").arg(sends.size());
+                        }
+
+                } else {
+                        m_busName =  m_track-> get_bus_in_name();
+                }
+
                 int stringwidth = fm.width(m_busName) + 10;
                 if (stringwidth > maxbuswidth) {
                         stringwidth = maxbuswidth;
                 }
                 m_pix = find_pixmap(":/bus_in");
 		m_boundingRect = m_pix.rect();
-                m_boundingRect.setWidth(m_pix.rect().width() + stringwidth);
 	} else {
                 QList<TSend*> sends  = m_track->get_post_sends();
                 if (sends.size() == 0) {
-                        m_busName = "No Outputs!";
+                        m_busName = "No Outputs";
                 } else if (sends.size() == 1) {
                         m_busName = sends.first()->get_name();
                 } else {
-                        m_busName = "Multiple";
+                        m_busName = "Multi" + QString(" (%1)").arg(sends.size());
                 }
 
                 int stringwidth = fm.width(m_busName) + 10;
@@ -676,7 +681,6 @@ void TrackPanelBus::bus_changed()
                 }
                 m_pix = find_pixmap(":/bus_out");
 		m_boundingRect = m_pix.rect();
-                m_boundingRect.setWidth(m_pix.rect().width() + stringwidth);
 	}
 	
 	m_boundingRect.setHeight(m_boundingRect.height() + 6);
