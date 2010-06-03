@@ -57,8 +57,6 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
 
         nameLineEdit->setText(m_track->get_name());
 
-        resize(400, 350);
-
         if (m_track->get_type() == Track::AUDIOTRACK) {
                 trackLabel->setText(tr("Audio Track:"));
                 routingInputButton->setText("Set Input");

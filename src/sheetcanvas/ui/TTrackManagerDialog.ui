@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>936</width>
+    <width>965</width>
     <height>378</height>
    </rect>
   </property>
@@ -51,7 +51,10 @@
         <item>
          <widget class="QLabel" name="label_15">
           <property name="text">
-           <string>Pan</string>
+           <string>&amp;1 Pan</string>
+          </property>
+          <property name="buddy">
+           <cstring>trackPanSlider</cstring>
           </property>
          </widget>
         </item>
@@ -119,7 +122,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
-        <string>Inputs</string>
+        <string>&amp;3 Inputs</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
@@ -173,7 +176,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="title">
-        <string>Pre Sends</string>
+        <string>&amp;4 Pre Sends</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
@@ -348,7 +351,7 @@
         </size>
        </property>
        <property name="title">
-        <string>Pre Fader Plugins</string>
+        <string>&amp;5 Pre Fader Plugins</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_11">
         <item>
@@ -495,7 +498,7 @@
         </size>
        </property>
        <property name="title">
-        <string>Gain</string>
+        <string>&amp;2 Gain</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
@@ -542,7 +545,7 @@
         </size>
        </property>
        <property name="title">
-        <string>Post Fader Plugins</string>
+        <string>&amp;6 Post Fader Plugins</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_10">
         <item>
@@ -683,7 +686,7 @@
      <item>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
-        <string>Outputs</string>
+        <string>&amp;7 Outputs</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
