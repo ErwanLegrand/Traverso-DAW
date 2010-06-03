@@ -706,6 +706,28 @@ qint64 Project::get_bus_id_for(const QString &busName)
         return 0;
 }
 
+QList<TSend*> Project::get_inputs_for_subgroup(SubGroup *sub) const
+{
+        QList<TSend*> inputs;
+
+        QList<Track*> tracks;
+        foreach(Sheet* sheet, m_sheets) {
+                tracks.append(sheet->get_tracks());
+                tracks.append(sheet->get_master_out());
+        }
+
+        foreach(Track* track, tracks) {
+                QList<TSend*> sends = track->get_post_sends();
+                foreach(TSend* send, sends) {
+                        if (send->get_bus_id() == sub->get_id()) {
+                                inputs.append(send);
+                        }
+                }
+        }
+
+        return inputs;
+}
+
 /**
  * Get the names of all the Capture Buses availble, use the names to get a Bus instance
  * via get_capture_bus()

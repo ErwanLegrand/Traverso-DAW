@@ -37,6 +37,7 @@ struct ExportSpecification;
 class ExportThread;
 class AudioDeviceClient;
 class SubGroup;
+class TSend;
 
 class Project : public ContextItem
 {
@@ -54,6 +55,7 @@ public :
 
         AudioBus* get_bus(qint64 id);
         qint64 get_bus_id_for(const QString& busName);
+        QList<TSend*> get_inputs_for_subgroup(SubGroup* sub) const;
 
         QStringList get_playback_buses_names( ) const;
         QStringList get_capture_buses_names( ) const;
