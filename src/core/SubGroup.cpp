@@ -36,12 +36,14 @@ SubGroup::SubGroup(Sheet* sheet, const QString& name, int channelCount)
         m_fader->set_gain(1.0);
 
         create_process_bus();
+
+        m_processBus->set_id(m_id);
+        m_processBus->set_name(m_name);
 }
 
 SubGroup::SubGroup(Sheet *sheet, QDomNode /*node*/)
         : Track(sheet)
 {
-        create_process_bus();
 }
 
 SubGroup::~SubGroup()
@@ -69,7 +71,10 @@ int SubGroup::set_state( const QDomNode & node )
         m_channelCount = e.attribute("channelcount", "2").toInt(&ok);
 
 
+        create_process_bus();
+
         m_processBus->set_id(m_id);
+        m_processBus->set_name(m_name);
 
         return 1;
 }
