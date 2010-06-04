@@ -58,6 +58,14 @@ AudioBus::AudioBus(const BusConfig& config)
                 m_type = ChannelIsOutput;
         }
 
+        if (config.bustype == "hardware") {
+                m_busType = BusIsHardware;
+        } else if (config.bustype == "software") {
+                m_busType = BusIsSoftware;
+        } else {
+                Q_ASSERT("bustype != hardware or software");
+        }
+
         m_id = config.id;
 
         // id was never created if it == -1, so create a unique one now!
@@ -96,6 +104,45 @@ void AudioBus::add_channel(AudioChannel* chan)
         m_channelCount++;
 }
 
+void AudioBus::add_channel(const QString &channel)
+{
+        m_channelNames.append(channel);
+}
+
+QStringList AudioBus::get_channel_names() const
+{
+        if (m_busType == BusIsHardware) {
+                return m_channelNames;
+        }
+
+        QStringList list;
+        foreach(AudioChannel* channel, m_channels) {
+                list.append(channel->get_name());
+        }
+
+        return list;
+}
+void AudioBus::audiodevice_params_changed()
+{
+        m_channels.clear();
+        m_channelCount = 0;
+
+        AudioChannel* channel;
+
+        foreach(QString channelName, m_channelNames) {
+                if (is_input()) {
+                        channel = audiodevice().get_capture_channel_by_name(channelName);
+                } else {
+                        channel = audiodevice().get_playback_channel_by_name(channelName);
+                }
+
+                if (channel) {
+                        add_channel(channel);
+                } else {
+                        printf("channel not found %s\n", channelName.toAscii().data());
+                }
+        }
+}
 
 /**
  * If set to true, all the data going through the AudioChannels in this AudioBus

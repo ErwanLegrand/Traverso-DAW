@@ -55,7 +55,7 @@ void AudioIODialog::accept()
         QList<ChannelConfig> channelConfigs  = m_inputPage->getChannelConfig();
         channelConfigs.append(m_outputPage->getChannelConfig());
 
-        audiodevice().set_channel_config(channelConfigs);
+//        audiodevice().set_channel_config(channelConfigs);
 
         QList<BusConfig> busConfigs = m_inputPage->getBusConfig();
         busConfigs.append(m_outputPage->getBusConfig());

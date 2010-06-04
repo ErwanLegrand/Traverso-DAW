@@ -97,7 +97,7 @@ int Import::prepare_actions()
 		QString activeFilter = tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)");
 		m_fileName = QFileDialog::getOpenFileName(0,
 				tr("Import audio source"),
-				pm().get_project()->get_import_dir(),
+                                pm().get_project()->get_import_dir(),
 				allFiles + ";;" + activeFilter,
 				&activeFilter);
 		

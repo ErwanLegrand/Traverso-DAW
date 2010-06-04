@@ -41,7 +41,10 @@ public:
 
 
 	void add_channel(AudioChannel* chan);
+        void add_channel(const QString& channel);
+        void audiodevice_params_changed();
         int get_channel_count()	{return m_channelCount;}
+        QStringList get_channel_names() const;
         QString get_name() {return m_name;}
 	
 	AudioChannel* get_channel(int channelNumber);
@@ -60,6 +63,7 @@ public:
         bool is_input() {return m_type == ChannelIsInput;}
         bool is_output() {return m_type == ChannelIsOutput;}
         int get_type() const {return m_type;}
+        int get_bus_type() const {return m_busType;}
         qint64 get_id() const {return m_id;}
         void set_id(qint64 id) {m_id = id;}
         void set_name(const QString& name) {m_name = name;}
@@ -91,12 +95,14 @@ public:
 
 private:
         QList<AudioChannel* >	m_channels;
+        QStringList             m_channelNames;
 	QString			m_name;
 	
         bool			m_isMonitoring;
         bool                    m_isInternalBus;
         int 			m_channelCount;
         int                     m_type;
+        int                     m_busType;
         qint64                  m_id;
 
 signals:

@@ -273,6 +273,11 @@ enum ChannelFlags {
         ChannelIsOutput = 2
 };
 
+enum AudioBusFlags {
+        BusIsHardware = 1,
+        BusIsSoftware = 2
+};
+
 typedef struct {
         QString name;
         QString type;
@@ -284,16 +289,19 @@ struct BusConfig {
                 id = -1;
                 channelcount = 0;
                 isInternalBus = false;
+                bustype = "software";
         }
 
         QString name;
         QStringList channelNames;
         QString type;
+        QString bustype;
         int channelcount;
         bool isInternalBus;
         qint64 id;
 };
 
+class AudioChannel;
 struct AudioDeviceSetup {
         AudioDeviceSetup() {
                 rate = 44100;
@@ -306,6 +314,7 @@ struct AudioDeviceSetup {
 
         QList<BusConfig>        busConfigs;
         QList<ChannelConfig>    channelConfigs;
+        QList<AudioChannel*>    jackChannels;
         int             rate;
         nframes_t       bufferSize;
         QString         driverType;

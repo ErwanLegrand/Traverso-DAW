@@ -72,16 +72,16 @@ public:
 
         void delete_channel(AudioChannel* channel);
 
-        void set_bus_config(QList<BusConfig> configs);
-        void set_channel_config(QList<ChannelConfig> configs);
         void set_master_out_bus(AudioBus* bus);
         void send_to_master_out(AudioChannel* channel, nframes_t nframes);
 
 	QStringList get_capture_channel_names() const;
 	QStringList get_playback_channel_names() const;
 	
-        QList<BusConfig> get_bus_configuration();
-        QList<ChannelConfig> get_channel_configuration();
+        QList<AudioChannel*> get_channels() const;
+        QList<AudioChannel*> get_playback_channels() const;
+        QList<AudioChannel*> get_capture_channels() const;
+        int add_jack_channel(AudioChannel* channel);
 	
 	QString get_device_name() const;
 	QString get_device_longname() const;
@@ -161,8 +161,6 @@ private:
 	int create_driver(QString driverType, bool capture, bool playback, const QString& cardDevice);
 	int transport_control(transport_state_t state);
 
-//	void setup_default_capture_buses();
-//	void setup_default_playback_buses();
 	void post_process();
 
 	// These are reserved for Driver Objects only!!
@@ -244,7 +242,6 @@ signals:
 private slots:
 	void private_add_client(AudioDeviceClient* client);
 	void private_remove_client(AudioDeviceClient* client);
-        void private_set_bus_config(QList<BusConfig> config);
 	void audiothread_finished();
 	void switch_to_null_driver();
 	void reset_xrun_counter() {m_xrunCount = 0;}

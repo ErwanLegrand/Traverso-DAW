@@ -65,6 +65,9 @@ class AudioChannel : public QObject
         Q_OBJECT
 
 public:
+        AudioChannel(const QString& name, uint channelNumber, int type, qint64 id=0);
+        ~AudioChannel();
+
         audio_sample_t* get_buffer(nframes_t ) {
                 return m_buffer;
 	}
@@ -86,18 +89,15 @@ public:
         uint get_number() const {return m_number;}
         uint get_buffer_size() const {return m_bufferSize;}
         int get_type() const {return m_type;}
+        qint64 get_id() const {return m_id;}
 
 private:
-        AudioChannel(const QString& name, uint channelNumber, int type);
-        ~AudioChannel();
-
-        friend class AudioDevice;
-
         APILinkedList           m_monitors;
         audio_sample_t* 	m_buffer;
         uint 			m_bufferSize;
 	uint 			m_latency;
 	uint 			m_number;
+        qint64                  m_id;
         int                     m_type;
 	bool			mlocked;
         bool			m_monitoring;

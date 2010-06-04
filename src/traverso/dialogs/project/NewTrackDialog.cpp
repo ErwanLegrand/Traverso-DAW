@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QComboBox>
 
 #include "AudioDevice.h"
+#include "AudioBus.h"
 #include "Information.h"
 #include "Project.h"
 #include "ProjectManager.h"
@@ -73,11 +74,13 @@ void NewTrackDialog::create_track()
 		title = "Untitled";
 	}
 	
+        Project* project = pm().get_project();
         Track* track;
+        AudioBus* inputBus = 0;
+        AudioBus* outputBus = 0;
 
         QString driver = audiodevice().get_driver_type();
         if (driver == "Jack") {
-                AudioDeviceSetup setup = audiodevice().get_device_setup();
                 for (int i=0; i<2; i++) {
                         // subgroups don't have input ports, so skip those.
                         if (isSubGroup->isChecked() && i == 1) {
@@ -97,24 +100,23 @@ void NewTrackDialog::create_track()
                                 ChannelConfig channelconfig;
                                 channelconfig.name = i == 0 ? channelname + "_out" : channelname + "_in";
                                 channelconfig.type = i == 0 ? "output" : "input";
-                                setup.channelConfigs.append(channelconfig);
                                 busconfig.channelNames << channelconfig.name;
                         }
 
                         busconfig.channelcount = channelnames.size();
                         busconfig.name = title;
                         busconfig.type =  i == 0 ? "output" : "input";
-                        setup.busConfigs.append(busconfig);
-                }
 
-                audiodevice().set_parameters(setup);
+                        if (i==0) {
+                                outputBus = project->create_software_audio_bus(busconfig);
+                        }
+                        if (i==1) {
+                                inputBus = project->create_software_audio_bus(busconfig);
+                        }
+                }
         }
 
         if (isSubGroup->isChecked()) {
-                // FIXME: when using jack, subgroups and their output bus have identical names
-                // setting that subgroup as output 'bus' for an audiotrack finds the subs output bus,
-                // not the subgroup itself!
-                // Temp fix: force unique subgroup name.
                 if (driver == "Jack") {
                         track = new SubGroup(sheet, title + "-sub", 2);
                 } else {
@@ -126,23 +128,23 @@ void NewTrackDialog::create_track()
         }
 
         if (driver == "Jack") {
-                // subgroups don't have input ports, so skip those.
-                if (!isSubGroup->isChecked()) {
+                // only AudioTracks have external inputs
+                if (track->get_type() == Track::AUDIOTRACK) {
                         track->add_input_bus(title);
                 }
-//                track->add_output_bus(title);
+                track->add_post_send(outputBus->get_id());
         } else {
-                if (!isSubGroup->isChecked()) {
+                // only AudioTracks have external inputs
+                if (track->get_type() == Track::AUDIOTRACK) {
                         track->add_input_bus(inputBuses->currentText());
                 }
-//                track->add_output_bus(outputBuses->currentText());
+                track->add_post_send(outputBus->get_id());
         }
 
         Command* command = sheet->add_track(track);
-		
         command->setText(tr("Added %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
-        Command::process_command(command);
 
+        Command::process_command(command);
 }
 
 void NewTrackDialog::clicked(QAbstractButton *button)

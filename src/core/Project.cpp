@@ -102,6 +102,7 @@ Project::Project(const QString& title)
 
         connect(this, SIGNAL(privateSheetRemoved(Sheet*)), this, SLOT(sheet_removed(Sheet*)));
         connect(this, SIGNAL(privateSheetAdded(Sheet*)), this, SLOT(sheet_added(Sheet*)));
+        connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 }
 
 
@@ -264,6 +265,73 @@ int Project::load(QString projectfile)
 	m_importDir = e.attribute("importdir", QDir::homePath()); 
 
 
+
+        QDomNode channelsConfigNode = docElem.firstChildElement("AudioChannels");
+        QDomNode channelNode = channelsConfigNode.firstChild();
+
+        while (!channelNode.isNull()) {
+                QDomElement e = channelNode.toElement();
+                QString name = e.attribute("name", "");
+                QString typeString = e.attribute("type", "");
+                uint number = e.attribute("number", "0").toInt();
+                qint64 id = e.attribute("id", "0").toLongLong();
+
+                int type;
+                if (typeString == "input") {
+                        type = ChannelIsInput;
+                }
+                if (typeString == "output") {
+                        type = ChannelIsOutput;
+                }
+
+                AudioChannel* chan = new AudioChannel(name, number, type, id);
+
+                m_softwareAudioChannels.insert(chan->get_id(), chan);
+
+                channelNode = channelNode.nextSibling();
+        }
+
+
+        QDomNode busesConfigNode = docElem.firstChildElement("AudioBuses");
+        QDomNode busNode = busesConfigNode.firstChild();
+
+        while (!busNode.isNull()) {
+                BusConfig conf;
+                QDomElement e = busNode.toElement();
+                conf.name = e.attribute("name", "");
+                conf.channelNames = e.attribute("channels", "").split(";");
+                conf.type = e.attribute("type", "");
+                conf.bustype = e.attribute("bustype", "software");
+                conf.id = e.attribute("id", "-1").toLongLong();
+                QStringList channelIds = e.attribute("channelids", "").split(";", QString::SkipEmptyParts);
+
+                AudioBus* bus = new AudioBus(conf);
+                printf("creating new bus %s\n", conf.name.toAscii().data());
+
+                if (bus->get_bus_type() == BusIsSoftware) {
+                        printf("creating software channels\n");
+                        AudioChannel* channel;
+                        foreach(QString idString, channelIds) {
+                                qint64 id = idString.toLongLong();
+                                channel = m_softwareAudioChannels.value(id);
+                                if (channel) {
+                                        bus->add_channel(channel);
+                                }
+                        }
+                        m_softwareAudioBuses.insert(bus->get_id(), bus);
+                }
+                if (bus->get_bus_type() == BusIsHardware) {
+                        printf("preparing for hardware channels\n");
+                        foreach(QString channelName, conf.channelNames) {
+                                bus->add_channel(channelName);
+                        }
+                        m_hardwareAudioBuses.append(bus);
+                }
+
+                busNode = busNode.nextSibling();
+        }
+
+
         prepare_audio_device(doc);
 
         QDomNode masterOutNode = docElem.firstChildElement("MasterOut");
@@ -420,53 +488,46 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	projectNode.appendChild(properties);
 
 
-        QDomElement audioIO = doc.createElement("AudioIO");
-        QDomElement systemConfig = doc.createElement("SystemConfig");
+        QDomElement audioDriverConfigs = doc.createElement("AudioDriverConfigurations");
+        QDomElement audioDriverConfig = doc.createElement("AudioDriverConfiguration");
 
-        systemConfig.setAttribute("device", audiodevice().get_device_setup().cardDevice);
-        systemConfig.setAttribute("driver", audiodevice().get_device_setup().driverType);
-        systemConfig.setAttribute("samplerate", audiodevice().get_sample_rate());
-        systemConfig.setAttribute("buffersize", audiodevice().get_buffer_size());
-        audioIO.appendChild(systemConfig);
+        audioDriverConfig.setAttribute("device", audiodevice().get_device_setup().cardDevice);
+        audioDriverConfig.setAttribute("driver", audiodevice().get_device_setup().driverType);
+        audioDriverConfig.setAttribute("samplerate", audiodevice().get_sample_rate());
+        audioDriverConfig.setAttribute("buffersize", audiodevice().get_buffer_size());
 
-        QDomElement channelsElement = doc.createElement("Channels");
-        QList<ChannelConfig> channelConfigs = audiodevice().get_channel_configuration();
-        foreach(ChannelConfig conf, channelConfigs) {
+        audioDriverConfigs.appendChild(audioDriverConfig);
+
+        projectNode.appendChild(audioDriverConfigs);
+
+        QDomElement channelsElement = doc.createElement("AudioChannels");
+
+        foreach(AudioChannel* channel, m_softwareAudioChannels) {
                 QDomElement chanElement = doc.createElement("Channel");
-                chanElement.setAttribute("name", conf.name);
-                chanElement.setAttribute("type", conf.type);
+                chanElement.setAttribute("name", channel->get_name());
+                chanElement.setAttribute("type", channel->get_type() == ChannelIsInput ? "input" : "output");
+                chanElement.setAttribute("id", channel->get_id());
                 channelsElement.appendChild(chanElement);
         }
-        systemConfig.appendChild(channelsElement);
+        projectNode.appendChild(channelsElement);
 
-        QDomElement busesElement = doc.createElement("Buses");
+        QDomElement busesElement = doc.createElement("AudioBuses");
 
-        foreach(AudioBus* bus, m_hardwareBuses) {
+        QList<AudioBus*> buses;
+        buses.append(m_hardwareAudioBuses);
+        buses.append(m_softwareAudioBuses.values());
 
-                BusConfig conf;
-                conf.name = bus->get_name();
-                conf.type = bus->is_input() ? "input" : "output";
-                conf.id = bus->get_id();
-
-                for (int i = 0; i < bus->get_channel_count(); ++i) {
-                        conf.channelNames.append(bus->get_channel(i)->get_name());
-                }
-
-                conf.channelcount = bus->get_channel_count();
-
-
+        foreach(AudioBus* bus, buses) {
                 QDomElement busElement = doc.createElement("Bus");
-                busElement.setAttribute("name", conf.name);
-                busElement.setAttribute("channels", conf.channelNames.join(";"));
-                busElement.setAttribute("type", conf.type);
-                busElement.setAttribute("channelcount", conf.channelcount);
-                busElement.setAttribute("id", conf.id);
+                busElement.setAttribute("name", bus->get_name());
+                busElement.setAttribute("channels", bus->get_channel_names().join(";"));
+                busElement.setAttribute("type", bus->is_input() ? "input" : "output");
+                busElement.setAttribute("id", bus->get_id());
+                busElement.setAttribute("bustype", bus->get_bus_type() == BusIsHardware ? "hardware" : "software");
 
                 busesElement.appendChild(busElement);
         }
-        systemConfig.appendChild(busesElement);
-
-        projectNode.appendChild(audioIO);
+        projectNode.appendChild(busesElement);
 
         QDomNode masterOutNode = doc.createElement("MasterOut");
         masterOutNode.appendChild(m_masterOut->get_state(doc, istemplate));
@@ -496,29 +557,15 @@ void Project::prepare_audio_device(QDomDocument doc)
 {
         AudioDeviceSetup ads;
 
-        QDomNode audioIO = doc.documentElement().firstChildElement("AudioIO");
-        QDomNode systemConfigNode = audioIO.firstChildElement("SystemConfig");
-        QDomElement e = systemConfigNode.toElement();
+        QDomNode audioDriverConfigurations = doc.documentElement().firstChildElement("AudioDriverConfigurations");
+        QDomNode audioConfigurationNode = audioDriverConfigurations.firstChildElement("AudioDriverConfiguration");
+
+        QDomElement e = audioConfigurationNode.toElement();
         ads.driverType = e.attribute("driver", "");
         ads.cardDevice = e.attribute("device", "");
         ads.rate = e.attribute("samplerate", "44100").toInt();
         ads.bufferSize = e.attribute("buffersize", "512").toInt();
-
-        QDomNode channelsConfigNode = systemConfigNode.firstChildElement("Channels");
-        QDomNode channelNode = channelsConfigNode.firstChild();
-
-        QList<ChannelConfig> channelConfigs;
-
-        while (!channelNode.isNull()) {
-                ChannelConfig conf;
-                QDomElement e = channelNode.toElement();
-                conf.name = e.attribute("name", "");
-                conf.type = e.attribute("type", "");
-                channelConfigs.append(conf);
-                channelNode = channelNode.nextSibling();
-        }
-
-        ads.channelConfigs = channelConfigs;
+        ads.jackChannels.append(m_softwareAudioChannels.values());
 
         if (ads.driverType.isEmpty() || ads.driverType.isNull()) {
 #if defined (Q_WS_X11)
@@ -566,41 +613,6 @@ void Project::prepare_audio_device(QDomDocument doc)
 
 
         audiodevice().set_parameters(ads);
-
-        QDomNode busesConfigNode = systemConfigNode.firstChildElement("Buses");
-        QDomNode busNode = busesConfigNode.firstChild();
-
-        AudioChannel* channel;
-
-        while (!busNode.isNull()) {
-                BusConfig conf;
-                QDomElement e = busNode.toElement();
-                conf.name = e.attribute("name", "");
-                conf.channelNames = e.attribute("channels", "").split(";");
-                conf.type = e.attribute("type", "");
-                conf.channelcount = e.attribute("channelcount", "2").toInt();
-                conf.id = e.attribute("id", "-1").toLongLong();
-
-                AudioBus* bus = new AudioBus(conf);
-
-                for (int i = 0; i < conf.channelNames.count(); ++i) {
-                        if (bus->is_input()) {
-                                channel = audiodevice().get_capture_channel_by_name(conf.channelNames.at(i));
-                        } else {
-                                channel = audiodevice().get_playback_channel_by_name(conf.channelNames.at(i));
-                        }
-
-                        if (channel) {
-                                bus->add_channel(channel);
-                        } else {
-                                printf("channel not found %s\n", conf.channelNames.at(i).toAscii().data());
-                        }
-                }
-
-                m_hardwareBuses.append(bus);
-
-                busNode = busNode.nextSibling();
-        }
 }
 
 void Project::connect_to_audio_device()
@@ -611,9 +623,15 @@ void Project::connect_to_audio_device()
 int Project::disconnect_from_audio_device()
 {
         m_audiodeviceClient->disconnect_from_audiodevice();
+        int count = 0;
         while(m_audiodeviceClient->is_connected()) {
                 printf("Project: Waiting to be disconnected from Audio Device\n");
                 usleep(20 * 1000);
+                count++;
+                if (count > 100) {
+                        printf("Project::disconnect_from_audio_device: can't seem to disconnect from audiodevice, giving up!\n");
+                        return -1;
+                }
         }
 
         return 1;
@@ -632,7 +650,7 @@ int Project::disconnect_from_audio_device()
  */
 AudioBus* Project::get_playback_bus(const QString& name) const
 {
-        foreach(AudioBus* bus, m_hardwareBuses) {
+        foreach(AudioBus* bus, m_hardwareAudioBuses) {
                 if (bus->get_type() == ChannelIsOutput) {
                         if (bus->get_name() == name) {
                                 return bus;
@@ -655,7 +673,7 @@ AudioBus* Project::get_playback_bus(const QString& name) const
  */
 AudioBus* Project::get_capture_bus(const QString& name) const
 {
-        foreach(AudioBus* bus, m_hardwareBuses) {
+        foreach(AudioBus* bus, m_hardwareAudioBuses) {
                 if (bus->get_type() == ChannelIsInput) {
                         if (bus->get_name() == name) {
                                 return bus;
@@ -666,16 +684,13 @@ AudioBus* Project::get_capture_bus(const QString& name) const
         return 0;
 }
 
-AudioBus* Project::get_bus(qint64 id)
+AudioBus* Project::get_audio_bus(qint64 id)
 {
         if (m_masterOut->get_id() == id) {
                 return m_masterOut->get_process_bus();
         }
 
-        printf("sheets size %d\n", m_sheets.size());
         foreach(Sheet* sheet, m_sheets) {
-                printf("looking for sheet (master) subgroup buses\n");
-                printf("sheet master out id %lld\n", sheet->get_master_out()->get_id());
                 if (sheet->get_master_out()->get_id() == id) {
                         return sheet->get_master_out()->get_process_bus();
                 }
@@ -686,13 +701,40 @@ AudioBus* Project::get_bus(qint64 id)
                 }
         }
 
-        foreach(AudioBus* bus, m_hardwareBuses) {
+        foreach(AudioBus* bus, m_hardwareAudioBuses) {
+                if (bus->get_id() == id) {
+                        return bus;
+                }
+        }
+
+        foreach(AudioBus* bus, m_softwareAudioBuses) {
                 if (bus->get_id() == id) {
                         return bus;
                 }
         }
 
         return 0;
+}
+
+AudioBus* Project::create_software_audio_bus(const BusConfig& conf)
+{
+        AudioBus* bus = new AudioBus(conf);
+
+        AudioChannel* channel;
+        for (int i=0; i< conf.channelNames.size(); ++i) {
+                channel = new AudioChannel(conf.channelNames.at(i), i, bus->get_type());
+                channel->set_buffer_size(audiodevice().get_buffer_size());
+
+                audiodevice().add_jack_channel(channel);
+                bus->add_channel(channel);
+
+                m_softwareAudioChannels.insert(channel->get_id(), channel);
+        }
+
+
+        m_softwareAudioBuses.insert(bus->get_id(), bus);
+
+        return bus;
 }
 
 qint64 Project::get_bus_id_for(const QString &busName)
@@ -765,7 +807,7 @@ void Project::track_routing_changed()
 QStringList Project::get_capture_buses_names( ) const
 {
         QStringList names;
-        foreach(AudioBus* bus, m_hardwareBuses) {
+        foreach(AudioBus* bus, m_hardwareAudioBuses) {
                 if (bus->get_type() == ChannelIsInput) {
                         names.append(bus->get_name());
                 }
@@ -783,7 +825,7 @@ QStringList Project::get_capture_buses_names( ) const
 QStringList Project::get_playback_buses_names( ) const
 {
         QStringList names;
-        foreach(AudioBus* bus, m_hardwareBuses) {
+        foreach(AudioBus* bus, m_hardwareAudioBuses) {
                 if (bus->get_type() == ChannelIsOutput) {
                         names.append(bus->get_name());
                 }
@@ -1344,6 +1386,57 @@ ResourcesManager * Project::get_audiosource_manager( ) const
 	return m_resourcesManager;
 }
 
+void Project::audiodevice_params_changed()
+{
+        printf("Project::audiodevice_params_changed();\n");
+        // if I don't have hardware buses, then either I could not
+        // restore it from project file, or we started for the first time
+        // either way, let's wrap the available channels logically into audiobuses:
+        if (!m_hardwareAudioBuses.size()) {
+                setup_default_hardware_buses();
+
+        }
+        foreach(AudioBus* bus, m_hardwareAudioBuses) {
+                bus->audiodevice_params_changed();
+        }
+
+        int bufferSize = audiodevice().get_buffer_size();
+        foreach(AudioChannel* channel, m_softwareAudioChannels) {
+                channel->set_buffer_size(bufferSize);
+        }
+}
+
+void Project::setup_default_hardware_buses()
+{
+        int number = 1;
+
+        BusConfig config;
+        config.type = "input";
+        config.bustype = "hardware";
+
+        QList<AudioChannel*> channels = audiodevice().get_capture_channels();
+        for (int i=0; i < channels.size();) {
+                config.name = "Capture " + QByteArray::number(number++);
+                AudioBus* bus = new AudioBus(config);
+                bus->add_channel("capture_"+QByteArray::number(1 + i++));
+                bus->add_channel("capture_"+QByteArray::number(1 + i++));
+
+                m_hardwareAudioBuses.append(bus);
+        }
+
+        number = 1;
+
+        channels = audiodevice().get_playback_channels();
+        config.type = "output";
+
+        for (int i=0; i < channels.size();) {
+                config.name = "Playback " + QByteArray::number(number++);
+                AudioBus* bus = new AudioBus(config);
+                bus->add_channel("playback_"+QByteArray::number(1 + i++));
+                bus->add_channel("playback_"+QByteArray::number(1 + i++));
+                m_hardwareAudioBuses.append(bus);
+        }
+}
 
 void Project::private_add_sheet(Sheet * sheet)
 {
@@ -1381,6 +1474,11 @@ void Project::sheet_added(Sheet *sheet)
 
 QString Project::get_import_dir() const
 {
+        QDir dir;
+        if (!dir.exists(m_importDir)) {
+                return QDir::homePath();
+        }
+
 	return m_importDir;
 }
 

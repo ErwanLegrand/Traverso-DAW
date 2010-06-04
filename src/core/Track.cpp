@@ -238,7 +238,7 @@ void Track::add_input_bus(AudioBus *bus)
 void Track::add_input_bus(qint64 busId)
 {
         Project* project = pm().get_project();
-        AudioBus* bus = project->get_bus(busId);
+        AudioBus* bus = project->get_audio_bus(busId);
         add_input_bus(bus);
 }
 
@@ -252,7 +252,7 @@ void Track::add_post_send(qint64 busId)
         }
 
         Project* project = pm().get_project();
-        AudioBus* bus = project->get_bus(busId);
+        AudioBus* bus = project->get_audio_bus(busId);
 
         if (!bus) {
                 printf("bus with id %lld could not be found by project!\n", busId);
@@ -281,7 +281,7 @@ void Track::add_pre_send(qint64 busId)
         }
 
         Project* project = pm().get_project();
-        AudioBus* bus = project->get_bus(busId);
+        AudioBus* bus = project->get_audio_bus(busId);
 
         if (!bus) {
                 printf("bus with id %lld could not be found by project!\n", busId);

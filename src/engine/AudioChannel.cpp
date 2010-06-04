@@ -23,6 +23,7 @@
 #include "AudioDevice.h"
 
 #include "Tsar.h"
+#include "Utils.h"
 
 #ifdef USE_MLOCK
 #include <sys/mman.h>
@@ -43,7 +44,7 @@
  */
 
 
-AudioChannel::AudioChannel(const QString& name, uint channelNumber, int type)
+AudioChannel::AudioChannel(const QString& name, uint channelNumber, int type, qint64 id)
 {
         m_name = name;
         m_number = channelNumber;
@@ -52,6 +53,11 @@ AudioChannel::AudioChannel(const QString& name, uint channelNumber, int type)
         m_buffer = 0;
         m_bufferSize = 0;
         mlocked = 0;
+        if (id == 0) {
+                m_id = create_id();
+        } else {
+                m_id = id;
+        }
 }
 
 AudioChannel::~ AudioChannel( )

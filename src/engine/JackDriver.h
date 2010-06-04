@@ -40,7 +40,7 @@ public:
         int _read(nframes_t nframes);
         int _write(nframes_t nframes);
         int _run_cycle() {return 1;}
-        int setup(QList<ChannelConfig> channelConfigs);
+        int setup(QList<AudioChannel* > channels);
         int attach();
         int start();
         int stop();
@@ -48,17 +48,12 @@ public:
         QString get_device_name();
         QString get_device_longname();
 
-        AudioChannel* add_playback_channel(const QString& name);
-        AudioChannel* add_capture_channel(const QString& name);
-
-        int remove_capture_channel(const QString& name);
-        int remove_playback_channel(const QString& name);
-
-
+        void add_channel(AudioChannel* channel);
+        void remove_channel(AudioChannel* channel);
 
         float get_cpu_load();
 	
-	size_t is_jack_running() const {return m_running == 1;}
+        size_t is_running() const {return m_running == 1;}
         jack_client_t* get_client() const {return m_jack_client;}
 	bool is_slave() const {return m_isSlave;}
 	void update_config();
@@ -82,8 +77,6 @@ private:
         QList<PortChannelPair*> m_inputs;
         QList<PortChannelPair*> m_outputs;
 
-        QVector<jack_port_t* >	m_inputPorts;
-        QVector<jack_port_t* >	m_outputPorts;
         bool                    m_isSlave;
 
 	int  jack_sync_callback (jack_transport_state_t, jack_position_t*);
@@ -95,6 +88,7 @@ private:
 	static int  _jack_sync_callback (jack_transport_state_t, jack_position_t*, void *arg);	
 
 private slots:
+        void private_add_port_channel_pair(PortChannelPair* pair);
         void cleanup_removed_port_channel_pair(PortChannelPair* pair);
 
 signals:

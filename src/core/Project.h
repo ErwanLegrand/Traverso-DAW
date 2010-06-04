@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "defines.h"
 
 class AudioBus;
+class AudioChannel;
 class Sheet;
 class Track;
 class ResourcesManager;
@@ -54,14 +55,16 @@ public :
         AudioBus* get_playback_bus(const QString& name) const;
         AudioBus* get_capture_bus(const QString& name) const;
 
-        AudioBus* get_bus(qint64 id);
+        AudioBus* get_audio_bus(qint64 id);
+        AudioBus* create_software_audio_bus(const BusConfig& config);
         qint64 get_bus_id_for(const QString& busName);
         QList<TSend*> get_inputs_for_subgroup(SubGroup* sub) const;
+        void setup_default_hardware_buses();
 
         QStringList get_playback_buses_names( ) const;
         QStringList get_capture_buses_names( ) const;
 
-        QList<AudioBus*> get_hardware_buses() const {return m_hardwareBuses;}
+        QList<AudioBus*> get_hardware_buses() const {return m_hardwareAudioBuses;}
         QList<Track*> get_tracks() const;
         Track* get_track(qint64 trackId) const;
 
@@ -158,7 +161,10 @@ private:
         AudioDeviceClient*	m_audiodeviceClient;
         SubGroup*               m_masterOut;
 
-        QList<AudioBus* >       m_hardwareBuses;
+        QList<AudioBus* >       m_hardwareAudioBuses;
+
+        QHash<qint64, AudioBus* >       m_softwareAudioBuses;
+        QHash<qint64, AudioChannel* >   m_softwareAudioChannels;
 
 
 
@@ -199,6 +205,7 @@ private:
 	friend class ProjectManager;
 
 private slots:
+        void audiodevice_params_changed();
 	void private_add_sheet(Sheet* sheet);
 	void private_remove_sheet(Sheet* sheet);
         void sheet_removed(Sheet* sheet);
