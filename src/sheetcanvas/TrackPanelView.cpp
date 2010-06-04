@@ -623,7 +623,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	painter->setBrush(color);
         painter->drawRect(m_boundingRect);
 	
-	painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
+        painter->setFont(themer()->get_font("TrackPanel:fontscale:bus"));
 	painter->setPen(themer()->get_color("TrackPanel:bus:font"));
 	
 			
