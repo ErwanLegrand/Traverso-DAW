@@ -47,9 +47,9 @@ Track::Track(Sheet *sheet)
                 m_vumonitors.append(new VUMonitor());
         }
 
-        connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
-        connect(&audiodevice(), SIGNAL(busConfigChanged()), this, SLOT(rescan_buses()), Qt::DirectConnection);
-        connect(this, SIGNAL(routingConfigurationChanged()), pm().get_project(), SLOT(track_routing_changed()));
+        if (sheet) {
+                connect(this, SIGNAL(routingConfigurationChanged()), sheet->get_project(), SLOT(track_routing_changed()));
+        }
 }
 
 Track::~Track()
@@ -213,16 +213,6 @@ void Track::set_sort_index( int index )
 int Track::get_sort_index( ) const
 {
         return m_sortIndex;
-}
-
-void Track::rescan_buses()
-{
-        // What if the bus no longer exists? What about
-        // signalling something here so the GUI can mark
-        // it's in/out bus indicators somehow?
-        m_inputBus = 0;
-//        add_input_bus(m_busInName);
-//        add_output_bus(m_busOutName);
 }
 
 void Track::add_input_bus(AudioBus *bus)
@@ -423,15 +413,6 @@ void Track::process_send(TSend *send, nframes_t nframes)
                 }
 
         }
-}
-
-
-void Track::audiodevice_params_changed()
-{
-//        AudioBus* bus = pm().get_project()->get_playback_bus(m_busOutName);
-//        if (bus) {
-//                m_outputBus = bus;
-//        }
 }
 
 QList<TSend* > Track::get_post_sends() const

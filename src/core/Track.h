@@ -104,14 +104,11 @@ public slots:
         Command* solo();
 
 private slots:
-        void audiodevice_params_changed();
         void private_add_post_send(TSend*);
         void private_add_pre_send(TSend *);
         void private_remove_post_send(TSend*);
         void private_remove_pre_send(TSend*);
         void private_add_input_bus(AudioBus*);
-        void rescan_buses();
-
 
 signals:
         void soloChanged(bool isSolo);

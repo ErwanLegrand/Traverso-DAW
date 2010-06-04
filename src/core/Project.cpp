@@ -88,6 +88,10 @@ Project::Project(const QString& title)
         m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Project::transport_control) );
 
         m_masterOut = new MasterOutSubGroup((Sheet*) 0, tr("Master"));
+        // FIXME: m_masterOut is a Track, but at this point in time, Track can't
+        // get a reference to us via pm().get_project();
+        connect(m_masterOut, SIGNAL(routingConfigurationChanged()), this, SLOT(track_routing_changed()));
+
 
         AudioBus* bus = m_masterOut->get_process_bus();
         for(int i=0; i<bus->get_channel_count(); i++) {

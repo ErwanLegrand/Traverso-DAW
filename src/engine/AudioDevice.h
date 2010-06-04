@@ -237,8 +237,6 @@ signals:
 	
 	void message(QString, int);
 
-        void busConfigChanged();
-
 private slots:
 	void private_add_client(AudioDeviceClient* client);
 	void private_remove_client(AudioDeviceClient* client);
