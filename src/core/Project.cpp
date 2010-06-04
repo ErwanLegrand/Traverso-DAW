@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TSend.h"
 
 #define PROJECT_FILE_VERSION 	3
-
+#define MASTER_OUT_SOFTWARE_BUS_ID 1
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
@@ -306,10 +306,8 @@ int Project::load(QString projectfile)
                 QStringList channelIds = e.attribute("channelids", "").split(";", QString::SkipEmptyParts);
 
                 AudioBus* bus = new AudioBus(conf);
-                printf("creating new bus %s\n", conf.name.toAscii().data());
 
                 if (bus->get_bus_type() == BusIsSoftware) {
-                        printf("creating software channels\n");
                         AudioChannel* channel;
                         foreach(QString idString, channelIds) {
                                 qint64 id = idString.toLongLong();
@@ -321,7 +319,6 @@ int Project::load(QString projectfile)
                         m_softwareAudioBuses.insert(bus->get_id(), bus);
                 }
                 if (bus->get_bus_type() == BusIsHardware) {
-                        printf("preparing for hardware channels\n");
                         foreach(QString channelName, conf.channelNames) {
                                 bus->add_channel(channelName);
                         }
@@ -521,6 +518,11 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
                 QDomElement busElement = doc.createElement("Bus");
                 busElement.setAttribute("name", bus->get_name());
                 busElement.setAttribute("channels", bus->get_channel_names().join(";"));
+                QStringList channelIds;
+                foreach(qint64 id, bus->get_channel_ids()) {
+                        channelIds.append(QString::number(id));
+                }
+                busElement.setAttribute("channelids", channelIds.join(";"));
                 busElement.setAttribute("type", bus->is_input() ? "input" : "output");
                 busElement.setAttribute("id", bus->get_id());
                 busElement.setAttribute("bustype", bus->get_bus_type() == BusIsHardware ? "hardware" : "software");
@@ -613,6 +615,23 @@ void Project::prepare_audio_device(QDomDocument doc)
 
 
         audiodevice().set_parameters(ads);
+
+        if (audiodevice().get_driver_type() == "Jack") {
+                // Lets see if there is already a Project Master out jack bus:
+                AudioBus* bus = m_softwareAudioBuses.value(1);
+                if (!bus) {
+                        BusConfig conf;
+                        conf.name = "jackmaster";
+                        conf.channelNames << "jackmaster_0" << "jackmaster_1";
+                        conf.type = "output";
+                        conf.bustype = "software";
+                        conf.id = MASTER_OUT_SOFTWARE_BUS_ID;
+                        bus = create_software_audio_bus(conf);
+
+                        m_masterOut->add_post_send(MASTER_OUT_SOFTWARE_BUS_ID);
+
+                }
+        }
 }
 
 void Project::connect_to_audio_device()
@@ -1388,7 +1407,6 @@ ResourcesManager * Project::get_audiosource_manager( ) const
 
 void Project::audiodevice_params_changed()
 {
-        printf("Project::audiodevice_params_changed();\n");
         // if I don't have hardware buses, then either I could not
         // restore it from project file, or we started for the first time
         // either way, let's wrap the available channels logically into audiobuses:
@@ -1416,7 +1434,8 @@ void Project::setup_default_hardware_buses()
 
         QList<AudioChannel*> channels = audiodevice().get_capture_channels();
         for (int i=0; i < channels.size();) {
-                config.name = "Capture " + QByteArray::number(number++);
+                config.name = "Capture " + QByteArray::number(number) + "-" + QByteArray::number(number + 1);
+                number += 2;
                 AudioBus* bus = new AudioBus(config);
                 bus->add_channel("capture_"+QByteArray::number(1 + i++));
                 bus->add_channel("capture_"+QByteArray::number(1 + i++));
@@ -1430,7 +1449,8 @@ void Project::setup_default_hardware_buses()
         config.type = "output";
 
         for (int i=0; i < channels.size();) {
-                config.name = "Playback " + QByteArray::number(number++);
+                config.name = "Playback " + QString::number(number) + "-" + QByteArray::number(number + 1);
+                number += 2;
                 AudioBus* bus = new AudioBus(config);
                 bus->add_channel("playback_"+QByteArray::number(1 + i++));
                 bus->add_channel("playback_"+QByteArray::number(1 + i++));

@@ -48,6 +48,7 @@ public:
         QString get_name() {return m_name;}
 	
 	AudioChannel* get_channel(int channelNumber);
+        QList<qint64> get_channel_ids() const;
 
 	/**
 	 *        Get a pointer to the buffer associated with AudioChannel \a channel 

@@ -122,6 +122,16 @@ QStringList AudioBus::get_channel_names() const
 
         return list;
 }
+
+QList<qint64> AudioBus::get_channel_ids() const
+{
+        QList<qint64> ids;
+        foreach(AudioChannel* channel, m_channels) {
+                ids.append(channel->get_id());
+        }
+        return ids;
+}
+
 void AudioBus::audiodevice_params_changed()
 {
         m_channels.clear();
