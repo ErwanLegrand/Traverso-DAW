@@ -692,7 +692,11 @@ AudioBus* Project::get_playback_bus(const QString& name) const
  */
 AudioBus* Project::get_capture_bus(const QString& name) const
 {
-        foreach(AudioBus* bus, m_hardwareAudioBuses) {
+        QList<AudioBus*> allBuses;
+        allBuses.append(m_hardwareAudioBuses);
+        allBuses.append(m_softwareAudioBuses.values());
+
+        foreach(AudioBus* bus, allBuses) {
                 if (bus->get_type() == ChannelIsInput) {
                         if (bus->get_name() == name) {
                                 return bus;
