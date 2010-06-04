@@ -336,6 +336,23 @@ int Project::load(QString projectfile)
         // Force the proper name for our Master Bus
         m_masterOut->set_name(tr("Master"));
 
+        if (audiodevice().get_driver_type() == "Jack") {
+                // Lets see if there is already a Project Master out jack bus:
+                AudioBus* bus = m_softwareAudioBuses.value(1);
+                if (!bus) {
+                        BusConfig conf;
+                        conf.name = "jackmaster";
+                        conf.channelNames << "jackmaster_0" << "jackmaster_1";
+                        conf.type = "output";
+                        conf.bustype = "software";
+                        conf.id = MASTER_OUT_SOFTWARE_BUS_ID;
+                        bus = create_software_audio_bus(conf);
+
+                        m_masterOut->add_post_send(MASTER_OUT_SOFTWARE_BUS_ID);
+
+                }
+        }
+
 	// Load all the AudioSources for this project
 	QDomNode asmNode = docElem.firstChildElement("ResourcesManager");
 	m_resourcesManager->set_state(asmNode);
@@ -615,23 +632,6 @@ void Project::prepare_audio_device(QDomDocument doc)
 
 
         audiodevice().set_parameters(ads);
-
-        if (audiodevice().get_driver_type() == "Jack") {
-                // Lets see if there is already a Project Master out jack bus:
-                AudioBus* bus = m_softwareAudioBuses.value(1);
-                if (!bus) {
-                        BusConfig conf;
-                        conf.name = "jackmaster";
-                        conf.channelNames << "jackmaster_0" << "jackmaster_1";
-                        conf.type = "output";
-                        conf.bustype = "software";
-                        conf.id = MASTER_OUT_SOFTWARE_BUS_ID;
-                        bus = create_software_audio_bus(conf);
-
-                        m_masterOut->add_post_send(MASTER_OUT_SOFTWARE_BUS_ID);
-
-                }
-        }
 }
 
 void Project::connect_to_audio_device()
