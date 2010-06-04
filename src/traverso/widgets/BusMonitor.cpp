@@ -52,7 +52,7 @@ BusMonitor::BusMonitor(QWidget* parent)
 	
 	m_menu = 0;
 	
-	connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(create_vu_meters()));
+        connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(create_vu_meters()));
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
 }
 
@@ -106,17 +106,20 @@ void BusMonitor::create_vu_meters( )
 	
         m_layout->addStretch(1);
 
+
+        //FIXME: restarting the Driver crashes here!!!!!
+
         QStringList list = pm().get_project()->get_capture_buses_names();
-        foreach(QString name, list) {
-                AudioBus* bus = pm().get_project()->get_capture_bus(name);
-                if (!bus) continue;
-		VUMeter* meter = new VUMeter( this, bus );
-		connect(bus, SIGNAL(monitoringPeaksStarted()), meter, SLOT(peak_monitoring_started()));
-		connect(bus, SIGNAL(monitoringPeaksStopped()), meter, SLOT(peak_monitoring_stopped()));
-                m_layout->addWidget(meter);
-		inMeters.append(meter);
-		meter->hide();
-	}
+//        foreach(QString name, list) {
+//                AudioBus* bus = pm().get_project()->get_capture_bus(name);
+//                if (!bus) continue;
+//		VUMeter* meter = new VUMeter( this, bus );
+//		connect(bus, SIGNAL(monitoringPeaksStarted()), meter, SLOT(peak_monitoring_started()));
+//		connect(bus, SIGNAL(monitoringPeaksStopped()), meter, SLOT(peak_monitoring_stopped()));
+//                m_layout->addWidget(meter);
+//		inMeters.append(meter);
+//		meter->hide();
+//	}
 
         // TODO: show playback VU's on demand or ??
         list = pm().get_project()->get_playback_buses_names();
