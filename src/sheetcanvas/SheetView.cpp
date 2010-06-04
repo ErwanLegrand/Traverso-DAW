@@ -551,7 +551,8 @@ void SheetView::layout_tracks()
 
 	m_sceneHeight = verticalposition;
 
-        m_meanTrackHeight = int(m_sceneHeight / (m_audioTrackViews.size() + m_subGroupViews.size() + 1));
+        // + 2, one for sheet master and one for project master track view!
+        m_meanTrackHeight = int(m_sceneHeight / (m_audioTrackViews.size() + m_subGroupViews.size() + 2));
 
 	update_scrollbars();
 }
