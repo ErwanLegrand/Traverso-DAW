@@ -109,6 +109,7 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 
 
         QWidget* zoomWidget = new QWidget(this);
+        zoomWidget->setMaximumWidth(200);
         QHBoxLayout* zoomLayout = new QHBoxLayout(zoomWidget);
         QLabel* zoomLabel = new QLabel(this);
         zoomLabel->setText("Zoom");
@@ -168,9 +169,6 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 	
 	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 	
-// 	m_usingOpenGL  = false;
-// 	set_use_opengl(config().get_property("Interface", "OpenGL", false).toBool());
-
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
 	cpointer().set_current_viewport(m_clipsViewPort);
