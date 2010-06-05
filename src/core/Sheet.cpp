@@ -172,6 +172,7 @@ void Sheet::init()
         m_clipRenderBus = new AudioBus(busConfig);
 
         m_masterOut = new MasterOutSubGroup(this, tr("Sheet Master"));
+        m_masterOut->set_gain(0.5);
         resize_buffer(audiodevice().get_buffer_size());
 
 	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
