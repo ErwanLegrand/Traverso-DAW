@@ -67,6 +67,7 @@ const int GAIN_X_POS = 10;
 const int GAIN_Y_POS = 23;
 const int PAN_X_POS = 10;
 const int PAN_Y_POS = GAIN_Y_POS + 13;
+const int INPUT_OUTPUT_BUTTON_Y_POS = PAN_Y_POS + 30;
 
 
 TrackPanelView::TrackPanelView(TrackView* view)
@@ -231,8 +232,8 @@ void TrackPanelView::layout_panel_items()
         m_gainView->setPos(GAIN_X_POS, GAIN_Y_POS + adjust);
         m_panView->setPos(PAN_X_POS, PAN_Y_POS + adjust);
 
-        m_inBus->setPos(4, 73);
-        m_outBus->setPos(96, 73);
+        m_inBus->setPos(4, INPUT_OUTPUT_BUTTON_Y_POS);
+        m_outBus->setPos(96, INPUT_OUTPUT_BUTTON_Y_POS);
 
         m_soloLed->setPos(SOLO_X_POS, LED_Y_POS);
         m_muteLed->setPos(MUTE_X_POS, LED_Y_POS);
@@ -603,7 +604,7 @@ TrackPanelBus::TrackPanelBus(TrackPanelView *view, Track *track, int busType)
         , m_type(busType)
 {
 	bus_changed();
-        m_boundingRect = QRectF(0, 0, 84, 16);
+        m_boundingRect = QRectF(0, 0, 84, 13);
 }
 
 void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )

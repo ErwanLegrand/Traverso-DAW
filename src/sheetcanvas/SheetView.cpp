@@ -498,7 +498,7 @@ Command* SheetView::toggle_expand_all_tracks()
                 }
         } else {
                 foreach(TrackView* view, get_track_views()) {
-                        view->get_track()->set_height(100);
+                        view->get_track()->set_height(85);
                 }
         }
 
