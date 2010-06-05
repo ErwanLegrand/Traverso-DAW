@@ -27,18 +27,18 @@
 #include "SheetView.h"
 #include "Themer.h"
 #include "Config.h"
+#include "Peak.h"
 
 #include <Sheet.h>
 #include "Utils.h"
 #include "ContextPointer.h"
 #include "Mixer.h"
 
-// #if defined (QT_OPENGL_SUPPORT)
-// #include <QtOpenGL>
-// #endif
-
 #include <QGridLayout>
 #include <QScrollBar>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QLabel>
 
 #include <Debugger.h>
 
@@ -66,7 +66,7 @@ class SheetPanelViewPort : public ViewPort
 {
 public:
 	SheetPanelViewPort(QGraphicsScene* scene, SheetWidget* sw);
-	~SheetPanelViewPort() {};
+        ~SheetPanelViewPort() {}
 
         void set_sheet_view(SheetView* view) { m_sv = view;}
 
@@ -106,9 +106,29 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 	m_clipsViewPort = new ClipsViewPort(m_scene, this);
 	m_timeLine = new TimeLineViewPort(m_scene, this);
 	m_sheetPanelVP = new SheetPanelViewPort(m_scene, this);
-	
+
+
+        QWidget* zoomWidget = new QWidget(this);
+        QHBoxLayout* zoomLayout = new QHBoxLayout(zoomWidget);
+        QLabel* zoomLabel = new QLabel(this);
+        zoomLabel->setText("Zoom");
+        m_zoomSlider = new QSlider(this);
+        m_zoomSlider->setMaximum(Peak::ZOOM_LEVELS);
+        m_zoomSlider->setMinimum(0);
+        m_zoomSlider->setPageStep(4);
+        m_zoomSlider->setSingleStep(1);
+        m_zoomSlider->setOrientation(Qt::Horizontal);
+        sheet_zoom_level_changed();
+
+        connect(m_zoomSlider, SIGNAL(sliderMoved(int)), this, SLOT(zoom_slider_value_changed(int)));
+        connect(m_sheet, SIGNAL(hzoomChanged()), this, SLOT(sheet_zoom_level_changed()));
+
+        zoomLayout->addWidget(zoomLabel);
+        zoomLayout->addWidget(m_zoomSlider);
+
 	m_mainLayout = new QGridLayout(this);
 	m_mainLayout->addWidget(m_sheetPanelVP, 0, 0);
+        m_mainLayout->addWidget(zoomWidget, 2, 0);
 	m_mainLayout->addWidget(m_timeLine, 0, 1);
 	m_mainLayout->addWidget(m_trackPanel, 1, 0);
 	m_mainLayout->addWidget(m_clipsViewPort, 1, 1);
@@ -179,22 +199,6 @@ QSize SheetWidget::sizeHint() const
 	return QSize(700, 600);
 }
 
-// void SheetWidget::set_use_opengl( bool useOpenGL )
-// {
-// 	if (!m_sheet) {
-// 		return;
-// 	}
-// 	
-// 	if (useOpenGL != m_usingOpenGL) {
-// #if defined (QT_OPENGL_SUPPORT)
-// 		m_clipsViewPort->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
-// 		m_trackPanel->setViewport(useOpenGL ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
-// #endif
-// 	}
-// 	m_usingOpenGL = useOpenGL;
-// }
-
-
 void SheetWidget::load_theme_data()
 {
 	QList<QGraphicsItem*> list = m_scene->items();
@@ -218,3 +222,18 @@ SheetView * SheetWidget::get_sheetview() const
 	return m_sv;
 }
 
+void SheetWidget::zoom_slider_value_changed(int value)
+{
+        m_sheet->set_hzoom(Peak::zoomStep[value]);
+}
+
+void SheetWidget::sheet_zoom_level_changed()
+{
+        int level = m_sheet->get_hzoom();
+        for (int i=0; i<Peak::ZOOM_LEVELS; ++i) {
+                if (level == Peak::zoomStep[i]) {
+                        m_zoomSlider->setValue(i);
+                        return;
+                }
+        }
+}

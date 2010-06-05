@@ -60,7 +60,6 @@ public:
 	SheetWidget(Sheet* sheet, QWidget* parent=0);
 	~SheetWidget();
 	
-// 	void set_use_opengl(bool useOpenGL);
 	Sheet* get_sheet() const;
 	SheetView* get_sheetview() const;
 	
@@ -79,12 +78,14 @@ private:
 	QGraphicsScene* 	m_scene;
 	QScrollBar*		m_vScrollBar;
 	QScrollBar*		m_hScrollBar;
-// 	bool			m_usingOpenGL;
+        QSlider*                m_zoomSlider;
 	
 	friend class SheetView;
 
 private slots:
 	void load_theme_data();
+        void zoom_slider_value_changed(int value);
+        void sheet_zoom_level_changed();
 };
 
 
