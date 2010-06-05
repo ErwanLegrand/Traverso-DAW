@@ -535,10 +535,6 @@ void SheetView::hzoom(qreal factor)
 
 void SheetView::layout_tracks()
 {
-        if ((m_audioTrackViews.isEmpty() && m_subGroupViews.isEmpty())) {
-                return;
-        }
-	
 	int verticalposition = m_trackTopIndent;
 
         QList<TrackView*> views = get_track_views();
