@@ -138,7 +138,10 @@ void NewTrackDialog::create_track()
                 if (track->get_type() == Track::AUDIOTRACK) {
                         track->add_input_bus(inputBuses->currentText());
                 }
-                track->add_post_send(outputBus->get_id());
+
+                int index = outputBuses->currentIndex();
+                qint64 outputBusId = outputBuses->itemData(index).toLongLong();
+                track->add_post_send(outputBusId);
         }
 
         Command* command = sheet->add_track(track);
@@ -168,6 +171,7 @@ void NewTrackDialog::set_project(Project * project)
 
 void NewTrackDialog::update_buses_comboboxes()
 {
+        inputBuses->clear();
         outputBuses->clear();
 
         Sheet* sheet = m_project->get_current_sheet();
@@ -176,28 +180,28 @@ void NewTrackDialog::update_buses_comboboxes()
                 return ;
         }
 
-        QStringList busNames;
-
         if (isSubGroup->isChecked()) {
                 inputBusFrame->setEnabled(false);
         } else {
                 inputBusFrame->setEnabled(true);
         }
 
-        busNames.append(sheet->get_master_out()->get_name());
-        busNames.append(pm().get_project()->get_playback_buses_names());
-
-        foreach(QString busName, busNames) {
-                outputBuses->addItem(busName);
+        QList<SubGroup*> subs;
+        subs.append(m_project->get_master_out());
+        subs.append(sheet->get_master_out());
+        subs.append(sheet->get_subgroups());
+        foreach(SubGroup* sg, subs) {
+                outputBuses->addItem(sg->get_name(), sg->get_id());
         }
 
-        inputBuses->clear();
+        QList<AudioBus*> hardwareBuses = m_project->get_hardware_buses();
 
-        busNames.clear();
-        busNames.append(pm().get_project()->get_capture_buses_names());
-
-        foreach(QString busName, busNames) {
-                inputBuses->addItem(busName);
+        foreach(AudioBus* bus, hardwareBuses) {
+                if (bus->get_type() == ChannelIsInput) {
+                        inputBuses->addItem(bus->get_name(), bus->get_id());
+                } else {
+                        outputBuses->addItem(bus->get_name(), bus->get_id());
+                }
         }
 }
 

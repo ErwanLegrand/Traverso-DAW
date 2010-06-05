@@ -35,7 +35,7 @@ class NewTrackDialog : public QDialog, protected Ui::NewTrackDialog
 
 public:
 	NewTrackDialog(QWidget* parent = 0);
-	~NewTrackDialog() {};
+        ~NewTrackDialog() {}
 
 protected:
         void showEvent ( QShowEvent * event );
