@@ -316,7 +316,7 @@
 		</keyfact>
                 <keyfact type="FKEY" key1="T" >
                         <Objects>
-                                <Object objectname="SheetView" modes="All" sortorder="22" slotsignature="add_track" modifierkeys="CTRL" />
+                                <Object objectname="Interface" modes="All" sortorder="22" slotsignature="show_newtrack_dialog" modifierkeys="CTRL" />
                                 <Object objectname="SheetView" modes="All" sortorder="23" slotsignature="browse_to_time_line" />
                         </Objects>
                 </keyfact>

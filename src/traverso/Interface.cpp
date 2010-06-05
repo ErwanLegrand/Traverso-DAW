@@ -1521,6 +1521,10 @@ Command* Interface::show_newsheet_dialog()
 
 Command* Interface::show_newtrack_dialog()
 {
+        if (!m_project) {
+                return 0;
+        }
+
 	if (! m_newTrackDialog) {
 		m_newTrackDialog = new NewTrackDialog(this);
 	}
@@ -1846,6 +1850,7 @@ Command* Interface::show_track_finder()
         foreach(Sheet* sheet, sheets) {
                 QList<Track*> tracks = sheet->get_tracks();
                 tracks.append(sheet->get_master_out());
+                tracks.append(m_project->get_master_out());
                 foreach(Track* track, tracks) {
                         QStandardItem* sItem = new QStandardItem(track->get_name());
                         sItem->setData(track->get_id(), Qt::UserRole);

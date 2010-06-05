@@ -32,8 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "SubGroup.h"
 #include "ContextPointer.h"
 #include "Themer.h"
-#include "Interface.h"
-
 #include "AudioClipView.h"
 #include "CurveView.h"
 #include "CurveNodeView.h"
@@ -928,15 +926,11 @@ void SheetView::set_vscrollbar_value(int value)
 	m_sheet->set_scrollbar_xy(m_hScrollBar->value(), m_vScrollBar->value());
 }
 
-Command* SheetView::add_track()
-{
-        Interface::instance()->show_newtrack_dialog();
-        return 0;
-}
-
 void SheetView::browse_to_track(Track *track)
 {
         QList<TrackView*> views = get_track_views();
+        views.append(m_sheetMasterOutView);
+        views.append(m_projectMasterOutView);
 
         foreach(TrackView* view, views) {
                 if (view->get_track() == track) {

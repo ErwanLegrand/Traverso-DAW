@@ -629,7 +629,7 @@ void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 			
         if (m_type == BUSIN) {
                 painter->drawPixmap(3, 3, m_pix);
-                painter->drawText(m_boundingRect.adjusted(15, 0, 0, 0), Qt::AlignCenter, m_busName);
+                painter->drawText(m_boundingRect.adjusted(20, 0, 0, 0), Qt::AlignVCenter, m_busName);
         } else {
                 painter->drawPixmap(m_boundingRect.width() - (m_pix.width() + 3), 3, m_pix);
                 painter->drawText(m_boundingRect.adjusted(3, 0, 0, 0), Qt::AlignVCenter, m_busName);
@@ -652,7 +652,7 @@ void TrackPanelBus::bus_changed()
                         } else if (sends.size() == 1) {
                                 m_busName = sends.first()->get_from_name();
                         } else {
-                                m_busName = "Multi" + QString(" (%1)").arg(sends.size());
+                                m_busName = "Multi" + QString("  (%1)").arg(sends.size());
                         }
 
                 } else {
@@ -671,7 +671,7 @@ void TrackPanelBus::bus_changed()
                 } else if (sends.size() == 1) {
                         m_busName = sends.first()->get_name();
                 } else {
-                        m_busName = "Multi" + QString(" (%1)").arg(sends.size());
+                        m_busName = "Multi" + QString("  (%1)").arg(sends.size());
                 }
 
                 int stringwidth = fm.width(m_busName) + 10;
