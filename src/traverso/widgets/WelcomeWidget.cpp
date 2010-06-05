@@ -65,7 +65,7 @@ void WelcomeWidget::set_project(Project* project)
                 loadPreviousProjectButton->setText(tr("Resume"));
                 previousProjectLineEdit->setText(project->get_title());
         } else {
-                previousProjectLabel->setText(tr("Load previous Project"));
+                previousProjectLabel->setText(tr("Load previous;"));
                 loadPreviousProjectButton->setText(tr("Load"));
 
         }
