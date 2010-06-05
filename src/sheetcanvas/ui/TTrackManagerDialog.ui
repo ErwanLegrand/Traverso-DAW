@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>965</width>
+    <width>881</width>
     <height>378</height>
    </rect>
   </property>
@@ -142,7 +142,7 @@
          <widget class="QListWidget" name="routingInputListWidget">
           <property name="minimumSize">
            <size>
-            <width>140</width>
+            <width>130</width>
             <height>0</height>
            </size>
           </property>
@@ -196,7 +196,7 @@
          <widget class="QListWidget" name="preSendsListWidget">
           <property name="minimumSize">
            <size>
-            <width>140</width>
+            <width>130</width>
             <height>0</height>
            </size>
           </property>
@@ -371,7 +371,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Up</string>
+             <string>U</string>
             </property>
            </widget>
           </item>
@@ -390,7 +390,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Down</string>
+             <string>D</string>
             </property>
            </widget>
           </item>
@@ -419,7 +419,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>140</width>
+            <width>130</width>
             <height>0</height>
            </size>
           </property>
@@ -443,7 +443,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
+              <width>50</width>
               <height>0</height>
              </size>
             </property>
@@ -451,19 +451,6 @@
              <string>Add</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item>
            <widget class="QPushButton" name="pluginsRemoveButton_2">
@@ -475,7 +462,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
+              <width>70</width>
               <height>0</height>
              </size>
             </property>
@@ -565,7 +552,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Up</string>
+             <string>U</string>
             </property>
            </widget>
           </item>
@@ -584,7 +571,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Down</string>
+             <string>D</string>
             </property>
            </widget>
           </item>
@@ -613,7 +600,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>140</width>
+            <width>130</width>
             <height>0</height>
            </size>
           </property>
@@ -637,7 +624,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
+              <width>50</width>
               <height>0</height>
              </size>
             </property>
@@ -645,19 +632,6 @@
              <string>Add</string>
             </property>
            </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
           <item>
            <widget class="QPushButton" name="pluginsRemoveButton">
@@ -669,7 +643,7 @@
             </property>
             <property name="minimumSize">
              <size>
-              <width>80</width>
+              <width>75</width>
               <height>0</height>
              </size>
             </property>
@@ -706,7 +680,7 @@
          <widget class="QListWidget" name="routingOutputListWidget">
           <property name="minimumSize">
            <size>
-            <width>140</width>
+            <width>130</width>
             <height>0</height>
            </size>
           </property>
