@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QString>
 #include <QList>
 #include <QDomNode>
-#include "ContextItem.h"
+#include "TSession.h"
 #include "APILinkedList.h"
 
 #include "defines.h"
@@ -41,7 +41,7 @@ class AudioDeviceClient;
 class SubGroup;
 class TSend;
 
-class Project : public ContextItem
+class Project : public TSession
 {
 	Q_OBJECT
 
@@ -64,8 +64,8 @@ public :
         QStringList get_playback_buses_names( ) const;
         QStringList get_capture_buses_names( ) const;
 
-        QList<AudioBus*> get_hardware_buses() const {return m_hardwareAudioBuses;}
-        QList<Track*> get_tracks() const;
+        QList<AudioBus*> get_hardware_buses() const;
+        QList<Track*> get_sheet_tracks() const;
         Track* get_track(qint64 trackId) const;
 
 
@@ -74,6 +74,7 @@ public :
 	int get_num_sheets() const;
 	int get_rate() const;
 	int get_bitdepth() const;
+        TimeRef get_last_location() const;
 
         QStringList get_input_buses_for(SubGroup* subGroup);
 	
@@ -94,7 +95,7 @@ public :
 	QString get_import_dir() const;
 	QString get_error_string() const {return m_errorString;}
 	QList<Sheet* > get_sheets() const;
-	Sheet* get_current_sheet() const ;
+        TSession* get_current_session() const ;
 	Sheet* get_sheet(qint64 id) const;
         int get_sheet_index(qint64 id);
         int get_keyboard_arrow_key_navigation_speed() const {return m_keyboardArrowNavigationSpeed;}
@@ -159,7 +160,6 @@ private:
 	ResourcesManager* 	m_resourcesManager;
         ExportThread*           m_exportThread;
         AudioDeviceClient*	m_audiodeviceClient;
-        SubGroup*               m_masterOut;
 
         QList<AudioBus* >       m_hardwareAudioBuses;
 
@@ -212,7 +212,7 @@ private slots:
         void sheet_added(Sheet* sheet);
 
 signals:
-	void currentSheetChanged(Sheet* );
+        void currentSessionChanged(TSession* );
         void privateSheetAdded(Sheet*);
 	void sheetAdded(Sheet*);
         void privateSheetRemoved(Sheet*);

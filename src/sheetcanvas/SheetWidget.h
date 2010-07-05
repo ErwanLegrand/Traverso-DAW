@@ -24,6 +24,7 @@
 #define SONG_WIDGET_H
 
 #include <QFrame>
+#include <QPushButton>
 #include "ViewItem.h"
 
 class QGridLayout;
@@ -36,7 +37,7 @@ class ClipsViewPort;
 class SheetPanelViewPort;
 
 class Project;
-class Sheet;
+class TSession;
 class Command;
 class SheetView;
 
@@ -44,23 +45,41 @@ class SheetPanelView : public ViewItem
 {
 	Q_OBJECT
 public:
-	SheetPanelView(QGraphicsScene* scene, Sheet* sheet);
+        SheetPanelView(QGraphicsScene* scene, TSession* sheet);
 	~SheetPanelView() {}
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-	Sheet* m_sheet;
+        TSession* m_sheet;
+};
+
+class TTimeLabel : public QPushButton
+{
+Q_OBJECT
+
+public:
+        TTimeLabel(QWidget* parent, TSession* session);
+
+private:
+        QTimer		m_updateTimer;
+        TSession*	m_session;
+
+
+private slots:
+        void transport_started();
+        void transport_stopped();
+        void update_label();
 };
 
 class SheetWidget : public QFrame
 {
 	Q_OBJECT
 public:
-	SheetWidget(Sheet* sheet, QWidget* parent=0);
+        SheetWidget(TSession* sheet, QWidget* parent=0);
 	~SheetWidget();
 	
-	Sheet* get_sheet() const;
+        TSession* get_sheet() const;
 	SheetView* get_sheetview() const;
 	
 protected:
@@ -69,7 +88,7 @@ protected:
 
 private:
 	SheetView* 		m_sv;
-	Sheet*			m_sheet;
+        TSession*		m_session;
 	QGridLayout*		m_mainLayout;
 	TrackPanelViewPort*	m_trackPanel;
 	TimeLineViewPort*	m_timeLine;

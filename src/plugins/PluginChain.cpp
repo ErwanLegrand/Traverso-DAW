@@ -139,6 +139,6 @@ void PluginChain::set_sheet(Sheet * sheet)
 {
 	m_sheet = sheet;
 	set_history_stack(m_sheet->get_history_stack());
-	m_fader->set_sheet(sheet);
+	m_fader->set_session(sheet);
 }
 

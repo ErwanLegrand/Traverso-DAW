@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TrackPanelViewPort.h"
 #include "SheetView.h"
 #include "TrackPanelView.h"
-#include <Interface.h>
+#include "TMainWindow.h"
 
 #include <Sheet.h>
 #include <AudioTrack.h>
@@ -129,8 +129,8 @@ void AudioTrackView::load_theme_data()
 
 Command* AudioTrackView::insert_silence()
 {
-	Interface::instance()->show_insertsilence_dialog();
-        Interface::instance()->set_insertsilence_track((AudioTrack*)m_track);
+	TMainWindow::instance()->show_insertsilence_dialog();
+        TMainWindow::instance()->set_insertsilence_track((AudioTrack*)m_track);
 	return 0; 
 }
 

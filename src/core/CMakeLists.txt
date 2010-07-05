@@ -42,6 +42,7 @@ ProcessingData.cpp
 ReadSource.cpp
 ResourcesManager.cpp
 TSend.cpp
+TSession.cpp
 Sheet.cpp
 SubGroup.cpp
 Track.cpp
@@ -82,6 +83,7 @@ SubGroup.h
 Themer.h
 TimeLine.h
 Track.h
+TSession.h
 WriteSource.h
 ContextItem.h
 InputEngine.h

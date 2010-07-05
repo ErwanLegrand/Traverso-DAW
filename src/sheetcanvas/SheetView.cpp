@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 
 #include <QScrollBar>
 
+#include "Config.h"
 #include "Curve.h"
 #include "InputEngine.h"
 #include "Sheet.h"
@@ -46,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "TimeLineViewPort.h"
 #include "TimeLineView.h"
 #include "TrackPanelViewPort.h"
+#include "TSession.h"
 
 #include "AddRemove.h"
 #include "Zoom.h"
@@ -69,7 +71,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	ClipsViewPort* viewPort,
 	TrackPanelViewPort* tpvp,
 	TimeLineViewPort* tlvp,
-	Sheet* sheet)
+        TSession* sheet)
 	: ViewItem(0, sheet)
 {
 	setZValue(1);
@@ -121,9 +123,9 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)), m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
 	
 	m_shuttleCurve = new Curve(0);
-	m_shuttleCurve->set_sheet(m_sheet);
+        m_shuttleCurve->set_sheet(m_sheet);
 	m_dragShuttleCurve = new Curve(0);
-	m_dragShuttleCurve->set_sheet(m_sheet);
+        m_dragShuttleCurve->set_sheet(m_sheet);
 	
 	// Use these variables to fine tune the scroll behavior
 	float whens[7] = {0.0, 0.2, 0.3, 0.4, 0.6, 0.9, 1.2};
@@ -169,7 +171,14 @@ SheetView::~SheetView()
 		
 void SheetView::scale_factor_changed( )
 {
-	timeref_scalefactor = qint64(m_sheet->get_hzoom() * (UNIVERSAL_SAMPLE_RATE / 44100));
+        qreal zoom = m_sheet->get_hzoom();
+        if (zoom == 0.0f) {
+                PERROR("Session %s return 0 hzoom factor!", m_sheet->get_name().toAscii().data());
+                // Woopsy, zoom can't be zero, if we allow that, timeref_scalefactor
+                // will be zero too, and we use timeref_scalefactor as a divider so...:
+                zoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
+        }
+        timeref_scalefactor = qint64(zoom * (UNIVERSAL_SAMPLE_RATE / 44100));
 	m_tlvp->scale_factor_changed();
 	
 	layout_tracks();
@@ -490,15 +499,21 @@ void SheetView::vzoom(qreal factor)
 }
 
 
-Command* SheetView::toggle_expand_all_tracks()
+Command* SheetView::toggle_expand_all_tracks(int height)
 {
-        if (m_meanTrackHeight > m_trackMinimumHeight) {
-                foreach(TrackView* view, get_track_views()) {
-                        view->get_track()->set_height(m_trackMinimumHeight);
+        if (height < 0) {
+                if (m_meanTrackHeight > m_trackMinimumHeight) {
+                        foreach(TrackView* view, get_track_views()) {
+                                view->get_track()->set_height(m_trackMinimumHeight);
+                        }
+                } else {
+                        foreach(TrackView* view, get_track_views()) {
+                                view->get_track()->set_height(85);
+                        }
                 }
         } else {
                 foreach(TrackView* view, get_track_views()) {
-                        view->get_track()->set_height(85);
+                        view->get_track()->set_height(height);
                 }
         }
 
@@ -794,9 +809,9 @@ Command * SheetView::work_cursor_move( )
 void SheetView::set_snap_range(int start)
 {
 // 	printf("SheetView::set_snap_range\n");
-	m_sheet->get_snap_list()->set_range(TimeRef(start * timeref_scalefactor),
-					TimeRef((start + m_clipsViewPort->viewport()->width()) * timeref_scalefactor),
-					timeref_scalefactor);
+        m_sheet->get_snap_list()->set_range(TimeRef(start * timeref_scalefactor),
+                                TimeRef((start + m_clipsViewPort->viewport()->width()) * timeref_scalefactor),
+                                timeref_scalefactor);
 }
 
 Command* SheetView::scroll_up( )

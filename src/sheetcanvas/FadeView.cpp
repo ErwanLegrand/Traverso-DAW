@@ -27,7 +27,7 @@ $Id: FadeView.cpp,v 1.2 2008/05/24 17:27:49 r_sijrier Exp $
 #include "FadeCurve.h"
 #include "AudioClipView.h"
 #include "SheetView.h"
-#include "Interface.h"
+#include "TMainWindow.h"
 #include <Themer.h>
 #include <Fade.h>
 #include <InputEngine.h>
@@ -273,10 +273,10 @@ Command* FadeView::strength()
 Command* FadeView::select_fade_shape()
 {
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeIn) {
-		Interface::instance()->select_fade_in_shape();
+		TMainWindow::instance()->select_fade_in_shape();
 	}
 	else {
-		Interface::instance()->select_fade_out_shape();
+		TMainWindow::instance()->select_fade_out_shape();
 	}
 	return 0;
 }

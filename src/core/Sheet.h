@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef SONG_H
 #define SONG_H
 
-#include "ContextItem.h"
+#include "TSession.h"
 #include <QDomNode>
 #include <QTimer>
 #include "defines.h"
@@ -47,7 +47,7 @@ class Track;
 
 struct ExportSpecification;
 
-class Sheet : public ContextItem, public APILinkedListNode
+class Sheet : public TSession, public APILinkedListNode
 {
 	Q_OBJECT
 	Q_CLASSINFO("start_transport", tr("Play"))
@@ -70,32 +70,14 @@ public:
 	Sheet(Project* project, const QDomNode node);
 	~Sheet();
 	
-	enum Mode {
-		EDIT = 1,
-  		EFFECTS = 2
-	};
-
 	// Get functions
-	qreal get_hzoom() const {return m_hzoom;}
 	int get_rate();
 	int get_bitdepth();
         int get_numtracks() const {return m_audioTracks.size();}
-	int get_mode() const {return m_mode;}
-	int is_transport_rolling() const {return m_transport;}
-	void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
-	
-	const TimeRef& get_work_location() const {return m_workLocation;}
-	nframes_t get_first_visible_frame() const;
-	TimeRef get_last_location() const;
-	const TimeRef& get_transport_location() const {return m_transportLocation;}
-	
-	const TimeRef& get_new_transport_location() const {return m_newTransportLocation;}
-	
+
         QString get_artists() const {return m_artists;}
-        QString get_name() const {return m_name;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
         QList<AudioTrack*> get_audio_tracks() const;
-        QList<SubGroup*> get_subgroups() const;
         QList<Track*> get_tracks() const;
 	
         Project* get_project() const {return m_project;}
@@ -103,25 +85,18 @@ public:
 	AudioClipManager* get_audioclip_manager() const;
 	AudioBus* get_render_bus() const {return m_renderBus;}
 	AudioBus* get_clip_render_bus() const {return m_clipRenderBus;}
-        SubGroup* get_master_out() const {return m_masterOut;}
-	SnapList* get_snap_list() const;
-	TimeLine* get_timeline() const {return m_timeline;}
-        Snappable* get_work_snap() {return m_workSnap;}
         Track* get_track(qint64 id) const;
         AudioTrack* get_audio_track_for_index(int index);
-        SubGroup* get_subgroup(const QString& name);
         QString get_audio_sources_dir() const;
+        TimeRef get_last_location() const;
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
         void set_name(const QString& name);
-	void set_first_visible_frame(nframes_t pos);
         void set_work_at(TimeRef location, bool isFolder=false);
         void set_work_at_for_sheet_as_track_folder(const TimeRef& location);
-	void set_hzoom(qreal hzoom);
 	void set_snapping(bool snap);
-	void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
-	int set_state( const QDomNode & node );
+        int set_state( const QDomNode & node );
 	void set_recording(bool recording, bool realtime);
         void set_audio_sources_dir(const QString& dir);
 
@@ -140,8 +115,7 @@ public:
         void solo_track(Track* track);
 	void create(int tracksToCreate);
         Command* add_track(Track* api, bool historable=true);
-        Command* remove_track(Track* api, bool historable=true);
-	
+
         bool any_audio_track_armed();
 	bool realtime_path() const {return m_realtimepath;}
         bool is_changed() const {return m_changed;}
@@ -149,10 +123,8 @@ public:
         bool is_recording() const {return m_recording;}
 	bool is_smaller_then(APILinkedListNode* node) {Q_UNUSED(node); return false;}
 
-	audio_sample_t* 	mixdown;
-	audio_sample_t*		readbuffer;
-	audio_sample_t*		gainbuffer;
-	DecodeBuffer*		renderDecodeBuffer;
+        audio_sample_t*		readbuffer;
+        DecodeBuffer*		renderDecodeBuffer;
 
 #if defined (THREAD_CHECK)
 	unsigned long	threadId;
@@ -160,18 +132,15 @@ public:
 
 private:
         APILinkedList		m_audioTracks;
-        APILinkedList           m_subGroups;
-        SubGroup*               m_masterOut;
         QList<AudioClip*>	m_recordingClips;
 	QTimer			m_skipTimer;
 	Project*		m_project;
 	WriteSource*		m_exportSource;
-        AudioDeviceClient* 		m_audiodeviceClient;
+        AudioDeviceClient*	m_audiodeviceClient;
         AudioBus*		m_renderBus;
 	AudioBus*		m_clipRenderBus;
 	DiskIO*			m_diskio;
 	AudioClipManager*	m_acmanager;
-	TimeLine*		m_timeline;
 	QList<TimeRef>		m_xposList;
         QString                 m_audioSourcesDir;
 
@@ -182,35 +151,20 @@ private:
 	// it 100% portable and working on all platforms...?
 	volatile size_t		m_transportFrame;
 	volatile size_t		m_newTransportFramePos;
-	volatile size_t		m_transport;
 	volatile size_t		m_seeking;
 	volatile size_t		m_startSeek;
-	
-	TimeRef		m_transportLocation;
-	TimeRef		m_workLocation;
-	TimeRef		m_newTransportLocation;
+        volatile size_t		m_stopTransport;
 
-	
-        nframes_t 	m_firstVisibleFrame;
+
         QString 	m_artists;
-        QString         m_name;
-	int		m_mode;
-	qreal		m_hzoom;
-	int		m_sbx;
-	int		m_sby;
 	uint		m_currentSampleRate;
 	bool 		m_rendering;
         bool 		m_changed;
-	bool 		m_isSnapOn;
 	bool		m_resumeTransport;
-	bool 		m_stopTransport;
 	bool		m_realtimepath;
-        bool		m_scheduledForDeletion;
         bool		m_recording;
 	bool		m_prepareRecording;
 	bool		m_readyToRecord;
-        SnapList*	m_snaplist;
-        Snappable*	m_workSnap;
 	
 	void init();
 
@@ -223,17 +177,13 @@ private:
 	
         void resize_buffer(nframes_t size);
 
-        AudioTrack* create_audio_track();
-	
 	friend class AudioClipManager;
-	friend class TimeLine;
 
 public slots :
 	void seek_finished();
         void audiodevice_params_changed();
         void set_gain(float gain);
-	void set_transport_pos(TimeRef location);
-	void set_temp_follow_state(bool state);
+        void set_transport_pos(TimeRef location);
 
 
 	Command* next_skip_pos();
@@ -245,25 +195,11 @@ public slots :
 	Command* toggle_solo();
 	Command* toggle_mute();
 	Command* toggle_arm();
-	Command* set_editing_mode();
-	Command* set_effects_mode();
-        Command* toggle_effects_mode();
 
 signals:
-        void trackRemoved(Track* );
-        void trackAdded(Track* );
-	void hzoomChanged();
-	void transportStarted();
-	void transportStopped();
-	void workingPosChanged();
-	void transportPosSet();
-	void firstVisibleFrameChanged();
-	void lastFramePositionChanged();
 	void seekStart();
 	void snapChanged();
-	void tempFollowChanged(bool state);
 	void setCursorAtEdge();
-	void modeChanged();
 	void recordingStateChanged();
 	void prepareRecording();
         void stateChanged();

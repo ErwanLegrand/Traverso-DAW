@@ -30,9 +30,12 @@
 #include "Config.h"
 #include "Information.h"
 
+#include "TimeLineViewPort.h"
+
 #include <QAction>
 #include <QWidget>
 #include <QPushButton>
+#include <QGridLayout>
 #include <QEvent>
 #include <QFont>
 #include <QString>
@@ -45,29 +48,30 @@
 TransportConsoleWidget::TransportConsoleWidget(QWidget* parent)
 	: QToolBar(parent)
 {
-	setEnabled(false);
+        setEnabled(false);
 
 	m_timeLabel = new QPushButton(this);
 	m_timeLabel->setFocusPolicy(Qt::NoFocus);
 	m_timeLabel->setStyleSheet(
 			"color: lime;"
 			"background-color: black;"
-			"font: 19px;"
+                        "font: 19px;"
 			"border: 2px solid gray;"
-			"border-radius: 10px;"
-			"padding: 0 8 0 8;"); 
+                        "border-radius: 10px;"
+                        "padding: 0 8 0 8;");
 
-	m_toStartAction = addAction(QIcon(":/skipleft"), tr("Skip to Start"), this, SLOT(to_start()));
-	m_toLeftAction = addAction(QIcon(":/seekleft"), tr("Previous Snap Position"), this, SLOT(to_left()));
-	m_recAction = addAction(QIcon(":/record"), tr("Record"), this, SLOT(rec_toggled()));
-	m_playAction = addAction(QIcon(":/playstart"), tr("Play / Stop"), this, SLOT(play_toggled()));
-	m_toRightAction = addAction(QIcon(":/seekright"), tr("Next Snap Position"), this, SLOT(to_right()));
-	m_toEndAction = addAction(QIcon(":/skipright"), tr("Skip to End"), this, SLOT(to_end()));
+        m_toStartAction = addAction(QIcon(":/skipleft"), tr("Skip to Start"), this, SLOT(to_start()));
+        m_toLeftAction = addAction(QIcon(":/seekleft"), tr("Previous Snap Position"), this, SLOT(to_left()));
+        m_recAction = addAction(QIcon(":/record"), tr("Record"), this, SLOT(rec_toggled()));
+        m_playAction = addAction(QIcon(":/playstart"), tr("Play / Stop"), this, SLOT(play_toggled()));
+        m_toRightAction = addAction(QIcon(":/seekright"), tr("Next Snap Position"), this, SLOT(to_right()));
+        m_toEndAction = addAction(QIcon(":/skipright"), tr("Skip to End"), this, SLOT(to_end()));
 
-	addWidget(m_timeLabel);
+//        addWidget(m_timeLabel);
+        m_timeLabel->hide();
 
-	m_recAction->setCheckable(true);
-	m_playAction->setCheckable(true);
+        m_recAction->setCheckable(true);
+        m_playAction->setCheckable(true);
 
 	m_lastSnapPosition = TimeRef();
 
@@ -82,16 +86,16 @@ void TransportConsoleWidget::set_project(Project* project)
 {
 	m_project = project;
 	if (m_project) {
-		connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
+                connect(m_project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(set_session(TSession*)));
 	} else {
 		m_updateTimer.stop();
-		set_sheet(0);
+                set_session(0);
 	}
 }
 
-void TransportConsoleWidget::set_sheet(Sheet* sheet)
+void TransportConsoleWidget::set_session(TSession* session)
 {
-	m_sheet = sheet;
+        m_sheet = qobject_cast<Sheet*>(session);
 
 	if (!m_sheet)
 	{
@@ -113,12 +117,12 @@ void TransportConsoleWidget::set_sheet(Sheet* sheet)
 
 void TransportConsoleWidget::to_start()
 {
-	m_sheet->skip_to_start();
+        m_sheet->skip_to_start();
 }
 
 void TransportConsoleWidget::to_left()
 {
-	m_sheet->prev_skip_pos();
+        m_sheet->prev_skip_pos();
 }
 
 void TransportConsoleWidget::rec_toggled()
@@ -133,12 +137,12 @@ void TransportConsoleWidget::play_toggled()
 
 void TransportConsoleWidget::to_end()
 {
-	m_sheet->skip_to_end();
+        m_sheet->skip_to_end();
 }
 
 void TransportConsoleWidget::to_right()
 {
-	m_sheet->next_skip_pos();
+        m_sheet->next_skip_pos();
 }
 
 void TransportConsoleWidget::transport_started()
@@ -148,23 +152,23 @@ void TransportConsoleWidget::transport_started()
 	// the same most of the time, but not always, which 
 	// looks jerky
         m_updateTimer.start(123);
-	m_playAction->setChecked(true);
-	m_playAction->setIcon(QIcon(":/playstop"));
-	m_recAction->setEnabled(false);
+        m_playAction->setChecked(true);
+        m_playAction->setIcon(QIcon(":/playstop"));
+        m_recAction->setEnabled(false);
 
 	// this is needed when the record button is pressed, but no track is armed.
 	// uncheck the rec button in that case
 	if (!m_sheet->is_recording()) {
-		m_recAction->setChecked(false);
+                m_recAction->setChecked(false);
 	}
 }
 
 void TransportConsoleWidget::transport_stopped()
 {
 	m_updateTimer.stop();
-	m_playAction->setChecked(false);
-	m_playAction->setIcon(QIcon(":/playstart"));
-	m_recAction->setEnabled(true);
+        m_playAction->setChecked(false);
+        m_playAction->setIcon(QIcon(":/playstart"));
+        m_recAction->setEnabled(true);
 }
 
 void TransportConsoleWidget::update_recording_state()
@@ -206,8 +210,6 @@ void TransportConsoleWidget::update_layout()
 	int iconsize = config().get_property("Themer", "transportconsolesize", "22").toInt();
 	setIconSize(QSize(iconsize, iconsize));
 }
-
-
 
 //eof
 

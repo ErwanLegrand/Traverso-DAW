@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TimeLine.h"
 
-#include "Sheet.h"
+#include "TSession.h"
 #include "Marker.h"
 #include "Export.h"
 #include "Utils.h"
@@ -33,7 +33,7 @@ static bool smallerMarker(const Marker* left, const Marker* right )
 	return left->get_when() < right->get_when();
 }
 
-TimeLine::TimeLine(Sheet * sheet)
+TimeLine::TimeLine(TSession * sheet)
 	: ContextItem(sheet)
 	, m_sheet(sheet)
 {

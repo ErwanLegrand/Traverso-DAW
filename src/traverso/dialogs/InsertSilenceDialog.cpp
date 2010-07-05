@@ -52,7 +52,11 @@ void InsertSilenceDialog::focusInput()
 
 void InsertSilenceDialog::accept()
 {
-	Sheet* sheet = pm().get_project()->get_current_sheet();
+        Sheet* sheet = qobject_cast<Sheet*>(pm().get_project()->get_current_session());
+        if (!sheet) {
+                return;
+        }
+
         QList<AudioTrack*> tracks = sheet->get_audio_tracks();
 
 	// Make sure track is still in the sheet

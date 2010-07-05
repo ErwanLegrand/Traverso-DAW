@@ -110,7 +110,7 @@ void TTrackManagerDialog::create_routing_input_menu()
                 QList<Track*> tracks;
                 Project* project = pm().get_project();
                 if (m_track == project->get_master_out()) {
-                        tracks = project->get_tracks();
+                        tracks = project->get_sheet_tracks();
                 } else {
                         foreach(AudioTrack* at, m_track->get_sheet()->get_audio_tracks()) {
                                 tracks.append(at);
@@ -165,9 +165,10 @@ QMenu* TTrackManagerDialog::create_sends_menu()
         QAction* action;
 
         Sheet* sheet = m_track->get_sheet();
+        Project* project = pm().get_project();
 
         SubGroup* sheetMaster = 0;
-        SubGroup* projectMaster = pm().get_project()->get_master_out();
+        SubGroup* projectMaster = project->get_master_out();
 
         if (sheet) {
                 sheetMaster = sheet->get_master_out();
@@ -192,6 +193,15 @@ QMenu* TTrackManagerDialog::create_sends_menu()
                         }
                 }
         }
+
+        if (project) {
+                QList<SubGroup*> subgroups = project->get_subgroups();
+                foreach(SubGroup* sub, subgroups) {
+                        action = menu->addAction(sub->get_name());
+                        action->setData(sub->get_id());
+                }
+        }
+
 
         menu->addSeparator();
 
@@ -229,7 +239,7 @@ void TTrackManagerDialog::routingInputMenuActionTriggered(QAction *action)
         }
 
         if (m_track->get_type() == Track::AUDIOTRACK) {
-                m_track->add_input_bus(action->data().toLongLong());
+                m_track->add_input_bus(action->text());
         }
 
         if (m_track->get_type() == Track::SUBGROUP) {

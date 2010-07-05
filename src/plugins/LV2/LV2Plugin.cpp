@@ -48,8 +48,8 @@ enum PortType {
 };
 
 
-LV2Plugin::LV2Plugin(Sheet* sheet, bool slave)
-	: Plugin(sheet)
+LV2Plugin::LV2Plugin(TSession* session, bool slave)
+        : Plugin(session)
 	, m_plugin(0)
 	, m_instance(0)
 {
@@ -57,8 +57,8 @@ LV2Plugin::LV2Plugin(Sheet* sheet, bool slave)
 }
 
 
-LV2Plugin::LV2Plugin(Sheet* sheet, char* pluginUri)
-	: Plugin(sheet)
+LV2Plugin::LV2Plugin(TSession* session, char* pluginUri)
+        : Plugin(session)
 	, m_pluginUri((char*) pluginUri)
 	, m_plugin(0)
 	, m_instance(0)
@@ -456,7 +456,7 @@ LV2Plugin * LV2Plugin::create_copy()
 {
 	QDomDocument doc("LV2Plugin");
 	QDomNode pluginState = get_state(doc);
-	LV2Plugin* plug = new LV2Plugin(m_sheet, true);
+        LV2Plugin* plug = new LV2Plugin(m_session, true);
 	plug->set_state(pluginState);
 	return plug;
 }

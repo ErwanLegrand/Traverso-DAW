@@ -25,14 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Mixer.h"
 #include "AudioBus.h"
 
-GainEnvelope::GainEnvelope(Sheet* sheet)
-	: Plugin(sheet)
+GainEnvelope::GainEnvelope(TSession* session)
+        : Plugin(session)
 {
 	PluginControlPort* port = new PluginControlPort(this, 0, 1.0);
 	port->set_index(0);
 	m_controlPorts.append(port);
-	if (sheet) {
-		set_sheet(sheet);
+        if (session) {
+                set_session(session);
 	}
 }
 
@@ -78,12 +78,12 @@ QString GainEnvelope::get_name()
 	return "Gain Envelope";
 }
 
-void GainEnvelope::set_sheet(Sheet * sheet)
+void GainEnvelope::set_session(TSession * session)
 {
-	m_sheet = sheet;
-	set_history_stack(m_sheet->get_history_stack());
+        m_session = session;
+	set_history_stack(m_session->get_history_stack());
 	if (get_curve()) {
-		get_curve()->set_sheet(sheet);
+                get_curve()->set_sheet(session);
 	}
 }
 

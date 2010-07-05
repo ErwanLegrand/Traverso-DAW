@@ -28,7 +28,7 @@
 class AudioClip;
 class AudioTrack;
 class SheetView;
-class Sheet;
+class TSession;
 class AudioClipView;
 class LineView;
 
@@ -37,7 +37,7 @@ class SplitClip : public MoveCommand
         Q_OBJECT
 public :
 	SplitClip(AudioClipView* view);
-        ~SplitClip() {};
+        ~SplitClip() {}
 
         int prepare_actions();
         int do_action();
@@ -52,7 +52,7 @@ public :
 	
 private :
 	SheetView* m_sv;
-        Sheet*  m_sheet;
+        TSession*  m_session;
 	AudioClipView* m_cv;
         AudioTrack* m_track;
         AudioClip* m_clip;

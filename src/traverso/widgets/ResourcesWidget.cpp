@@ -249,7 +249,7 @@ void ResourcesWidget::project_load_finished()
 	
 	connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(sheet_added(Sheet*)));
 	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(sheet_removed(Sheet*)));
-	connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_current_sheet(Sheet*)));
+        connect(m_project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(set_current_session(TSession*)));
 	
 	connect(rsmanager, SIGNAL(clipAdded(AudioClip*)), this, SLOT(add_clip(AudioClip*)));
 	connect(rsmanager, SIGNAL(clipRemoved(AudioClip*)), this, SLOT(remove_clip(AudioClip*)));
@@ -268,7 +268,7 @@ void ResourcesWidget::project_load_finished()
 		sheet_added(sheet);
 	}
 	
-	set_current_sheet(m_project->get_current_sheet());
+        set_current_sheet(qobject_cast<Sheet*>(m_project->get_current_session()));
 
 	sourcesTreeWidget->sortItems(0, Qt::AscendingOrder);
 }

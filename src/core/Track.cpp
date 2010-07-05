@@ -218,10 +218,10 @@ int Track::get_sort_index( ) const
 void Track::add_input_bus(AudioBus *bus)
 {
         if (m_sheet && m_sheet->is_transport_rolling()) {
-                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_add_input_bus(AudioBus*), busConfigurationChanged());
+                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_add_input_bus(AudioBus*), routingConfigurationChanged())
         } else {
                 private_add_input_bus(bus);
-                emit busConfigurationChanged();
+                emit routingConfigurationChanged();
         }
 }
 
@@ -253,7 +253,7 @@ void Track::add_post_send(qint64 busId)
         postSend->set_type(TSend::POSTSEND);
 
         if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
-                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, postSend, private_add_post_send(TSend*), routingConfigurationChanged());
+                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, postSend, private_add_post_send(TSend*), routingConfigurationChanged())
         } else {
                 private_add_post_send(postSend);
                 emit routingConfigurationChanged();
@@ -282,7 +282,7 @@ void Track::add_pre_send(qint64 busId)
         preSend->set_type(TSend::PRESEND);
 
         if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
-                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, preSend, private_add_pre_send(TSend*), routingConfigurationChanged());
+                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, preSend, private_add_pre_send(TSend*), routingConfigurationChanged())
         } else {
                 private_add_pre_send(preSend);
                 emit routingConfigurationChanged();

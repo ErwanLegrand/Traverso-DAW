@@ -27,7 +27,7 @@
 #include <Tsar.h>
 
 class ContextItem;
-class Sheet;
+class TSession;
 
 class AddRemove : public Command
 {
@@ -36,7 +36,7 @@ public :
         AddRemove(ContextItem* parent,
 			void*  arg,
 			bool historable,
-			Sheet* sheet,
+                        TSession* sheet,
 			const char* doActionSlot,
 			const char* doSignal,
 			const char* undoActionSlot,
@@ -45,7 +45,7 @@ public :
         AddRemove(ContextItem* parent,
                         ContextItem*  item,
                         bool historable,
-                        Sheet* sheet,
+                        TSession* sheet,
                         const char* doActionSlot,
                         const char* doSignal,
                         const char* undoActionSlot,
@@ -65,7 +65,7 @@ private :
 	void* 		m_arg;
         TsarEvent	m_doActionEvent;
         TsarEvent	m_undoActionEvent;
-        Sheet*		m_sheet;
+        TSession*	m_sheet;
 
         const char*	m_doActionSlot;
 	const char*	m_undoActionSlot;

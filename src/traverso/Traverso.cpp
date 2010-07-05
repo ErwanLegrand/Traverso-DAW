@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Mixer.h"
 #include "ProjectManager.h"
 #include <Project.h>
-#include "Interface.h"
+#include "TMainWindow.h"
 #include "Themer.h"
 #include <Config.h>
 #include <AudioDevice.h>
@@ -118,7 +118,7 @@ Traverso::Traverso(int &argc, char **argv )
 Traverso::~Traverso()
 {
 	PENTERDES;
-	delete Interface::instance();
+	delete TMainWindow::instance();
 	delete themer();
         config().save();
 }
@@ -126,8 +126,8 @@ Traverso::~Traverso()
 void Traverso::create_interface( )
 {
 	themer()->load();
-        Interface* iface = Interface::instance();
-	iface->show();
+        TMainWindow* tMainWindow = TMainWindow::instance();
+        tMainWindow->show();
 
         config().init_input_engine();
 	
@@ -174,7 +174,7 @@ void Traverso::shutdown( int signal )
 			break;
 		case SIGSEGV:
                         printf("\nCaught the SIGSEGV signal!\n");
-			QMessageBox::critical( Interface::instance(), "Crash",
+			QMessageBox::critical( TMainWindow::instance(), "Crash",
 				"The program made an invalid operation and crashed :-(\n"
 				"Please, report this to us!");
 	}

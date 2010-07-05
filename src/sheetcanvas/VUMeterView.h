@@ -22,7 +22,7 @@
 #define VUMeterView_H
 
 #include "ViewItem.h"
-#include "Interface.h"
+#include "TMainWindow.h"
 
 class Track;
 class VUMeterLevelView;

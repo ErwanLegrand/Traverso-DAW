@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <LV2Plugin.h>
 #endif
 
-#include "Interface.h"
+#include "TMainWindow.h"
 #include <Plugin.h>
 #include <PluginManager.h>
 #include <Information.h>
@@ -129,7 +129,7 @@ void PluginSelectorDialog::plugin_double_clicked()
 PluginSelectorDialog* PluginSelectorDialog::instance()
 {
 	if (m_instance == 0) {
-		m_instance = new PluginSelectorDialog(Interface::instance());
+		m_instance = new PluginSelectorDialog(TMainWindow::instance());
 	}
 
 	return m_instance;

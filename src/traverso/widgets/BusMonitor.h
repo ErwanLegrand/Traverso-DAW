@@ -29,6 +29,7 @@ $Id: BusMonitor.h,v 1.1 2008/05/24 17:41:02 r_sijrier Exp $
 class VUMeter;
 class Project;
 class Sheet;
+class TSession;
 class QMenu;
 class QHBoxLayout;
 
@@ -61,7 +62,7 @@ private:
 private slots:
 	void create_vu_meters();
 	void set_project(Project* project);
-        void set_sheet(Sheet* sheet);
+        void set_session(TSession* session);
 	void reset_vu_meters();
 };
 

@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioDevice.h"
 #include "Config.h"
 #include "DiskIO.h"
-#include "Interface.h"
+#include "TMainWindow.h"
 #include "InputEngine.h"
 #include "MessageWidget.h" 
 #include "Project.h"
@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Mixer.h"
 
 #include <QPainter>
+#include <QLineEdit>
 #include <QByteArray>
 #include <QPalette>
 #include <QPushButton>
@@ -115,6 +116,7 @@ SystemResources::SystemResources(QWidget * parent)
 	lay->addWidget(m_icon);
 	lay->addWidget(m_writeBufferStatus);
 	lay->addWidget(m_cpuUsage);
+        lay->addWidget(TMainWindow::instance()->get_track_finder());
         lay->addWidget(m_collectedNumber);
 	lay->setMargin(0);
 	lay->addSpacing(6);
@@ -240,7 +242,7 @@ void DriverInfo::leaveEvent(QEvent * event)
 
 void DriverInfo::show_driver_config_dialog( )
 {
-	Interface::instance()->show_settings_dialog_sound_system_page();
+        TMainWindow::instance()->show_settings_dialog_sound_system_page();
 }
 
 
@@ -418,7 +420,7 @@ void InfoWidget::set_project(Project* project )
 {
 	m_project = project;
 	if (m_project) {
-		connect(m_project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
+                connect(m_project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(set_session(TSession*)));
 	} else {
 		set_sheet(0);
 	}

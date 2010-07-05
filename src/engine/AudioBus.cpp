@@ -109,6 +109,11 @@ void AudioBus::add_channel(const QString &channel)
         m_channelNames.append(channel);
 }
 
+int AudioBus::get_channel_count() const
+{
+        return m_channelCount;
+}
+
 QStringList AudioBus::get_channel_names() const
 {
         if (m_busType == BusIsHardware) {

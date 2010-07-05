@@ -37,6 +37,7 @@ class TrackPanelViewPort;
 class TimeLineViewPort;
 class TimeLineView;
 class TrackView;
+class TSession;
 class SheetWidget;
 class AudioTrackView;
 class Track;
@@ -102,13 +103,13 @@ public :
 		 	ClipsViewPort* viewPort,
     			TrackPanelViewPort* tpvp, 
        			TimeLineViewPort* tlvp, 
-	  		Sheet* sheet);
+                        TSession* sheet);
         ~SheetView();
 	
         void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) {}
 	QRectF boundingRect() const {return QRectF();}
 	
-	Sheet* get_sheet() const {return m_sheet;}
+        TSession* get_sheet() const {return m_sheet;}
 	TrackPanelViewPort* get_trackpanel_view_port() const;
 	ClipsViewPort* get_clips_viewport() const;
         TimeLineViewPort* get_timeline_viewport() const;
@@ -145,7 +146,7 @@ public :
 	qint64		timeref_scalefactor;
 
 private:
-        Sheet* 			m_sheet;
+        TSession*		m_sheet;
 	Curve*			m_shuttleCurve;
 	Curve*			m_dragShuttleCurve;
 	PlayHead*		m_playCursor;
@@ -213,7 +214,7 @@ public slots:
         Command* playhead_to_workcursor();
         Command* workcursor_to_playhead();
 	Command* center_playhead();
-        Command* toggle_expand_all_tracks();
+        Command* toggle_expand_all_tracks(int height = -1);
 	
 private slots:
 	void scale_factor_changed();

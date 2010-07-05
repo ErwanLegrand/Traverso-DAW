@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QList>
 #include "defines.h"
 
-class Sheet;
+class TSession;
 class Marker;
 class Snappable;
 class Command;
@@ -37,15 +37,15 @@ class TimeLine : public ContextItem
 {
 	Q_OBJECT
 public:
-	TimeLine(Sheet* sheet);
-	~TimeLine() {};
+        TimeLine(TSession* sheet);
+        ~TimeLine() {}
 	
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode& node);
 	
 	QList<Marker*> get_markers() const {return m_markers;}
         QList<Marker*> get_cd_layout(bool & endmarker);
-	Sheet *get_sheet() const {return m_sheet;}
+        TSession *get_sheet() const {return m_sheet;}
 	
 	Marker* get_marker(qint64 id);
 	Marker* get_end_marker();
@@ -62,7 +62,7 @@ public:
 
 
 private:
-	Sheet* m_sheet;
+        TSession* m_sheet;
 	QList<Marker*> m_markers;
 	void index_markers();
 

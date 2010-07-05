@@ -130,7 +130,7 @@ void Curve::init( )
 	m_changed = true;
 	m_lookup_cache.left = -1;
 	m_defaultValue = 1.0f;
-	m_sheet = 0;
+        m_session = 0;
 	
 	connect(this, SIGNAL(nodePositionChanged()), this, SLOT(set_changed()));
 }
@@ -212,11 +212,11 @@ int Curve::process(
 	}
 	
 	// Calculate the vector, an apply to the buffer including the makeup gain.
-	get_vector(startlocation.universal_frame(), endlocation.universal_frame(), m_sheet->mixdown, nframes);
+        get_vector(startlocation.universal_frame(), endlocation.universal_frame(), m_session->mixdown, nframes);
 	
 	for (uint chan=0; chan<channels; ++chan) {
 		for (nframes_t n = 0; n < nframes; ++n) {
-			buffer[chan][n] *= (m_sheet->mixdown[n] * makeupgain);
+                        buffer[chan][n] *= (m_session->mixdown[n] * makeupgain);
 		}
 	}
 	
@@ -405,6 +405,8 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		
 		subveclen = min (subveclen, veclen);
 
+                printf("filling first %d samples %f\n", subveclen, firstnode->value);
+
 		for (i = 0; i < subveclen; ++i) {
 			vec[i] = firstnode->value;
 		}
@@ -429,7 +431,9 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 
 		i = veclen - subveclen;
 
-		for (i = veclen - subveclen; i < veclen; ++i) {
+                printf("filling last %d samples %f\n", subveclen, firstnode->value);
+
+                for (i = veclen - subveclen; i < veclen; ++i) {
 			vec[i] = val;
 		}
 
@@ -702,7 +706,7 @@ Command* Curve::add_node(CurveNode* node, bool historable)
 
 	
 	AddRemove* cmd;
-	cmd = new AddRemove(this, node, historable, m_sheet,
+        cmd = new AddRemove(this, node, historable, m_session,
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)",
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			tr("Add CurveNode"));
@@ -741,7 +745,7 @@ Command* Curve::remove_node(CurveNode* node, bool historable)
 	
 	AddRemove* cmd;
 	
-	cmd = new AddRemove(this, node, historable, m_sheet,
+        cmd = new AddRemove(this, node, historable, m_session,
 			"private_remove_node(CurveNode*)", "nodeRemoved(CurveNode*)", 
 			"private_add_node(CurveNode*)", "nodeAdded(CurveNode*)", 
    			tr("Remove CurveNode"));
@@ -761,9 +765,9 @@ void Curve::private_remove_node( CurveNode * node )
 	set_changed();
 }
 
-void Curve::set_sheet(Sheet * sheet)
+void Curve::set_sheet(TSession * sheet)
 {
-	m_sheet = sheet; 
-	set_history_stack(m_sheet->get_history_stack());
+        m_session = sheet;
+        set_history_stack(m_session->get_history_stack());
 }
 

@@ -276,7 +276,7 @@ VUMeterLevelView::VUMeterLevelView(ViewItem* parent, VUMonitor* monitor)
         m_orientation = Qt::Vertical;
 
         // falloff speed, according to IEC 60268-18: 20 dB in 1.7 sec.
-        m_maxFalloff = 20.0 / (1700.0 / (float)Interface::instance()->get_vulevel_update_frequency());
+        m_maxFalloff = 20.0 / (1700.0 / (float)TMainWindow::instance()->get_vulevel_update_frequency());
 
         for (int i = 0; i < RMS_SAMPLES; i++) {
                 m_peakHistory[i] = 0.0;
@@ -285,12 +285,12 @@ VUMeterLevelView::VUMeterLevelView(ViewItem* parent, VUMonitor* monitor)
         connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
         load_theme_data();
 
-        Interface::instance()->register_vumeter_level(this);
+        TMainWindow::instance()->register_vumeter_level(this);
 }
 
 VUMeterLevelView::~VUMeterLevelView()
 {
-        Interface::instance()->unregister_vumeter_level(this);
+        TMainWindow::instance()->unregister_vumeter_level(this);
 }
 
 void VUMeterLevelView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

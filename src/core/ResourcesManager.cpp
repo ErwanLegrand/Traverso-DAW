@@ -153,7 +153,7 @@ ReadSource* ResourcesManager::import_source(const QString& dir, const QString& n
 	ReadSource* source = new ReadSource(dir, name);
 	SourceData* data = new SourceData();
 	data->source = source;
-	source->set_created_by_sheet(m_project->get_current_sheet()->get_id());
+        source->set_created_by_sheet(m_project->get_current_session()->get_id());
 	
 	m_sources.insert(source->get_id(), data);
 	

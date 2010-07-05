@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Themer.h>
 #include <InputEngine.h>
 #include "ContextPointer.h"
-#include "Interface.h"
+#include "TMainWindow.h"
 #include <QDomDocument>
 #include <QPrinter>
 #include <QPrintDialog>
@@ -841,8 +841,8 @@ void KeyboardConfigPage::update_keymap_combo()
 
 void KeyboardConfigPage::on_exportButton_clicked()
 {
-	Interface::instance()->export_keymap();
-	QMessageBox::information( Interface::instance(), tr("KeyMap Export"), 
+	TMainWindow::instance()->export_keymap();
+	QMessageBox::information( TMainWindow::instance(), tr("KeyMap Export"), 
 		     tr("The exported keymap can be found here:\n\n %1").arg(QDir::homePath() + "/traversokeymap.html"),
 		     QMessageBox::Ok);
 }
@@ -850,10 +850,10 @@ void KeyboardConfigPage::on_exportButton_clicked()
 void KeyboardConfigPage::on_printButton_clicked()
 {
 	QString kmap;
-	Interface::instance()->get_keymap(kmap);
+	TMainWindow::instance()->get_keymap(kmap);
 
 	QPrinter printer(QPrinter::ScreenResolution);
-	QPrintDialog printDialog(&printer, Interface::instance());
+	QPrintDialog printDialog(&printer, TMainWindow::instance());
 	if (printDialog.exec() == QDialog::Accepted) {
                 QTextDocument doc;
                 doc.setHtml(kmap);

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_NewTrackDialog.h"
 
 #include <QDialog>
+#include <QTimer>
 
 class Project;
 class QAbstractButton;
@@ -43,6 +44,7 @@ protected:
 
 private:
 	Project* m_project;
+        QTimer  m_timer;
 
         void create_track();
         void update_driver_info();
@@ -52,6 +54,7 @@ private slots:
         void clicked (QAbstractButton * button );
 	void set_project(Project* project);
         void update_buses_comboboxes();
+        void reset_information_label();
 
 };
 

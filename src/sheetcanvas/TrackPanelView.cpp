@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SubGroup.h"
 #include "Track.h"
 #include "TSend.h"
-#include "Interface.h"
+#include "TMainWindow.h"
 #include "VUMeterView.h"
 		
 #include <Debugger.h>
@@ -164,7 +164,6 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
                 painter->fillRect(xstart, m_track->get_height() - m_trackView->m_bottomborderwidth, pixelcount, m_trackView->m_bottomborderwidth, color);
         }
 
-        // Track / track panel seperator is painted in TrackPanelViewPort... not the best place perhaps ?
         painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
 
         if (xstart < 180) {

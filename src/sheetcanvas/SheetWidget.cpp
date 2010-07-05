@@ -42,24 +42,18 @@
 
 #include <Debugger.h>
 
-SheetPanelView::SheetPanelView(QGraphicsScene* scene, Sheet* sheet)
+SheetPanelView::SheetPanelView(QGraphicsScene* scene, TSession* sheet)
 	: ViewItem(0, 0)
 	, m_sheet(sheet)
 {
-	scene->addItem(this);
-	m_boundingRect = QRectF(0, 0, 200, TIMELINE_HEIGHT);
+        scene->addItem(this);
+        m_boundingRect = QRectF(0, 0, 200, TIMELINE_HEIGHT);
 }
 
 
 void SheetPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
 {
-	int xstart = (int)option->exposedRect.x();
-	int pixelcount = (int)option->exposedRect.width();
-	
-	QColor color = QColor(Qt::darkGray);//themer()->get_color("Track:cliptopoffset");
-	painter->setPen(color);
-	painter->fillRect(xstart, TIMELINE_HEIGHT - 2, pixelcount, 2, color);
-	painter->fillRect(199, 0, 1, TIMELINE_HEIGHT, color);
+        painter->fillRect(-3, 0, 3, -TIMELINE_HEIGHT - 1, themer()->get_color("TrackPanel:trackseparation"));
 }
 
 class SheetPanelViewPort : public ViewPort
@@ -75,26 +69,82 @@ private:
 	SheetPanelView* m_spv;
 };
 
-
 SheetPanelViewPort::SheetPanelViewPort(QGraphicsScene * scene, SheetWidget * sw)
 	: ViewPort(scene, sw)
 {
-	setSceneRect(-200, -TIMELINE_HEIGHT, 200, 0);
+        setSceneRect(-200, -TIMELINE_HEIGHT, 200, 0);
 	setMaximumHeight(TIMELINE_HEIGHT);
 	setMinimumHeight(TIMELINE_HEIGHT);
 	setMinimumWidth(200);
 	setMaximumWidth(200);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	setBackgroundBrush(themer()->get_color("SheetPanel:background"));
+        setBackgroundBrush(themer()->get_color("Timeline:background"));
+
+        m_spv = new SheetPanelView(scene, sw->get_sheet());
+
+        QHBoxLayout* m_mainLayout = new QHBoxLayout(this);
+        m_mainLayout->addWidget(new TTimeLabel(this, sw->get_sheet()));
+        setLayout(m_mainLayout);
+
+}
+
+TTimeLabel::TTimeLabel(QWidget* parent, TSession* session)
+        : QPushButton(parent)
+        , m_session(session)
+{
+        setEnabled(false);
+
+        setMaximumWidth(120);
+        setFocusPolicy(Qt::NoFocus);
+        setStyleSheet(  "color: lime;"
+                        "background-color: black;"
+                        "font: 17px;"
+                        "border-radius: 5px;"
+                        "padding: 0 4 0 4;");
+
+
+        connect(m_session, SIGNAL(transportStarted()), this, SLOT(transport_started()));
+        connect(m_session, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
+        connect(m_session, SIGNAL(transportPosSet()), this, SLOT(update_label()));
+        connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update_label()));
+
+        update_label();
+}
+
+void TTimeLabel::transport_started()
+{
+    // use an odd number for the update interval, because
+        // a round number (e.g. 100) lets the last digit stay
+        // the same most of the time, but not always, which
+        // looks jerky
+        m_updateTimer.start(123);
+}
+
+void TTimeLabel::transport_stopped()
+{
+        m_updateTimer.stop();
 }
 
 
-SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
-	: QFrame(parent)
-	, m_sheet(sheet)
+void TTimeLabel::update_label()
 {
-	if (!m_sheet) {
+        QString currentTime;
+
+        if (!m_session) {
+                currentTime = "";
+        } else {
+                currentTime = timeref_to_ms_2(m_session->get_transport_location());
+        }
+        setText(currentTime);
+}
+
+
+SheetWidget::SheetWidget(TSession* sheet, QWidget* parent)
+	: QFrame(parent)
+	, m_session(sheet)
+{
+	if (!m_session) {
 		return;
 	}
 	m_scene = new QGraphicsScene();
@@ -122,13 +172,13 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
         sheet_zoom_level_changed();
 
         connect(m_zoomSlider, SIGNAL(sliderMoved(int)), this, SLOT(zoom_slider_value_changed(int)));
-        connect(m_sheet, SIGNAL(hzoomChanged()), this, SLOT(sheet_zoom_level_changed()));
+        connect(m_session, SIGNAL(hzoomChanged()), this, SLOT(sheet_zoom_level_changed()));
 
         zoomLayout->addWidget(zoomLabel);
         zoomLayout->addWidget(m_zoomSlider);
 
-	m_mainLayout = new QGridLayout(this);
-	m_mainLayout->addWidget(m_sheetPanelVP, 0, 0);
+        m_mainLayout = new QGridLayout(this);
+        m_mainLayout->addWidget(m_sheetPanelVP, 0, 0);
         m_mainLayout->addWidget(zoomWidget, 2, 0);
 	m_mainLayout->addWidget(m_timeLine, 0, 1);
 	m_mainLayout->addWidget(m_trackPanel, 1, 0);
@@ -179,7 +229,7 @@ SheetWidget::SheetWidget(Sheet* sheet, QWidget* parent)
 SheetWidget::~ SheetWidget()
 {
 	PENTERDES;
-	if (!m_sheet) {
+	if (!m_session) {
 		return;
 	}
 
@@ -210,9 +260,9 @@ void SheetWidget::load_theme_data()
 	
 }
 
-Sheet * SheetWidget::get_sheet() const
+TSession * SheetWidget::get_sheet() const
 {
-	return m_sheet;
+	return m_session;
 }
 
 SheetView * SheetWidget::get_sheetview() const
@@ -222,12 +272,12 @@ SheetView * SheetWidget::get_sheetview() const
 
 void SheetWidget::zoom_slider_value_changed(int value)
 {
-        m_sheet->set_hzoom(Peak::zoomStep[value]);
+        m_session->set_hzoom(Peak::zoomStep[value]);
 }
 
 void SheetWidget::sheet_zoom_level_changed()
 {
-        int level = m_sheet->get_hzoom();
+        int level = m_session->get_hzoom();
         for (int i=0; i<Peak::ZOOM_LEVELS; ++i) {
                 if (level == Peak::zoomStep[i]) {
                         m_zoomSlider->setValue(i);

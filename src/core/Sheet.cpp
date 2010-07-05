@@ -82,15 +82,16 @@ Sheet::Sheet(Project* project, int numtracks)
         : m_project(project)
 {
 	PENTERCONS;
-        m_name = tr("Untitled");
+        m_name = tr("Sheet %1").arg(project->get_num_sheets() + 1);
 	m_id = create_id();
         m_artists = tr("No artists name set");
-	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
 
 	init();
 
 	for (int i=1; i <= numtracks; i++) {
-                AudioTrack* track = create_audio_track();
+                int height = AudioTrack::INITIAL_HEIGHT;
+                QString trackname = QString("Audio Track %1").arg(i);
+                AudioTrack* track = new AudioTrack(this, trackname, height);
                 private_add_track(track);
 	}
 
@@ -175,24 +176,11 @@ void Sheet::init()
         m_masterOut->set_gain(0.5);
         resize_buffer(audiodevice().get_buffer_size());
 
-	m_transport = m_stopTransport = m_resumeTransport = m_readyToRecord = false;
-        m_snaplist = new SnapList(this);
-        m_workSnap = new Snappable();
-        m_workSnap->set_snap_list(m_snaplist);
+        m_resumeTransport = m_readyToRecord = false;
 
 	m_realtimepath = false;
-        m_scheduledForDeletion = false;
-        m_isSnapOn=true;
 	m_changed = m_rendering = m_recording = m_prepareRecording = false;
-        m_firstVisibleFrame=0;
-	m_workLocation = TimeRef();
-	m_seeking = m_startSeek = 0;
-	// TODO seek to old position on project exit ?
-	m_transportLocation = TimeRef();
-	m_mode = EDIT;
-	m_sbx = m_sby = 0;
-	m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
-	m_timeline = new TimeLine(this);
+        m_stopTransport = m_seeking = m_startSeek = 0;
 	
 	m_skipTimer.setSingleShot(true);
 	
@@ -215,7 +203,6 @@ int Sheet::set_state( const QDomNode & node )
 	set_hzoom(zoom);
 	m_sbx = e.attribute("sbx", "0").toInt();
 	m_sby = e.attribute("sby", "0").toInt();
-	set_first_visible_frame(e.attribute( "firstVisibleFrame", "0" ).toUInt());
 	
 	bool ok;
         m_workLocation = e.attribute( "m_workLocation", "0").toLongLong(&ok);
@@ -275,7 +262,6 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
         properties.setAttribute("title", m_name);
         properties.setAttribute("artists", m_artists);
         properties.setAttribute("audiosourcesdir", m_audioSourcesDir);
-        properties.setAttribute("firstVisibleFrame", m_firstVisibleFrame);
 	properties.setAttribute("m_workLocation", m_workLocation.universal_frame());
 	properties.setAttribute("transportlocation", m_transportLocation.universal_frame());
 	properties.setAttribute("hzoom", m_hzoom);
@@ -312,31 +298,6 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
         sheetNode.appendChild(subgroupsNode);
 
 	return sheetNode;
-}
-
-
-Command* Sheet::add_track(Track* track, bool historable)
-{
-        apill_foreach(Track* existing, Track, m_audioTracks) {
-		if (existing->is_solo()) {
-                        track->set_muted_by_solo( true );
-			break;
-		}
-	}
-
-        return new AddRemove(this, track, historable, this,
-                "private_add_track(Track*)", "trackAdded(Track*)",
-                "private_remove_track(Track*)", "trackRemoved(Track*)",
-                tr("Added %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
-}
-
-
-Command* Sheet::remove_track(Track* track, bool historable)
-{
-        return new AddRemove(this, track, historable, this,
-                "private_remove_track(Track*)", "trackRemoved(Track*)",
-                "private_add_track(Track*)", "trackAdded(Track*)",
-                tr("Removed %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
 }
 
 bool Sheet::any_audio_track_armed()
@@ -611,13 +572,6 @@ out:
 	return ret;
 }
 
-
-SnapList* Sheet::get_snap_list() const
-{
-        return m_snaplist;
-}
-
-
 void Sheet::set_artists(const QString& pArtists)
 {
         m_artists = pArtists;
@@ -641,13 +595,6 @@ void Sheet::set_gain(float gain)
         m_masterOut->set_gain(gain);
 
         emit stateChanged();
-}
-
-void Sheet::set_first_visible_frame(nframes_t pos)
-{
-	PENTER;
-        m_firstVisibleFrame = pos;
-	emit firstVisibleFrameChanged();
 }
 
 void Sheet::set_work_at(TimeRef location, bool isFolder)
@@ -690,14 +637,6 @@ void Sheet::set_snapping(bool snapping)
 
 /******************************** SLOTS *****************************/
 
-AudioTrack* Sheet::create_audio_track()
-{
-	int height = AudioTrack::INITIAL_HEIGHT;
-
-	AudioTrack* track = new AudioTrack(this, "Unnamed", height);
-
-	return track;
-}
 
 void Sheet::solo_track(Track *track)
 {
@@ -802,33 +741,6 @@ Command *Sheet::toggle_arm()
 	return (Command*) 0;
 }
 
-void Sheet::set_hzoom( qreal hzoom )
-{
-	// Traverso <= 0.42.0 doesn't store the real zoom factor, but an 
-	// index. This currently causes problems as there is no real support
-	// (yet) for zoomlevels other then powers of 2, so we force that for now.
-	// NOTE: Remove those 2 lines when floating point zoomlevel is implemented!
-	int highbit;
-	hzoom = nearest_power_of_two(hzoom, highbit);
-
-
-	if (hzoom > Peak::max_zoom_value()) {
-		hzoom = Peak::max_zoom_value();
-	}
-	
-	if (hzoom < 1.0) {
-		hzoom = 1.0;
-	}
-	
-	if (m_hzoom == hzoom) {
-		return;
-	}
-	
-	m_hzoom = hzoom;
-	
-	emit hzoomChanged();
-}
-
 //
 //  Function called in RealTime AudioThread processing path
 //
@@ -854,7 +766,7 @@ int Sheet::process( nframes_t nframes )
 		m_realtimepath = false;
 		m_stopTransport = false;
 		
-		RT_THREAD_EMIT(this, 0, transportStopped());
+                RT_THREAD_EMIT(this, 0, transportStopped())
 
 		return 0;
 	}
@@ -968,11 +880,6 @@ int Sheet::get_rate( )
 	return m_project->get_rate();
 }
 
-nframes_t Sheet::get_first_visible_frame( ) const
-{
-        return m_firstVisibleFrame;
-}
-
 DiskIO * Sheet::get_diskio( ) const
 {
 	return m_diskio;
@@ -1048,25 +955,38 @@ TimeRef Sheet::get_last_location() const
 	return lastAudio;
 }
 
+Command* Sheet::add_track(Track* track, bool historable)
+{
+        apill_foreach(Track* existing, Track, m_audioTracks) {
+                if (existing->is_solo()) {
+                        track->set_muted_by_solo( true );
+                        break;
+                }
+        }
+
+        return TSession::add_track(track, historable);
+}
+
+
 void Sheet::private_add_track(Track* track)
 {
         switch (track->get_type()) {
-        case Track::AUDIOTRACK: m_audioTracks.append(track);
-              break;
-        case Track::SUBGROUP: m_subGroups.append(track);
-              break;
-        default: ;// do nothing
+        case Track::AUDIOTRACK:
+                m_audioTracks.append(track);
+                break;
+        default:
+                TSession::private_add_track(track);
         }
 }
 
 void Sheet::private_remove_track(Track* track)
 {
         switch (track->get_type()) {
-        case Track::AUDIOTRACK: m_audioTracks.remove(track);
-              break;
-        case Track::SUBGROUP: m_subGroups.remove(track);
-              break;
-        default: ;// do nothing
+        case Track::AUDIOTRACK:
+                m_audioTracks.remove(track);
+                break;
+        default:
+                TSession::private_remove_track(track);
         }
 }
 
@@ -1080,35 +1000,6 @@ Track* Sheet::get_track(qint64 id) const
 		}
 	}
 	return 0;
-}
-
-Command* Sheet::set_editing_mode( )
-{
-	m_mode = EDIT;
-	emit modeChanged();
-	return 0;
-}
-
-Command* Sheet::set_effects_mode( )
-{
-	m_mode = EFFECTS;
-	emit modeChanged();
-	return 0;
-}
-
-Command* Sheet::toggle_effects_mode()
-{
-        if (m_mode == EDIT) {
-                set_effects_mode();
-        } else {
-                set_editing_mode();
-        }
-        return 0;
-}
-
-void Sheet::set_temp_follow_state(bool state)
-{
-	emit tempFollowChanged(state);
 }
 
 // Function is only to be called from GUI thread.
@@ -1174,10 +1065,6 @@ Command* Sheet::start_transport()
 // So ALL functions called here need to be RT thread save!!
 int Sheet::transport_control(transport_state_t state)
 {
-        if (m_scheduledForDeletion) {
-                return true;
-        }
-
         switch(state.transport) {
 	case TransportStopped:
                 if (state.location != m_transportLocation) {
@@ -1205,12 +1092,12 @@ int Sheet::transport_control(transport_state_t state)
 					// so we delegate the prepare_recording() function call via a 
 					// RT thread save signal!
 					Q_ASSERT(state.realtime);
-					RT_THREAD_EMIT(this, 0, prepareRecording());
-					PMESG("transport starting: initiating prepare for record");
+                                        RT_THREAD_EMIT(this, 0, prepareRecording())
+                                        PMESG("transport starting: initiating prepare for record");
 					return false;
 				}
 				if (!m_readyToRecord) {
-					PMESG("transport starting: still preparing for record");
+                                        PMESG("transport starting: still preparing for record");
 					return false;
 				}
 			}
@@ -1420,37 +1307,15 @@ QList< AudioTrack * > Sheet::get_audio_tracks() const
 	return list;	
 }
 
-QList<SubGroup*> Sheet::get_subgroups() const
-{
-        QList<SubGroup*> list;
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
-                list.append(group);
-        }
-
-        return list;
-}
-
-SubGroup* Sheet::get_subgroup(const QString &name)
-{
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
-                if (group->get_name() == name) {
-                        return group;
-                }
-        }
-        return 0;
-}
-
 QList<Track*> Sheet::get_tracks() const
 {
         QList<Track*> list;
         apill_foreach(AudioTrack* track, AudioTrack, m_audioTracks) {
                 list.append(track);
         }
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
-                list.append(group);
-        }
-        return list;
+        list.append(TSession::get_tracks());
 
+        return list;
 }
 
 AudioTrack * Sheet::get_audio_track_for_index(int index)

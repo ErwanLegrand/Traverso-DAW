@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioTrackView.h"
 #include "PluginChainView.h"
-#include "Interface.h"
+#include "TMainWindow.h"
 
 #include <Themer.h>
 #include <Plugin.h>
@@ -106,7 +106,7 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 Command * PluginView::edit_properties( )
 {
 	if (! m_propertiesDialog) {
-		m_propertiesDialog = new PluginPropertiesDialog(Interface::instance(), m_plugin);
+		m_propertiesDialog = new PluginPropertiesDialog(TMainWindow::instance(), m_plugin);
 		m_propertiesDialog->setWindowTitle(m_name);
 	} 
 	m_propertiesDialog->show();

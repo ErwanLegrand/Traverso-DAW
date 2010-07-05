@@ -112,7 +112,6 @@ private slots:
 
 signals:
         void soloChanged(bool isSolo);
-        void busConfigurationChanged();
         void routingConfigurationChanged();
 };
 

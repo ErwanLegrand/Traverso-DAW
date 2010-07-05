@@ -54,7 +54,7 @@ FadeCurve::FadeCurve(AudioClip* clip, Sheet* sheet, QString type )
 		m_type = FadeOut;
 	}
 	
-	m_sheet = m_clip->get_sheet();
+	m_session = m_clip->get_sheet();
 		
 	m_controlPoints.append(QPointF(0.0, 0.0));
 	m_controlPoints.append(QPointF(0.25, 0.25));
@@ -182,7 +182,7 @@ void FadeCurve::process(AudioBus *bus, nframes_t nframes)
         TimeRef trackStartLocation, trackEndLocation, mix_pos;
         TimeRef fadeRange = TimeRef(get_range());
 
-        TimeRef transportLocation = m_sheet->get_transport_location();
+        TimeRef transportLocation = m_session->get_transport_location();
         TimeRef upperRange = transportLocation + TimeRef(framesToProcess, outputRate);
 
 	
@@ -230,11 +230,11 @@ void FadeCurve::process(AudioBus *bus, nframes_t nframes)
 
         upperRange = mix_pos + TimeRef(framesToProcess, outputRate);
 
-        get_vector(mix_pos.universal_frame(), upperRange.universal_frame(), m_sheet->gainbuffer, framesToProcess);
+        get_vector(mix_pos.universal_frame(), upperRange.universal_frame(), m_session->gainbuffer, framesToProcess);
 
         for (int chan=0; chan<bus->get_channel_count(); ++chan) {
                 for (nframes_t frame = 0; frame < framesToProcess; ++frame) {
-                        mixdown[chan][frame] *= m_sheet->gainbuffer[frame];
+                        mixdown[chan][frame] *= m_session->gainbuffer[frame];
                 }
         }
 }

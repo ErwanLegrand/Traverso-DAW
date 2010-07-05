@@ -43,7 +43,7 @@ public:
 	void add_channel(AudioChannel* chan);
         void add_channel(const QString& channel);
         void audiodevice_params_changed();
-        int get_channel_count()	{return m_channelCount;}
+        int get_channel_count() const;
         QStringList get_channel_names() const;
         QString get_name() {return m_name;}
 	

@@ -24,7 +24,7 @@
 
 #include "MoveCommand.h"
 
-class Sheet;
+class TSession;
 class SheetView;
 class PlayHead;
 
@@ -46,7 +46,7 @@ public :
 
 private :
 	PlayHead*	m_playhead;
-	Sheet*		m_sheet;
+        TSession*	m_session;
 	SheetView*	m_sv;
 	bool		m_resync;
 	int		m_origXPos;

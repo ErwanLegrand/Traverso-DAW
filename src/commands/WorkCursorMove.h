@@ -25,7 +25,7 @@
 #include "MoveCommand.h"
 #include "defines.h"
 
-class Sheet;
+class TSession;
 class SheetView;
 class PlayHead;
 class WorkCursor;
@@ -54,7 +54,7 @@ public :
 	void set_cursor_shape(int useX, int useY);
 
 private :
-	Sheet*		m_sheet;
+        TSession*	m_session;
 	SheetView*	m_sv;
 	PlayHead*	m_playCursor;
         WorkCursor*     m_workCursor;

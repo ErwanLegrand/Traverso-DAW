@@ -39,9 +39,9 @@
 #define AUTO_SCROLL_MARGIN	0.05  // autoscroll when within 5% of the clip view port
 
 
-PlayHead::PlayHead(SheetView* sv, Sheet* sheet, ClipsViewPort* vp)
-	: ViewItem(0, sheet)
-	, m_sheet(sheet)
+PlayHead::PlayHead(SheetView* sv, TSession* session, ClipsViewPort* vp)
+        : ViewItem(0, session)
+        , m_session(session)
 	, m_vp(vp)
 {
 	m_sv = sv;
@@ -52,8 +52,8 @@ PlayHead::PlayHead(SheetView* sv, Sheet* sheet, ClipsViewPort* vp)
 	m_animation.setDuration(ANIME_DURATION);
 	m_animation.setCurveShape(QTimeLine::EaseInOutCurve);
 	
-	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(play_start()));
-	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(play_stop()));
+	connect(m_session, SIGNAL(transportStarted()), this, SLOT(play_start()));
+	connect(m_session, SIGNAL(transportStopped()), this, SLOT(play_stop()));
 	
 	connect(&m_playTimer, SIGNAL(timeout()), this, SLOT(update_position()));
 	
@@ -83,7 +83,7 @@ void PlayHead::paint( QPainter * painter, const QStyleOptionGraphicsItem * optio
 	Q_UNUSED(widget);
         QBrush brush;
 	
-	if (m_sheet->is_transport_rolling()) {
+	if (m_session->is_transport_rolling()) {
                 brush = m_brushActive;
 	} else {
                 brush = m_brushInactive;
@@ -130,16 +130,16 @@ void PlayHead::enable_follow()
 	m_followDisabled = false;
 	// This function is called after the sheet finished a seek action.
 	// if the sheet is still playing, update our position, and start moving again!
-	if (m_sheet->is_transport_rolling()) {
+	if (m_session->is_transport_rolling()) {
 		play_start();
 	}
 }
 
 void PlayHead::update_position()
 {
-	QPointF newPos(m_sheet->get_transport_location() / m_sv->timeref_scalefactor, 1);
+	QPointF newPos(m_session->get_transport_location() / m_sv->timeref_scalefactor, 1);
 	qreal playBufferTimePositionCompensation = 0;
-	if (m_sheet->is_transport_rolling()) {
+	if (m_session->is_transport_rolling()) {
 		playBufferTimePositionCompensation = audiodevice().get_buffer_latency() / m_sv->timeref_scalefactor;
 	}
 	qreal newXPos = newPos.x() - playBufferTimePositionCompensation;
@@ -155,7 +155,7 @@ void PlayHead::update_position()
 		return;
 	}
 	
-	if ( ! m_follow || m_followDisabled || ! m_sheet->is_transport_rolling()) {
+	if ( ! m_follow || m_followDisabled || ! m_session->is_transport_rolling()) {
 		return;
 	}
 	
@@ -216,7 +216,7 @@ void PlayHead::set_animation_value(int value)
 		return;
 	}
 
-	QPointF newPos(m_sheet->get_transport_location() / m_sv->timeref_scalefactor, 0);
+	QPointF newPos(m_session->get_transport_location() / m_sv->timeref_scalefactor, 0);
 	
 	// calculate the animation x diff.
 	int diff = m_animation.currentValue() * m_animFrameRange;
@@ -243,7 +243,7 @@ void PlayHead::set_animation_value(int value)
 
 void PlayHead::animation_finished()
 {
-	if (m_sheet->is_transport_rolling()) {
+	if (m_session->is_transport_rolling()) {
 		play_start();
 	}
 }
@@ -289,9 +289,9 @@ void PlayHead::load_theme_data()
 /**************************************************************/
 
 
-WorkCursor::WorkCursor(SheetView* sv, Sheet* sheet)
-	: ViewItem(0, sheet)
-	, m_sheet(sheet)
+WorkCursor::WorkCursor(SheetView* sv, TSession* session)
+        : ViewItem(0, session)
+        , m_session(session)
 	, m_sv(sv)
 {
 	setZValue(100);
@@ -316,7 +316,7 @@ void WorkCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * opt
 
 void WorkCursor::update_position()
 {
-	setPos(m_sheet->get_work_location() / m_sv->timeref_scalefactor, 1);
+	setPos(m_session->get_work_location() / m_sv->timeref_scalefactor, 1);
 }
 
 void WorkCursor::set_bounding_rect( QRectF rect )

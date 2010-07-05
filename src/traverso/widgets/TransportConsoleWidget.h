@@ -25,11 +25,13 @@
 
 #include <QTimer>
 #include <QToolBar>
+#include <QWidget>
 
 #include "defines.h"
 
 class Project;
 class Sheet;
+class TSession;
 class QPushButton;
 
 class TransportConsoleWidget : public QToolBar
@@ -42,7 +44,7 @@ public:
 private:
 	QPushButton*	m_timeLabel;
 	Project*	m_project;
-	Sheet*		m_sheet;
+        Sheet*		m_sheet;
 	QAction*	m_toStartAction;
 	QAction*	m_toLeftAction;
 	QAction*	m_recAction;
@@ -52,9 +54,9 @@ private:
 	QTimer		m_updateTimer;
 	TimeRef		m_lastSnapPosition;
 
-protected slots:
+public slots:
 	void set_project(Project*);
-	void set_sheet(Sheet*);
+        void set_session(TSession*);
 
 private slots:
 	void to_start();
@@ -70,6 +72,8 @@ private slots:
 	void update_label();
 	void update_layout();
 };
+
+
 
 #endif
 

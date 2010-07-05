@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SnapList.h"
 
 #include "Peak.h"
+#include "TSession.h"
 #include "Sheet.h"
 #include "AudioClip.h"
 #include "AudioClipManager.h"
@@ -43,7 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define SLPRINT(args...);
 #endif
 
-SnapList::SnapList(Sheet* sheet) 
+SnapList::SnapList(TSession* sheet)
 	: m_sheet(sheet)
 {
 	m_isDirty = true;
@@ -66,7 +67,11 @@ void SnapList::update_snaplist()
 	m_xposBool.clear();
 	
 	// collects all clip boundaries and adds them to the snap list
-	QList<AudioClip* > acList = m_sheet->get_audioclip_manager()->get_clip_list();
+        QList<AudioClip* > acList;
+        Sheet* sheet = qobject_cast<Sheet*>(m_sheet);
+        if (sheet) {
+                acList.append(sheet->get_audioclip_manager()->get_clip_list());
+        }
 	
 	SLPRINT("acList size is %d\n", acList.size());
 

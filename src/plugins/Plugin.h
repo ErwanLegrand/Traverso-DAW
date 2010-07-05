@@ -35,7 +35,7 @@ class PluginControlPort;
 class AudioInputPort;
 class AudioOutputPort;
 class Curve;
-class Sheet;
+class TSession;
 
 struct PluginInfo {
 	PluginInfo() {
@@ -55,8 +55,8 @@ class Plugin : public ContextItem
 	Q_CLASSINFO("toggle_bypass", tr("Bypass: On/Off"))
 	
 public:
-	Plugin(Sheet* sheet = 0);
-	virtual ~Plugin(){};
+        Plugin(TSession* session = 0);
+        virtual ~Plugin(){}
 
 	virtual int init() {return 1;}
 	virtual	QDomNode get_state(QDomDocument doc);
@@ -68,14 +68,14 @@ public:
 	QList<PluginControlPort* > get_control_ports() const { return m_controlPorts; }
 	
 	Plugin* get_slave() const {return m_slave;}
-	Sheet* get_sheet() const {return m_sheet;}
+        TSession* get_session() const {return m_session;}
 	bool is_bypassed() const {return m_bypass;}
 	
 	void automate_port(int index, bool automate);
 	
 protected:
-	Plugin* m_slave;
-	Sheet* m_sheet;
+        Plugin*                         m_slave;
+        TSession*                       m_session;
 	QList<PluginControlPort* > 	m_controlPorts;
 	QList<AudioInputPort* >		m_audioInputPorts;
 	QList<AudioOutputPort* >	m_audioOutputPorts;
@@ -95,9 +95,9 @@ class PluginPort : public QObject
 {
 
 public:
-	PluginPort(QObject* parent, int index) : QObject(parent), m_index(index), m_hint(FLOAT_CONTROL) {};
-	PluginPort(QObject* parent) : QObject(parent), m_hint(FLOAT_CONTROL) {};
-	virtual ~PluginPort(){};
+        PluginPort(QObject* parent, int index) : QObject(parent), m_index(index), m_hint(FLOAT_CONTROL) {}
+        PluginPort(QObject* parent) : QObject(parent), m_hint(FLOAT_CONTROL) {}
+        virtual ~PluginPort(){}
 
 	virtual QDomNode get_state(QDomDocument doc);
 	virtual int set_state( const QDomNode & node ) = 0;
@@ -182,8 +182,8 @@ class AudioOutputPort : public PluginPort
 
 public:
 	AudioOutputPort(QObject* parent, int index);
-	AudioOutputPort(QObject* parent) : PluginPort(parent) {};
-	virtual ~AudioOutputPort(){};
+        AudioOutputPort(QObject* parent) : PluginPort(parent) {}
+        virtual ~AudioOutputPort(){}
 
 	QDomNode get_state(QDomDocument doc);
 	int set_state( const QDomNode & node );

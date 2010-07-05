@@ -134,7 +134,7 @@ void MeterView::resize()
 void MeterView::set_project(Project *project)
 {
 	if (project) {
-		connect(project, SIGNAL(currentSheetChanged(Sheet *)), this, SLOT(set_sheet(Sheet*)));
+                connect(project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(set_session(TSession*)));
 		m_project = project;
 	} else {
 		m_project = 0;

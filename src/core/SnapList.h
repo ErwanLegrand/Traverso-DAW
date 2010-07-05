@@ -26,14 +26,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "defines.h"
 
-class Sheet;
+class TSession;
 
 class SnapList
 {
 
 public:
-	SnapList(Sheet* sheet);
-	~SnapList() {};
+        SnapList(TSession* sheet);
+        ~SnapList() {}
 
 	TimeRef get_snap_value(const TimeRef& location);
 	bool is_snap_value(const TimeRef& location);
@@ -48,7 +48,7 @@ public:
 	bool was_dirty();
 
 private:
-	Sheet* 		m_sheet;
+        TSession*	m_sheet;
 	QList<TimeRef> 	m_xposList;
 	QList<TimeRef> 	m_xposLut;
 	QList<bool> 	m_xposBool;

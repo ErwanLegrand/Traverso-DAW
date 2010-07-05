@@ -79,11 +79,11 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 	QString type = e.attribute( "type", "");
 
 	Plugin* plugin = 0;
-	Sheet* sheet = pm().get_project()->get_current_sheet();
+        TSession* session = pm().get_project()->get_current_session();
 
 #if defined (LV2_SUPPORT)
 	if (type == "LV2Plugin") {
-		plugin = new LV2Plugin(sheet);
+                plugin = new LV2Plugin(session);
 	}
 #endif
 	
@@ -123,8 +123,8 @@ SLV2Plugins PluginManager::get_slv2_plugin_list()
 
 Plugin* PluginManager::create_lv2_plugin(const QString& uri)
 {
-	Sheet* sheet = pm().get_project()->get_current_sheet();
-	LV2Plugin* plugin = new LV2Plugin(sheet, QS_C(uri));
+        TSession* session = pm().get_project()->get_current_session();
+        LV2Plugin* plugin = new LV2Plugin(session, QS_C(uri));
 	
 	if (plugin->init() < 0) {
 		info().warning(QObject::tr("Plugin %1 initialization failed!").arg(uri));

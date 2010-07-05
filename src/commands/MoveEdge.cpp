@@ -125,7 +125,7 @@ int MoveEdge::jog()
 {
 	m_newPos = TimeRef(cpointer().scene_x() * m_sv->timeref_scalefactor);
 
-	if (m_sv->get_sheet()->is_snap_on()) {
+        if (m_sv->get_sheet()->is_snap_on()) {
 		SnapList* slist = m_sv->get_sheet()->get_snap_list();
 		m_newPos = slist->get_snap_value(m_newPos);
 	}

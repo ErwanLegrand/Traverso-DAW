@@ -156,15 +156,19 @@ void BusMonitor::set_project(Project * project)
 	Q_UNUSED(project);
 	
         if (project) {
-                connect(project, SIGNAL(currentSheetChanged(Sheet*)), this, SLOT(set_sheet(Sheet*)));
+                connect(project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(set_session(TSession*)));
         } else {
                 m_sheet = 0;
         }
 }
 
-void BusMonitor::set_sheet(Sheet *sheet)
+void BusMonitor::set_session(TSession* session)
 {
-        m_sheet = sheet;
+        Project* project = qobject_cast<Project*>(session);
+        if (project) {
+                return;
+        }
+        m_sheet = qobject_cast<Sheet*>(session);
         create_vu_meters();
 }
 

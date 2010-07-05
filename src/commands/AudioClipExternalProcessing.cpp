@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Project.h>
 #include <ResourcesManager.h>
 #include <Utils.h>
-#include "Interface.h"
+#include "TMainWindow.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -58,7 +58,7 @@ AudioClipExternalProcessing::~AudioClipExternalProcessing()
 int AudioClipExternalProcessing::prepare_actions()
 {
 	PENTER;
-	ExternalProcessingDialog epdialog(Interface::instance(), this);
+	ExternalProcessingDialog epdialog(TMainWindow::instance(), this);
 	
 	epdialog.exec();
 	

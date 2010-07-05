@@ -26,22 +26,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Plugin.h"
 
 class Curve;
-class Sheet;
+class TSession;
 
 class GainEnvelope : public Plugin
 {
 	Q_OBJECT
 	
 public:
-	GainEnvelope(Sheet* sheet);
-	~GainEnvelope(){};
+        GainEnvelope(TSession* session);
+        ~GainEnvelope(){}
 
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode & node );
 	void process(AudioBus* bus, unsigned long nframes);
 	void process_gain(audio_sample_t** buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes, uint channels);
 	
-	void set_sheet(Sheet* sheet);
+        void set_session(TSession* session);
 	void set_gain(float gain) {m_gain = gain;}
 	
 	float get_gain() const {return m_gain;}

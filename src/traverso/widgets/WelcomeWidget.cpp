@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "ProjectManager.h"
 #include "Project.h"
-#include "Interface.h"
+#include "TMainWindow.h"
 
 #include <QMessageBox>
 #include <QDir>
@@ -61,7 +61,7 @@ WelcomeWidget::~WelcomeWidget()
 void WelcomeWidget::set_project(Project* project)
 {
         if (project) {
-                previousProjectLabel->setText(tr("Resume loaded Project (%1)").arg(project->get_title()));
+                previousProjectLabel->setText(tr("Resume loaded"));
                 loadPreviousProjectButton->setText(tr("Resume"));
                 previousProjectLineEdit->setText(project->get_title());
         } else {
@@ -98,7 +98,7 @@ void WelcomeWidget::load_previous_project_button_clicked()
 {
         Project* project = pm().get_project();
         if (project) {
-                Interface::instance()->show_current_sheet();
+                TMainWindow::instance()->show_current_sheet();
 
         } else {
 
@@ -112,7 +112,7 @@ void WelcomeWidget::load_previous_project_button_clicked()
 
 void WelcomeWidget::create_new_project_button_clicked()
 {
-        Interface::instance()->show_newproject_dialog();
+        TMainWindow::instance()->show_newproject_dialog();
 }
 
 void WelcomeWidget::update_projects_combo_box()

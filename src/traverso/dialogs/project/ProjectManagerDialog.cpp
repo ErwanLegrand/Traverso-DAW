@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDir>
 #include <QMessageBox>
 #include <dialogs/project/NewSheetDialog.h>
-#include <Interface.h>
+#include "TMainWindow.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -223,7 +223,7 @@ void ProjectManagerDialog::on_deleteSheetButton_clicked( )
 
 void ProjectManagerDialog::on_createSheetButton_clicked( )
 {
-	Interface::instance()->show_newsheet_dialog();
+	TMainWindow::instance()->show_newsheet_dialog();
 }
 
 void ProjectManagerDialog::redo_text_changed(const QString & text)
@@ -256,7 +256,7 @@ void ProjectManagerDialog::on_redoButton_clicked()
 
 void ProjectManagerDialog::on_sheetsExportButton_clicked()
 {
-	Interface::instance()->show_export_widget();
+	TMainWindow::instance()->show_export_widget();
 }
 
 void ProjectManagerDialog::on_exportTemplateButton_clicked()

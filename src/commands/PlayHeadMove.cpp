@@ -31,26 +31,26 @@
 PlayHeadMove::PlayHeadMove(PlayHead* cursor, SheetView* sv)
         : MoveCommand("Play Cursor Move")
         , m_playhead(cursor)
-	, m_sheet(sv->get_sheet())
+        , m_session(sv->get_sheet())
 	, m_sv(sv)
 {
 	m_resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
-        m_newTransportLocation = m_sheet->get_transport_location();
+        m_newTransportLocation = m_session->get_transport_location();
 }
 
 int PlayHeadMove::finish_hold()
 {
 	// When SyncDuringDrag is true, don't seek in finish_hold()
 	// since that causes another audio glitch.
-	if (!(m_resync && m_sheet->is_transport_rolling())) {
+        if (!(m_resync && m_session->is_transport_rolling())) {
 		// if the sheet is transporting, the seek action will cause 
 		// the playcursor to be moved to the correct location.
 		// Until then hide it, it will be shown again when the seek is finished!
-		if (m_sheet->is_transport_rolling()) {
+                if (m_session->is_transport_rolling()) {
                         m_playhead->hide();
 		}
 
-                m_sheet->set_transport_pos(m_newTransportLocation);
+                m_session->set_transport_pos(m_newTransportLocation);
 	}
 	m_sv->start_shuttle(false);
 	return -1;
@@ -59,7 +59,7 @@ int PlayHeadMove::finish_hold()
 int PlayHeadMove::begin_hold()
 {
         m_playhead->set_active(false);
-	m_origXPos = m_newXPos = int(m_sheet->get_transport_location() / m_sv->timeref_scalefactor);
+        m_origXPos = m_newXPos = int(m_session->get_transport_location() / m_sv->timeref_scalefactor);
 	m_sv->start_shuttle(true, true);
         m_holdCursorSceneY = cpointer().scene_y();
 
@@ -85,7 +85,7 @@ int PlayHeadMove::begin_hold()
 void PlayHeadMove::cancel_action()
 {
 	m_sv->start_shuttle(false);
-        m_playhead->set_active(m_sheet->is_transport_rolling());
+        m_playhead->set_active(m_session->is_transport_rolling());
 	if (!m_resync) {
                 m_playhead->setPos(m_origXPos, 0);
 	}
@@ -116,8 +116,8 @@ int PlayHeadMove::jog()
 
                 m_newTransportLocation = TimeRef(x * m_sv->timeref_scalefactor);
 
-                if (m_resync && m_sheet->is_transport_rolling()) {
-                        m_sheet->set_transport_pos(m_newTransportLocation);
+                if (m_resync && m_session->is_transport_rolling()) {
+                        m_session->set_transport_pos(m_newTransportLocation);
 		}
 		
 		m_sv->update_shuttle_factor();
@@ -156,13 +156,13 @@ void PlayHeadMove::move_right(bool autorepeat)
 void PlayHeadMove::next_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        do_keyboard_move(m_sheet->get_snap_list()->next_snap_pos(m_newTransportLocation), true);
+        do_keyboard_move(m_session->get_snap_list()->next_snap_pos(m_newTransportLocation), true);
 }
 
 void PlayHeadMove::prev_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        do_keyboard_move(m_sheet->get_snap_list()->prev_snap_pos(m_newTransportLocation), true);
+        do_keyboard_move(m_session->get_snap_list()->prev_snap_pos(m_newTransportLocation), true);
 }
 
 void PlayHeadMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
@@ -175,8 +175,8 @@ void PlayHeadMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
 
         m_newTransportLocation = newLocation;
 
-        if (m_resync && m_sheet->is_transport_rolling()) {
-                m_sheet->set_transport_pos(m_newTransportLocation);
+        if (m_resync && m_session->is_transport_rolling()) {
+                m_session->set_transport_pos(m_newTransportLocation);
         } else {
                 m_playhead->setPos(newLocation / m_sv->timeref_scalefactor, 0);
         }
@@ -190,5 +190,5 @@ void PlayHeadMove::move_to_work_cursor(bool autorepeat)
         if (autorepeat) {
                 return;
         }
-        do_keyboard_move(m_sheet->get_work_location());
+        do_keyboard_move(m_session->get_work_location());
 }

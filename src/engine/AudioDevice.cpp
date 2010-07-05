@@ -157,6 +157,7 @@ AudioDevice::AudioDevice()
         m_masterOutBus = 0;
         m_audioThread = 0;
 	m_bufferSize = 1024;
+        m_rate = 44100;
 	m_xrunCount = 0;
 	m_cpuTime = new RingBufferNPT<trav_time_t>(4096);
 

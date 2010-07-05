@@ -66,7 +66,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 Project::Project(const QString& title)
-	: ContextItem(), m_title(title)
+        : TSession()
+        , m_title(title)
 {
 	PENTERCONS;
 	m_currentSheetId = 0;
@@ -343,7 +344,7 @@ int Project::load(QString projectfile)
 
         if (audiodevice().get_driver_type() == "Jack") {
                 // Lets see if there is already a Project Master out jack bus:
-                AudioBus* bus = m_softwareAudioBuses.value(1);
+                AudioBus* bus = m_softwareAudioBuses.value(MASTER_OUT_SOFTWARE_BUS_ID);
                 if (!bus) {
                         BusConfig conf;
                         conf.name = "jackmaster";
@@ -658,6 +659,7 @@ int Project::disconnect_from_audio_device()
                 }
         }
 
+        printf("Project: Successfully disconnected from Audio Device!\n");
         return 1;
 }
 
@@ -741,6 +743,12 @@ AudioBus* Project::get_audio_bus(qint64 id)
                 }
         }
 
+        foreach(SubGroup* group, get_subgroups()) {
+                if (group->get_id() == id) {
+                        return group->get_process_bus();
+                }
+        }
+
         return 0;
 }
 
@@ -798,7 +806,7 @@ QList<TSend*> Project::get_inputs_for_subgroup(SubGroup *sub) const
         return inputs;
 }
 
-QList<Track*> Project::get_tracks() const
+QList<Track*> Project::get_sheet_tracks() const
 {
         QList<Track*> tracks;
         foreach(Sheet* sheet, m_sheets) {
@@ -861,7 +869,24 @@ QStringList Project::get_playback_buses_names( ) const
         return names;
 }
 
+QList<AudioBus*> Project::get_hardware_buses() const
+{
+        QMap<QString, AudioBus*> monos, steroes;
+        foreach(AudioBus* bus, m_hardwareAudioBuses) {
+                if (bus->get_channel_names().count() == 1) {
+                        monos.insert(bus->get_name(), bus);
+                }
+                if (bus->get_channel_names().count() == 2) {
+                        steroes.insert(bus->get_name(), bus);
+                }
+        }
 
+        QList<AudioBus*> sorted;
+        sorted.append(monos.values());
+        sorted.append(steroes.values());
+
+        return sorted;
+}
 
 void Project::set_title(const QString& title)
 {
@@ -987,6 +1012,13 @@ Command* Project::remove_sheet(Sheet* sheet, bool historable)
 void Project::set_current_sheet(qint64 id)
 {
 	PENTER;
+
+        if (id == get_id()) {
+                printf("session == project\n");
+                m_currentSheetId = get_id();
+                emit currentSessionChanged(this);
+                return;
+        }
 	
 	if (m_currentSheetId == id) {
 		return;
@@ -1008,25 +1040,31 @@ void Project::set_current_sheet(qint64 id)
                         set_current_sheet(m_sheets.first()->get_id());
                 }
 
-		emit currentSheetChanged(0);
+		emit currentSessionChanged(0);
 		return;
 	}
 
 	m_currentSheetId=id;
 	
-	emit currentSheetChanged(newcurrent);
+	emit currentSessionChanged(newcurrent);
 }
 
 void Project::set_current_sheet(Sheet *sheet)
 {
         m_currentSheetId = sheet->get_id();
-        emit currentSheetChanged(sheet);
+        emit currentSessionChanged(sheet);
 }
 
 
-Sheet* Project::get_current_sheet() const
+TSession* Project::get_current_session() const
 {
-	Sheet* current = 0;
+        TSession* current = 0;
+
+        if (m_currentSheetId == get_id()) {
+                current = (TSession*)this;
+                return current;
+        }
+
 	
         foreach(Sheet* sheet, m_sheets) {
                 if (sheet->get_id() == m_currentSheetId) {
@@ -1108,7 +1146,7 @@ int Project::start_export(ExportSpecification* spec)
                         sheetsToRender.append(sheet);
 		}
 	} else {
-		Sheet* sheet = get_current_sheet();
+                Sheet* sheet = qobject_cast<Sheet*>(get_current_session());
 		if (sheet) {
 			sheetsToRender.append(sheet);
 		}
@@ -1202,9 +1240,11 @@ TimeRef Project::get_cd_totaltime(ExportSpecification* spec)
                         totalTime += spec->totalTime;
                 }
         } else {
-                Sheet* sheet = get_current_sheet();
-                sheet->prepare_export(spec);
-                totalTime += spec->totalTime;
+                Sheet* sheet = qobject_cast<Sheet*>(get_current_session());
+                if (sheet) {
+                        sheet->prepare_export(spec);
+                        totalTime += spec->totalTime;
+                }
         }
 
         return totalTime;
@@ -1223,7 +1263,7 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
                 // filename of the toc file is "project-name.toc"
 		filename += get_title() + ".toc";
 	} else {
-		Sheet* sheet = get_current_sheet();
+                Sheet* sheet = qobject_cast<Sheet*>(get_current_session());
                 if (!sheet) {
 			return -1;
 		}
@@ -1416,13 +1456,8 @@ ResourcesManager * Project::get_audiosource_manager( ) const
 
 void Project::audiodevice_params_changed()
 {
-        // if I don't have hardware buses, then either I could not
-        // restore it from project file, or we started for the first time
-        // either way, let's wrap the available channels logically into audiobuses:
-        if (!m_hardwareAudioBuses.size()) {
-                setup_default_hardware_buses();
+        setup_default_hardware_buses();
 
-        }
         foreach(AudioBus* bus, m_hardwareAudioBuses) {
                 bus->audiodevice_params_changed();
         }
@@ -1445,10 +1480,28 @@ void Project::setup_default_hardware_buses()
         for (int i=0; i < channels.size();) {
                 config.name = "Capture " + QByteArray::number(number) + "-" + QByteArray::number(number + 1);
                 number += 2;
+                AudioBus* exists = get_capture_bus(config.name);
+                if (exists) {
+                        // don't add a hardware bus with the same name, so continue:
+                        i+=2;
+                        continue;
+                }
                 AudioBus* bus = new AudioBus(config);
                 bus->add_channel("capture_"+QByteArray::number(1 + i++));
                 bus->add_channel("capture_"+QByteArray::number(1 + i++));
 
+                m_hardwareAudioBuses.append(bus);
+        }
+
+        for (int i=0; i < channels.size(); ++i) {
+                config.name = "Capture " + QByteArray::number(i + 1);
+                AudioBus* exists = get_capture_bus(config.name);
+                if (exists) {
+                        // don't add a hardware bus with the same name, so continue:
+                        continue;
+                }
+                AudioBus* bus = new AudioBus(config);
+                bus->add_channel("capture_"+QByteArray::number(i + 1));
                 m_hardwareAudioBuses.append(bus);
         }
 
@@ -1460,9 +1513,27 @@ void Project::setup_default_hardware_buses()
         for (int i=0; i < channels.size();) {
                 config.name = "Playback " + QString::number(number) + "-" + QByteArray::number(number + 1);
                 number += 2;
+                AudioBus* exists = get_playback_bus(config.name);
+                if (exists) {
+                        // don't add a hardware bus with the same name, so continue:
+                        i+=2;
+                        continue;
+                }
                 AudioBus* bus = new AudioBus(config);
                 bus->add_channel("playback_"+QByteArray::number(1 + i++));
                 bus->add_channel("playback_"+QByteArray::number(1 + i++));
+                m_hardwareAudioBuses.append(bus);
+        }
+
+        for (int i=0; i < channels.size(); ++i) {
+                config.name = "Playback " + QByteArray::number(i + 1);
+                AudioBus* exists = get_playback_bus(config.name);
+                if (exists) {
+                        // don't add a hardware bus with the same name, so continue:
+                        continue;
+                }
+                AudioBus* bus = new AudioBus(config);
+                bus->add_channel("playback_"+QByteArray::number(i + 1));
                 m_hardwareAudioBuses.append(bus);
         }
 }
@@ -1565,6 +1636,10 @@ int Project::process( nframes_t nframes )
         }
 
 
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                group->process(nframes);
+        }
+
         // Mix the result into the AudioDevice "physical" buffers
         m_masterOut->process(nframes);
 
@@ -1581,6 +1656,21 @@ int Project::transport_control(transport_state_t state)
 
         return result;
 }
+
+TimeRef Project::get_last_location() const
+{
+        TimeRef lastLocation;
+
+        foreach(Sheet* sheet, m_sheets) {
+                TimeRef location = sheet->get_last_location();
+                if (location > lastLocation) {
+                        lastLocation = location;
+                }
+        }
+
+        return lastLocation;
+}
+
 
 QStringList Project::get_input_buses_for(SubGroup *subGroup)
 {

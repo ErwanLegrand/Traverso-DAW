@@ -40,7 +40,7 @@
 
 WorkCursorMove::WorkCursorMove(WorkCursor* wc, PlayHead* cursor, SheetView* sv)
         : MoveCommand("Play Cursor Move")
-	, m_sheet(sv->get_sheet())
+        , m_session(sv->get_sheet())
 	, m_sv(sv)
 	, m_playCursor(cursor)
         , m_workCursor(wc)
@@ -51,7 +51,7 @@ WorkCursorMove::WorkCursorMove(WorkCursor* wc, PlayHead* cursor, SheetView* sv)
 
 int WorkCursorMove::finish_hold()
 {
-	m_sheet->get_work_snap()->set_snappable(true);
+        m_session->get_work_snap()->set_snappable(true);
 	m_sv->start_shuttle(false);
 	return -1;
 }
@@ -59,20 +59,20 @@ int WorkCursorMove::finish_hold()
 
 int WorkCursorMove::begin_hold()
 {
-        if (m_sheet->is_transport_rolling()) {
+        if (m_session->is_transport_rolling()) {
 		m_playCursor->disable_follow();
 	}
 
-        m_sheet->get_work_snap()->set_snappable(false);
+        m_session->get_work_snap()->set_snappable(false);
 	m_sv->start_shuttle(true, true);
-	m_origPos = m_sheet->get_work_location();
+        m_origPos = m_session->get_work_location();
 
 	return 1;
 }
 
 void WorkCursorMove::cancel_action()
 {
-	m_sheet->set_work_at(m_origPos);
+        m_session->set_work_at(m_origPos);
         finish_hold();
 }
 
@@ -82,7 +82,7 @@ void WorkCursorMove::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
-        do_keyboard_move(m_sheet->get_work_location());
+        do_keyboard_move(m_session->get_work_location());
 }
 
 int WorkCursorMove::jog()
@@ -96,16 +96,16 @@ int WorkCursorMove::jog()
 
 	TimeRef newLocation(x * m_sv->timeref_scalefactor);
 
-        if (newLocation == m_sheet->get_work_location()) {
+        if (newLocation == m_session->get_work_location()) {
                 return 1;
         }
 
-        if (m_sheet->is_snap_on() || m_doSnap) {
-		SnapList* slist = m_sheet->get_snap_list();
+        if (m_session->is_snap_on() || m_doSnap) {
+                SnapList* slist = m_session->get_snap_list();
 		newLocation = slist->get_snap_value(newLocation);
 	}
 
-	m_sheet->set_work_at(newLocation);
+        m_session->set_work_at(newLocation);
 
 	m_sv->update_shuttle_factor();
         cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newLocation, m_sv->timeref_scalefactor));
@@ -130,7 +130,7 @@ void WorkCursorMove::move_left(bool autorepeat)
         if (m_doSnap) {
                 return prev_snap_pos(autorepeat);
         }
-        do_keyboard_move(m_sheet->get_work_location() - (m_sv->timeref_scalefactor * m_speed));
+        do_keyboard_move(m_session->get_work_location() - (m_sv->timeref_scalefactor * m_speed));
 }
 
 
@@ -150,20 +150,20 @@ void WorkCursorMove::move_right(bool autorepeat)
         if (m_doSnap) {
                 return next_snap_pos(autorepeat);
         }
-        do_keyboard_move(m_sheet->get_work_location() + (m_sv->timeref_scalefactor * m_speed));
+        do_keyboard_move(m_session->get_work_location() + (m_sv->timeref_scalefactor * m_speed));
 }
 
 
 void WorkCursorMove::next_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        do_keyboard_move(m_sheet->get_snap_list()->next_snap_pos(m_sheet->get_work_location()));
+        do_keyboard_move(m_session->get_snap_list()->next_snap_pos(m_session->get_work_location()));
 }
 
 void WorkCursorMove::prev_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        do_keyboard_move(m_sheet->get_snap_list()->prev_snap_pos(m_sheet->get_work_location()));
+        do_keyboard_move(m_session->get_snap_list()->prev_snap_pos(m_session->get_work_location()));
 }
 
 void WorkCursorMove::do_keyboard_move(TimeRef newLocation)
@@ -194,7 +194,7 @@ void WorkCursorMove::toggle_browse_markers(bool autorepeat)
 
 void WorkCursorMove::browse_to_next_marker()
 {
-        QList<Marker*> markers = m_sheet->get_timeline()->get_markers();
+        QList<Marker*> markers = m_session->get_timeline()->get_markers();
         QList<ContextItem*> contexts = cpointer().get_active_context_items();
         MarkerView* view;
         foreach(ContextItem* item, contexts) {
@@ -207,7 +207,7 @@ void WorkCursorMove::browse_to_next_marker()
 
         Marker* next = 0;
         foreach(Marker* marker, markers) {
-                if (marker->get_when() > m_sheet->get_work_location()) {
+                if (marker->get_when() > m_session->get_work_location()) {
                         next = marker;
                         break;
                 }
@@ -229,7 +229,7 @@ void WorkCursorMove::browse_to_next_marker()
 
 void WorkCursorMove::browse_to_previous_marker()
 {
-        QList<Marker*> markers = m_sheet->get_timeline()->get_markers();
+        QList<Marker*> markers = m_session->get_timeline()->get_markers();
         QList<ContextItem*> contexts = cpointer().get_active_context_items();
         MarkerView* view;
         foreach(ContextItem* item, contexts) {
@@ -243,7 +243,7 @@ void WorkCursorMove::browse_to_previous_marker()
         Marker* prev = 0;
         for (int i=markers.size() - 1; i>= 0; --i) {
                 Marker* marker = markers.at(i);
-                if (marker->get_when() < m_sheet->get_work_location()) {
+                if (marker->get_when() < m_session->get_work_location()) {
                         prev = marker;
                         break;
                 }
@@ -280,5 +280,5 @@ void WorkCursorMove::move_to_play_cursor(bool autorepeat)
                 return;
         }
 
-        do_keyboard_move(m_sheet->get_transport_location());
+        do_keyboard_move(m_session->get_transport_location());
 }

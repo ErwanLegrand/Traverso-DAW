@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Config.h>
 #include <FadeCurve.h>
 #include <Curve.h>
-#include <Interface.h>
+#include "TMainWindow.h"
 #include "PluginChain.h"
 #include "Mixer.h"
 
@@ -844,14 +844,14 @@ void AudioClipView::active_context_changed()
 
 Command * AudioClipView::select_fade_in_shape( )
 {
-        Interface::instance()->select_fade_in_shape();
+        TMainWindow::instance()->select_fade_in_shape();
 
         return 0;
 }
 
 Command * AudioClipView::select_fade_out_shape( )
 {
-        Interface::instance()->select_fade_out_shape();
+        TMainWindow::instance()->select_fade_out_shape();
 
         return 0;
 }
@@ -927,7 +927,7 @@ Command * AudioClipView::set_audio_file()
 
 Command * AudioClipView::edit_properties()
 {
-        AudioClipEditDialog editdialog(m_clip, Interface::instance());
+        AudioClipEditDialog editdialog(m_clip, TMainWindow::instance());
 
         editdialog.exec();
 

@@ -323,7 +323,7 @@ void NewProjectDialog::load_all_files()
 
 void NewProjectDialog::load_file(QString name, int i, QString trackname)
 {
-	Sheet* sheet = pm().get_project()->get_current_sheet();
+        Sheet* sheet = qobject_cast<Sheet*>(pm().get_project()->get_current_session());
 
 	if (!sheet) {
 		return;

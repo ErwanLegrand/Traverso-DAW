@@ -109,7 +109,7 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		} else if (m_actionType == FOLD_SHEET) {
 			d->sv = qobject_cast<SheetView*>(view);
 			Q_ASSERT(d->sv);
-			tracks = d->sv->get_sheet()->get_audio_tracks();
+                        tracks = ((Sheet*)d->sv->get_sheet())->get_audio_tracks();
 		} else {
 			d->sv = qobject_cast<SheetView*>(view->get_sheetview());
 			Q_ASSERT(d->sv);
@@ -124,7 +124,7 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 		}
 		
 		if (m_actionType == FOLD_SHEET || m_actionType == FOLD_MARKERS) {
-			QList<Marker*> movingMarkers = d->sv->get_sheet()->get_timeline()->get_markers();
+                        QList<Marker*> movingMarkers = d->sv->get_sheet()->get_timeline()->get_markers();
 			foreach(Marker* marker, movingMarkers) {
 				if (marker->get_when() > currentLocation) {
 					MarkerAndOrigin markerAndOrigin;
@@ -169,7 +169,7 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 	} else {
 		m_trackStartLocation = m_group.get_track_start_location();
 	}
-	m_sheet = d->sv->get_sheet();
+        m_sheet = ((Sheet*)d->sv->get_sheet());
 	d->zoom = 0;
 }
 

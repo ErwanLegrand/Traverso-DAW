@@ -40,15 +40,24 @@ NewTrackDialog::NewTrackDialog(QWidget * parent)
 	: QDialog(parent)
 {
 	setupUi(this);
-	
+        jackTrackFrame->hide();
+        busConfigGroupBox->hide();
+        resize(300, 300);
+
 	set_project(pm().get_project());
 	
         buttonBox->button(QDialogButtonBox::Apply)->setDefault(true);
+
         update_buses_comboboxes();
+        reset_information_label();
+        m_timer.setSingleShot(true);
 	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
         connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
         connect(isSubGroup, SIGNAL(toggled(bool)), this, SLOT(update_buses_comboboxes()));
+        connect(&m_timer, SIGNAL(timeout()), this, SLOT(reset_information_label()));
+
+        resize(300, 300);
 }
 
 void NewTrackDialog::showEvent(QShowEvent *event)
@@ -63,8 +72,8 @@ void NewTrackDialog::create_track()
 		return;
 	}
 	
-	Sheet* sheet = m_project->get_current_sheet();
-	if ( ! sheet ) {
+        TSession* session = m_project->get_current_session();
+        if ( ! session ) {
 		return ;
 	}
 	
@@ -75,6 +84,7 @@ void NewTrackDialog::create_track()
 	}
 	
         Project* project = pm().get_project();
+        Sheet* sheet = qobject_cast<Sheet*>(session);
         Track* track;
         AudioBus* inputBus = 0;
         AudioBus* outputBus = 0;
@@ -136,18 +146,30 @@ void NewTrackDialog::create_track()
         } else {
                 // only AudioTracks have external inputs
                 if (track->get_type() == Track::AUDIOTRACK) {
-                        track->add_input_bus(inputBuses->currentText());
+                        track->add_input_bus(inputsHW->currentText());
                 }
 
-                int index = outputBuses->currentIndex();
-                qint64 outputBusId = outputBuses->itemData(index).toLongLong();
-                track->add_post_send(outputBusId);
+                int index = outputsHW->currentIndex();
+                qint64 outputBusId = outputsHW->itemData(index).toLongLong();
+                if (outputBusId) {
+                        track->add_post_send(outputBusId);
+                }
+                outputBusId = outputsBus->itemData(index).toLongLong();
+                if (outputBusId) {
+                        track->add_post_send(outputBusId);
+                }
         }
 
-        Command* command = sheet->add_track(track);
+        Command* command = session->add_track(track);
         command->setText(tr("Added %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
 
         Command::process_command(command);
+
+        QString styleSheet = "color: darkGreen; background: lightGreen; padding: 5px; border: solid 1px;";
+        informationLabel->setStyleSheet(styleSheet);
+        informationLabel->setText(tr("Created new Track '%1'' in Sheet '%2'").arg(track->get_name(), session->get_name()));
+
+        m_timer.start(2000);
 }
 
 void NewTrackDialog::clicked(QAbstractButton *button)
@@ -171,36 +193,41 @@ void NewTrackDialog::set_project(Project * project)
 
 void NewTrackDialog::update_buses_comboboxes()
 {
-        inputBuses->clear();
-        outputBuses->clear();
+        outputsBus->clear();
+        inputsHW->clear();
+        outputsHW->clear();
 
-        Sheet* sheet = m_project->get_current_sheet();
+        outputsHW->addItem("Select...");
 
-        if ( ! sheet ) {
+        TSession* session = m_project->get_current_session();
+
+        if ( ! session ) {
                 return ;
         }
 
         if (isSubGroup->isChecked()) {
                 inputBusFrame->setEnabled(false);
+                jackInPortsCheckBox->setChecked(false);
         } else {
                 inputBusFrame->setEnabled(true);
+                jackInPortsCheckBox->setChecked(true);
         }
 
         QList<SubGroup*> subs;
         subs.append(m_project->get_master_out());
-        subs.append(sheet->get_master_out());
-        subs.append(sheet->get_subgroups());
+        subs.append(session->get_master_out());
+        subs.append(session->get_subgroups());
         foreach(SubGroup* sg, subs) {
-                outputBuses->addItem(sg->get_name(), sg->get_id());
+                outputsBus->addItem(sg->get_name(), sg->get_id());
         }
 
         QList<AudioBus*> hardwareBuses = m_project->get_hardware_buses();
 
         foreach(AudioBus* bus, hardwareBuses) {
                 if (bus->get_type() == ChannelIsInput) {
-                        inputBuses->addItem(bus->get_name(), bus->get_id());
+                        inputsHW->addItem(bus->get_name(), bus->get_id());
                 } else {
-                        outputBuses->addItem(bus->get_name(), bus->get_id());
+                        outputsHW->addItem(bus->get_name(), bus->get_id());
                 }
         }
 }
@@ -209,10 +236,17 @@ void NewTrackDialog::update_driver_info()
 {
         QString driver = audiodevice().get_driver_type();
         if (driver == "Jack") {
-                jackTrackGroupBox->show();
+                jackTrackFrame->show();
                 busConfigGroupBox->hide();
         } else {
-                jackTrackGroupBox->hide();
+                jackTrackFrame->show();
                 busConfigGroupBox->show();
         }
+}
+
+void NewTrackDialog::reset_information_label()
+{
+        QString styleSheet = "color: black;";
+        informationLabel->setStyleSheet(styleSheet);
+        informationLabel->setText(tr("Fill in Track name, and hit enter to add new Track"));
 }

@@ -136,7 +136,7 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 		AudioClip* clip = resources_manager()->get_clip(id);
 		if (clip) {
 			bool hadSheet = clip->has_sheet();
-			clip->set_sheet(m_sw->get_sheet());
+                        clip->set_sheet(((Sheet*)m_sw->get_sheet()));
 			clip->set_track(importTrack);
 			if (!hadSheet) {
 				clip->set_state(clip->get_dom_node());
@@ -183,7 +183,7 @@ void ClipsViewPort::dragMoveEvent( QDragMoveEvent * event )
 		return;
 	}
 	
-	Sheet* sheet = project->get_current_sheet();
+        Sheet* sheet = qobject_cast<Sheet*>(project->get_current_session());
 	
 	if (!sheet) {
 		return;

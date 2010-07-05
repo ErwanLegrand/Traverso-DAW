@@ -27,7 +27,7 @@
 #include <QTimeLine>
 #include <QBrush>
 
-class Sheet;
+class TSession;
 class SheetView;
 class ClipsViewPort;
 		
@@ -36,7 +36,7 @@ class PlayHead : public ViewItem
         Q_OBJECT
 
 public:
-        PlayHead(SheetView* sv, Sheet* sheet, ClipsViewPort* vp);
+        PlayHead(SheetView* sv, TSession* session, ClipsViewPort* vp);
         ~PlayHead();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -55,7 +55,7 @@ public:
 	void toggle_follow();
 
 private:
-	Sheet*		m_sheet;
+        TSession*	m_session;
         QTimer		m_playTimer;
         QTimeLine	m_animation;
         ClipsViewPort*	m_vp;
@@ -89,14 +89,14 @@ class WorkCursor : public ViewItem
         Q_OBJECT
 
 public:
-        WorkCursor(SheetView* sv, Sheet* sheet);
+        WorkCursor(SheetView* sv, TSession* session);
         ~WorkCursor();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void set_bounding_rect(QRectF rect);
 
 private:
-	Sheet*		m_sheet;
+        TSession*	m_session;
 	SheetView*	m_sv;
 	QPixmap		m_pix;
 	

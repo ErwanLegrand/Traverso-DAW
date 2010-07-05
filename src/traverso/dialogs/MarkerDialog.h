@@ -27,7 +27,7 @@
 
 class Project;
 class Marker;
-class Sheet;
+class TSession;
 
 class MarkerDialog : public QDialog, protected Ui::MarkerDialog
 {
@@ -35,12 +35,12 @@ class MarkerDialog : public QDialog, protected Ui::MarkerDialog
 
 public:
 	MarkerDialog(QWidget* parent = 0);
-	~MarkerDialog() {};
+        ~MarkerDialog() {}
 	
 private:
 	Project* m_project;
 	Marker* m_marker;
-	Sheet* m_sheet;
+        TSession* m_session;
 
 	Marker* get_marker(qint64);
 	void next_item(QLineEdit *);

@@ -23,7 +23,7 @@ ENDIF(USE_INTERNAL_SLV2_LIB)
 SET(TRAVERSO_GUI_SOURCES
 ${CMAKE_SOURCE_DIR}/src/common/fpu.cc
 Main.cpp
-Interface.cpp
+TMainWindow.cpp
 Traverso.cpp
 dialogs/settings/Pages.cpp
 dialogs/settings/SettingsDialog.cpp
@@ -90,7 +90,7 @@ ui/ThemeModifierDialog.ui
 )
 
 SET(TRAVERSO_GUI_MOC_CLASSES
-Interface.h
+TMainWindow.h
 Traverso.h
 dialogs/CDWritingDialog.h
 dialogs/ExportDialog.h

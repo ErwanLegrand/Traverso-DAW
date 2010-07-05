@@ -38,7 +38,7 @@ SplitClip::SplitClip(AudioClipView* view)
 {
 	m_clip = view->get_clip();
 	m_sv = view->get_sheetview();
-        m_sheet = m_sv->get_sheet();
+        m_session = m_sv->get_sheet();
 	m_cv = view;
 	m_track = m_clip->get_track();
 	leftClip = 0;
@@ -193,13 +193,13 @@ void SplitClip::move_right(bool autorepeat)
 void SplitClip::next_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        do_keyboard_move(m_sheet->get_snap_list()->next_snap_pos(m_splitPoint));
+        do_keyboard_move(m_session->get_snap_list()->next_snap_pos(m_splitPoint));
 }
 
 void SplitClip::prev_snap_pos(bool autorepeat)
 {
         Q_UNUSED(autorepeat);
-        do_keyboard_move(m_sheet->get_snap_list()->prev_snap_pos(m_splitPoint));
+        do_keyboard_move(m_session->get_snap_list()->prev_snap_pos(m_splitPoint));
 }
 
 void SplitClip::do_keyboard_move(TimeRef location)

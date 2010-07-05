@@ -35,7 +35,7 @@ class AudioBus;
 class LV2ControlPort;
 class AudioInputPort;
 class AudioOutputPort;
-class Sheet;
+class TSession;
 
 class LV2Plugin : public Plugin
 {
@@ -43,8 +43,8 @@ class LV2Plugin : public Plugin
 	Q_CLASSINFO("toggle_bypass", tr("Bypass: On/Off"))
 
 public:
-	LV2Plugin(Sheet* sheet, bool slave=false);
-	LV2Plugin(Sheet* sheet, char* pluginUri);
+        LV2Plugin(TSession* session, bool slave=false);
+        LV2Plugin(TSession* session, char* pluginUri);
 	~LV2Plugin();
 
 	void process(AudioBus* bus, unsigned long nframes);
