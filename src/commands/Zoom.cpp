@@ -27,6 +27,7 @@
 #include "Track.h"
 #include "ClipsViewPort.h"
 #include "ContextPointer.h"
+#include "InputEngine.h"
 #include <QPoint>
 
 // Always put me below _all_ includes, this is needed
@@ -72,6 +73,8 @@ void Zoom::init(SheetView *sv, TrackView *tv, QVariantList args)
         } else {
                 m_yScalefactor = 0;
         }
+
+        m_trackHeight = collected_number_to_track_height(ie().get_collected_number());
 }
 
 int Zoom::prepare_actions()
@@ -140,11 +143,11 @@ int Zoom::jog()
 		
 		if (abs(dx) > 10  /*1*/) {
                         m_horizontalJogZoomLastX = x;
-			Sheet* sheet = m_sv->get_sheet();
+                        TSession* session = m_sv->get_sheet();
 			if (dx > 0) {
-				sheet->set_hzoom(sheet->get_hzoom() / 2 /*(m_xScalefactor + dx/18)*/);
+                                session->set_hzoom(session->get_hzoom() / 2 /*(m_xScalefactor + dx/18)*/);
 			} else {
-				sheet->set_hzoom(sheet->get_hzoom() * 2 /*(m_xScalefactor + abs(dx)/18)*/);
+                                session->set_hzoom(session->get_hzoom() * 2 /*(m_xScalefactor + abs(dx)/18)*/);
 			}
 			m_sv->center();
 		}
@@ -228,6 +231,10 @@ void Zoom::track_vzoom_out(bool autorepeat)
 
 void Zoom::set_collected_number(const QString &collected)
 {
+        if (collected.isEmpty()) {
+                return;
+        }
+        printf("yes %s\n", collected.toAscii().data());
         int number = 0;
         bool ok = false;
         QString cleared = collected;
@@ -237,21 +244,41 @@ void Zoom::set_collected_number(const QString &collected)
                 number = QString(cleared.data()[cleared.size() -1]).toInt(&ok);
         }
 
+        m_sv->set_track_height(m_tv, collected_number_to_track_height(collected));
+}
+
+
+int Zoom::collected_number_to_track_height(const QString& collected) const
+{
+        int number = 0;
+        int trackHeight;
+        bool ok = false;
+        QString cleared = collected;
+        cleared = cleared.remove(".").remove("-").remove(",");
+
+        if (cleared.size() >= 1) {
+                number = QString(cleared.data()[cleared.size() -1]).toInt(&ok);
+        } else {
+                return -1;
+        }
+
         if (ok && m_tv) {
                 switch(number) {
-                case 0: m_sv->set_track_height(m_tv, 10); break;
-                case 1: m_sv->set_track_height(m_tv, 30); break;
-                case 2: m_sv->set_track_height(m_tv, 60); break;
-                case 3: m_sv->set_track_height(m_tv, 90); break;
-                case 4: m_sv->set_track_height(m_tv, 120); break;
-                case 5: m_sv->set_track_height(m_tv, 150); break;
-                case 6: m_sv->set_track_height(m_tv, 180); break;
-                case 7: m_sv->set_track_height(m_tv, 210); break;
-                case 8: m_sv->set_track_height(m_tv, 240); break;
-                case 9: m_sv->set_track_height(m_tv, 270); break;
-                default: m_sv->set_track_height(m_tv, 50);
+                case 0: trackHeight = 10; break;
+                case 1: trackHeight = 30; break;
+                case 2: trackHeight = 60; break;
+                case 3: trackHeight = 90; break;
+                case 4: trackHeight = 120; break;
+                case 5: trackHeight = 150; break;
+                case 6: trackHeight = 180; break;
+                case 7: trackHeight = 210; break;
+                case 8: trackHeight = 260; break;
+                case 9: trackHeight = 340; break;
+                default: trackHeight = 50;
                 }
         }
+
+        return trackHeight;
 }
 
 
@@ -278,6 +305,6 @@ void Zoom::toggle_expand_all_tracks(bool autorepeat)
                 return;
         }
 
-        m_sv->toggle_expand_all_tracks();
+        m_sv->toggle_expand_all_tracks(m_trackHeight);
 }
 

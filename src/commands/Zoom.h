@@ -61,6 +61,7 @@ public :
 private :
         int m_horizontalJogZoomLastX;
         int m_verticalJogZoomLastY;
+        int m_trackHeight;
 	bool m_jogVertical;
 	bool m_jogHorizontal;
 	qreal m_xScalefactor;
@@ -69,6 +70,7 @@ private :
         QPointF	m_origPos;
 
         void init(SheetView* sv, TrackView* tv, QVariantList args);
+        int collected_number_to_track_height(const QString& collected) const;
 	
         SheetView* m_sv;
         TrackView* m_tv;
