@@ -116,7 +116,7 @@ int TrackView::get_height( )
 
 Command* TrackView::edit_properties( )
 {
-        TTrackManagerDialog manager(m_track, 0);
+        TTrackManagerDialog manager(m_track, TMainWindow::instance());
         manager.exec();
         return 0;
 
