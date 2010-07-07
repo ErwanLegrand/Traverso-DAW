@@ -32,14 +32,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-TSession::TSession()
+TSession::TSession(TSession *parentSession)
         : ContextItem()
+        , m_parentSession(parentSession)
 {
-        m_timeline = new TimeLine(this);
-        m_snaplist = new SnapList(this);
-        m_workSnap = new Snappable();
-        m_workSnap->set_snap_list(m_snaplist);
+        if (!m_parentSession) {
+                m_timeline = new TimeLine(this);
+                m_snaplist = new SnapList(this);
+                m_workSnap = new Snappable();
+                m_workSnap->set_snap_list(m_snaplist);
+        }
 
+        init();
+}
+
+void TSession::init()
+{
         // TODO seek to old position on project exit ?
         m_workLocation = TimeRef();
         m_transportLocation = TimeRef();

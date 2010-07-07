@@ -818,7 +818,8 @@ QList<Track*> Project::get_sheet_tracks() const
 
 Track* Project::get_track(qint64 id) const
 {
-        QList<Track*> tracks = get_tracks();
+        QList<Track*> tracks = get_sheet_tracks();
+        tracks.append(get_tracks());
         foreach(Track* track, tracks) {
                 if (track->get_id() == id) {
                         return track;

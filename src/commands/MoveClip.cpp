@@ -169,7 +169,7 @@ MoveClip::MoveClip(ViewItem* view, QVariantList args)
 	} else {
 		m_trackStartLocation = m_group.get_track_start_location();
 	}
-        m_sheet = ((Sheet*)d->sv->get_sheet());
+        m_session = d->sv->get_sheet();
 	d->zoom = 0;
 }
 
@@ -204,7 +204,7 @@ int MoveClip::begin_hold()
                 d->sv->start_shuttle(true, true);
         }
 	d->sceneXStartPos = cpointer().on_first_input_event_scene_x();
-        d->relativeWorkCursorPos = m_sheet->get_work_location() - m_group.get_track_start_location();
+        d->relativeWorkCursorPos = m_session->get_work_location() - m_group.get_track_start_location();
 	
 	return 1;
 }
@@ -323,8 +323,8 @@ int MoveClip::jog()
 	}
 
 	// substract the snap distance, if snap is turned on.
-        if ((m_sheet->is_snap_on() || m_doSnap) && !d->verticalOnly) {
-		newTrackStartLocation -= m_sheet->get_snap_list()->calculate_snap_diff(newTrackStartLocation, newTrackStartLocation + m_group.get_length());
+        if ((m_session->is_snap_on() || m_doSnap) && !d->verticalOnly) {
+                newTrackStartLocation -= m_session->get_snap_list()->calculate_snap_diff(newTrackStartLocation, newTrackStartLocation + m_group.get_length());
 	}
 	
 	// Now that the new track start location is known, the position diff can be calculated
@@ -351,22 +351,22 @@ int MoveClip::jog()
 void MoveClip::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	do_prev_next_snap(m_sheet->get_snap_list()->next_snap_pos(m_group.get_track_start_location()),
-			  m_sheet->get_snap_list()->next_snap_pos(m_group.get_track_end_location()));
+        do_prev_next_snap(m_session->get_snap_list()->next_snap_pos(m_group.get_track_start_location()),
+                          m_session->get_snap_list()->next_snap_pos(m_group.get_track_end_location()));
 }
 
 void MoveClip::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	do_prev_next_snap(m_sheet->get_snap_list()->prev_snap_pos(m_group.get_track_start_location()),
-			m_sheet->get_snap_list()->prev_snap_pos(m_group.get_track_end_location()));
+        do_prev_next_snap(m_session->get_snap_list()->prev_snap_pos(m_group.get_track_start_location()),
+                        m_session->get_snap_list()->prev_snap_pos(m_group.get_track_end_location()));
 }
 
 void MoveClip::do_prev_next_snap(TimeRef trackStartLocation, TimeRef trackEndLocation)
 {
 	if (d->verticalOnly) return;
 	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-	trackStartLocation -= m_sheet->get_snap_list()->calculate_snap_diff(trackStartLocation, trackEndLocation);
+        trackStartLocation -= m_session->get_snap_list()->calculate_snap_diff(trackStartLocation, trackEndLocation);
 	m_posDiff = trackStartLocation - m_trackStartLocation;
 	do_move();
 }
@@ -380,7 +380,7 @@ void MoveClip::move_to_start(bool autorepeat)
 void MoveClip::move_to_end(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	m_group.move_to(m_group.get_track_index(), m_sheet->get_last_location());
+        m_group.move_to(m_group.get_track_index(), m_session->get_last_location());
 }
 
 void MoveClip::move_up(bool autorepeat)

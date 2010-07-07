@@ -34,6 +34,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QMenu>
 
+#include "Debugger.h"
+
 TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         : QDialog(parent)
         , m_track(track)
@@ -229,6 +231,8 @@ void TTrackManagerDialog::reject()
 
 void TTrackManagerDialog::routingInputMenuActionTriggered(QAction *action)
 {
+        PENTER2;
+
         Project* project = pm().get_project();
         if (!project) {
                 return;

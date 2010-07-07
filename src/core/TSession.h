@@ -37,7 +37,7 @@ class TSession : public ContextItem
 {
         Q_OBJECT
 public:
-        TSession();
+        TSession(TSession* parentSession = 0);
 
         qreal get_hzoom() const {return m_hzoom;}
         void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
@@ -74,6 +74,7 @@ public:
         };
 
 protected:
+        TSession*       m_parentSession;
         SubGroup*       m_masterOut;
         APILinkedList   m_subGroups;
         SnapList*	m_snaplist;
@@ -94,6 +95,8 @@ protected:
 
 private:
         friend class TimeLine;
+
+        void init();
 
 
 public slots:

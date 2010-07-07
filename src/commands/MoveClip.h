@@ -30,7 +30,7 @@
 #include "Marker.h"
 
 class AudioClip;
-class Sheet;
+class TSession;
 class AudioTrack;
 class SheetView;
 class ViewItem;
@@ -79,7 +79,7 @@ private :
 		MOVE_TO_END
 	};
 	
-	Sheet* 		m_sheet;
+        TSession*	m_session;
 	AudioClipGroup  m_group;
 	QList<MarkerAndOrigin>	m_markers;
         TimeRef 	m_trackStartLocation;
