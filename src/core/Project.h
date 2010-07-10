@@ -38,7 +38,7 @@ class ResourcesManager;
 struct ExportSpecification;
 class ExportThread;
 class AudioDeviceClient;
-class SubGroup;
+class TBusTrack;
 class TSend;
 
 class Project : public TSession
@@ -58,7 +58,7 @@ public :
         AudioBus* get_audio_bus(qint64 id);
         AudioBus* create_software_audio_bus(const BusConfig& config);
         qint64 get_bus_id_for(const QString& busName);
-        QList<TSend*> get_inputs_for_subgroup(SubGroup* sub) const;
+        QList<TSend*> get_inputs_for_bus_track(TBusTrack* busTrack) const;
         void setup_default_hardware_buses();
 
         QStringList get_playback_buses_names( ) const;
@@ -76,10 +76,10 @@ public :
 	int get_bitdepth() const;
         TimeRef get_last_location() const;
 
-        QStringList get_input_buses_for(SubGroup* subGroup);
+        QStringList get_input_buses_for(TBusTrack* busTrack);
 	
 	ResourcesManager* get_audiosource_manager() const;
-        SubGroup* get_master_out() const {return m_masterOut;}
+        TBusTrack* get_master_out() const {return m_masterOut;}
 	QString get_title() const;
 	QString get_engineer() const;
 	QString get_description() const;

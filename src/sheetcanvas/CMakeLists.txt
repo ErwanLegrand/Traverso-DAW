@@ -28,7 +28,7 @@ PositionIndicator.cpp
 TrackView.cpp
 SheetView.cpp
 SheetWidget.cpp
-SubGroupView.cpp
+TBusTrackView.cpp
 TimeLineView.cpp
 TimeLineViewPort.cpp
 TrackPanelView.cpp
@@ -52,7 +52,7 @@ PluginChainView.h
 PluginView.h
 TrackView.h
 PositionIndicator.h
-SubGroupView.h
+TBusTrackView.h
 ViewItem.h
 dialogs/AudioClipEditDialog.h
 dialogs/TTrackManagerDialog.h

@@ -1011,8 +1011,8 @@ Command * TMainWindow::get_keymap(QString &str)
 	QMap<QString, QList<const QMetaObject*> > objects;
 	
 	QList<const QMetaObject*> sheetlist; sheetlist << &Sheet::staticMetaObject; sheetlist << &SheetView::staticMetaObject;
-        QList<const QMetaObject*> tracklist; tracklist << &AudioTrack::staticMetaObject; tracklist << &AudioTrackView::staticMetaObject;
-        QList<const QMetaObject*> subgrouplist; subgrouplist << &SubGroup::staticMetaObject; subgrouplist << &SubGroupView::staticMetaObject;
+        QList<const QMetaObject*> audiotracklist; audiotracklist << &AudioTrack::staticMetaObject; audiotracklist << &AudioTrackView::staticMetaObject;
+        QList<const QMetaObject*> bustracklist; bustracklist << &TBusTrack::staticMetaObject; bustracklist << &TBusTrackView::staticMetaObject;
         QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
 	QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
 	QList<const QMetaObject*> timelinelist; timelinelist << &TimeLine::staticMetaObject; timelinelist << &TimeLineView::staticMetaObject;
@@ -1033,8 +1033,8 @@ Command * TMainWindow::get_keymap(QString &str)
         QList<const QMetaObject*> moveclipedgelist; moveclipedgelist << &MoveEdge::staticMetaObject;
 
 	objects.insert("Sheet", sheetlist);
-        objects.insert("Track", tracklist);
-        objects.insert("SubGroup", subgrouplist);
+        objects.insert("Audio Track", audiotracklist);
+        objects.insert("Bus Track", bustracklist);
         objects.insert("AudioClip", cliplist);
 	objects.insert("Curve", curvelist);
 	objects.insert("TimeLine", timelinelist);
@@ -1201,24 +1201,24 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 		
 		qSort(list->begin(), list->end(), MenuData::smaller);
 
-		QMenu* sub = new QMenu(this);
-		sub->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
+                QMenu* busTrack = new QMenu(this);
+                busTrack->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
 		
 		QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 		font.setBold(true);
-		sub->menuAction()->setFont(font);
+                busTrack->menuAction()->setFont(font);
 		
-		QAction* action = menu->insertMenu(0, sub);
+                QAction* action = menu->insertMenu(0, busTrack);
 		action->setText(QObject::tr(QS_C(key)));
 		foreach(MenuData data, *list) {
-			QAction* action = new QAction(sub);
+                        QAction* action = new QAction(busTrack);
 			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);
 			QString text = QString(data.description + "  " + keyfact);
 			action->setText(text);
 			QStringList strings;
 			strings << data.iedata << data.description << keyfact;
 			action->setData(strings);
-			sub->addAction(action);
+                        busTrack->addAction(action);
 		}
 		
 		delete list;

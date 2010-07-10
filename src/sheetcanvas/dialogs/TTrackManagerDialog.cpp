@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ProjectManager.h"
 #include "Project.h"
 #include "Sheet.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 #include "Utils.h"
 #include "TSend.h"
 
@@ -64,8 +64,8 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
                 trackLabel->setText(tr("Audio Track:"));
                 routingInputButton->setText("Set Input");
         }
-        if (m_track->get_type() == Track::SUBGROUP) {
-                trackLabel->setText(tr("SubGroup Bus:"));
+        if (m_track->get_type() == Track::BUS) {
+                trackLabel->setText(tr("Bus Track:"));
                 routingInputButton->setText("Add Input");
         }
 
@@ -108,7 +108,7 @@ void TTrackManagerDialog::create_routing_input_menu()
                 }
         }
 
-        if (m_track->get_type() == Track::SUBGROUP) {
+        if (m_track->get_type() == Track::BUS) {
                 QList<Track*> tracks;
                 Project* project = pm().get_project();
                 if (m_track == project->get_master_out()) {
@@ -118,7 +118,7 @@ void TTrackManagerDialog::create_routing_input_menu()
                                 tracks.append(at);
                         }
                         if (m_track == m_track->get_sheet()->get_master_out()) {
-                                foreach(SubGroup* sg, m_track->get_sheet()->get_subgroups()) {
+                                foreach(TBusTrack* sg, m_track->get_sheet()->get_bus_tracks()) {
                                         tracks.append(sg);
                                 }
                         }
@@ -169,8 +169,8 @@ QMenu* TTrackManagerDialog::create_sends_menu()
         Sheet* sheet = m_track->get_sheet();
         Project* project = pm().get_project();
 
-        SubGroup* sheetMaster = 0;
-        SubGroup* projectMaster = project->get_master_out();
+        TBusTrack* sheetMaster = 0;
+        TBusTrack* projectMaster = project->get_master_out();
 
         if (sheet) {
                 sheetMaster = sheet->get_master_out();
@@ -187,20 +187,20 @@ QMenu* TTrackManagerDialog::create_sends_menu()
         }
 
         if (sheet) {
-                QList<SubGroup*> subgroups = sheet->get_subgroups();
-                if (!m_track->get_type() == Track::SUBGROUP && subgroups.size()) {
-                        foreach(SubGroup* sub, subgroups) {
-                                action = menu->addAction(sub->get_name());
-                                action->setData(sub->get_id());
+                QList<TBusTrack*> busTracks = sheet->get_bus_tracks();
+                if (!m_track->get_type() == Track::BUS && busTracks.size()) {
+                        foreach(TBusTrack* busTrack, busTracks) {
+                                action = menu->addAction(busTrack->get_name());
+                                action->setData(busTrack->get_id());
                         }
                 }
         }
 
         if (project) {
-                QList<SubGroup*> subgroups = project->get_subgroups();
-                foreach(SubGroup* sub, subgroups) {
-                        action = menu->addAction(sub->get_name());
-                        action->setData(sub->get_id());
+                QList<TBusTrack*> busTracks = project->get_bus_tracks();
+                foreach(TBusTrack* busTrack, busTracks) {
+                        action = menu->addAction(busTrack->get_name());
+                        action->setData(busTrack->get_id());
                 }
         }
 
@@ -246,7 +246,7 @@ void TTrackManagerDialog::routingInputMenuActionTriggered(QAction *action)
                 m_track->add_input_bus(action->text());
         }
 
-        if (m_track->get_type() == Track::SUBGROUP) {
+        if (m_track->get_type() == Track::BUS) {
                 qint64 senderId = action->data().toLongLong();
                 Track* sender = project->get_track(senderId);
                 if (sender) {
@@ -276,8 +276,8 @@ void TTrackManagerDialog::update_routing_input_output_widget_view()
 {
         routingInputListWidget->clear();
 
-        if (m_track->get_type() == Track::SUBGROUP) {
-                QList<TSend*> inputs = pm().get_project()->get_inputs_for_subgroup(qobject_cast<SubGroup*>(m_track));
+        if (m_track->get_type() == Track::BUS) {
+                QList<TSend*> inputs = pm().get_project()->get_inputs_for_bus_track(qobject_cast<TBusTrack*>(m_track));
                 foreach(TSend* send, inputs) {
                         QListWidgetItem* item = new QListWidgetItem(routingInputListWidget);
                         item->setText(send->get_from_name());

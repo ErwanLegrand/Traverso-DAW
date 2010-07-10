@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "SnapList.h"
 #include "AudioTrack.h"
 #include "Marker.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 #include "ContextPointer.h"
 #include "Themer.h"
 #include "AudioClipView.h"
@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "SheetView.h"
 #include "SheetWidget.h"
 #include "AudioTrackView.h"
-#include "SubGroupView.h"
+#include "TBusTrackView.h"
 #include "TrackPanelView.h"
 #include "Cursors.h"
 #include "ClipsViewPort.h"
@@ -89,8 +89,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
 	m_playCursor = new PlayHead(this, m_sheet, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_sheet);
-        m_sheetMasterOutView = new SubGroupView(this, m_sheet->get_master_out());
-        m_projectMasterOutView = new SubGroupView(this, pm().get_project()->get_master_out());
+        m_sheetMasterOutView = new TBusTrackView(this, m_sheet->get_master_out());
+        m_projectMasterOutView = new TBusTrackView(this, pm().get_project()->get_master_out());
 	
 	connect(m_sheet, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
 	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
@@ -233,7 +233,7 @@ void SheetView::move_trackview_up(TrackView *trackView)
         }
 
         AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
-        SubGroupView* sgv = qobject_cast<SubGroupView*>(trackView);
+        TBusTrackView* sgv = qobject_cast<TBusTrackView*>(trackView);
 
         int newindex = index - 1;
 
@@ -246,9 +246,9 @@ void SheetView::move_trackview_up(TrackView *trackView)
         }
 
         if (sgv) {
-                for(int i=0; i<m_subGroupViews.size(); i++) {
+                for(int i=0; i<m_busTrackViews.size(); i++) {
                         if (i==newindex) {
-                                m_subGroupViews.at(i)->get_track()->set_sort_index(i+1);
+                                m_busTrackViews.at(i)->get_track()->set_sort_index(i+1);
                         }
                 }
         }
@@ -257,7 +257,7 @@ void SheetView::move_trackview_up(TrackView *trackView)
         trackView->get_track()->set_sort_index(newindex);
 
         qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
-        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+        qSort(m_busTrackViews.begin(), m_busTrackViews.end(), smallerTrackView);
 
         layout_tracks();
 }
@@ -271,7 +271,7 @@ void SheetView::move_trackview_down(TrackView *trackView)
         }
 
         AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
-        SubGroupView* sgv = qobject_cast<SubGroupView*>(trackView);
+        TBusTrackView* sgv = qobject_cast<TBusTrackView*>(trackView);
 
         int newindex = index + 1;
 
@@ -287,13 +287,13 @@ void SheetView::move_trackview_down(TrackView *trackView)
         }
 
         if (sgv) {
-                for(int i=0; i<m_subGroupViews.size(); i++) {
+                for(int i=0; i<m_busTrackViews.size(); i++) {
                         if (i==newindex) {
-                                m_subGroupViews.at(i)->get_track()->set_sort_index(i-1);
+                                m_busTrackViews.at(i)->get_track()->set_sort_index(i-1);
                         }
                 }
-                if (newindex >= m_subGroupViews.size()) {
-                        newindex = m_subGroupViews.size() - 1;
+                if (newindex >= m_busTrackViews.size()) {
+                        newindex = m_busTrackViews.size() - 1;
                 }
         }
 
@@ -301,7 +301,7 @@ void SheetView::move_trackview_down(TrackView *trackView)
         trackView->get_track()->set_sort_index(newindex);
 
         qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
-        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+        qSort(m_busTrackViews.begin(), m_busTrackViews.end(), smallerTrackView);
 
         layout_tracks();
 
@@ -310,7 +310,7 @@ void SheetView::move_trackview_down(TrackView *trackView)
 void SheetView::to_bottom(TrackView *trackView)
 {
         AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
-        SubGroupView* sgv = qobject_cast<SubGroupView*>(trackView);
+        TBusTrackView* sgv = qobject_cast<TBusTrackView*>(trackView);
 
         if (atv) {
                 QList<TrackView*> list = m_audioTrackViews;
@@ -322,7 +322,7 @@ void SheetView::to_bottom(TrackView *trackView)
         }
 
         if (sgv) {
-                QList<TrackView*> list = m_subGroupViews;
+                QList<TrackView*> list = m_busTrackViews;
                 list.removeAll(atv);
 
                 for(int i=0; i<list.size(); i++) {
@@ -333,7 +333,7 @@ void SheetView::to_bottom(TrackView *trackView)
 
 
         qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
-        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+        qSort(m_busTrackViews.begin(), m_busTrackViews.end(), smallerTrackView);
 
         layout_tracks();
 }
@@ -347,7 +347,7 @@ void SheetView::to_top(TrackView *trackView)
         }
 
         AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
-        SubGroupView* sgv = qobject_cast<SubGroupView*>(trackView);
+        TBusTrackView* sgv = qobject_cast<TBusTrackView*>(trackView);
 
         if (atv) {
                 QList<TrackView*> list = m_audioTrackViews;
@@ -360,7 +360,7 @@ void SheetView::to_top(TrackView *trackView)
         }
 
         if (sgv) {
-                QList<TrackView*> list = m_subGroupViews;
+                QList<TrackView*> list = m_busTrackViews;
                 list.removeAll(atv);
                 sgv->get_track()->set_sort_index(0);
 
@@ -371,7 +371,7 @@ void SheetView::to_top(TrackView *trackView)
 
 
         qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
-        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+        qSort(m_busTrackViews.begin(), m_busTrackViews.end(), smallerTrackView);
 
         layout_tracks();
 }
@@ -381,7 +381,7 @@ void SheetView::add_new_track_view(Track* track)
         TrackView* view;
 
         AudioTrack* audiotrack = qobject_cast<AudioTrack*>(track);
-        SubGroup* group = qobject_cast<SubGroup*>(track);
+        TBusTrack* group = qobject_cast<TBusTrack*>(track);
 
         int sortIndex = track->get_sort_index();
 
@@ -392,16 +392,16 @@ void SheetView::add_new_track_view(Track* track)
                 }
                 m_audioTrackViews.append(view);
         } else {
-                view = new SubGroupView(this, group);
+                view = new TBusTrackView(this, group);
                 if(sortIndex < 0) {
-                        track->set_sort_index(m_subGroupViews.size());
+                        track->set_sort_index(m_busTrackViews.size());
                 }
-                m_subGroupViews.append(view);
+                m_busTrackViews.append(view);
         }
 
 
         qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
-        qSort(m_subGroupViews.begin(), m_subGroupViews.end(), smallerTrackView);
+        qSort(m_busTrackViews.begin(), m_busTrackViews.end(), smallerTrackView);
 
 	layout_tracks();
 }
@@ -410,7 +410,7 @@ void SheetView::remove_track_view(Track* track)
 {
         QList<TrackView*> views;
         views.append(m_audioTrackViews);
-        views.append(m_subGroupViews);
+        views.append(m_busTrackViews);
 
         foreach(TrackView* view, views) {
                 if (view->get_track() == track) {
@@ -418,7 +418,7 @@ void SheetView::remove_track_view(Track* track)
                         scene()->removeItem(panel);
 			scene()->removeItem(view);
                         m_audioTrackViews.removeAll(view);
-                        m_subGroupViews.removeAll(view);
+                        m_busTrackViews.removeAll(view);
 			delete view;
                         delete panel;
 			break;
@@ -561,7 +561,7 @@ void SheetView::layout_tracks()
 	m_sceneHeight = verticalposition;
 
         // + 2, one for sheet master and one for project master track view!
-        m_meanTrackHeight = int(m_sceneHeight / (m_audioTrackViews.size() + m_subGroupViews.size() + 2));
+        m_meanTrackHeight = int(m_sceneHeight / (m_audioTrackViews.size() + m_busTrackViews.size() + 2));
 
 	update_scrollbars();
 }
@@ -1096,7 +1096,7 @@ Command* SheetView::to_lower_context_level()
                 browse_to_audio_clip_view(data.acv);
         } else if (data.currentContext == "AudioClipView") {
                 browse_to_track(data.acv->get_audio_track_view()->get_track());
-        } else if (data.currentContext == "AudioTrackView" || data.currentContext == "SubGroupView") {
+        } else if (data.currentContext == "AudioTrackView" || data.currentContext == "TBusTrackView") {
                 browse_to_time_line();
         }
 
@@ -1136,7 +1136,7 @@ Command* SheetView::browse_to_context_item_below()
 
         }
 
-        if (data.currentContext == "AudioTrackView" || data.currentContext == "SubGroupView") {
+        if (data.currentContext == "AudioTrackView" || data.currentContext == "TBusTrackView") {
                 QList<TrackView*> views = get_track_views();
                 int index = views.indexOf(data.tv);
                 if (index < views.size()) {
@@ -1348,7 +1348,7 @@ QList<TrackView*> SheetView::get_track_views() const
 {
         QList<TrackView*> views;
         views.append(m_audioTrackViews);
-        views.append(m_subGroupViews);
+        views.append(m_busTrackViews);
         views.append(m_sheetMasterOutView);
         views.append(m_projectMasterOutView);
         return views;

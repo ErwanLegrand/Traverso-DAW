@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <ProjectManager.h>
 #include <Project.h>
 #include <Sheet.h>
-#include <SubGroup.h>
+#include "TBusTrack.h"
 #include <Themer.h>
 #include <AudioDevice.h>
 #include <AudioBus.h>

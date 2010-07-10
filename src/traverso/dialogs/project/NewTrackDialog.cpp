@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Project.h"
 #include "ProjectManager.h"
 #include "Sheet.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 #include "AudioTrack.h"
 
 #include <CommandGroup.h>
@@ -54,7 +54,7 @@ NewTrackDialog::NewTrackDialog(QWidget * parent)
 	
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
         connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
-        connect(isSubGroup, SIGNAL(toggled(bool)), this, SLOT(update_buses_comboboxes()));
+        connect(isBusTrack, SIGNAL(toggled(bool)), this, SLOT(update_buses_comboboxes()));
         connect(&m_timer, SIGNAL(timeout()), this, SLOT(reset_information_label()));
 
         resize(300, 300);
@@ -65,7 +65,7 @@ void NewTrackDialog::showEvent(QShowEvent *event)
         update_driver_info();
         if (m_project->get_current_session() == m_project) {
                 isAudioTrack->hide();
-                isSubGroup->setChecked(true);
+                isBusTrack->setChecked(true);
         } else {
                 isAudioTrack->show();
                 isAudioTrack->setChecked(true);
@@ -99,8 +99,8 @@ void NewTrackDialog::create_track()
         QString driver = audiodevice().get_driver_type();
         if (driver == "Jack") {
                 for (int i=0; i<2; i++) {
-                        // subgroups don't have input ports, so skip those.
-                        if (isSubGroup->isChecked() && i == 1) {
+                        // busTracks don't have input ports, so skip those.
+                        if (isBusTrack->isChecked() && i == 1) {
                                 continue;
                         }
 
@@ -133,11 +133,11 @@ void NewTrackDialog::create_track()
                 }
         }
 
-        if (isSubGroup->isChecked()) {
+        if (isBusTrack->isChecked()) {
                 if (driver == "Jack") {
-                        track = new SubGroup(sheet, title + "-sub", 2);
+                        track = new TBusTrack(sheet, title + "-busTrack", 2);
                 } else {
-                        track = new SubGroup(sheet, title, 2);
+                        track = new TBusTrack(sheet, title, 2);
                 }
 
         } else {
@@ -212,7 +212,7 @@ void NewTrackDialog::update_buses_comboboxes()
                 return ;
         }
 
-        if (isSubGroup->isChecked()) {
+        if (isBusTrack->isChecked()) {
                 inputBusFrame->setEnabled(false);
                 jackInPortsCheckBox->setChecked(false);
         } else {
@@ -220,11 +220,11 @@ void NewTrackDialog::update_buses_comboboxes()
                 jackInPortsCheckBox->setChecked(true);
         }
 
-        QList<SubGroup*> subs;
+        QList<TBusTrack*> subs;
         subs.append(m_project->get_master_out());
         subs.append(session->get_master_out());
-        subs.append(session->get_subgroups());
-        foreach(SubGroup* sg, subs) {
+        subs.append(session->get_bus_tracks());
+        foreach(TBusTrack* sg, subs) {
                 outputsBus->addItem(sg->get_name(), sg->get_id());
         }
 

@@ -32,7 +32,7 @@ class AudioTrackView;
 class TrackPanelViewPort;
 class PanelLed;
 class AudioTrackPanelView;
-class SubGroupView;
+class TBusTrackView;
 class VUMeterView;
 
 class TrackPanelGain : public ViewItem
@@ -184,13 +184,13 @@ private:
 };
 
 
-class SubGroupPanelView : public TrackPanelView
+class TBusTrackPanelView : public TrackPanelView
 {
         Q_OBJECT
 
 public:
-        SubGroupPanelView(SubGroupView* trackView);
-        ~SubGroupPanelView();
+        TBusTrackPanelView(TBusTrackView* trackView);
+        ~TBusTrackPanelView();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

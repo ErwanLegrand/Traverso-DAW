@@ -28,7 +28,7 @@
 #include "ProjectManager.h"
 #include "Project.h"
 #include "Sheet.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

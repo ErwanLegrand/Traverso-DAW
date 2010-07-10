@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 TBusTrack::TBusTrack(Sheet* sheet, const QString& name, int channelCount)
         : Track(sheet)
 {
-        QObject::tr("SubGroup");
+        QObject::tr("Bus Track");
         m_height = 60;
         m_id = create_id();
         m_name = name;
@@ -53,7 +53,7 @@ TBusTrack::~TBusTrack()
 
 QDomNode TBusTrack::get_state( QDomDocument doc, bool istemplate)
 {
-        QDomElement node = doc.createElement("SubGroup");
+        QDomElement node = doc.createElement("BusTrack");
         Track::get_state(doc, node, istemplate);
 
         node.setAttribute("channelcount", m_channelCount);
@@ -85,7 +85,7 @@ void TBusTrack::create_process_bus()
         if (m_processBus) {
                 return;
         }
-        m_type = SUBGROUP;
+        m_type = BUS;
         BusConfig busConfig;
         busConfig.name = m_name;
         busConfig.channelcount = m_channelCount;

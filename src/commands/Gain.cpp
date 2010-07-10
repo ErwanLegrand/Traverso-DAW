@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <ViewPort.h>
 #include <Track.h>
 #include "Sheet.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 /**
  *	\class Gain
-        \brief Change (jog) the Gain of an AudioTrack, SubGroup or AudioClip, or set to a pre-defined value
+        \brief Change (jog) the Gain of an AudioTrack, BusTrack or AudioClip, or set to a pre-defined value
 	
 	\sa TraversoCommands
  */

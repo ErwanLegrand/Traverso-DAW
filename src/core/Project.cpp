@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AddRemove.h>
 #include "FileHelpers.h"
 #include "TimeLine.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 #include "TSend.h"
 
 #define PROJECT_FILE_VERSION 	3
@@ -361,15 +361,15 @@ int Project::load(QString projectfile)
                 }
         }
 
-        QDomNode subgroupsNode = docElem.firstChildElement("SubGroups");
-        QDomNode subgroupNode = subgroupsNode.firstChild();
+        QDomNode busTracksNode = docElem.firstChildElement("BusTracks");
+        QDomNode busTrackNode = busTracksNode.firstChild();
 
-        while(!subgroupNode.isNull()) {
-                SubGroup* subgroup = new SubGroup(0, subgroupNode);
-                subgroup->set_state(subgroupNode);
-                private_add_track(subgroup);
+        while(!busTrackNode.isNull()) {
+                TBusTrack* busTrack = new TBusTrack(0, busTrackNode);
+                busTrack->set_state(busTrackNode);
+                private_add_track(busTrack);
 
-                subgroupNode = subgroupNode.nextSibling();
+                busTrackNode = busTrackNode.nextSibling();
         }
 
 	// Load all the AudioSources for this project
@@ -569,12 +569,12 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
         projectNode.appendChild(busesElement);
 
 
-        QDomNode subgroupsNode = doc.createElement("SubGroups");
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
-                subgroupsNode.appendChild(group->get_state(doc, istemplate));
+        QDomNode busTracksNode = doc.createElement("BusTracks");
+        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
+                busTracksNode.appendChild(group->get_state(doc, istemplate));
         }
 
-        projectNode.appendChild(subgroupsNode);
+        projectNode.appendChild(busTracksNode);
 
 
         QDomNode masterOutNode = doc.createElement("MasterOut");
@@ -747,7 +747,7 @@ AudioBus* Project::get_audio_bus(qint64 id)
                 if (sheet->get_master_out()->get_id() == id) {
                         return sheet->get_master_out()->get_process_bus();
                 }
-                foreach(SubGroup* group, sheet->get_subgroups()) {
+                foreach(TBusTrack* group, sheet->get_bus_tracks()) {
                         if (group->get_id() == id) {
                                 return group->get_process_bus();
                         }
@@ -766,7 +766,7 @@ AudioBus* Project::get_audio_bus(qint64 id)
                 }
         }
 
-        foreach(SubGroup* group, get_subgroups()) {
+        foreach(TBusTrack* group, get_bus_tracks()) {
                 if (group->get_id() == id) {
                         return group->get_process_bus();
                 }
@@ -807,7 +807,7 @@ qint64 Project::get_bus_id_for(const QString &busName)
         return 0;
 }
 
-QList<TSend*> Project::get_inputs_for_subgroup(SubGroup *sub) const
+QList<TSend*> Project::get_inputs_for_bus_track(TBusTrack *busTrack) const
 {
         QList<TSend*> inputs;
 
@@ -820,7 +820,7 @@ QList<TSend*> Project::get_inputs_for_subgroup(SubGroup *sub) const
         foreach(Track* track, tracks) {
                 QList<TSend*> sends = track->get_post_sends();
                 foreach(TSend* send, sends) {
-                        if (send->get_bus_id() == sub->get_id()) {
+                        if (send->get_bus_id() == busTrack->get_id()) {
                                 inputs.append(send);
                         }
                 }
@@ -1660,7 +1660,7 @@ int Project::process( nframes_t nframes )
         }
 
 
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
                 group->process(nframes);
         }
 
@@ -1696,7 +1696,7 @@ TimeRef Project::get_last_location() const
 }
 
 
-QStringList Project::get_input_buses_for(SubGroup *subGroup)
+QStringList Project::get_input_buses_for(TBusTrack *busTrack)
 {
         QStringList buses;
 
@@ -1709,7 +1709,7 @@ QStringList Project::get_input_buses_for(SubGroup *subGroup)
                 // FIXME this is a temp fix!
                 QList<TSend*> sends = track->get_post_sends();
                 foreach(TSend* send, sends) {
-                        if (send->get_bus_id() == subGroup->get_id()) {
+                        if (send->get_bus_id() == busTrack->get_id()) {
                                 buses.append(send->get_name());
                         }
                 }

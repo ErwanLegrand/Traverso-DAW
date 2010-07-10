@@ -35,7 +35,7 @@ TBusTrackView::TBusTrackView(SheetView* sv, TBusTrack* group)
 
         load_theme_data();
 
-        m_panel = new SubGroupPanelView(this);
+        m_panel = new TBusTrackPanelView(this);
         calculate_bounding_rect();
 }
 
@@ -51,7 +51,7 @@ void TBusTrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
         int pixelcount = (int)option->exposedRect.width();
 
 //        if (m_paintBackground) {
-                QColor color = themer()->get_color("SubGroup:background");
+                QColor color = themer()->get_color("BusTrack:background");
                 painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_track->get_height() - m_bottomborderwidth, color);
 //        }
 }

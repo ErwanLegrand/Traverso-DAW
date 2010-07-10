@@ -65,9 +65,6 @@ protected:
         int			m_topborderwidth;
         int			m_bottomborderwidth;
 
-        friend class TrackPanelView;
-        friend class SubGroupPanelView;
-
 public slots:
         Command* edit_properties();
         Command* add_new_plugin();

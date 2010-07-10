@@ -27,7 +27,7 @@
 #include <CorrelationMeter.h>
 #include <Command.h>
 #include <Sheet.h>
-#include <SubGroup.h>
+#include <TBusTrack.h>
 #include <Themer.h>
 #include <Config.h>
 #include <cmath> // used for fabs

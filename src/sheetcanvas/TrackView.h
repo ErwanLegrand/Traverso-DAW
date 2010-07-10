@@ -70,7 +70,7 @@ protected:
 
         friend class TrackPanelView;
         friend class AudioTrackPanelView;
-        friend class SubGroupPanelView;
+        friend class TBusTrackPanelView;
 
 public slots:
         Command* edit_properties();

@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "Peak.h"
 #include "Utils.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 #include "SnapList.h"
 #include "Snappable.h"
 #include "TimeLine.h"
@@ -61,17 +61,17 @@ void TSession::init()
 QList<Track*> TSession::get_tracks() const
 {
         QList<Track*> list;
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
                 list.append(group);
         }
         return list;
 
 }
 
-QList<SubGroup*> TSession::get_subgroups() const
+QList<TBusTrack*> TSession::get_bus_tracks() const
 {
-        QList<SubGroup*> list;
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+        QList<TBusTrack*> list;
+        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
                 list.append(group);
         }
 
@@ -177,7 +177,7 @@ Command* TSession::remove_track(Track* track, bool historable)
 void TSession::private_add_track(Track* track)
 {
         switch (track->get_type()) {
-        case Track::SUBGROUP: m_subGroups.append(track);
+        case Track::BUS: m_busTracks.append(track);
               break;
         default: ;// do nothing
         }
@@ -186,7 +186,7 @@ void TSession::private_add_track(Track* track)
 void TSession::private_remove_track(Track* track)
 {
         switch (track->get_type()) {
-        case Track::SUBGROUP: m_subGroups.remove(track);
+        case Track::BUS: m_busTracks.remove(track);
               break;
         default: ;// do nothing
         }

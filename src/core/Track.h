@@ -39,7 +39,7 @@ public:
 
         enum {
                 AUDIOTRACK = 0,
-                SUBGROUP = 1
+                BUS = 1
         };
 
         static const int INITIAL_HEIGHT = 60;

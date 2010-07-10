@@ -67,7 +67,7 @@
         <color alpha="255" red="100" blue="120" name="Track:clipbottomoffset" green="100"/>
         <color alpha="255" red="0" blue="0" name="CorrelationMeter:text" green="0"/>
         <color alpha="255" red="205" blue="255" name="FFTMeter:grid" green="223"/>
-        <color alpha="255" red="0" blue="248" name="SubGroupPanel:background" green="0"/>
+        <color alpha="255" red="0" blue="248" name="BusTrackPanel:background" green="0"/>
         <color alpha="100" red="255" blue="0" name="AudioClip:invalidreadsource" green="0"/>
         <color alpha="170" red="255" blue="255" name="AudioClip:background:muted:mousehover" green="255"/>
         <color alpha="255" red="240" blue="150" name="TrackPanel:head:active" green="140"/>
@@ -145,7 +145,7 @@
         <color alpha="255" red="237" blue="250" name="TrackPanel:bus:background" green="237"/>
         <color alpha="255" red="255" blue="255" name="PanSlider:0" green="255"/>
         <color alpha="255" red="90" blue="90" name="AudioClip:wavemacroview:outline:muted" green="90"/>
-        <color alpha="100" red="150" blue="251" name="SubGroup:background" green="150"/>
+        <color alpha="100" red="150" blue="251" name="BusTrack:background" green="150"/>
         <color alpha="255" red="255" blue="0" name="PanSlider:1" green="0"/>
         <color alpha="255" red="243" blue="255" name="ResourcesBin:alternaterowcolor" green="248"/>
         <color alpha="255" red="255" blue="0" name="FFTMeter:curve:average" green="0"/>

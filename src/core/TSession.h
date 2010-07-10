@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class SnapList;
 class Snappable;
-class SubGroup;
+class TBusTrack;
 class Track;
 class TimeLine;
 
@@ -51,9 +51,9 @@ public:
         TimeLine* get_timeline() const {return m_timeline;}
         QString get_name() const {return m_name;}
 
-        SubGroup* get_master_out() const {return m_masterOut;}
+        TBusTrack* get_master_out() const {return m_masterOut;}
         virtual QList<Track*> get_tracks() const;
-        QList<SubGroup*> get_subgroups() const;
+        QList<TBusTrack*> get_bus_tracks() const;
         Snappable* get_work_snap() {return m_workSnap;}
         virtual bool is_snap_on() const	{return m_isSnapOn;}
 
@@ -75,8 +75,8 @@ public:
 
 protected:
         TSession*       m_parentSession;
-        SubGroup*       m_masterOut;
-        APILinkedList   m_subGroups;
+        TBusTrack*       m_masterOut;
+        APILinkedList   m_busTracks;
         SnapList*	m_snaplist;
         Snappable*	m_workSnap;
         TimeLine*	m_timeline;

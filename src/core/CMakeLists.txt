@@ -41,10 +41,10 @@ ProjectManager.cpp
 ProcessingData.cpp
 ReadSource.cpp
 ResourcesManager.cpp
+TBusTrack.cpp
 TSend.cpp
 TSession.cpp
 Sheet.cpp
-SubGroup.cpp
 Track.cpp
 WriteSource.cpp
 gdither.cpp
@@ -79,7 +79,7 @@ ProjectManager.h
 ReadSource.h
 ResourcesManager.h
 Sheet.h
-SubGroup.h
+TBusTrack.h
 Themer.h
 TimeLine.h
 Track.h

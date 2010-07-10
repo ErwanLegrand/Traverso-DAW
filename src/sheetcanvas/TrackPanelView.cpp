@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Config.h"
 #include "TrackPanelView.h"
 #include "AudioTrackView.h"
-#include "SubGroupView.h"
+#include "TBusTrackView.h"
 #include "SheetView.h"
 #include <Themer.h>
 #include "TrackPanelViewPort.h"
@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Project.h"
 #include "ProjectManager.h"
 #include "Sheet.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 #include "Track.h"
 #include "TSend.h"
 #include "TMainWindow.h"
@@ -313,7 +313,7 @@ void AudioTrackPanelView::layout_panel_items()
 }
 
 
-SubGroupPanelView::SubGroupPanelView(SubGroupView* view)
+TBusTrackPanelView::TBusTrackPanelView(TBusTrackView* view)
         : TrackPanelView(view)
 {
         PENTERCONS;
@@ -324,13 +324,13 @@ SubGroupPanelView::SubGroupPanelView(SubGroupView* view)
 
 }
 
-SubGroupPanelView::~SubGroupPanelView( )
+TBusTrackPanelView::~TBusTrackPanelView( )
 {
         PENTERDES;
 }
 
 
-void SubGroupPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void TBusTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
         Q_UNUSED(widget);
         Q_UNUSED(option);
@@ -338,14 +338,14 @@ void SubGroupPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem*
         int xstart = (int)option->exposedRect.x();
         int pixelcount = (int)option->exposedRect.width();
 
-        QColor color = themer()->get_color("SubGroup:background");
+        QColor color = themer()->get_color("BusTrack:background");
         painter->fillRect(xstart, m_trackView->m_topborderwidth, pixelcount, m_track->get_height() - m_trackView->m_bottomborderwidth, color);
 
         TrackPanelView::paint(painter, option, widget);
 }
 
 
-void SubGroupPanelView::layout_panel_items()
+void TBusTrackPanelView::layout_panel_items()
 {
         TrackPanelView::layout_panel_items();
 }
@@ -645,8 +645,8 @@ void TrackPanelBus::bus_changed()
         int maxbuswidth = 70;
 	
 	if (m_type == BUSIN) {
-                if (m_track->get_type() == Track::SUBGROUP) {
-                        QList<TSend*> sends  = pm().get_project()->get_inputs_for_subgroup(qobject_cast<SubGroup*>(m_track));
+                if (m_track->get_type() == Track::BUS) {
+                        QList<TSend*> sends  = pm().get_project()->get_inputs_for_bus_track(qobject_cast<TBusTrack*>(m_track));
                         if (sends.size() == 0) {
                                 m_busName = "No Input";
                         } else if (sends.size() == 1) {

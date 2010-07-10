@@ -51,7 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClipManager.h"
 #include "Tsar.h"
 #include "SnapList.h"
-#include "SubGroup.h"
+#include "TBusTrack.h"
 #include "Config.h"
 #include "Utils.h"
 #include "ContextItem.h"
@@ -221,15 +221,15 @@ int Sheet::set_state( const QDomNode & node )
         // Force the proper name for our Master Bus
         m_masterOut->set_name(tr("Sheet Master"));
 
-        QDomNode subgroupsNode = node.firstChildElement("SubGroups");
-        QDomNode subgroupNode = subgroupsNode.firstChild();
+        QDomNode busTracksNode = node.firstChildElement("BusTracks");
+        QDomNode busTrackNode = busTracksNode.firstChild();
 
-        while(!subgroupNode.isNull()) {
-                SubGroup* subgroup = new SubGroup(this, subgroupNode);
-                subgroup->set_state(subgroupNode);
-                private_add_track(subgroup);
+        while(!busTrackNode.isNull()) {
+                TBusTrack* busTrack = new TBusTrack(this, busTrackNode);
+                busTrack->set_state(busTrackNode);
+                private_add_track(busTrack);
 
-                subgroupNode = subgroupNode.nextSibling();
+                busTrackNode = busTrackNode.nextSibling();
         }
 
         QDomNode tracksNode = node.firstChildElement("Tracks");
@@ -290,12 +290,12 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	sheetNode.appendChild(tracksNode);
 
 
-        QDomNode subgroupsNode = doc.createElement("SubGroups");
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
-                subgroupsNode.appendChild(group->get_state(doc, istemplate));
+        QDomNode busTracksNode = doc.createElement("BusTracks");
+        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
+                busTracksNode.appendChild(group->get_state(doc, istemplate));
         }
 
-        sheetNode.appendChild(subgroupsNode);
+        sheetNode.appendChild(busTracksNode);
 
 	return sheetNode;
 }
@@ -648,26 +648,26 @@ void Sheet::solo_track(Track *track)
         QList<AudioTrack*> tracks= get_audio_tracks();
 
 
-        // If the Track was a SubGroup, then also (un) solo all the AudioTracks
-        // that have this SubGroup as the output bus.
-        if ((track->get_type() == Track::SUBGROUP) && !(track == m_masterOut)) {
-                QList<AudioTrack*> subgroupAudioTracks;
+        // If the Track was a Bus Track, then also (un) solo all the AudioTracks
+        // that have this Bus Track as the output bus.
+        if ((track->get_type() == Track::BUS) && !(track == m_masterOut)) {
+                QList<AudioTrack*> busTrackAudioTracks;
                 foreach(AudioTrack* sgTrack, tracks) {
                         QList<TSend*> sends = sgTrack->get_post_sends();
                         foreach(TSend* send, sends) {
                                 if (send->get_bus_id() == track->get_process_bus()->get_id()) {
-                                        subgroupAudioTracks.append(sgTrack);
+                                        busTrackAudioTracks.append(sgTrack);
                                 }
                         }
                 }
 
                 if (wasSolo) {
-                        foreach(AudioTrack* sgTrack, subgroupAudioTracks) {
+                        foreach(AudioTrack* sgTrack, busTrackAudioTracks) {
                                 sgTrack->set_solo(false);
                                 sgTrack->set_muted_by_solo(false);
                         }
                 } else {
-                        foreach(AudioTrack* sgTrack, subgroupAudioTracks) {
+                        foreach(AudioTrack* sgTrack, busTrackAudioTracks) {
                                 sgTrack->set_solo(true);
                                 sgTrack->set_muted_by_solo(true);
                         }
@@ -773,7 +773,7 @@ int Sheet::process( nframes_t nframes )
 
 	// zero the m_masterOut buffers
         m_masterOut->get_process_bus()->silence_buffers(nframes);
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
                 group->get_process_bus()->silence_buffers(nframes);
         }
 
@@ -786,7 +786,7 @@ int Sheet::process( nframes_t nframes )
 		processResult |= track->process(nframes);
 	}
 
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
                 group->process(nframes);
         }
 
@@ -807,7 +807,7 @@ int Sheet::process_export( nframes_t nframes )
 {
 	// Get the masterout buffers, and fill with zero's
         m_masterOut->get_process_bus()->silence_buffers(nframes);
-        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
                 group->get_process_bus()->silence_buffers(nframes);
         }
         memset (mixdown, 0, sizeof (audio_sample_t) * nframes);

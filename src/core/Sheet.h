@@ -42,7 +42,7 @@ class SnapList;
 class TimeLine;
 class Snappable;
 class DecodeBuffer;
-class SubGroup;
+class TBusTrack;
 class Track;
 
 struct ExportSpecification;

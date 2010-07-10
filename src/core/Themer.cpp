@@ -554,7 +554,7 @@ void Themer::load_defaults()
         m_defaultColors.insert("FFTMeter:foreground", p.color(QPalette::Link));
         m_defaultColors.insert("FFTMeter:curve:average", p.color(QPalette::LinkVisited));
         m_defaultColors.insert("FFTMeter:tickmarks:main", p.color(QPalette::Dark));
-        m_defaultColors.insert("FFTMeter:tickmarks:sub", p.color(QPalette::Mid));
+        m_defaultColors.insert("FFTMeter:tickmarks:busTrack", p.color(QPalette::Mid));
         m_defaultColors.insert("FFTMeter:text", p.color(QPalette::WindowText));
         m_defaultColors.insert("VUMeter:background:widget", p.color(QPalette::Window));
         m_defaultColors.insert("VUMeter:background:bar", p.color(QPalette::Base));
@@ -607,8 +607,8 @@ void Themer::load_defaults()
         m_defaultColors.insert("TrackPanel:bus:font", p.color(QPalette::WindowText));
         m_defaultColors.insert("TrackPanel:bus:background", p.color(QPalette::Button));
         m_defaultColors.insert("TrackPanel:bus:margin", p.color(QPalette::Dark));
-        m_defaultColors.insert("SubGroup:background", p.color(QPalette::Background));
-        m_defaultColors.insert("SubGroupPanel:background", p.color(QPalette::Background));
+        m_defaultColors.insert("BusTrack:background", p.color(QPalette::Background));
+        m_defaultColors.insert("BusTrackPanel:background", p.color(QPalette::Background));
         m_defaultColors.insert("Workcursor:default", QColor(100, 50, 100, 180));
         m_defaultColors.insert("Marker:default", QColor(Qt::red));
         m_defaultColors.insert("Marker:blink", p.color(QPalette::Highlight));
