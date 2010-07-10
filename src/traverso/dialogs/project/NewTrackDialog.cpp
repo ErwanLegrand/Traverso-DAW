@@ -63,6 +63,13 @@ NewTrackDialog::NewTrackDialog(QWidget * parent)
 void NewTrackDialog::showEvent(QShowEvent *event)
 {
         update_driver_info();
+        if (m_project->get_current_session() == m_project) {
+                isAudioTrack->hide();
+                isSubGroup->setChecked(true);
+        } else {
+                isAudioTrack->show();
+                isAudioTrack->setChecked(true);
+        }
 }
 
 void NewTrackDialog::create_track()
@@ -239,7 +246,7 @@ void NewTrackDialog::update_driver_info()
                 jackTrackFrame->show();
                 busConfigGroupBox->hide();
         } else {
-                jackTrackFrame->show();
+                jackTrackFrame->hide();
                 busConfigGroupBox->show();
         }
 }
