@@ -113,7 +113,7 @@ void TTrackManagerDialog::create_routing_input_menu()
                 Project* project = pm().get_project();
                 if (m_track == project->get_master_out()) {
                         tracks = project->get_sheet_tracks();
-                } else {
+                } else if (m_track->get_sheet()){
                         foreach(AudioTrack* at, m_track->get_sheet()->get_audio_tracks()) {
                                 tracks.append(at);
                         }
