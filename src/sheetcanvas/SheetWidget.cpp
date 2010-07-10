@@ -96,7 +96,7 @@ TTimeLabel::TTimeLabel(QWidget* parent, TSession* session)
         setEnabled(false);
 
         setMaximumWidth(120);
-        setMinimumHeight(24);
+        setMinimumHeight(22);
         setFocusPolicy(Qt::NoFocus);
         setStyleSheet(  "color: lime;"
                         "background-color: black;"

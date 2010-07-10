@@ -46,7 +46,7 @@ public:
         TimeRef get_work_location() const {return m_workLocation;}
         virtual TimeRef get_last_location() const = 0;
         TimeRef get_new_transport_location() const {return m_newTransportLocation;}
-        TimeRef get_transport_location() const {return m_transportLocation;}
+        virtual TimeRef get_transport_location() const {return m_transportLocation;}
         virtual SnapList* get_snap_list() const;
         TimeLine* get_timeline() const {return m_timeline;}
         QString get_name() const {return m_name;}

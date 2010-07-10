@@ -72,6 +72,7 @@ Project::Project(const QString& title)
 	PENTERCONS;
 	m_currentSheetId = 0;
 	m_exportThread = 0;
+        m_activeSheet = 0;
 	engineer = "";
         m_keyboardArrowNavigationSpeed = 4;
 
@@ -1064,9 +1065,18 @@ void Project::set_current_sheet(qint64 id)
                         set_current_sheet(m_sheets.first()->get_id());
                 }
 
+                m_activeSheet = 0;
 		emit currentSessionChanged(0);
 		return;
-	}
+        } else {
+                if (m_activeSheet) {
+                        disconnect(m_activeSheet, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
+                        disconnect(m_activeSheet, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
+                }
+                m_activeSheet = newcurrent;
+                connect(m_activeSheet, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
+                connect(m_activeSheet, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
+        }
 
 	m_currentSheetId=id;
 	
@@ -1695,6 +1705,21 @@ TimeRef Project::get_last_location() const
         return lastLocation;
 }
 
+TimeRef Project::get_transport_location() const
+{
+        if (!m_activeSheet) return TimeRef();
+
+        return m_activeSheet->get_transport_location();
+}
+
+Command* Project::start_transport()
+{
+        if (!m_activeSheet) {
+                return 0;
+        }
+
+        return m_activeSheet->start_transport();
+}
 
 QStringList Project::get_input_buses_for(TBusTrack *busTrack)
 {

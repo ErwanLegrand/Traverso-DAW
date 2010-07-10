@@ -165,7 +165,7 @@
 			<Objects>
                                 <Object objectname="TMainWindow" slotsignature="start_transport" modes="All" sortorder="1" />
                                 <Object objectname="TMainWindow" slotsignature="set_recordable_and_start_transport" modes="All" modifierkeys="CTRL" sortorder="2" />
-				<Object objectname="Sheet" slotsignature="start_transport" modes="All" sortorder="1" />
+                                <Object objectname="TSession" slotsignature="start_transport" modes="All" sortorder="1" />
 				<Object objectname="Sheet" slotsignature="set_recordable_and_start_transport" modes="All" modifierkeys="CTRL" sortorder="2" />
 			</Objects>
 		</keyfact>

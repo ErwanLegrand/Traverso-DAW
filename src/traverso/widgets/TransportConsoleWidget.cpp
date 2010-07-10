@@ -95,6 +95,13 @@ void TransportConsoleWidget::set_project(Project* project)
 
 void TransportConsoleWidget::set_session(TSession* session)
 {
+        Project* project = qobject_cast<Project*>(session);
+        // if the view was changed to Project's session (mixer)
+        // then keep the current active sheet!
+        if (project) {
+                return;
+        }
+
         m_sheet = qobject_cast<Sheet*>(session);
 
 	if (!m_sheet)

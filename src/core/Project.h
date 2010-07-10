@@ -75,6 +75,7 @@ public :
 	int get_rate() const;
 	int get_bitdepth() const;
         TimeRef get_last_location() const;
+        TimeRef get_transport_location() const;
 
         QStringList get_input_buses_for(TBusTrack* busTrack);
 	
@@ -151,11 +152,13 @@ public :
 public slots:
         void track_routing_changed();
 	Command* select();
+        Command* start_transport();
 
 private:
 	Project(const QString& title);
 	
         QList<Sheet*>           m_sheets;
+        Sheet*                  m_activeSheet;
         APILinkedList           m_RtSheets;
 	ResourcesManager* 	m_resourcesManager;
         ExportThread*           m_exportThread;
