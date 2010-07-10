@@ -47,7 +47,10 @@ Track::Track(Sheet *sheet)
                 m_vumonitors.append(new VUMonitor());
         }
 
-        connect(this, SIGNAL(routingConfigurationChanged()), pm().get_project(), SLOT(track_routing_changed()));
+        Project* project = pm().get_project();
+        if (project) {
+                connect(this, SIGNAL(routingConfigurationChanged()), project, SLOT(track_routing_changed()));
+        }
 }
 
 Track::~Track()
