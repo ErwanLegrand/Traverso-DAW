@@ -96,12 +96,12 @@ TTimeLabel::TTimeLabel(QWidget* parent, TSession* session)
         setEnabled(false);
 
         setMaximumWidth(120);
+        setMinimumHeight(24);
         setFocusPolicy(Qt::NoFocus);
         setStyleSheet(  "color: lime;"
                         "background-color: black;"
                         "font: 17px;"
-                        "border-radius: 5px;"
-                        "padding: 0 4 0 4;");
+                        "border-radius: 5px;");
 
 
         connect(m_session, SIGNAL(transportStarted()), this, SLOT(transport_started()));
