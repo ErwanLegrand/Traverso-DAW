@@ -108,11 +108,30 @@ void TTrackManagerDialog::create_routing_input_menu()
                 }
         }
 
+        Project* project = pm().get_project();
+        bool isProjectBus = false;
+        foreach(TBusTrack* track, project->get_bus_tracks()) {
+                if (track == m_track) {
+                        isProjectBus = true;
+                        break;
+                }
+        }
+
         if (m_track->get_type() == Track::BUS) {
                 QList<Track*> tracks;
-                Project* project = pm().get_project();
                 if (m_track == project->get_master_out()) {
                         tracks = project->get_sheet_tracks();
+                } else if (isProjectBus) {
+                        foreach(Sheet* sheet, project->get_sheets()) {
+                                foreach(AudioTrack* track, sheet->get_audio_tracks()) {
+                                        tracks.append(track);
+                                }
+                                foreach(TBusTrack* track, sheet->get_bus_tracks()) {
+                                        tracks.append(track);
+                                }
+                                tracks.append(sheet->get_master_out());
+
+                        }
                 } else if (m_track->get_sheet()){
                         foreach(AudioTrack* at, m_track->get_sheet()->get_audio_tracks()) {
                                 tracks.append(at);
@@ -318,7 +337,8 @@ void TTrackManagerDialog::on_routingInputRemoveButton_clicked()
                 qint64 id = item->data(Qt::UserRole).toLongLong();
                 QList<qint64> toBeRemoved;
                 toBeRemoved.append(id);
-                QList<Track*> tracks = pm().get_project()->get_tracks();
+                QList<Track*> tracks = pm().get_project()->get_sheet_tracks();
+                tracks.append(pm().get_project()->get_tracks());
                 foreach(Track* track, tracks) {
                         QList<TSend*> preSends = track->get_pre_sends();
                         foreach(TSend* send, preSends) {
