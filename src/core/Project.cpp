@@ -342,8 +342,10 @@ int Project::load(QString projectfile)
         // Force the proper name for our Master Bus
         m_masterOut->set_name(tr("Master"));
 
+
+        // Lets see if there is already a Project Master out jack bus:
+        // if not, create one, the user expects at least that Master shows up in the patchbay!
         if (audiodevice().get_driver_type() == "Jack") {
-                // Lets see if there is already a Project Master out jack bus:
                 AudioBus* bus = m_softwareAudioBuses.value(MASTER_OUT_SOFTWARE_BUS_ID);
                 if (!bus) {
                         BusConfig conf;
@@ -357,6 +359,17 @@ int Project::load(QString projectfile)
                         m_masterOut->add_post_send(MASTER_OUT_SOFTWARE_BUS_ID);
 
                 }
+        }
+
+        QDomNode subgroupsNode = docElem.firstChildElement("SubGroups");
+        QDomNode subgroupNode = subgroupsNode.firstChild();
+
+        while(!subgroupNode.isNull()) {
+                SubGroup* subgroup = new SubGroup(0, subgroupNode);
+                subgroup->set_state(subgroupNode);
+                private_add_track(subgroup);
+
+                subgroupNode = subgroupNode.nextSibling();
         }
 
 	// Load all the AudioSources for this project
@@ -552,7 +565,17 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 
                 busesElement.appendChild(busElement);
         }
+
         projectNode.appendChild(busesElement);
+
+
+        QDomNode subgroupsNode = doc.createElement("SubGroups");
+        apill_foreach(SubGroup* group, SubGroup, m_subGroups) {
+                subgroupsNode.appendChild(group->get_state(doc, istemplate));
+        }
+
+        projectNode.appendChild(subgroupsNode);
+
 
         QDomNode masterOutNode = doc.createElement("MasterOut");
         masterOutNode.appendChild(m_masterOut->get_state(doc, istemplate));

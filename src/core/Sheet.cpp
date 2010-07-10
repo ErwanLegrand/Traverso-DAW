@@ -215,13 +215,13 @@ int Sheet::set_state( const QDomNode & node )
 	
 	m_timeline->set_state(node.firstChildElement("TimeLine"));
 
-        QDomNode subgroupsNode = node.firstChildElement("SubGroups");
         
         QDomNode masterOutNode = node.firstChildElement("MasterOut");
         m_masterOut->set_state(masterOutNode.firstChildElement());
         // Force the proper name for our Master Bus
         m_masterOut->set_name(tr("Sheet Master"));
 
+        QDomNode subgroupsNode = node.firstChildElement("SubGroups");
         QDomNode subgroupNode = subgroupsNode.firstChild();
 
         while(!subgroupNode.isNull()) {
