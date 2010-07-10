@@ -28,7 +28,7 @@
 #include <ViewItem.h>
 
 class MeterView;
-class Sheet;
+class TSession;
 class Project;
 class Plugin;
 
@@ -56,7 +56,7 @@ public:
 	MeterView(MeterWidget* widget);
 	~MeterView();
 
-	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {};
+        virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {}
 	virtual void resize();
 	void hide_event();
 	void show_event();
@@ -68,13 +68,14 @@ protected:
 	QTimer		timer;
 	QTimer		m_delayTimer;
 	Project*	m_project;
-	Sheet*		m_sheet;
+        TSession*	m_session;
 
-	void		set_sheet( Sheet* );
-	
+protected slots:
+        void		set_session(TSession* session);
+
 private slots:
 	void		set_project( Project* );
-	virtual void	update_data() {};
+        virtual void	update_data() {}
 	void		transport_started();
 	void		transport_stopped();
 	void		delay_timeout();

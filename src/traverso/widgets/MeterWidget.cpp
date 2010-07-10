@@ -100,7 +100,7 @@ MeterView::MeterView(MeterWidget* widget)
 	: ViewItem(0, 0)
 	, m_widget(widget)
 	, m_meter(0)
-	, m_sheet(0)
+        , m_session(0)
 {
 	// Nicola: Not sure if we need to initialize here, perhaps a 
 	// call to resize would suffice ?
@@ -134,48 +134,48 @@ void MeterView::resize()
 void MeterView::set_project(Project *project)
 {
 	if (project) {
-                connect(project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(set_session(TSession*)));
-		m_project = project;
+                m_project = project;
+//                metaObject()->invokeMethod(this, "set_session", Q_ARG(TSession*, m_project));
 	} else {
 		m_project = 0;
-		set_sheet(0);
+                set_session(0);
 		timer.stop();
 	}
 }
 
-void MeterView::set_sheet(Sheet *sheet)
+void MeterView::set_session(TSession *session)
 {
 	if (m_widget->parentWidget()->isHidden()) {
-		m_sheet = sheet;
+                m_session = session;
 		return;
 	}
 	
 
-	if (m_sheet) {
+        if (m_session) {
 		if (m_meter) {
 			// FIXME The removed plugin still needs to be deleted!!!!!!
-                        Command::process_command(m_sheet->get_master_out()->get_plugin_chain()->remove_plugin(m_meter, false));
+                        Command::process_command(m_session->get_master_out()->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
-			disconnect(m_sheet, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
-			disconnect(m_sheet, SIGNAL(transportStarted()), this, SLOT(transport_started()));
+                        disconnect(m_session, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
+                        disconnect(m_session, SIGNAL(transportStarted()), this, SLOT(transport_started()));
 		}
 	}
 	
-	m_sheet = sheet;
+        m_session = session;
 	
-	if ( ! m_sheet ) {
+        if ( ! m_session ) {
 		return;
 	}
 
-	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
-	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(transport_started()));
+        connect(m_session, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
+        connect(m_session, SIGNAL(transportStarted()), this, SLOT(transport_started()));
 }
 
 void MeterView::hide_event()
 {
-	if (m_sheet) {
+        if (m_session) {
 		if (m_meter) {
-                        Command::process_command(m_sheet->get_master_out()->get_plugin_chain()->remove_plugin(m_meter, false));
+                        Command::process_command(m_session->get_master_out()->get_plugin_chain()->remove_plugin(m_meter, false));
 			timer.stop();
 		}
 	}
@@ -183,12 +183,12 @@ void MeterView::hide_event()
 
 void MeterView::show_event()
 {
-	if (m_sheet) {
+        if (m_session) {
 		if (m_meter) {
-                        Command::process_command(m_sheet->get_master_out()->get_plugin_chain()->add_plugin(m_meter, false));
+                        Command::process_command(m_session->get_master_out()->get_plugin_chain()->add_plugin(m_meter, false));
                         timer.start(40);
 		} else {
-			set_sheet(m_sheet);
+                        set_session(m_session);
 		}
 	}
 }

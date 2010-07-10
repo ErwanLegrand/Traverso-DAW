@@ -60,7 +60,7 @@ private:
 
 private slots:
 	void		update_data();
-	void		set_sheet(Sheet* sheet);
+        void		set_session(TSession* session);
 	void		load_theme_data();
 
 public slots:

@@ -127,15 +127,15 @@ void CorrelationMeterView::update_data()
 	update();
 }
 
-void CorrelationMeterView::set_sheet(Sheet *sheet)
+void CorrelationMeterView::set_session(TSession *session)
 {
-	MeterView::set_sheet(sheet);
+        MeterView::set_session(session);
 	
-	if ( ! m_sheet ) {
+        if ( ! m_session ) {
 		return;
 	}
 	
-        PluginChain* chain = m_sheet->get_master_out()->get_plugin_chain();
+        PluginChain* chain = m_session->get_master_out()->get_plugin_chain();
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
 		m_meter = dynamic_cast<CorrelationMeter*>(plugin);

@@ -281,13 +281,13 @@ void SpectralMeterView::update_data()
 
 void SpectralMeterView::set_sheet(Sheet *sheet)
 {
-	MeterView::set_sheet(sheet);
+	MeterView::set_session(sheet);
 	
-	if ( ! m_sheet ) {
+	if ( ! m_session ) {
 		return;
 	}
 
-        PluginChain* chain = m_sheet->get_master_out()->get_plugin_chain();
+        PluginChain* chain = m_session->get_master_out()->get_plugin_chain();
 	sample_rate = audiodevice().get_sample_rate();
 	
 	foreach(Plugin* plugin, chain->get_plugin_list()) {
