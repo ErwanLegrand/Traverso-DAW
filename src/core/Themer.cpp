@@ -554,7 +554,7 @@ void Themer::load_defaults()
         m_defaultColors.insert("FFTMeter:foreground", p.color(QPalette::Link));
         m_defaultColors.insert("FFTMeter:curve:average", p.color(QPalette::LinkVisited));
         m_defaultColors.insert("FFTMeter:tickmarks:main", p.color(QPalette::Dark));
-        m_defaultColors.insert("FFTMeter:tickmarks:busTrack", p.color(QPalette::Mid));
+        m_defaultColors.insert("FFTMeter:tickmarks:sub", p.color(QPalette::Mid));
         m_defaultColors.insert("FFTMeter:text", p.color(QPalette::WindowText));
         m_defaultColors.insert("VUMeter:background:widget", p.color(QPalette::Window));
         m_defaultColors.insert("VUMeter:background:bar", p.color(QPalette::Base));
