@@ -120,7 +120,8 @@ void TTrackManagerDialog::create_routing_input_menu()
         if (m_track->get_type() == Track::BUS) {
                 QList<Track*> tracks;
                 if (m_track == project->get_master_out()) {
-                        tracks = project->get_sheet_tracks();
+                        tracks = project->get_tracks();
+                        tracks.append(project->get_sheet_tracks());
                 } else if (isProjectBus) {
                         foreach(Sheet* sheet, project->get_sheets()) {
                                 foreach(AudioTrack* track, sheet->get_audio_tracks()) {
