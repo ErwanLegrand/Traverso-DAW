@@ -241,7 +241,7 @@ void SpectralMeterView::load_theme_data()
 	m_brushMargin = themer()->get_brush("FFTMeter:margin", QPoint(0, 0), QPoint(0, m_rect.height()));
 	m_penAvgCurve.setColor(themer()->get_color("FFTMeter:curve:average"));
 	m_penTickMain.setColor(themer()->get_color("FFTMeter:tickmarks:main"));
-	m_penTickSub.setColor(themer()->get_color("FFTMeter:tickmarks:busTrack"));
+        m_penTickSub.setColor(themer()->get_color("FFTMeter:tickmarks:sub"));
 	m_penFont.setColor(themer()->get_color("FFTMeter:text"));
 	m_penGrid.setColor(themer()->get_color("FFTMeter:grid"));
 
