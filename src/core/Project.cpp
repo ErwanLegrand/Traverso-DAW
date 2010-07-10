@@ -813,6 +813,7 @@ QList<TSend*> Project::get_inputs_for_bus_track(TBusTrack *busTrack) const
         QList<TSend*> inputs;
 
         QList<Track*> tracks;
+        tracks.append(get_tracks());
         foreach(Sheet* sheet, m_sheets) {
                 tracks.append(sheet->get_tracks());
                 tracks.append(sheet->get_master_out());
