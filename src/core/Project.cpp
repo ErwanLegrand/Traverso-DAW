@@ -366,7 +366,7 @@ int Project::load(QString projectfile)
         QDomNode busTrackNode = busTracksNode.firstChild();
 
         while(!busTrackNode.isNull()) {
-                TBusTrack* busTrack = new TBusTrack(0, busTrackNode);
+                TBusTrack* busTrack = new TBusTrack(this, busTrackNode);
                 busTrack->set_state(busTrackNode);
                 private_add_track(busTrack);
 

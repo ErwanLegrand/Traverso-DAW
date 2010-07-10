@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
         : Track(sheet)
+        , m_sheet(sheet)
 {
         PENTERCONS;
         m_id = create_id();
@@ -59,6 +60,7 @@ AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
 
 AudioTrack::AudioTrack( Sheet * sheet, const QDomNode node)
         : Track(sheet)
+        , m_sheet(sheet)
 {
         PENTERCONS;
         Q_UNUSED(node);

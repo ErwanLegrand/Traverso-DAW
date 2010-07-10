@@ -33,6 +33,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "defines.h"
 
+class Sheet;
+
 
 class AudioTrack : public Track
 {
@@ -50,6 +52,7 @@ public :
         Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
         AudioClip* get_clip_after(const TimeRef& pos);
         AudioClip* get_clip_before(const TimeRef& pos);
+        Sheet* get_sheet() const {return m_sheet;}
         QDomNode get_state(QDomDocument doc, bool istemplate=false);
         QList<AudioClip*> get_cliplist() const;
         void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
@@ -66,6 +69,7 @@ protected:
         void add_input_bus(AudioBus* bus);
 
 private :
+        Sheet*          m_sheet;
         APILinkedList 	m_clips;
         int             m_numtakes;
         bool            m_isArmed;

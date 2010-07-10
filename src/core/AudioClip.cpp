@@ -825,7 +825,7 @@ void AudioClip::set_sheet( Sheet * sheet )
 	m_sheetId = sheet->get_id();
 	
 	set_history_stack(m_sheet->get_history_stack());
-	m_pluginChain->set_sheet(m_sheet);
+	m_pluginChain->set_session(m_sheet);
 	set_snap_list(m_sheet->get_snap_list());
 }
 

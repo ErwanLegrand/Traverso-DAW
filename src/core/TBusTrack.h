@@ -30,8 +30,8 @@ class TBusTrack : public Track
         Q_OBJECT
 
 public:
-        TBusTrack(Sheet* sheet, const QString& name, int channelCount);
-        TBusTrack(Sheet* sheet, const QDomNode node);
+        TBusTrack(TSession* session, const QString& name, int channelCount);
+        TBusTrack(TSession* session, const QDomNode node);
         ~TBusTrack();
 
         QDomNode get_state(QDomDocument doc, bool istemplate=false);
@@ -50,8 +50,8 @@ class MasterOutSubGroup : public TBusTrack
         Q_OBJECT
 
 public:
-        MasterOutSubGroup(Sheet* sheet, const QString& name) : TBusTrack(sheet, name, 2) {}
-        MasterOutSubGroup(Sheet* sheet, const QDomNode node) : TBusTrack(sheet, node) {}
+        MasterOutSubGroup(TSession* session, const QString& name) : TBusTrack(session, name, 2) {}
+        MasterOutSubGroup(TSession* session, const QDomNode node) : TBusTrack(session, node) {}
         ~MasterOutSubGroup() {}
 
 //        void add_output_bus(const QString& name) {

@@ -25,17 +25,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClip.h"
 #include "AudioClipManager.h"
 #include "PluginChain.h"
-#include "Sheet.h"
+#include "TSession.h"
 
 #include "Debugger.h"
 
-ProcessingData::ProcessingData(Sheet *sheet)
-        : ContextItem(sheet)
-        , m_sheet(sheet)
+ProcessingData::ProcessingData(TSession *session)
+        : ContextItem(session)
+        , m_session(session)
 {
-        if (m_sheet) {
-                m_pluginChain = new PluginChain(this, m_sheet);
-                set_history_stack(m_sheet->get_history_stack());
+        if (m_session) {
+                m_pluginChain = new PluginChain(this, m_session);
+                set_history_stack(m_session->get_history_stack());
         } else {
                 m_pluginChain = new PluginChain(this);
         }

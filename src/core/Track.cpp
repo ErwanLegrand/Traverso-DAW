@@ -36,8 +36,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-Track::Track(Sheet *sheet)
-        : ProcessingData(sheet)
+Track::Track(TSession* session)
+        : ProcessingData(session)
 {
         m_sortIndex = -1;
         m_isSolo = m_mutedBySolo = m_isMuted = false;
@@ -162,12 +162,14 @@ int Track::set_state( const QDomNode & node )
 
 Command* Track::solo(  )
 {
+        Sheet* sheet = qobject_cast<Sheet*>(m_session);
+
         // Not all Tracks have a sheet (e.g. Project Master)
-        if (!m_sheet) {
+        if (!sheet) {
                 return 0;
         }
 
-        m_sheet->solo_track(this);
+        sheet->solo_track(this);
         return (Command*) 0;
 }
 
@@ -218,7 +220,7 @@ int Track::get_sort_index( ) const
 
 void Track::add_input_bus(AudioBus *bus)
 {
-        if (m_sheet && m_sheet->is_transport_rolling()) {
+        if (m_session && m_session->is_transport_rolling()) {
                 THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_add_input_bus(AudioBus*), routingConfigurationChanged())
         } else {
                 private_add_input_bus(bus);
@@ -253,7 +255,7 @@ void Track::add_post_send(qint64 busId)
         TSend* postSend = new TSend(this, bus);
         postSend->set_type(TSend::POSTSEND);
 
-        if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
+        if (!m_session || (m_session && m_session->is_transport_rolling())) {
                 THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, postSend, private_add_post_send(TSend*), routingConfigurationChanged())
         } else {
                 private_add_post_send(postSend);
@@ -282,7 +284,7 @@ void Track::add_pre_send(qint64 busId)
         TSend* preSend = new TSend(this, bus);
         preSend->set_type(TSend::PRESEND);
 
-        if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
+        if (!m_session || (m_session && m_session->is_transport_rolling())) {
                 THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, preSend, private_add_pre_send(TSend*), routingConfigurationChanged())
         } else {
                 private_add_pre_send(preSend);
@@ -302,7 +304,7 @@ void Track::remove_post_sends(QList<qint64> sendIds)
         }
 
         foreach(TSend* send, sendsToBeRemoved) {
-                if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
+                if (!m_session || (m_session && m_session->is_transport_rolling())) {
                         THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, send, private_remove_post_send(TSend*), routingConfigurationChanged())
                 } else {
                         private_remove_post_send(send);
@@ -323,7 +325,7 @@ void Track::remove_pre_sends(QList<qint64> sendIds)
         }
 
         foreach(TSend* send, sendsToBeRemoved) {
-                if (!m_sheet || (m_sheet && m_sheet->is_transport_rolling())) {
+                if (!m_session || (m_session && m_session->is_transport_rolling())) {
                         THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, send, private_remove_pre_send(TSend*), routingConfigurationChanged())
                 } else {
                         private_remove_pre_send(send);

@@ -229,11 +229,11 @@ Command* TraversoCommands::create(QObject* obj, const QString& command, QVariant
                                         "RemoveTrackCommand needs a Track as argument");
 				return 0;
 			}
-                        if (track == track->get_sheet()->get_master_out()) {
+                        if (track == track->get_session()->get_master_out()) {
                                 info().information(tr("It is not possible to remove the Master Out track!"));
                                 return 0;
                         }
-                        return track->get_sheet()->remove_track(track);
+                        return track->get_session()->remove_track(track);
 		}
 		
 		case AudioClipExternalProcessingCommand:

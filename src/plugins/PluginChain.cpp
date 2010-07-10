@@ -42,11 +42,11 @@ PluginChain::PluginChain(ContextItem * parent)
 	m_fader = new GainEnvelope(0);
 }
 
-PluginChain::PluginChain(ContextItem* parent, Sheet* sheet)
+PluginChain::PluginChain(ContextItem* parent, TSession* session)
 	: ContextItem(parent)
 {
-	m_fader = new GainEnvelope(sheet);
-	set_sheet(sheet);
+        m_fader = new GainEnvelope(session);
+        set_session(session);
 }
 
 PluginChain::~ PluginChain()
@@ -102,7 +102,7 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 {
 	plugin->set_history_stack(get_history_stack());
 	
-	return new AddRemove( this, plugin, historable, m_sheet,
+        return new AddRemove( this, plugin, historable, m_session,
 		"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
 		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
 		tr("Add Plugin (%1)").arg(plugin->get_name()));
@@ -111,7 +111,7 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 
 Command* PluginChain::remove_plugin(Plugin* plugin, bool historable)
 {
-	return new AddRemove( this, plugin, historable, m_sheet,
+        return new AddRemove( this, plugin, historable, m_session,
 		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",
 		"private_add_plugin(Plugin*)", "pluginAdded(Plugin*)",
 		tr("Remove Plugin (%1)").arg(plugin->get_name()));
@@ -135,10 +135,10 @@ void PluginChain::private_remove_plugin( Plugin * plugin )
 	}
 }
 
-void PluginChain::set_sheet(Sheet * sheet)
+void PluginChain::set_session(TSession * session)
 {
-	m_sheet = sheet;
-	set_history_stack(m_sheet->get_history_stack());
-	m_fader->set_session(sheet);
+        m_session = session;
+        set_history_stack(m_session->get_history_stack());
+        m_fader->set_session(session);
 }
 

@@ -25,8 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "PluginChain.h"
 #include "Utils.h"
 
-TBusTrack::TBusTrack(Sheet* sheet, const QString& name, int channelCount)
-        : Track(sheet)
+TBusTrack::TBusTrack(TSession* session, const QString& name, int channelCount)
+        : Track(session)
 {
         QObject::tr("Bus Track");
         m_height = 60;
@@ -41,8 +41,8 @@ TBusTrack::TBusTrack(Sheet* sheet, const QString& name, int channelCount)
         m_processBus->set_name(m_name);
 }
 
-TBusTrack::TBusTrack(Sheet *sheet, QDomNode /*node*/)
-        : Track(sheet)
+TBusTrack::TBusTrack(TSession *session, QDomNode /*node*/)
+        : Track(session)
 {
 }
 

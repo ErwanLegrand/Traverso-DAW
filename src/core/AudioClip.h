@@ -118,6 +118,7 @@ public:
 
 
 private:
+        Sheet*                  m_sheet;
         AudioTrack* 		m_track;
 	ReadSource*		m_readSource;
         WriteSource*		m_writer;

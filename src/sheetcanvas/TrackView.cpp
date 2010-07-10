@@ -120,7 +120,7 @@ Command* TrackView::edit_properties( )
         manager.exec();
         return 0;
 
-        if (m_track == m_track->get_sheet()->get_master_out()) {
+        if (m_track == m_track->get_session()->get_master_out()) {
                 return 0;
         }
 

@@ -135,9 +135,9 @@ void NewTrackDialog::create_track()
 
         if (isBusTrack->isChecked()) {
                 if (driver == "Jack") {
-                        track = new TBusTrack(sheet, title + "-busTrack", 2);
+                        track = new TBusTrack(session, title + "-busTrack", 2);
                 } else {
-                        track = new TBusTrack(sheet, title, 2);
+                        track = new TBusTrack(session, title, 2);
                 }
 
         } else {

@@ -184,7 +184,7 @@ void MoveTrack::move_to_sheet()
 
         Track* track = m_trackView->get_track();
         Sheet* destination = project->get_sheet(id);
-        Sheet* orig = track->get_sheet();
+        Sheet* orig = qobject_cast<Sheet*>(track->get_session());
 
         if (! (destination || orig)) {
                 return;

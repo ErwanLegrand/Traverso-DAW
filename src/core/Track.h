@@ -34,7 +34,7 @@ class Track : public ProcessingData
         Q_CLASSINFO("solo", tr("Solo"))
 
 public:
-        Track (Sheet* sheet=0);
+        Track (TSession* session=0);
         virtual ~Track ();
 
         enum {

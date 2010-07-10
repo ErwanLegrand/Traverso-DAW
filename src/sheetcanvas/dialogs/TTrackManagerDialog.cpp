@@ -109,7 +109,9 @@ void TTrackManagerDialog::create_routing_input_menu()
         }
 
         Project* project = pm().get_project();
+        Sheet* sheet = qobject_cast<Sheet*>(m_track->get_session());
         bool isProjectBus = false;
+
         foreach(TBusTrack* track, project->get_bus_tracks()) {
                 if (track == m_track) {
                         isProjectBus = true;
@@ -133,12 +135,12 @@ void TTrackManagerDialog::create_routing_input_menu()
                                 tracks.append(sheet->get_master_out());
 
                         }
-                } else if (m_track->get_sheet()){
-                        foreach(AudioTrack* at, m_track->get_sheet()->get_audio_tracks()) {
+                } else if (sheet){
+                        foreach(AudioTrack* at, sheet->get_audio_tracks()) {
                                 tracks.append(at);
                         }
-                        if (m_track == m_track->get_sheet()->get_master_out()) {
-                                foreach(TBusTrack* sg, m_track->get_sheet()->get_bus_tracks()) {
+                        if (m_track == sheet->get_master_out()) {
+                                foreach(TBusTrack* sg, sheet->get_bus_tracks()) {
                                         tracks.append(sg);
                                 }
                         }
@@ -186,7 +188,7 @@ QMenu* TTrackManagerDialog::create_sends_menu()
         QMenu* menu = new QMenu;
         QAction* action;
 
-        Sheet* sheet = m_track->get_sheet();
+        Sheet* sheet = qobject_cast<Sheet*>(m_track->get_session());
         Project* project = pm().get_project();
 
         TBusTrack* sheetMaster = 0;

@@ -31,7 +31,7 @@ class AudioBus;
 class AudioClip;
 class Plugin;
 class PluginChain;
-class Sheet;
+class TSession;
 
 
 class ProcessingData : public ContextItem, public APILinkedListNode
@@ -41,14 +41,14 @@ class ProcessingData : public ContextItem, public APILinkedListNode
         Q_CLASSINFO("mute", tr("Mute"))
 
 public:
-        ProcessingData (Sheet* sheet=0);
+        ProcessingData (TSession* session=0);
         virtual ~ProcessingData () {}
 	
         Command* add_plugin(Plugin* plugin);
         Command* remove_plugin(Plugin* plugin);
 
         PluginChain* get_plugin_chain() const {return m_pluginChain;}
-        Sheet* get_sheet() const {return m_sheet;}
+        TSession* get_session() const {return m_session;}
         QString get_name() const {return m_name;}
         float get_pan() const {return m_pan;}
 
@@ -64,7 +64,7 @@ public:
 protected:
 
         AudioBus*       m_processBus;
-        Sheet*          m_sheet;
+        TSession*       m_session;
         GainEnvelope*   m_fader;
         PluginChain*    m_pluginChain;
         QString		m_name;
