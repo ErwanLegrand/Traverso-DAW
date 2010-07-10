@@ -153,8 +153,6 @@ void AudioBus::audiodevice_params_changed()
 
                 if (channel) {
                         add_channel(channel);
-                } else {
-                        printf("channel not found %s\n", channelName.toAscii().data());
                 }
         }
 }
