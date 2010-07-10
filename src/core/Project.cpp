@@ -1040,7 +1040,6 @@ void Project::set_current_sheet(qint64 id)
 	PENTER;
 
         if (id == get_id()) {
-                printf("session == project\n");
                 m_currentSheetId = get_id();
                 emit currentSessionChanged(this);
                 return;
