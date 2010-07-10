@@ -364,14 +364,18 @@ void TMainWindow::add_session(TSession *session)
 
         m_sheetWidgets.insert(session, sheetWidget);
 
-        connect(session, SIGNAL(propertyChanged()), this, SLOT(update_sheet_tabs_appearance()));
         connect(session, SIGNAL(transportStarted()), this, SLOT(sheet_transport_state_changed()));
         connect(session, SIGNAL(transportStopped()), this, SLOT(sheet_transport_state_changed()));
         connect(session, SIGNAL(transportStopped()), this, SLOT(update_follow_state()));
-        connect(session, SIGNAL(recordingStateChanged()), this, SLOT(sheet_transport_state_changed()));
-        connect(session, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
         connect(session, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
         connect(session, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
+
+        Sheet* sheet = qobject_cast<Sheet*>(session);
+        if (sheet) {
+                connect(session, SIGNAL(propertyChanged()), this, SLOT(update_sheet_tabs_appearance()));
+                connect(session, SIGNAL(recordingStateChanged()), this, SLOT(sheet_transport_state_changed()));
+                connect(session, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
+        }
 
         if (mixer) {
                 m_centerAreaWidget->addTab(mixer, "");
