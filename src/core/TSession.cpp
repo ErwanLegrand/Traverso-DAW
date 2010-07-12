@@ -81,6 +81,9 @@ void TSession::set_parent_session(TSession *parentSession)
         }
 
         m_parentSession = parentSession;
+
+        emit scrollBarValueChanged();
+        emit hzoomChanged();
 }
 
 QList<Track*> TSession::get_tracks() const
@@ -132,6 +135,14 @@ QPoint TSession::get_scrollbar_xy()
         return QPoint(m_sbx, m_sby);
 }
 
+int TSession::is_transport_rolling() const
+{
+        if (m_parentSession) {
+                return m_parentSession->is_transport_rolling();
+        }
+        return m_transport;
+}
+
 void TSession::set_hzoom( qreal hzoom )
 {
         if (m_parentSession) {
@@ -179,9 +190,6 @@ void TSession::set_transport_pos(TimeRef location)
 
 void TSession::set_temp_follow_state(bool state)
 {
-        if (m_parentSession) {
-                return m_parentSession->set_temp_follow_state(state);
-        }
         emit tempFollowChanged(state);
 }
 

@@ -42,7 +42,7 @@ public:
         qreal get_hzoom() const;
         QPoint get_scrollbar_xy();
         int get_mode() const {return m_mode;}
-        int is_transport_rolling() const {return m_transport;}
+        int is_transport_rolling() const;
         TimeRef get_work_location() const;
         virtual TimeRef get_last_location() const = 0;
         TimeRef get_new_transport_location() const {return m_newTransportLocation;}

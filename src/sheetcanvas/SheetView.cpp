@@ -158,10 +158,9 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
         // Everything is in place to scroll to the last position
         // we were at, at closing this view.
-//        int x, y;
-//        m_sheet->get_scrollbar_xy(x, y);
-//        set_hscrollbar_value(x);
-//        set_vscrollbar_value(y);
+        QPoint p = m_sheet->get_scrollbar_xy();
+        set_hscrollbar_value(p.x());
+        set_vscrollbar_value(p.y());
 }
 
 SheetView::~SheetView()
