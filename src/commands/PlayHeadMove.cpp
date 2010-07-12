@@ -179,6 +179,12 @@ void PlayHeadMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
                 m_session->set_transport_pos(m_newTransportLocation);
         } else {
                 m_playhead->setPos(newLocation / m_sv->timeref_scalefactor, 0);
+
+                int x = m_sv->get_clips_viewport()->mapFromScene(m_playhead->scenePos()).x();
+
+                if (x < 0 || x > m_sv->get_clips_viewport()->width()) {
+                        m_sv->center_in_view(m_playhead, Qt::AlignHCenter);
+                }
         }
 
         cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_newTransportLocation, m_sv->timeref_scalefactor));
