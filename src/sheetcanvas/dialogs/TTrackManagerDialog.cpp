@@ -216,6 +216,7 @@ QMenu* TTrackManagerDialog::create_sends_menu()
                                 action->setData(busTrack->get_id());
                         }
                 }
+                menu->addSeparator();
         }
 
         if (project) {
@@ -224,10 +225,10 @@ QMenu* TTrackManagerDialog::create_sends_menu()
                         action = menu->addAction(busTrack->get_name());
                         action->setData(busTrack->get_id());
                 }
+                menu->addSeparator();
         }
 
 
-        menu->addSeparator();
 
         foreach(AudioBus* bus, pm().get_project()->get_hardware_buses()) {
                 if (bus->is_output()) {
