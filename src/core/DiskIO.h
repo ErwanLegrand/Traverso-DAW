@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class ReadSource;
 class WriteSource;
 class AudioSource;
-class RingBuffer;
 class DiskIOThread;
 class Sheet;
 class DecodeBuffer;
@@ -87,9 +86,9 @@ private:
         QMutex			mutex;
 	volatile int		m_readBufferFillStatus;
 	volatile int		m_writeBufferFillStatus;
-	RingBuffer*		cpuTimeBuffer;
-	trav_time_t		cycleStartTime;
-	trav_time_t		lastCpuReadTime;
+        trav_time_t             m_totalDoWorkTime;
+	trav_time_t		m_doWorkStartTime;
+        trav_time_t		m_lastdoWorkReadTime;
 	bool			m_seeking;
 	int			m_resampleQuality;
 	bool			m_sampleRateChanged;

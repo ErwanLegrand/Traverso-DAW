@@ -143,8 +143,7 @@ DiskIO::DiskIO(Sheet* sheet)
 	: m_sheet(sheet)
 {
 	m_diskThread = new DiskIOThread(this);
-	cpuTimeBuffer = new RingBuffer(128);
-	lastCpuReadTime = get_microseconds();
+        m_lastdoWorkReadTime = get_microseconds();
 	m_stopWork = m_seeking = m_sampleRateChanged = 0;
 	m_resampleQuality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	m_readBufferFillStatus = m_writeBufferFillStatus = 0;
@@ -169,7 +168,6 @@ DiskIO::~DiskIO()
 {
 	PENTERDES;
 	stop();
-	delete cpuTimeBuffer;
 	delete [] framebuffer[0];
 	delete m_decodebuffer;
 	delete m_resampleDecodeBuffer;
@@ -236,11 +234,12 @@ void DiskIO::do_work( )
 	
 	int whilecount = 0; 
 	m_hardDiskOverLoadCounter = 0;
-	cycleStartTime = get_microseconds();
-	
+
 	while (there_are_processable_sources()) {
-		
-		for (int i=0; i<m_processableReadSources.size(); ++i) {
+
+                m_doWorkStartTime = get_microseconds();
+
+                for (int i=0; i<m_processableReadSources.size(); ++i) {
 			ReadSource* source = m_processableReadSources.at(i);
 	
 			if (m_stopWork) {
@@ -261,9 +260,8 @@ void DiskIO::do_work( )
 			break;
 		}
 		
-	}
-	
-	update_time_usage();
+                update_time_usage();
+        }
 }
 
 
@@ -454,9 +452,7 @@ void DiskIO::prepare_for_seek( )
 // Internal function
 void DiskIO::update_time_usage( )
 {
-	audio_sample_t runcycleTime = get_microseconds() - cycleStartTime;
-	cpuTimeBuffer->write((char*)&runcycleTime, 1 * sizeof(audio_sample_t));
-
+        m_totalDoWorkTime += (get_microseconds() - m_doWorkStartTime);
 }
 
 /**
@@ -466,18 +462,9 @@ void DiskIO::update_time_usage( )
 trav_time_t DiskIO::get_cpu_time( )
 {
 	trav_time_t currentTime = get_microseconds();
-	float totaltime = 0;
-	float value = 0;
-	int read = cpuTimeBuffer->read_space() / sizeof(audio_sample_t);
-
-	while (read != 0) {
-		read = cpuTimeBuffer->read((char*)&value, 1 * sizeof(audio_sample_t));
-		totaltime += value;
-	}
-
-	audio_sample_t result = ( (totaltime  / (currentTime - lastCpuReadTime) ) * 100 );
-
-	lastCpuReadTime = currentTime;
+        audio_sample_t result = ( (m_totalDoWorkTime  / (currentTime - m_lastdoWorkReadTime) ) * 100 );
+        m_totalDoWorkTime = 0;
+        m_lastdoWorkReadTime = currentTime;
 
 // 	if (result > 95) {
 // 		qWarning("DiskIO :: consuming more then 95 Percent CPU !!");
