@@ -224,6 +224,7 @@ private slots:
 	void sheet_mode_changed();
 	void hscrollbar_value_changed(int);
 	void hscrollbar_action(int);
+        void session_scrollbar_position_changed();
 };
 
 

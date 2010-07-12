@@ -75,6 +75,7 @@ Project::Project(const QString& title)
         m_activeSheet = 0;
 	engineer = "";
         m_keyboardArrowNavigationSpeed = 4;
+        set_is_project_session(true);
 
 	m_useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
 	m_rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
@@ -1072,14 +1073,17 @@ void Project::set_current_sheet(qint64 id)
                 if (m_activeSheet) {
                         disconnect(m_activeSheet, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
                         disconnect(m_activeSheet, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
+                        disconnect(m_activeSheet, SIGNAL(transportPosSet()), this, SIGNAL(transportPosSet()));
                 }
                 m_activeSheet = newcurrent;
+                set_parent_session(m_activeSheet);
                 connect(m_activeSheet, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
                 connect(m_activeSheet, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
+                connect(m_activeSheet, SIGNAL(transportPosSet()), this, SIGNAL(transportPosSet()));
         }
 
 	m_currentSheetId=id;
-	
+
 	emit currentSessionChanged(newcurrent);
 }
 

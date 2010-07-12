@@ -39,11 +39,11 @@ class TSession : public ContextItem
 public:
         TSession(TSession* parentSession = 0);
 
-        qreal get_hzoom() const {return m_hzoom;}
-        void get_scrollbar_xy(int& x, int& y) {x = m_sbx; y = m_sby;}
+        qreal get_hzoom() const;
+        QPoint get_scrollbar_xy();
         int get_mode() const {return m_mode;}
         int is_transport_rolling() const {return m_transport;}
-        TimeRef get_work_location() const {return m_workLocation;}
+        TimeRef get_work_location() const;
         virtual TimeRef get_last_location() const = 0;
         TimeRef get_new_transport_location() const {return m_newTransportLocation;}
         virtual TimeRef get_transport_location() const {return m_transportLocation;}
@@ -60,7 +60,9 @@ public:
 
         void set_hzoom(qreal hzoom);
         virtual void set_work_at(TimeRef location, bool isFolder=false);
-        void set_scrollbar_xy(int x, int y) {m_sbx = x; m_sby = y;}
+        void set_scrollbar_xy(int x, int y);
+        void set_parent_session(TSession* parentSession);
+        void set_is_project_session(bool isProjectSession) {m_isProjectSession = isProjectSession;}
 
         Command* add_track(Track* api, bool historable=true);
         Command* remove_track(Track* api, bool historable=true);
@@ -75,7 +77,7 @@ public:
 
 protected:
         TSession*       m_parentSession;
-        TBusTrack*       m_masterOut;
+        TBusTrack*      m_masterOut;
         APILinkedList   m_busTracks;
         SnapList*	m_snaplist;
         Snappable*	m_workSnap;
@@ -87,6 +89,7 @@ protected:
         int		m_sby;
         qreal		m_hzoom;
         bool 		m_isSnapOn;
+        bool            m_isProjectSession;
 
         volatile size_t		m_transport;
         TimeRef                 m_transportLocation;
@@ -124,8 +127,7 @@ signals:
         void transportStopped();
         void workingPosChanged();
         void transportPosSet();
-
-
+        void scrollBarValueChanged();
 };
 
 #endif // TSESSION_H

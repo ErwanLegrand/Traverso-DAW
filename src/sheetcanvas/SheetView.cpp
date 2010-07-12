@@ -96,6 +96,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
 	connect(m_sheet, SIGNAL(transportPosSet()), this, SLOT(transport_position_set()));
 	connect(m_sheet, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
+        connect(m_sheet, SIGNAL(scrollBarValueChanged()), this, SLOT(session_scrollbar_position_changed()));
 	
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
@@ -157,10 +158,10 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
         // Everything is in place to scroll to the last position
         // we were at, at closing this view.
-        int x, y;
-        m_sheet->get_scrollbar_xy(x, y);
-        set_hscrollbar_value(x);
-        set_vscrollbar_value(y);
+//        int x, y;
+//        m_sheet->get_scrollbar_xy(x, y);
+//        set_hscrollbar_value(x);
+//        set_vscrollbar_value(y);
 }
 
 SheetView::~SheetView()
@@ -466,11 +467,11 @@ void SheetView::hscrollbar_value_changed(int value)
 		if (!s) {
 			ie().jog();
 		}
-	} else {
-		m_clipsViewPort->horizontalScrollBar()->setValue(value);
+        } else {
+                m_clipsViewPort->horizontalScrollBar()->setValue(value);
 	}
 	
-	set_snap_range(m_hScrollBar->value());
+        set_snap_range(value);
 }
 
 void SheetView::clipviewport_resize_event()
@@ -923,9 +924,7 @@ Command * SheetView::center_playhead( )
 
 void SheetView::set_hscrollbar_value(int value)
 {
-	m_clipsViewPort->horizontalScrollBar()->setValue(value);
-	m_hScrollBar->setValue(value);
-	m_sheet->set_scrollbar_xy(m_hScrollBar->value(), m_vScrollBar->value());
+        m_sheet->set_scrollbar_xy(value, m_vScrollBar->value());
 }
 
 void SheetView::set_vscrollbar_value(int value)
@@ -936,9 +935,18 @@ void SheetView::set_vscrollbar_value(int value)
         if (value < 0) {
                 value = 0;
         }
-	m_clipsViewPort->verticalScrollBar()->setValue(value);
-	m_vScrollBar->setValue(value);
-	m_sheet->set_scrollbar_xy(m_hScrollBar->value(), m_vScrollBar->value());
+        m_sheet->set_scrollbar_xy(m_hScrollBar->value(), value);
+}
+
+void SheetView::session_scrollbar_position_changed()
+{
+        QPoint p = m_sheet->get_scrollbar_xy();
+
+        m_clipsViewPort->verticalScrollBar()->setValue(p.y());
+        m_vScrollBar->setValue(p.y());
+
+        m_clipsViewPort->horizontalScrollBar()->setValue(p.x());
+        m_hScrollBar->setValue(p.x());
 }
 
 void SheetView::browse_to_track(Track *track)

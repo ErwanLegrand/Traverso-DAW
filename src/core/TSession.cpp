@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Peak.h"
 #include "Utils.h"
 #include "TBusTrack.h"
+#include "Sheet.h"
 #include "SnapList.h"
 #include "Snappable.h"
 #include "TimeLine.h"
@@ -56,6 +57,30 @@ void TSession::init()
         m_hzoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
         m_transport = 0;
         m_isSnapOn=true;
+        m_isProjectSession = false;
+}
+
+void TSession::set_parent_session(TSession *parentSession)
+{
+        if (m_isProjectSession) {
+
+                if (m_parentSession) {
+                        disconnect(m_parentSession, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
+                        disconnect(m_parentSession, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
+                        disconnect(m_parentSession, SIGNAL(transportPosSet()), this, SIGNAL(transportPosSet()));
+                        disconnect(m_parentSession, SIGNAL(workingPosChanged()), this, SIGNAL(workingPosChanged()));
+                        disconnect(m_parentSession, SIGNAL(hzoomChanged()), this, SIGNAL(hzoomChanged()));
+                        disconnect(m_parentSession, SIGNAL(scrollBarValueChanged()), this, SIGNAL(scrollBarValueChanged()));
+                }
+                connect(parentSession, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
+                connect(parentSession, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
+                connect(parentSession, SIGNAL(transportPosSet()), this, SIGNAL(transportPosSet()));
+                connect(parentSession, SIGNAL(workingPosChanged()), this, SIGNAL(workingPosChanged()));
+                connect(parentSession, SIGNAL(hzoomChanged()), this, SIGNAL(hzoomChanged()));
+                connect(parentSession, SIGNAL(scrollBarValueChanged()), this, SIGNAL(scrollBarValueChanged()));
+        }
+
+        m_parentSession = parentSession;
 }
 
 QList<Track*> TSession::get_tracks() const
@@ -83,9 +108,36 @@ SnapList* TSession::get_snap_list() const
         return m_snaplist;
 }
 
+TimeRef TSession::get_work_location() const
+{
+        if (m_parentSession) {
+                return m_parentSession->get_work_location();
+        }
+        return m_workLocation;
+}
+
+qreal TSession::get_hzoom() const
+{
+        if (m_parentSession) {
+                return m_parentSession->get_hzoom();
+        }
+        return m_hzoom;
+}
+
+QPoint TSession::get_scrollbar_xy()
+{
+        if (m_parentSession) {
+                return m_parentSession->get_scrollbar_xy();
+        }
+        return QPoint(m_sbx, m_sby);
+}
 
 void TSession::set_hzoom( qreal hzoom )
 {
+        if (m_parentSession) {
+                return m_parentSession->set_hzoom(hzoom);
+        }
+
         // Traverso <= 0.42.0 doesn't store the real zoom factor, but an
         // index. This currently causes problems as there is no real support
         // (yet) for zoomlevels other then powers of 2, so we force that for now.
@@ -113,17 +165,34 @@ void TSession::set_hzoom( qreal hzoom )
 
 void TSession::set_work_at(TimeRef location, bool isFolder)
 {
-        PERROR("implement me!");
-}
-
-void TSession::set_temp_follow_state(bool state)
-{
-        emit tempFollowChanged(state);
+        if (m_parentSession) {
+                m_parentSession->set_work_at(location);
+        }
 }
 
 void TSession::set_transport_pos(TimeRef location)
 {
-        PERROR("implement me!");
+        if (m_parentSession) {
+                m_parentSession->set_transport_pos(location);
+        }
+}
+
+void TSession::set_temp_follow_state(bool state)
+{
+        if (m_parentSession) {
+                return m_parentSession->set_temp_follow_state(state);
+        }
+        emit tempFollowChanged(state);
+}
+
+void TSession::set_scrollbar_xy(int x, int y)
+{
+        if (m_parentSession) {
+                return m_parentSession->set_scrollbar_xy(x, y);
+        }
+        m_sbx = x; m_sby = y;
+
+        emit scrollBarValueChanged();
 }
 
 Command* TSession::set_editing_mode( )
