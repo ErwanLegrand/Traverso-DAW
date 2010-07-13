@@ -67,9 +67,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 Project::Project(const QString& title)
         : TSession()
-        , m_title(title)
 {
 	PENTERCONS;
+        m_name = title;
 	m_currentSheetId = 0;
 	m_exportThread = 0;
         m_activeSheet = 0;
@@ -78,7 +78,7 @@ Project::Project(const QString& title)
         set_is_project_session(true);
 
 	m_useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
-	m_rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_title;
+	m_rootDir = config().get_property("Project", "directory", "/directory/unknown/").toString() + "/" + m_name;
 	m_sourcesDir = m_rootDir + "/audiosources";
 	m_rate = audiodevice().get_sample_rate();
 	m_bitDepth = audiodevice().get_bit_depth();
@@ -133,7 +133,7 @@ Project::~Project()
 int Project::create(int sheetcount, int numtracks)
 {
 	PENTER;
-	PMESG("Creating new project %s  NumSheets=%d", QS_C(m_title), sheetcount);
+	PMESG("Creating new project %s  NumSheets=%d", QS_C(m_name), sheetcount);
 
 	QDir dir;
 	if (dir.mkdir(m_rootDir) < 0) {
@@ -174,7 +174,7 @@ int Project::create(int sheetcount, int numtracks)
         QDomDocument doc;
         prepare_audio_device(doc);
 
-	info().information(tr("Created new Project %1").arg(m_title));
+	info().information(tr("Created new Project %1").arg(m_name));
 	return 1;
 }
 
@@ -220,7 +220,7 @@ int Project::load(QString projectfile)
 	}
 
 	if (!file.open(QIODevice::ReadOnly)) {
-		m_errorString = tr("Project %1: Cannot open project.tpf file! (Reason: %2)").arg(m_title).arg(file.errorString());
+		m_errorString = tr("Project %1: Cannot open project.tpf file! (Reason: %2)").arg(m_name).arg(file.errorString());
 		info().critical(m_errorString);
 		return PROJECT_FILE_COULD_NOT_BE_OPENED;
 	}
@@ -238,7 +238,7 @@ int Project::load(QString projectfile)
 	// Start setting and parsing the content of the xml file
 	QString errorMsg;
 	if (!doc.setContent(&file, &errorMsg)) {
-		m_errorString = tr("Project %1: Failed to parse project.tpf file! (Reason: %2)").arg(m_title).arg(errorMsg);
+		m_errorString = tr("Project %1: Failed to parse project.tpf file! (Reason: %2)").arg(m_name).arg(errorMsg);
 		info().critical(m_errorString);
 		return SETTING_XML_CONTENT_FAILED;
 	}
@@ -253,7 +253,7 @@ int Project::load(QString projectfile)
 		return PROJECT_FILE_VERSION_MISMATCH;
 	}
 
-	m_title = e.attribute( "title", "" );
+	m_name = e.attribute( "title", "" );
 	engineer = e.attribute( "engineer", "" );
 	m_description = e.attribute( "description", "No description set");
 	m_discid = e.attribute( "discId", "" );
@@ -406,7 +406,7 @@ int Project::load(QString projectfile)
 
         set_current_sheet(id);
 
-	info().information( tr("Project %1 loaded").arg(m_title) );
+	info().information( tr("Project %1 loaded").arg(m_name) );
 	
 	emit projectLoadFinished();
 
@@ -421,7 +421,7 @@ int Project::save_from_template_to_project_file(const QString& templateFile, con
         QDomDocument doc("Project");
 
         if (!file.open(QIODevice::ReadOnly)) {
-                m_errorString = tr("Project %1: Cannot open project.tpf file! (Reason: %2)").arg(m_title).arg(file.errorString());
+                m_errorString = tr("Project %1: Cannot open project.tpf file! (Reason: %2)").arg(m_name).arg(file.errorString());
                 info().critical(m_errorString);
                 return PROJECT_FILE_COULD_NOT_BE_OPENED;
         }
@@ -429,7 +429,7 @@ int Project::save_from_template_to_project_file(const QString& templateFile, con
         // Start setting and parsing the content of the xml file
         QString errorMsg;
         if (!doc.setContent(&file, &errorMsg)) {
-                m_errorString = tr("Project %1: Failed to parse project.tpf file! (Reason: %2)").arg(m_title).arg(errorMsg);
+                m_errorString = tr("Project %1: Failed to parse project.tpf file! (Reason: %2)").arg(m_name).arg(errorMsg);
                 info().critical(m_errorString);
                 return SETTING_XML_CONTENT_FAILED;
         }
@@ -482,7 +482,7 @@ int Project::save(bool autosave)
 	data.close();
 	
 	if (!autosave) {
-		info().information( tr("Project %1 saved ").arg(m_title) );
+		info().information( tr("Project %1 saved ").arg(m_name) );
 	}
 	
         pm().start_incremental_backup(this);
@@ -498,7 +498,7 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	QDomElement projectNode = doc.createElement("Project");
 	QDomElement properties = doc.createElement("Properties");
 
-	properties.setAttribute("title", m_title);
+	properties.setAttribute("title", m_name);
 	properties.setAttribute("engineer", engineer);
 	properties.setAttribute("description", m_description);
 	properties.setAttribute("discId", m_discid );
@@ -917,7 +917,7 @@ QList<AudioBus*> Project::get_hardware_buses() const
 
 void Project::set_title(const QString& title)
 {
-	if (title == m_title) {
+	if (title == m_name) {
 		// do nothing if the title is the same as the current one
 		return;
 	}
@@ -937,7 +937,7 @@ void Project::set_title(const QString& title)
 		return;
 	}
 	
-	m_title = title;
+	m_name = title;
 	
 	save();
 	
@@ -950,7 +950,7 @@ void Project::set_title(const QString& title)
 			tr("Project title changed, Project will to be reloaded to ensure proper operation"),
 			QMessageBox::Ok);
 	
-	pm().load_renamed_project(m_title);
+	pm().load_renamed_project(m_name);
 }
 
 
@@ -1429,7 +1429,7 @@ int Project::get_num_sheets( ) const
 
 QString Project::get_title( ) const
 {
-	return m_title;
+	return m_name;
 }
 
 QString Project::get_engineer( ) const

@@ -172,7 +172,6 @@ private:
 
 
 
-	QString 	m_title;
 	QString 	m_rootDir;
 	QString 	m_sourcesDir;
 	QString 	engineer;
