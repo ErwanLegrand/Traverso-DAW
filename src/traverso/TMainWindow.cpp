@@ -862,6 +862,19 @@ void TMainWindow::create_menus( )
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
 
         set_project_actions_enabled(false);
+
+        m_contextMenuDict.insert("AudioClip",tr("Audio Clip"));
+        m_contextMenuDict.insert("AudioTrack", tr("Audio Track"));
+        m_contextMenuDict.insert("Curve",tr("Curve"));
+        m_contextMenuDict.insert("CurveNode",tr("Curve Node"));
+        m_contextMenuDict.insert("FadeCurve",tr("Fade Curve"));
+        m_contextMenuDict.insert("Marker",tr("Marker"));
+        m_contextMenuDict.insert("Sheet",tr("Sheet"));
+        m_contextMenuDict.insert("TBusTrack",tr("Bus Track"));
+        m_contextMenuDict.insert("TimeLine",tr("Time Line"));
+        m_contextMenuDict.insert("TBusTrackPanel", tr("Bus Track"));
+        m_contextMenuDict.insert("AudioTrackPanel",tr("Audio Track"));
+        m_contextMenuDict.insert("Plugin",tr("Plugin"));
 }
 
 void TMainWindow::set_project_actions_enabled(bool enable)
@@ -948,9 +961,9 @@ Command * TMainWindow::show_context_menu( )
 				continue;
 			}
 			action = toplevelmenu->insertMenu(action, menu);
-			QString name = className.remove("View");
+                        QString name = m_contextMenuDict.value(className.remove("View"));
 
-			action->setText(QObject::tr(QS_C(name)));
+                        action->setText(name);
 		}
 	}
 
@@ -1142,15 +1155,13 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 	
 	QString name;
 	if (item) {
-		 name = QString(item->metaObject()->className()).remove("View").remove("Panel");
-	} else {
-		name = "noname";
+                name = m_contextMenuDict.value(QString(item->metaObject()->className()).remove("View"));
 	}
 
 	QMenu* menu = new QMenu(this);
 	menu->installEventFilter(this);
 	
-	QAction* menuAction = menu->addAction(QObject::tr(QS_C(name)));
+        QAction* menuAction = menu->addAction(name);
 	QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 	font.setBold(true);
 	menuAction->setFont(font);
@@ -1205,24 +1216,24 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 		
 		qSort(list->begin(), list->end(), MenuData::smaller);
 
-                QMenu* busTrack = new QMenu(this);
-                busTrack->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
+                QMenu* subMenu = new QMenu(this);
+                subMenu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
 		
 		QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 		font.setBold(true);
-                busTrack->menuAction()->setFont(font);
+                subMenu->menuAction()->setFont(font);
 		
-                QAction* action = menu->insertMenu(0, busTrack);
-		action->setText(QObject::tr(QS_C(key)));
+                QAction* action = menu->insertMenu(0, subMenu);
+                action->setText(key);
 		foreach(MenuData data, *list) {
-                        QAction* action = new QAction(busTrack);
+                        QAction* action = new QAction(subMenu);
 			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);
 			QString text = QString(data.description + "  " + keyfact);
 			action->setText(text);
 			QStringList strings;
 			strings << data.iedata << data.description << keyfact;
 			action->setData(strings);
-                        busTrack->addAction(action);
+                        subMenu->addAction(action);
 		}
 		
 		delete list;

@@ -144,6 +144,7 @@ private:
         SheetWidget*		m_currentSheetWidget;
 	QList<ViewPort* > 	currentProjectViewPortList;
 	QHash<QString, QMenu*>	m_contextMenus;
+        QHash<QString, QString> m_contextMenuDict;
 	ExportDialog*		m_exportDialog;
 	CDWritingDialog*	m_cdWritingDialog;
 	QUndoView*		historyWidget;
