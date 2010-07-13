@@ -405,7 +405,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 		
 		subveclen = min (subveclen, veclen);
 
-                printf("filling first %d samples %f\n", subveclen, firstnode->value);
+//                printf("filling first %d samples %f\n", subveclen, firstnode->value);
 
 		for (i = 0; i < subveclen; ++i) {
 			vec[i] = firstnode->value;
@@ -431,7 +431,7 @@ void Curve::get_vector (double x0, double x1, float *vec, int32_t veclen)
 
 		i = veclen - subveclen;
 
-                printf("filling last %d samples %f\n", subveclen, firstnode->value);
+//                printf("filling last %d samples %f\n", subveclen, firstnode->value);
 
                 for (i = veclen - subveclen; i < veclen; ++i) {
 			vec[i] = val;
