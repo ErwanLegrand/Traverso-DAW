@@ -195,9 +195,19 @@ void TSession::set_temp_follow_state(bool state)
 
 void TSession::set_scrollbar_xy(int x, int y)
 {
+        // this session mirrors a parent session
+        // when transport rolls, this sessions playhead will _also_ try to
+        // update the scrollbars position, but it's already taken care of by
+        // the parent session. So do nothing here.
+        // FIXME: is this a real fix? Should it be managed in PlayHead (Cursors.cpp) ??
+        if (m_parentSession && m_parentSession->is_transport_rolling()) {
+                return;
+        }
+
         if (m_parentSession) {
                 return m_parentSession->set_scrollbar_xy(x, y);
         }
+
         m_sbx = x; m_sby = y;
 
         emit scrollBarValueChanged();

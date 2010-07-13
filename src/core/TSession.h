@@ -49,6 +49,7 @@ public:
         virtual TimeRef get_transport_location() const {return m_transportLocation;}
         virtual SnapList* get_snap_list() const;
         TimeLine* get_timeline() const {return m_timeline;}
+        TSession* get_parent_session() const {return m_parentSession;}
         QString get_name() const {return m_name;}
 
         TBusTrack* get_master_out() const {return m_masterOut;}
