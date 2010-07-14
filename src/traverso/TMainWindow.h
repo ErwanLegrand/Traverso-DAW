@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QHash>
 #include <QModelIndex>
 #include <QTimer>
+#include <QGridLayout>
 
 class Sheet;
 class TSession;
@@ -137,6 +138,7 @@ protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
+        QGridLayout*            m_mainLayout;
         TTabWidget*             m_centerAreaWidget;
         int                     m_previousCenterAreaWidgetIndex;
         int                     m_vuLevelUpdateFrequency;

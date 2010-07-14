@@ -145,8 +145,12 @@ TMainWindow::TMainWindow()
         m_trackFinderTreeView->header()->setStretchLastSection(false);
 
         // CenterAreaWidget
+        QWidget* mainWidget = new QWidget(this);
+        m_mainLayout = new QGridLayout(this);
+        mainWidget->setLayout(m_mainLayout);
+        setCentralWidget(mainWidget);
         m_centerAreaWidget = new TTabWidget(this);
-        setCentralWidget(m_centerAreaWidget);
+        m_mainLayout->addWidget(m_centerAreaWidget, 0, 0);
 
         connect(m_centerAreaWidget, SIGNAL(currentChanged(int)), this, SLOT(sheet_tab_index_changed(int)));
 	
@@ -350,6 +354,8 @@ void TMainWindow::add_sheetwidget(Sheet* sheet)
 
 void TMainWindow::add_session(TSession *session)
 {
+        Project* project = qobject_cast<Project*>(session);
+
         SheetWidget* mixer = m_sheetWidgets.value(m_project);
         int mixerIndex = -1;
         if (mixer) {
@@ -359,8 +365,10 @@ void TMainWindow::add_session(TSession *session)
 
         SheetWidget* sheetWidget = new SheetWidget(session, m_centerAreaWidget);
 
+        if (!project) {
         int index = m_centerAreaWidget->addTab(sheetWidget, "");
         m_centerAreaWidget->get_tab_bar()->setTabData(index, session->get_id());
+}
 
         m_sheetWidgets.insert(session, sheetWidget);
 
@@ -379,6 +387,10 @@ void TMainWindow::add_session(TSession *session)
 
         if (mixer) {
                 m_centerAreaWidget->addTab(mixer, "");
+        }
+
+        if (project) {
+                m_mainLayout->addWidget(sheetWidget, 0, 1);
         }
 
         update_sheet_tabs_appearance();
@@ -1895,10 +1907,6 @@ Command* TMainWindow::show_track_finder()
 {
         if (!m_project) {
                 return 0;
-        }
-
-        if (m_projectToolBar->isHidden()) {
-                m_projectToolBar->show();
         }
 
         m_trackFinder->setStyleSheet("color: blue;"
