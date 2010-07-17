@@ -223,6 +223,7 @@
 		<keyfact type="FKEY" key1="N" >
 			<Objects>
                                 <Object objectname="CurveView" slotsignature="add_node" modes="All" />
+                                <Object objectname="Project" slotsignature="add_child_session" modes="All" modifierkeys="SHIFT" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="B" >
