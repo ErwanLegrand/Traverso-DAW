@@ -103,16 +103,18 @@ void TransportConsoleWidget::set_session(TSession* session)
         }
 
         m_sheet = qobject_cast<Sheet*>(session);
+        if (!m_sheet && session) {
+                m_sheet = qobject_cast<Sheet*>(session->get_parent_session());
+        }
 
-	if (!m_sheet)
-	{
+        if (!m_sheet) {
 		m_updateTimer.stop();
 		setEnabled(false);
                 update_label();
 		return;
 	}
 
-	setEnabled(true);
+        setEnabled(true);
 
 	connect(m_sheet, SIGNAL(recordingStateChanged()), this, SLOT(update_recording_state()));
 	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(transport_started()));
@@ -165,7 +167,7 @@ void TransportConsoleWidget::transport_started()
 
 	// this is needed when the record button is pressed, but no track is armed.
 	// uncheck the rec button in that case
-	if (!m_sheet->is_recording()) {
+        if (m_sheet && !m_sheet->is_recording()) {
                 m_recAction->setChecked(false);
 	}
 }

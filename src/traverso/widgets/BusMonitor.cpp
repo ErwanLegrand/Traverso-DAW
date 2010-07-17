@@ -157,9 +157,8 @@ void BusMonitor::set_project(Project * project)
 	
         if (project) {
                 connect(project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(set_session(TSession*)));
-        } else {
-                m_sheet = 0;
         }
+        m_sheet = 0;
 }
 
 void BusMonitor::set_session(TSession* session)

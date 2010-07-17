@@ -325,6 +325,7 @@ void TMainWindow::set_project(Project* project)
 
 void TMainWindow::project_load_finished()
 {
+        PENTER;
         if (!m_project) {
                 return;
         }
@@ -384,6 +385,7 @@ void TMainWindow::add_session(TSession *session)
                 connect(session, SIGNAL(propertyChanged()), this, SLOT(update_sheet_tabs_appearance()));
                 connect(session, SIGNAL(recordingStateChanged()), this, SLOT(sheet_transport_state_changed()));
                 connect(session, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
+                connect(session, SIGNAL(sessionAdded(TSession*)), this, SLOT(add_session(TSession*)));
         }
 
         if (mixer) {
@@ -459,7 +461,6 @@ void TMainWindow::show_session(TSession* session)
                 setWindowTitle(m_project->get_title() + ": Sheet " + session->get_name() + " - Traverso");
 	}
 }
-
 
 Command* TMainWindow::about_traverso()
 {
@@ -1836,9 +1837,9 @@ void TMainWindow::update_sheet_tabs_appearance()
                         if (session && m_project) {
                                 QString string;
                                 if (session == m_project) {
-                                        string = "&" + QString::number(m_project->get_num_sheets() + 1) + ": Mixer";
+                                        string = "&" + QString::number(i) + ": Mixer";
                                 } else {
-                                        string = "&" + QString::number(m_project->get_sheet_index(session->get_id())) + ": " + session->get_name();
+                                        string = "&" + QString::number(i) + ": " + session->get_name();
                                 }
                                 m_centerAreaWidget->setTabText(i, string);
                         }
@@ -1878,7 +1879,7 @@ void TMainWindow::sheet_tab_index_changed(int index)
                 m_previousCenterAreaWidgetIndex = index;
 
                 qint64 id = m_centerAreaWidget->get_tab_bar()->tabData(index).toLongLong();
-                m_project->set_current_sheet(id);
+                m_project->set_current_session(id);
         }
 }
 

@@ -176,7 +176,7 @@ void ProjectManagerDialog::sheetitem_clicked( QTreeWidgetItem* item, int)
 		
         selectedSheetName->setText(sheet->get_name());
 	
-	m_project->set_current_sheet(sheet->get_id());
+        m_project->set_current_session(sheet->get_id());
 }
 
 void ProjectManagerDialog::on_renameSheetButton_clicked( )

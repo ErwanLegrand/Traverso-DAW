@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "APILinkedList.h"
 #include "defines.h"
 
+class AudioTrack;
 class SnapList;
 class Snappable;
 class TBusTrack;
@@ -44,17 +45,18 @@ public:
         int get_mode() const {return m_mode;}
         int is_transport_rolling() const;
         TimeRef get_work_location() const;
-        virtual TimeRef get_last_location() const = 0;
+        virtual TimeRef get_last_location() const;
         TimeRef get_new_transport_location() const {return m_newTransportLocation;}
-        virtual TimeRef get_transport_location() const {return m_transportLocation;}
+        virtual TimeRef get_transport_location() const;
         virtual SnapList* get_snap_list() const;
-        TimeLine* get_timeline() const {return m_timeline;}
+        TimeLine* get_timeline() const;
         TSession* get_parent_session() const {return m_parentSession;}
         QString get_name() const {return m_name;}
 
-        TBusTrack* get_master_out() const {return m_masterOut;}
+        TBusTrack* get_master_out() const;
         virtual QList<Track*> get_tracks() const;
         QList<TBusTrack*> get_bus_tracks() const;
+        QList<TSession*> get_child_sessions() const {return m_childSessions;}
         Snappable* get_work_snap() {return m_workSnap;}
         virtual bool is_snap_on() const	{return m_isSnapOn;}
 
@@ -64,9 +66,13 @@ public:
         void set_scrollbar_xy(int x, int y);
         void set_parent_session(TSession* parentSession);
         void set_is_project_session(bool isProjectSession) {m_isProjectSession = isProjectSession;}
+        void set_name(const QString& name);
 
         Command* add_track(Track* api, bool historable=true);
         Command* remove_track(Track* api, bool historable=true);
+
+        void add_child_session(TSession* child);
+        void remove_child_session(TSession* child);
 
         audio_sample_t* 	mixdown;
         audio_sample_t*		gainbuffer;
@@ -77,9 +83,14 @@ public:
         };
 
 protected:
-        TSession*       m_parentSession;
-        TBusTrack*      m_masterOut;
-        APILinkedList   m_busTracks;
+        TSession*               m_parentSession;
+        QList<TSession*>        m_childSessions;
+        APILinkedList           m_rtAudioTracks;
+        APILinkedList           m_rtBusTracks;
+        QList<AudioTrack*>      m_audioTracks;
+        QList<TBusTrack*>       m_busTracks;
+        TBusTrack*              m_masterOut;
+
         SnapList*	m_snaplist;
         Snappable*	m_workSnap;
         TimeLine*	m_timeline;
@@ -110,16 +121,22 @@ public slots:
         Command* set_editing_mode();
         Command* set_effects_mode();
         Command* toggle_effects_mode();
-        Command* start_transport();
+        virtual Command* start_transport();
 
 protected slots:
         void private_add_track(Track* track);
         void private_remove_track(Track* track);
+        void private_track_added(Track* track);
+        void private_track_removed(Track* track);
 
 
 signals:
+        void privateTrackRemoved(Track*);
+        void privateTrackAdded(Track*);
         void trackRemoved(Track* );
         void trackAdded(Track* );
+        void sessionAdded(TSession*);
+        void sessionRemoved(TSession*);
         void hzoomChanged();
         void tempFollowChanged(bool state);
         void lastFramePositionChanged();
@@ -129,6 +146,7 @@ signals:
         void workingPosChanged();
         void transportPosSet();
         void scrollBarValueChanged();
+        void propertyChanged();
 };
 
 #endif // TSESSION_H

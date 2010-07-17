@@ -92,7 +92,6 @@ public:
 
 	// Set functions
 	void set_artists(const QString& pArtistis);
-        void set_name(const QString& name);
         void set_work_at(TimeRef location, bool isFolder=false);
         void set_work_at_for_sheet_as_track_folder(const TimeRef& location);
 	void set_snapping(bool snap);
@@ -131,7 +130,6 @@ public:
 #endif
 
 private:
-        APILinkedList		m_audioTracks;
         QList<AudioClip*>	m_recordingClips;
 	QTimer			m_skipTimer;
 	Project*		m_project;
@@ -203,11 +201,8 @@ signals:
 	void recordingStateChanged();
 	void prepareRecording();
         void stateChanged();
-        void propertyChanged();
 	
 private slots:
-        void private_add_track(Track* track);
-        void private_remove_track(Track* track);
 	void handle_diskio_writebuffer_overrun();
 	void handle_diskio_readbuffer_underrun();
 	void prepare_recording();

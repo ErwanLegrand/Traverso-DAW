@@ -96,6 +96,7 @@ public :
 	QString get_import_dir() const;
 	QString get_error_string() const {return m_errorString;}
 	QList<Sheet* > get_sheets() const;
+        TSession* get_session(qint64 id);
         TSession* get_current_session() const ;
         Sheet* get_active_sheet() const {return m_activeSheet;}
 	Sheet* get_sheet(qint64 id) const;
@@ -117,7 +118,7 @@ public :
 	void set_genre(int pGenre);
 	void set_sheet_export_progress(int pogress);
         void set_export_message(QString message);
-	void set_current_sheet(qint64 id);
+        void set_current_session(qint64 id);
 	void set_import_dir(const QString& dir);
         void set_sheets_are_tracks_folder(bool isFolder);
         void set_work_at(TimeRef worklocation);
@@ -154,12 +155,15 @@ public slots:
         void track_routing_changed();
 	Command* select();
         Command* start_transport();
+        Command* add_child_session();
+        Command* remove_child_session();
 
 private:
 	Project(const QString& title);
 	
         QList<Sheet*>           m_sheets;
         Sheet*                  m_activeSheet;
+        TSession*               m_activeSession;
         APILinkedList           m_RtSheets;
 	ResourcesManager* 	m_resourcesManager;
         ExportThread*           m_exportThread;
@@ -196,14 +200,14 @@ private:
 	int 		renderedSheets;
 	QList<Sheet* > 	sheetsToRender;
 
-	qint64 		m_currentSheetId;
-	
-	int create(int sheetcount, int numtracks);
+        qint64 		m_activeSheetId;
+        qint64          m_activeSessionId;
+
+        int create(int sheetcount, int numtracks);
 	int create_audiosources_dir();
 	int create_peakfiles_dir();
 
         void prepare_audio_device(QDomDocument doc);
-        void set_current_sheet(Sheet* sheet);
 	
 	friend class ProjectManager;
 

@@ -70,9 +70,10 @@ Project::Project(const QString& title)
 {
 	PENTERCONS;
         m_name = title;
-	m_currentSheetId = 0;
 	m_exportThread = 0;
         m_activeSheet = 0;
+        m_activeSession = 0;
+        m_activeSessionId = m_activeSheetId = -1;
 	engineer = "";
         m_keyboardArrowNavigationSpeed = 4;
         set_is_project_session(true);
@@ -160,7 +161,7 @@ int Project::create(int sheetcount, int numtracks)
 	}
 
 	if (m_sheets.size()) {
-                set_current_sheet(m_sheets.first()->get_id());
+                set_current_session(m_sheets.first()->get_id());
 	}
 	
 	m_id = create_id();
@@ -370,6 +371,7 @@ int Project::load(QString projectfile)
                 TBusTrack* busTrack = new TBusTrack(this, busTrackNode);
                 busTrack->set_state(busTrackNode);
                 private_add_track(busTrack);
+                private_track_added(busTrack);
 
                 busTrackNode = busTrackNode.nextSibling();
         }
@@ -396,17 +398,19 @@ int Project::load(QString projectfile)
 		sheetNode = sheetNode.nextSibling();
 	}
 
-        qint64 id = e.attribute("currentsheetid", "0" ).toLongLong();
+        qint64 activeSheetId = e.attribute("currentsheetid", "0" ).toLongLong();
+        qint64 activeSessionId = e.attribute("activesessionid", "0" ).toLongLong();
 
-        if ( id == 0) {
+        if ( activeSheetId == 0) {
                 if (m_sheets.size()) {
-                        id = m_sheets.first()->get_id();
+                        activeSheetId = m_sheets.first()->get_id();
                 }
         }
 
-        set_current_sheet(id);
+        set_current_session(activeSheetId);
+        set_current_session(activeSessionId);
 
-	info().information( tr("Project %1 loaded").arg(m_name) );
+        info().information( tr("Project %1 loaded").arg(m_name) );
 	
 	emit projectLoadFinished();
 
@@ -508,8 +512,13 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("arranger", m_arranger);
 	properties.setAttribute("songwriter", m_songwriter);
 	properties.setAttribute("message", m_message);
-	properties.setAttribute("currentsheetid", m_currentSheetId);
-	properties.setAttribute("rate", m_rate);
+        qint64 activeSessionId = 0;
+        if (m_activeSession) {
+                activeSessionId = m_activeSession->get_id();
+        }
+        properties.setAttribute("currentsheetid", m_activeSheetId);
+        properties.setAttribute("activesessionid", m_activeSessionId);
+        properties.setAttribute("rate", m_rate);
 	properties.setAttribute("bitdepth", m_bitDepth);
 	properties.setAttribute("projectfileversion", PROJECT_FILE_VERSION);
         properties.setAttribute("sheetsaretrackfolder", m_sheetsAreTrackFolder);
@@ -572,8 +581,8 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 
 
         QDomNode busTracksNode = doc.createElement("BusTracks");
-        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
-                busTracksNode.appendChild(group->get_state(doc, istemplate));
+        foreach(TBusTrack* busTrack, m_busTracks) {
+                busTracksNode.appendChild(busTrack->get_state(doc, istemplate));
         }
 
         projectNode.appendChild(busTracksNode);
@@ -1036,97 +1045,74 @@ Command* Project::remove_sheet(Sheet* sheet, bool historable)
 }
 
 
-void Project::set_current_sheet(qint64 id)
+Sheet* Project::get_sheet(qint64 id) const
 {
-	PENTER;
+        Sheet* current = 0;
 
-        if (id == get_id()) {
-                m_currentSheetId = get_id();
-                emit currentSessionChanged(this);
-                return;
-        }
-	
-	if (m_currentSheetId == id) {
-		return;
-	}
-	
-	Sheet* newcurrent = 0;
-	
         foreach(Sheet* sheet, m_sheets) {
                 if (sheet->get_id() == id) {
-			newcurrent = sheet;
-			break;
-		}
-	}
-	
-	if (!newcurrent) {
-		info().information( tr("Sheet '%1' doesn't exist!").arg(id) );
-                // fallback to the first sheet.
-                if (m_sheets.size()) {
-                        set_current_sheet(m_sheets.first()->get_id());
+                        current = sheet;
+                        break;
                 }
-
-                m_activeSheet = 0;
-		emit currentSessionChanged(0);
-		return;
-        } else {
-                if (m_activeSheet) {
-                        disconnect(m_activeSheet, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
-                        disconnect(m_activeSheet, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
-                        disconnect(m_activeSheet, SIGNAL(transportPosSet()), this, SIGNAL(transportPosSet()));
-                }
-                m_activeSheet = newcurrent;
-                set_parent_session(m_activeSheet);
-                connect(m_activeSheet, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
-                connect(m_activeSheet, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
-                connect(m_activeSheet, SIGNAL(transportPosSet()), this, SIGNAL(transportPosSet()));
         }
 
-	m_currentSheetId=id;
-
-	emit currentSessionChanged(newcurrent);
+        return current;
 }
 
-void Project::set_current_sheet(Sheet *sheet)
+TSession* Project::get_session(qint64 id)
 {
-        m_currentSheetId = sheet->get_id();
-        emit currentSessionChanged(sheet);
+        if(id == get_id()) {
+                return this;
+        }
+
+        foreach(Sheet* sheet, m_sheets) {
+                if (sheet->get_id() == id) {
+                        return sheet;
+                }
+
+                foreach(TSession* session, sheet->get_child_sessions()) {
+                        if (session->get_id() == id) {
+                                printf("this is a child session\n");
+                                return session;
+                        }
+                }
+        }
+
+        return 0;
 }
 
+void Project::set_current_session(qint64 id)
+{
+        printf("set_current_session\n");
+
+        TSession* session = get_session(id);
+
+        if (!session) {
+                PERROR("id %lld doesn't match any known sessions???", id);
+                return;
+        }
+
+        m_activeSession = session;
+        if (m_activeSession) {
+                m_activeSessionId = m_activeSession->get_id();
+        }
+
+        printf("active session = %s\n", m_activeSession->get_name().toAscii().data());
+
+        Sheet* sheet = qobject_cast<Sheet*>(m_activeSession);
+        if (sheet && (m_activeSheet != sheet)) {
+                m_activeSheet = sheet;
+                m_activeSheetId = sheet->get_id();
+                set_parent_session(m_activeSheet);
+        }
+
+
+        emit currentSessionChanged(m_activeSession);
+}
 
 TSession* Project::get_current_session() const
 {
-        TSession* current = 0;
-
-        if (m_currentSheetId == get_id()) {
-                current = (TSession*)this;
-                return current;
-        }
-
-	
-        foreach(Sheet* sheet, m_sheets) {
-                if (sheet->get_id() == m_currentSheetId) {
-			current = sheet;
-			break;
-		}
-	}
-	
-	return current;
-}
-
-
-Sheet* Project::get_sheet(qint64 id) const
-{
-	Sheet* current = 0;
-	
-        foreach(Sheet* sheet, m_sheets) {
-                if (sheet->get_id() == id) {
-			current = sheet;
-			break;
-		}
-	}
-	
-	return current;
+        return m_activeSession;
 }
 
 
@@ -1364,7 +1350,7 @@ Command* Project::select()
 {
 	int index = ie().collected_number();
 	if (index <= m_sheets.size() && index > 0) {
-                set_current_sheet(m_sheets.at(index - 1)->get_id());
+                set_current_session(m_sheets.at(index - 1)->get_id());
 	}
 	return (Command*) 0;
 }
@@ -1419,7 +1405,7 @@ int Project::get_sheet_index(qint64 id)
 
 int Project::get_current_sheet_id( ) const
 {
-	return m_currentSheetId;
+        return m_activeSheetId;
 }
 
 int Project::get_num_sheets( ) const
@@ -1586,10 +1572,6 @@ void Project::private_remove_sheet(Sheet * sheet)
 {
 	PENTER;
         m_RtSheets.remove(sheet);
-	
-        if (m_RtSheets.isEmpty()) {
-		m_currentSheetId = -1;
-	}		
 }
 
 void Project::sheet_removed(Sheet *sheet)
@@ -1598,7 +1580,7 @@ void Project::sheet_removed(Sheet *sheet)
         m_sheets.removeAll(sheet);
 
         if (m_sheets.size() > 0) {
-                set_current_sheet(m_sheets.last());
+                set_current_session(m_sheets.last()->get_id());
         }
 
         emit sheetRemoved(sheet);
@@ -1674,8 +1656,8 @@ int Project::process( nframes_t nframes )
         }
 
 
-        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
-                group->process(nframes);
+        apill_foreach(TBusTrack* busTrack, TBusTrack, m_rtBusTracks) {
+                busTrack->process(nframes);
         }
 
         // Mix the result into the AudioDevice "physical" buffers
@@ -1745,4 +1727,22 @@ QStringList Project::get_input_buses_for(TBusTrack *busTrack)
         }
 
         return buses;
+}
+
+Command* Project::add_child_session()
+{
+        if (!m_activeSheet) {
+                info().information(tr("No Sheet active to add child view to"));
+                return 0;
+        }
+
+        TSession* session = new TSession(m_activeSheet);
+        m_activeSheet->add_child_session(session);
+
+        return 0;
+}
+
+Command* Project::remove_child_session()
+{
+        return 0;
 }

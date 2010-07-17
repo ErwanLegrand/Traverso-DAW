@@ -92,7 +92,7 @@ void NewSheetDialog::accept()
 	Command::process_command(group);
 	
 	if (firstNewSheet) {
-		m_project->set_current_sheet(firstNewSheet->get_id());
+		m_project->set_current_session(firstNewSheet->get_id());
 	}
 	
 	hide();

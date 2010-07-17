@@ -35,13 +35,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 TSession::TSession(TSession *parentSession)
         : ContextItem()
-        , m_parentSession(parentSession)
 {
-        if (!m_parentSession) {
+        m_parentSession = 0;
+
+        if (!parentSession) {
                 m_timeline = new TimeLine(this);
                 m_snaplist = new SnapList(this);
                 m_workSnap = new Snappable();
                 m_workSnap->set_snap_list(m_snaplist);
+        } else {
+                set_parent_session(parentSession);
         }
 
         init();
@@ -58,11 +61,14 @@ void TSession::init()
         m_transport = 0;
         m_isSnapOn=true;
         m_isProjectSession = false;
+
+        connect(this, SIGNAL(privateTrackAdded(Track*)), this, SLOT(private_track_added(Track*)));
+        connect(this, SIGNAL(privateTrackRemoved(Track*)), this, SLOT(private_track_removed(Track*)));
 }
 
 void TSession::set_parent_session(TSession *parentSession)
 {
-        if (m_isProjectSession) {
+//        if (m_isProjectSession) {
 
                 if (m_parentSession) {
                         disconnect(m_parentSession, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
@@ -78,7 +84,7 @@ void TSession::set_parent_session(TSession *parentSession)
                 connect(parentSession, SIGNAL(workingPosChanged()), this, SIGNAL(workingPosChanged()));
                 connect(parentSession, SIGNAL(hzoomChanged()), this, SIGNAL(hzoomChanged()));
                 connect(parentSession, SIGNAL(scrollBarValueChanged()), this, SIGNAL(scrollBarValueChanged()));
-        }
+//        }
 
         m_parentSession = parentSession;
 
@@ -86,29 +92,44 @@ void TSession::set_parent_session(TSession *parentSession)
         emit hzoomChanged();
 }
 
+TBusTrack* TSession::get_master_out() const
+{
+        if (m_parentSession) {
+                return m_parentSession->get_master_out();
+        }
+
+        return m_masterOut;
+}
 QList<Track*> TSession::get_tracks() const
 {
         QList<Track*> list;
-        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
-                list.append(group);
+        foreach(TBusTrack* track, m_busTracks) {
+                list.append(track);
         }
-        return list;
 
+        return list;
 }
 
 QList<TBusTrack*> TSession::get_bus_tracks() const
 {
-        QList<TBusTrack*> list;
-        apill_foreach(TBusTrack* group, TBusTrack, m_busTracks) {
-                list.append(group);
-        }
-
-        return list;
+        return m_busTracks;
 }
 
 SnapList* TSession::get_snap_list() const
 {
+        if (m_parentSession) {
+                return m_parentSession->get_snap_list();
+        }
         return m_snaplist;
+}
+
+TimeLine* TSession::get_timeline() const
+{
+        if (m_parentSession) {
+                return m_parentSession->get_timeline();
+        }
+
+        return m_timeline;
 }
 
 TimeRef TSession::get_work_location() const
@@ -117,6 +138,26 @@ TimeRef TSession::get_work_location() const
                 return m_parentSession->get_work_location();
         }
         return m_workLocation;
+}
+
+TimeRef TSession::get_last_location() const
+{
+        if (m_parentSession) {
+                return m_parentSession->get_last_location();
+        }
+
+        PERROR("TSession::get_last_location(): unsupported configuration, this function needs a parentSession to work!");
+
+        return TimeRef();
+}
+
+TimeRef TSession::get_transport_location() const
+{
+        if (m_parentSession) {
+                return m_parentSession->get_transport_location();
+        }
+
+        return m_transportLocation;
 }
 
 qreal TSession::get_hzoom() const
@@ -227,6 +268,12 @@ Command* TSession::set_effects_mode( )
         return 0;
 }
 
+void TSession::set_name(const QString& name)
+ {
+        m_name = name;
+        emit propertyChanged();
+}
+
 Command* TSession::toggle_effects_mode()
 {
         if (m_mode == EDIT) {
@@ -239,7 +286,10 @@ Command* TSession::toggle_effects_mode()
 
 Command* TSession::start_transport()
 {
-        PERROR("Implement me!");
+        if (m_parentSession) {
+                PERROR("Implement me!");
+                return m_parentSession->start_transport();
+        }
         return 0;
 }
 
@@ -247,8 +297,8 @@ Command* TSession::start_transport()
 Command* TSession::add_track(Track* track, bool historable)
 {
         return new AddRemove(this, track, historable, this,
-                "private_add_track(Track*)", "trackAdded(Track*)",
-                "private_remove_track(Track*)", "trackRemoved(Track*)",
+                "private_add_track(Track*)", "privateTrackAdded(Track*)",
+                "private_remove_track(Track*)", "privateTrackRemoved(Track*)",
                 tr("Added %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
 }
 
@@ -256,25 +306,83 @@ Command* TSession::add_track(Track* track, bool historable)
 Command* TSession::remove_track(Track* track, bool historable)
 {
         return new AddRemove(this, track, historable, this,
-                "private_remove_track(Track*)", "trackRemoved(Track*)",
-                "private_add_track(Track*)", "trackAdded(Track*)",
+                "private_remove_track(Track*)", "privateTrackRemoved(Track*)",
+                "private_add_track(Track*)", "privateTrackAdded(Track*)",
                 tr("Removed %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
 }
 
 void TSession::private_add_track(Track* track)
 {
         switch (track->get_type()) {
-        case Track::BUS: m_busTracks.append(track);
-              break;
-        default: ;// do nothing
+        case Track::AUDIOTRACK:
+                m_rtAudioTracks.append(track);
+                break;
+        case Track::BUS:
+                m_rtBusTracks.append(track);
+                break;
+        default:
+                Q_ASSERT("TSession::private_add_track() Unknown Track type, this is a programming error!");
+
         }
 }
 
 void TSession::private_remove_track(Track* track)
 {
         switch (track->get_type()) {
-        case Track::BUS: m_busTracks.remove(track);
-              break;
-        default: ;// do nothing
+        case Track::AUDIOTRACK:
+                m_rtAudioTracks.remove(track);
+                break;
+        case Track::BUS:
+                m_rtBusTracks.remove(track);
+                break;
+        default:
+                Q_ASSERT("TSession::private_remove_track() Unknown Track type, this is a programming error!");
         }
 }
+
+void TSession::private_track_added(Track *track)
+{
+        switch(track->get_type()) {
+        case Track::AUDIOTRACK:
+                m_audioTracks.append((AudioTrack*)track);
+                break;
+        case Track::BUS:
+                m_busTracks.append((TBusTrack*)track);
+                break;
+        default:
+                Q_ASSERT("TSession::private_track_added() Unknown Track type, this is a programming error!");
+        }
+
+        emit trackAdded(track);
+}
+
+void TSession::private_track_removed(Track *track)
+{
+        switch(track->get_type()) {
+        case Track::AUDIOTRACK:
+                m_audioTracks.removeAll((AudioTrack*)track);
+                break;
+        case Track::BUS:
+                m_busTracks.removeAll((TBusTrack*)track);
+                break;
+        default:
+                Q_ASSERT("TSession::private_track_removed() Unknown Track type, this is a programming error!");
+        }
+
+        emit trackRemoved(track);
+}
+
+void TSession::add_child_session(TSession *child)
+{
+        m_childSessions.append(child);
+        child->set_name(m_name + " " + QString("child %1").arg(m_childSessions.size()));
+        emit sessionAdded(child);
+}
+
+void TSession::remove_child_session(TSession *child)
+{
+        m_childSessions.removeAll(child);
+        emit sessionRemoved(child);
+        printf("removed child session\n");
+}
+

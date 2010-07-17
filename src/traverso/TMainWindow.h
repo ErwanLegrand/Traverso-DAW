@@ -209,8 +209,6 @@ private:
         void update_vu_levels_peak();
         void reset_vu_levels_peak_hold_value();
 
-        void add_session(TSession* session);
-        void remove_session(TSession*);
 
 public slots :
 	void set_project(Project* project);
@@ -256,11 +254,12 @@ public slots :
         Command* show_track_finder();
         Command* browse_to_first_track_in_active_sheet();
         Command* browse_to_last_track_in_active_sheet();
-
 	
 private slots:
         void add_sheetwidget(Sheet* session);
         void remove_sheetwidget(Sheet*);
+        void add_session(TSession* session);
+        void remove_session(TSession*);
         void project_dir_change_detected();
 	void project_load_failed(QString project, QString reason);
         void project_load_finished();
