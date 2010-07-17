@@ -103,11 +103,6 @@ void ProjectManager::set_current_project(Project* project)
 	
         if (currentProject) {
 
-                // this serves as a 'project closed' signal, emiting
-                // a zero pointer as project makes the GUI to delete it's
-                // project and releated GUI objects
-                emit projectLoaded(0);
-
                 ie().abort_current_hold_actions();
 
 //                printf("exit in progress");
@@ -129,6 +124,11 @@ void ProjectManager::set_current_project(Project* project)
                 oldprojectname = currentProject->get_title();
 
                 currentProject->disconnect_from_audio_device();
+
+                // this serves as a 'project closed' signal, emiting
+                // a zero pointer as project makes the GUI to delete it's
+                // project and releated GUI objects
+                emit projectLoaded(0);
 
                 delete currentProject;
         }
