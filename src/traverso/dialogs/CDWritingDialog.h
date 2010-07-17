@@ -74,7 +74,7 @@ private:
 	};
 	
 	int m_writingState;
-	int m_lastSheetExported;
+        qint64 m_lastSheetExported;
 	bool m_wasClosed;
 	bool m_wodimAvailable;
 	int m_copyNumber;
