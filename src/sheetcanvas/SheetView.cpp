@@ -1136,7 +1136,7 @@ Command* SheetView::browse_to_context_item_below()
                 while (data.atv) {
                         QList<TrackView*> views = get_track_views();
                         int index = views.indexOf(data.atv);
-                        if (index < views.size()) {
+                        if (index < (views.size() - 1)) {
                                 data.atv = qobject_cast<AudioTrackView*>(views.at(index + 1));
                                 if (!data.atv) {
                                         return 0;
