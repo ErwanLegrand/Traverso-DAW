@@ -167,7 +167,14 @@ void BusMonitor::set_session(TSession* session)
         if (project) {
                 return;
         }
-        m_sheet = qobject_cast<Sheet*>(session);
+
+        if (session) {
+                m_sheet = qobject_cast<Sheet*>(session);
+                if (!m_sheet) {
+                        m_sheet = qobject_cast<Sheet*>(session->get_parent_session());
+                }
+        }
+
         create_vu_meters();
 }
 
