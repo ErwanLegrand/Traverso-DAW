@@ -52,13 +52,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
  */
 
-QUndoGroup ProjectManager::undogroup;
+QUndoGroup ProjectManager::m_undogroup;
 
 ProjectManager::ProjectManager()
 	: ContextItem()
 {
 	PENTERCONS;
-	currentProject = (Project*) 0;
+        m_currentProject = (Project*) 0;
 	m_exitInProgress = false;
 	
 	m_watcher = new QFileSystemWatcher(0);
@@ -101,43 +101,43 @@ void ProjectManager::set_current_project(Project* project)
 
         QString oldprojectname = "";
 	
-        if (currentProject) {
+        if (m_currentProject) {
 
                 ie().abort_current_hold_actions();
 
 //                printf("exit in progress");
                 QString oncloseaction = config().get_property("Project", "onclose", "save").toString();
                 if (oncloseaction == "save") {
-                        currentProject->save();
+                        m_currentProject->save();
                 } else if (oncloseaction == "ask") {
                         QMessageBox::StandardButton button =
                                 QMessageBox::question(0,
                                 tr("Save Project"),
-                                tr("Should Project '%1' be safed before closing it?").arg(currentProject->get_title()),
+                                tr("Should Project '%1' be safed before closing it?").arg(m_currentProject->get_title()),
                                 QMessageBox::Yes | QMessageBox::No,
                                 QMessageBox::Yes);
                         if (button  == QMessageBox::Yes) {
-                                currentProject->save();
+                                m_currentProject->save();
                         }
                 }
 		
-                oldprojectname = currentProject->get_title();
+                oldprojectname = m_currentProject->get_title();
 
-                currentProject->disconnect_from_audio_device();
+                m_currentProject->disconnect_from_audio_device();
 
                 // this serves as a 'project closed' signal, emiting
                 // a zero pointer as project makes the GUI to delete it's
                 // project and releated GUI objects
                 emit projectLoaded(0);
 
-                delete currentProject;
+                delete m_currentProject;
         }
 
-	currentProject = project;
+        m_currentProject = project;
 
-	if (currentProject) {
-                config().set_property("Project", "current", currentProject->get_title());
-                emit projectLoaded(currentProject);
+        if (m_currentProject) {
+                config().set_property("Project", "current", m_currentProject->get_title());
+                emit projectLoaded(m_currentProject);
         } else if (!m_exitInProgress) {
                 // free the audiodevice, but only if we don't want to quit.
                 audiodevice().set_parameters(AudioDeviceSetup());
@@ -218,23 +218,21 @@ int ProjectManager::load_project(const QString& projectName)
 	set_current_project(newProject);
 
 	int err;
-	if ((err = currentProject->load()) < 0) {
+        if ((err = m_currentProject->load()) < 0) {
 		switch (err) {
 			case Project::PROJECT_FILE_VERSION_MISMATCH: {
-				emit projectFileVersionMismatch(currentProject->get_root_dir(), currentProject->get_title());
+                                emit projectFileVersionMismatch(m_currentProject->get_root_dir(), m_currentProject->get_title());
 				break;
 			}
 			default: {
-				emit projectLoadFailed(currentProject->get_title(), currentProject->get_error_string());
+                                emit projectLoadFailed(m_currentProject->get_title(), m_currentProject->get_error_string());
 			}
 		}
-		delete currentProject;
-		currentProject = 0;
-		set_current_project(0);
-		info().critical(tr("Unable to load Project %1").arg(projectName));
+                info().critical(tr("Unable to load Project %1").arg(projectName));
+                set_current_project(0);
 		return -1;
         } else {
-                currentProject->connect_to_audio_device();
+                m_currentProject->connect_to_audio_device();
         }
 	
 	return 1;
@@ -242,10 +240,8 @@ int ProjectManager::load_project(const QString& projectName)
 
 int ProjectManager::load_renamed_project(const QString & name)
 {
-	Q_ASSERT(currentProject);
+        Q_ASSERT(m_currentProject);
 	
-	delete currentProject;
-	currentProject= 0;
 	
 	return load_project(name);
 }
@@ -276,7 +272,7 @@ bool ProjectManager::project_is_current(const QString& title)
 	QString path = config().get_property("Project", "directory", "/directory/unknown").toString();
 	path += "/" + title;
 
-	if (currentProject && (currentProject->get_root_dir() == path)) {
+        if (m_currentProject && (m_currentProject->get_root_dir() == path)) {
 		return true;
 	}
 
@@ -298,8 +294,8 @@ bool ProjectManager::project_exists(const QString& title)
 
 Command* ProjectManager::save_project()
 {
-	if (currentProject) {
-		currentProject->save();
+        if (m_currentProject) {
+                m_currentProject->save();
 	} else {
 		info().information( tr("No Project to save, open or create a Project first!"));
 	}
@@ -309,7 +305,7 @@ Command* ProjectManager::save_project()
 
 Project * ProjectManager::get_project( )
 {
-	return currentProject;
+        return m_currentProject;
 }
 
 
@@ -324,7 +320,7 @@ void ProjectManager::start(const QString & basepath, const QString & projectname
 
 QUndoGroup* ProjectManager::get_undogroup() const
 {
-	return &undogroup;
+        return &m_undogroup;
 }
 
 
@@ -332,14 +328,14 @@ Command* ProjectManager::exit()
 {
 	PENTER;
 	
-	if (currentProject) {
-		if (currentProject->get_sheets().size() == 0) {
+        if (m_currentProject) {
+                if (m_currentProject->get_sheets().size() == 0) {
 			// No sheets to unregister from the audiodevice,
 			// just save and quit:
 			set_current_project(0);
 			QApplication::exit();
 			return 0;
-		} else if (currentProject->is_save_to_close()) {
+                } else if (m_currentProject->is_save_to_close()) {
 			m_exitInProgress = true;
 			set_current_project(0);
                         QApplication::exit();
@@ -374,13 +370,13 @@ void ProjectManager::delete_sheet( Sheet * sheet )
 
 Command* ProjectManager::undo()
 {
-	undogroup.undo();
+        m_undogroup.undo();
 	return 0;
 }
 
 Command* ProjectManager::redo()
 {
-	undogroup.redo();
+        m_undogroup.redo();
 	return 0;
 }
 
@@ -554,11 +550,9 @@ int ProjectManager::restore_project_from_backup(const QString& projectname, uint
 	QString project_path = project_dir + "/" + projectname;
 	QString backupDir = project_path + "/projectfilebackup";
 	
-	if (currentProject) {
-		currentProject->save();
+        if (m_currentProject) {
+                m_currentProject->save();
 		set_current_project(0);
-		delete currentProject;
-		currentProject = 0;
 	}
 
 	QString fileName = project_path + "/project.tpf";

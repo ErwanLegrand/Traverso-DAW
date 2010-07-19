@@ -80,7 +80,6 @@ public :
         QStringList get_input_buses_for(TBusTrack* busTrack);
 	
 	ResourcesManager* get_audiosource_manager() const;
-        TBusTrack* get_master_out() const {return m_masterOut;}
 	QString get_title() const;
 	QString get_engineer() const;
 	QString get_description() const;
@@ -155,7 +154,6 @@ public slots:
         void track_routing_changed();
 	Command* select();
         Command* start_transport();
-        Command* add_child_session();
         Command* remove_child_session();
 
 private:

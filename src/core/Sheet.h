@@ -78,14 +78,12 @@ public:
         QString get_artists() const {return m_artists;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
         QList<AudioTrack*> get_audio_tracks() const;
-        QList<Track*> get_tracks() const;
 	
         Project* get_project() const {return m_project;}
 	DiskIO*	get_diskio() const;
 	AudioClipManager* get_audioclip_manager() const;
 	AudioBus* get_render_bus() const {return m_renderBus;}
 	AudioBus* get_clip_render_bus() const {return m_clipRenderBus;}
-        Track* get_track(qint64 id) const;
         AudioTrack* get_audio_track_for_index(int index);
         QString get_audio_sources_dir() const;
         TimeRef get_last_location() const;

@@ -223,7 +223,7 @@
 		<keyfact type="FKEY" key1="N" >
 			<Objects>
                                 <Object objectname="CurveView" slotsignature="add_node" modes="All" />
-                                <Object objectname="Project" slotsignature="add_child_session" modes="All" modifierkeys="SHIFT" />
+                                <Object objectname="TMainWindow" slotsignature="show_add_child_session_dialog" modes="All" modifierkeys="SHIFT" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="B" >
@@ -330,6 +330,7 @@
                         <Objects>
                                 <Object objectname="AudioClip" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveClip" />
                                 <Object objectname="Track" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveTrack" />
+                                <Object objectname="Project" modes="All" sortorder="42" modifierkeys="CTRL" slotsignature="remove_child_session" />
                                 <Object objectname="CurveView" slotsignature="remove_node" modes="All" />
                                 <Object objectname="PluginView" slotsignature="remove_plugin" modes="All" />
                                 <Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" />

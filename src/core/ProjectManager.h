@@ -86,14 +86,13 @@ private:
         ProjectManager();
 	ProjectManager(const ProjectManager&);
 
-	Project* currentProject;
+        Project*        m_currentProject;
 	QList<Sheet*>	m_deletionSheetList;
 	bool		m_exitInProgress;
 	QStringList	m_projectDirs;
 	QFileSystemWatcher*	m_watcher;
 
-	bool clientRequestInProgress;
-	static QUndoGroup	undogroup;
+        static QUndoGroup	m_undogroup;
 	
 	void set_current_project(Project* project);
 	void cleanup_backupfiles_for_project(const QString& projectname);

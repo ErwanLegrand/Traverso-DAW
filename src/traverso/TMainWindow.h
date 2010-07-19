@@ -246,6 +246,7 @@ public slots :
 	Command* show_newsheet_dialog();
 	Command* show_newtrack_dialog();
 	Command* show_newproject_dialog();
+        Command* show_add_child_session_dialog();
         Command* show_welcome_page();
         Command* show_current_sheet();
         Command* audio_io_dialog();

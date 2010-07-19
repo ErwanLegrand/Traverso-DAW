@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TSession.h"
 
 #include "AddRemove.h"
+#include "AudioTrack.h"
 #include "Config.h"
 #include "Peak.h"
 #include "Utils.h"
@@ -61,6 +62,7 @@ void TSession::init()
         m_transport = 0;
         m_isSnapOn=true;
         m_isProjectSession = false;
+        m_id = create_id();
 
         connect(this, SIGNAL(privateTrackAdded(Track*)), this, SLOT(private_track_added(Track*)));
         connect(this, SIGNAL(privateTrackRemoved(Track*)), this, SLOT(private_track_removed(Track*)));
@@ -92,8 +94,48 @@ void TSession::set_parent_session(TSession *parentSession)
         emit hzoomChanged();
 }
 
+
+int TSession::set_state( const QDomNode & node )
+{
+        PENTER;
+
+        QDomElement e = node.toElement();
+
+        m_name = e.attribute("name", "" );
+        m_id = e.attribute("id", "0").toLongLong();
+
+        return 1;
+}
+
+QDomNode TSession::get_state(QDomDocument doc)
+{
+        QDomElement sheetNode = doc.createElement("WorkSheet");
+
+        sheetNode.setAttribute("id", m_id);
+        sheetNode.setAttribute("name", m_name);
+
+        QDomNode tracksNode = doc.createElement("Tracks");
+
+        foreach(Track* track, get_tracks()) {
+                QDomElement trackNode = doc.createElement("Track");
+
+                trackNode.setAttribute("id", track->get_id() );
+                tracksNode.appendChild(trackNode);
+        }
+
+        sheetNode.appendChild(tracksNode);
+
+        return sheetNode;
+}
+
+
+
 TBusTrack* TSession::get_master_out() const
 {
+        if (m_isProjectSession) {
+                return m_masterOut;
+        }
+
         if (m_parentSession) {
                 return m_parentSession->get_master_out();
         }
@@ -103,12 +145,30 @@ TBusTrack* TSession::get_master_out() const
 QList<Track*> TSession::get_tracks() const
 {
         QList<Track*> list;
+        foreach(AudioTrack* track, m_audioTracks) {
+                list.append(track);
+        }
         foreach(TBusTrack* track, m_busTracks) {
                 list.append(track);
         }
 
         return list;
 }
+
+Track* TSession::get_track(qint64 id) const
+{
+        QList<Track*> tracks = get_tracks();
+        if (m_masterOut) {
+                tracks.append(m_masterOut);
+        }
+        foreach(Track* track, tracks) {
+                if (track->get_id() == id) {
+                        return track;
+                }
+        }
+        return 0;
+}
+
 
 QList<TBusTrack*> TSession::get_bus_tracks() const
 {
@@ -296,6 +356,11 @@ Command* TSession::start_transport()
 
 Command* TSession::add_track(Track* track, bool historable)
 {
+        if (m_parentSession) {
+                private_track_added(track);
+                return 0;
+        }
+
         return new AddRemove(this, track, historable, this,
                 "private_add_track(Track*)", "privateTrackAdded(Track*)",
                 "private_remove_track(Track*)", "privateTrackRemoved(Track*)",
@@ -305,6 +370,11 @@ Command* TSession::add_track(Track* track, bool historable)
 
 Command* TSession::remove_track(Track* track, bool historable)
 {
+        if (m_parentSession) {
+                private_track_removed(track);
+                return 0;
+        }
+
         return new AddRemove(this, track, historable, this,
                 "private_remove_track(Track*)", "privateTrackRemoved(Track*)",
                 "private_add_track(Track*)", "privateTrackAdded(Track*)",
@@ -375,7 +445,6 @@ void TSession::private_track_removed(Track *track)
 void TSession::add_child_session(TSession *child)
 {
         m_childSessions.append(child);
-        child->set_name(m_name + " " + QString("child %1").arg(m_childSessions.size()));
         emit sessionAdded(child);
 }
 

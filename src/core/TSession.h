@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextItem.h"
 
+#include <QDomNode>
 #include "APILinkedList.h"
 #include "defines.h"
 
@@ -40,6 +41,10 @@ class TSession : public ContextItem
 public:
         TSession(TSession* parentSession = 0);
 
+        QDomNode get_state(QDomDocument doc);
+        int set_state( const QDomNode & node );
+
+
         qreal get_hzoom() const;
         QPoint get_scrollbar_xy();
         int get_mode() const {return m_mode;}
@@ -49,6 +54,7 @@ public:
         TimeRef get_new_transport_location() const {return m_newTransportLocation;}
         virtual TimeRef get_transport_location() const;
         virtual SnapList* get_snap_list() const;
+        Track* get_track(qint64 id) const;
         TimeLine* get_timeline() const;
         TSession* get_parent_session() const {return m_parentSession;}
         QString get_name() const {return m_name;}

@@ -76,6 +76,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/CDWritingDialog.h"
 #include "dialogs/project/ImportClipsDialog.h"
 #include "dialogs/AudioIODialog.h"
+#include "dialogs/TTrackSelector.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -301,8 +302,9 @@ void TMainWindow::set_project(Project* project)
         foreach(SheetWidget* sw, m_sheetWidgets) {
                 remove_session(sw->get_sheet());
         }
-        remove_session(m_project);
-
+        if (m_project) {
+                remove_session(m_project);
+        }
 
         m_project = project;
 
@@ -336,6 +338,9 @@ void TMainWindow::project_load_finished()
 
         foreach(Sheet* sheet, m_project->get_sheets()) {
                 add_session(sheet);
+                foreach(TSession* session, sheet->get_child_sessions()) {
+                        add_session(session);
+                }
         }
 
         add_session(m_project);
@@ -386,6 +391,7 @@ void TMainWindow::add_session(TSession *session)
                 connect(session, SIGNAL(recordingStateChanged()), this, SLOT(sheet_transport_state_changed()));
                 connect(session, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
                 connect(session, SIGNAL(sessionAdded(TSession*)), this, SLOT(add_session(TSession*)));
+                connect(session, SIGNAL(sessionRemoved(TSession*)), this, SLOT(remove_session(TSession*)));
         }
 
         if (mixer) {
@@ -1576,6 +1582,31 @@ Command * TMainWindow::show_marker_dialog()
 
 	return 0;
 }
+
+Command* TMainWindow::show_add_child_session_dialog()
+{
+        if (!m_project) {
+                return 0;
+        }
+
+        Sheet* activeSheet = m_project->get_active_sheet();
+
+        if (!activeSheet) {
+                info().information(tr("No Sheet active to add child view to"));
+                return 0;
+        }
+
+        TSession* session = new TSession(activeSheet);
+
+        TTrackSelector selector(this, activeSheet, session);
+        selector.exec();
+
+        activeSheet->add_child_session(session);
+        m_project->set_current_session(session->get_id());
+
+        return 0;
+}
+
 
 QSize TMainWindow::sizeHint() const
 {

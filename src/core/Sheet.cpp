@@ -248,6 +248,17 @@ int Sheet::set_state( const QDomNode & node )
 	}
 
         m_acmanager->set_state(node.firstChildElement("ClipManager"));
+
+        QDomNode workSheetsNode = node.firstChildElement("WorkSheets");
+        QDomNode workSheetNode = workSheetsNode.firstChild();
+
+        while(!workSheetNode.isNull()) {
+                TSession* childSession = new TSession(this);
+                childSession->set_state(workSheetNode);
+                add_child_session(childSession);
+
+                workSheetNode = workSheetNode.nextSibling();
+        }
 	
 	return 1;
 }
@@ -275,8 +286,6 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
 	properties.setAttribute("mode", m_mode);
 	sheetNode.appendChild(properties);
 
-	doc.appendChild(sheetNode);
-
 	sheetNode.appendChild(m_acmanager->get_state(doc));
 	
 	sheetNode.appendChild(m_timeline->get_state(doc));
@@ -300,6 +309,13 @@ QDomNode Sheet::get_state(QDomDocument doc, bool istemplate)
         }
 
         sheetNode.appendChild(busTracksNode);
+
+        QDomNode workSheetsNode = doc.createElement("WorkSheets");
+        foreach(TSession* session, m_childSessions) {
+                workSheetsNode.appendChild(session->get_state(doc));
+        }
+
+        sheetNode.appendChild(workSheetsNode);
 
 	return sheetNode;
 }
@@ -964,19 +980,6 @@ Command* Sheet::add_track(Track* track, bool historable)
         return TSession::add_track(track, historable);
 }
 
-
-Track* Sheet::get_track(qint64 id) const
-{
-        QList<Track*> tracks = get_tracks();
-        tracks.append(m_masterOut);
-        foreach(Track* track, tracks) {
-		if (track->get_id() == id) {
-			return track;
-		}
-	}
-	return 0;
-}
-
 // Function is only to be called from GUI thread.
 Command * Sheet::set_recordable()
 {
@@ -1276,17 +1279,6 @@ void Sheet::config_changed()
 QList< AudioTrack * > Sheet::get_audio_tracks() const
 {
         return m_audioTracks;
-}
-
-QList<Track*> Sheet::get_tracks() const
-{
-        QList<Track*> list;
-        foreach(AudioTrack* track, m_audioTracks) {
-                list.append(track);
-        }
-        list.append(TSession::get_tracks());
-
-        return list;
 }
 
 AudioTrack * Sheet::get_audio_track_for_index(int index)

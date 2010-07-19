@@ -42,6 +42,7 @@ dialogs/ExportDialog.cpp
 dialogs/CDWritingDialog.cpp
 dialogs/AudioIODialog.cpp
 dialogs/ThemeModifierDialog.cpp
+dialogs/TTrackSelector.cpp
 widgets/AudioIOPage.cpp
 widgets/BusMonitor.cpp
 widgets/CorrelationMeterWidget.cpp
@@ -87,6 +88,7 @@ ui/CDWritingDialog.ui
 ui/ImportClipsDialog.ui
 ui/WelcomeWidget.ui
 ui/ThemeModifierDialog.ui
+ui/TTrackSelector.ui
 )
 
 SET(TRAVERSO_GUI_MOC_CLASSES
@@ -109,6 +111,7 @@ dialogs/settings/SettingsDialog.h
 dialogs/settings/Pages.h
 dialogs/AudioIODialog.h
 dialogs/ThemeModifierDialog.h
+dialogs/TTrackSelector.h
 widgets/BusMonitor.h
 widgets/CorrelationMeterWidget.h
 widgets/ExportFormatOptionsWidget.h

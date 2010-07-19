@@ -91,7 +91,7 @@ Project::Project(const QString& title)
         m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Project::process) );
         m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Project::transport_control) );
 
-        m_masterOut = new MasterOutSubGroup((Sheet*) 0, tr("Master"));
+        m_masterOut = new MasterOutSubGroup(this, tr("Master"));
         m_masterOut->set_gain(0.5);
         // FIXME: m_masterOut is a Track, but at this point in time, Track can't
         // get a reference to us via pm().get_project();
@@ -390,11 +390,11 @@ int Project::load(QString projectfile)
                 Sheet* sheet = new Sheet(this, sheetNode);
                 // add it to the non-real time safe list
                 m_sheets.append(sheet);
-                sheet->set_state(sheetNode);
-
                 // and to the real time safe list
                 m_RtSheets.append(sheet);
-                emit sheetAdded(sheet);
+
+                sheet->set_state(sheetNode);
+
 		sheetNode = sheetNode.nextSibling();
 	}
 
@@ -407,8 +407,12 @@ int Project::load(QString projectfile)
                 }
         }
 
-        set_current_session(activeSheetId);
-        set_current_session(activeSessionId);
+        if (activeSheetId == activeSessionId) {
+                set_current_session(activeSheetId);
+        } else {
+                set_current_session(activeSheetId);
+                set_current_session(activeSessionId);
+        }
 
         info().information( tr("Project %1 loaded").arg(m_name) );
 	
@@ -1061,7 +1065,7 @@ Sheet* Project::get_sheet(qint64 id) const
 
 TSession* Project::get_session(qint64 id)
 {
-        if(id == get_id()) {
+        if(id == m_id) {
                 return this;
         }
 
@@ -1072,7 +1076,6 @@ TSession* Project::get_session(qint64 id)
 
                 foreach(TSession* session, sheet->get_child_sessions()) {
                         if (session->get_id() == id) {
-                                printf("this is a child session\n");
                                 return session;
                         }
                 }
@@ -1083,7 +1086,7 @@ TSession* Project::get_session(qint64 id)
 
 void Project::set_current_session(qint64 id)
 {
-        printf("set_current_session\n");
+        PENTER;
 
         TSession* session = get_session(id);
 
@@ -1093,13 +1096,13 @@ void Project::set_current_session(qint64 id)
         }
 
         m_activeSession = session;
+
         if (m_activeSession) {
                 m_activeSessionId = m_activeSession->get_id();
         }
 
-        printf("active session = %s\n", m_activeSession->get_name().toAscii().data());
-
         Sheet* sheet = qobject_cast<Sheet*>(m_activeSession);
+
         if (sheet && (m_activeSheet != sheet)) {
                 m_activeSheet = sheet;
                 m_activeSheetId = sheet->get_id();
@@ -1651,7 +1654,7 @@ int Project::process( nframes_t nframes )
 {
         int result = 0;
 
-        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+        apill_foreach(Sheet* sheet, Sheet, m_RtSheets) {
                 result |= sheet->process(nframes);
         }
 
@@ -1670,7 +1673,7 @@ int Project::transport_control(transport_state_t state)
 {
         bool result = true;
 
-        apill_foreach(Sheet* sheet, Sheet, m_sheets) {
+        apill_foreach(Sheet* sheet, Sheet, m_RtSheets) {
                 result = sheet->transport_control(state);
         }
 
@@ -1729,20 +1732,27 @@ QStringList Project::get_input_buses_for(TBusTrack *busTrack)
         return buses;
 }
 
-Command* Project::add_child_session()
+Command* Project::remove_child_session()
 {
-        if (!m_activeSheet) {
-                info().information(tr("No Sheet active to add child view to"));
+        PENTER;
+
+        if (!m_activeSession) {
                 return 0;
         }
 
-        TSession* session = new TSession(m_activeSheet);
-        m_activeSheet->add_child_session(session);
+        Sheet* sheet = qobject_cast<Sheet*>(m_activeSession->get_parent_session());
+        if (!sheet) {
+                // m_activeSession wasn't a child session, do nothing
+                return 0;
+        }
 
-        return 0;
-}
+        TSession* toBeRemoved = m_activeSession;
 
-Command* Project::remove_child_session()
-{
+        set_current_session(sheet->get_id());
+
+        sheet->remove_child_session(toBeRemoved);
+
+        delete toBeRemoved;
+
         return 0;
 }
