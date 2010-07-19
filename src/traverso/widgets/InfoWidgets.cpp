@@ -282,19 +282,19 @@ HDDSpaceInfo::HDDSpaceInfo(QWidget* parent )
 }
 
 
-void HDDSpaceInfo::set_sheet(Sheet* sheet)
+void HDDSpaceInfo::set_session(TSession* session)
 {
-	m_sheet = sheet;
+        m_session = session;
 	
-	if (! m_sheet) {
+        if (! m_session) {
 		updateTimer.start(20000);
 		return;
 	}
 	
 	update_status();
 	
-	connect(m_sheet, SIGNAL(transportStopped()), this, SLOT(sheet_stopped()));
-	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(sheet_started()));
+        connect(m_session, SIGNAL(transportStopped()), this, SLOT(sheet_stopped()));
+        connect(m_session, SIGNAL(transportStarted()), this, SLOT(sheet_started()));
 }
 
 void HDDSpaceInfo::sheet_started()
@@ -418,7 +418,7 @@ QSize HDDSpaceInfo::sizeHint() const
 
 InfoWidget::InfoWidget(QWidget* parent)
 	: QFrame(parent)
-	, m_sheet(0)
+        , m_session(0)
 	, m_project(0)
 {
 	setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
@@ -434,13 +434,13 @@ void InfoWidget::set_project(Project* project )
 	if (m_project) {
                 connect(m_project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(set_session(TSession*)));
 	} else {
-		set_sheet(0);
+                set_session(0);
 	}
 }
 
-void InfoWidget::set_sheet(Sheet* sheet)
+void InfoWidget::set_session(TSession* session)
 {
-	m_sheet = sheet;
+        m_session = session;
 }
 
 

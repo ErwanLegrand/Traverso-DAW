@@ -28,7 +28,7 @@
 #include <QProgressBar>
 
 class Project;
-class Sheet;
+class TSession;
 class MessageWidget;
 class SystemValueBar;
 class QLabel;
@@ -43,7 +43,7 @@ public:
 	InfoWidget(QWidget* parent = 0);
 
 protected:
-	Sheet*		m_sheet;
+        TSession*	m_session;
 	Project*	m_project;
 	
 	virtual QSize sizeHint() const {return QSize(size());}
@@ -52,7 +52,7 @@ private:
 	friend class InfoToolBar;
 
 protected slots:
-	virtual void set_sheet(Sheet* );
+        virtual void set_session(TSession* );
 	virtual void set_project(Project* );
 };
 
@@ -92,7 +92,7 @@ class DriverInfo : public InfoWidget
 
 public:
         DriverInfo(QWidget* parent = 0);
-        ~DriverInfo() {};
+        ~DriverInfo() {}
 
 protected:
 	QSize sizeHint () const;
@@ -118,7 +118,7 @@ class HDDSpaceInfo : public InfoWidget
 	Q_OBJECT
 public:
 	HDDSpaceInfo(QWidget* parent  = 0);
-	~HDDSpaceInfo(){};
+        ~HDDSpaceInfo(){}
 
 protected:
 	QSize sizeHint() const;	
@@ -128,7 +128,7 @@ private:
 	QPushButton* m_button;
 
 private slots:
-	void set_sheet(Sheet* );
+        void set_session(TSession* );
 
 private slots:
 	void update_status();
