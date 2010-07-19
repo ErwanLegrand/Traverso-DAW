@@ -40,8 +40,7 @@ NewTrackDialog::NewTrackDialog(QWidget * parent)
 	: QDialog(parent)
 {
 	setupUi(this);
-        jackTrackFrame->hide();
-        busConfigGroupBox->hide();
+
         resize(300, 300);
 
 	set_project(pm().get_project());
@@ -244,10 +243,10 @@ void NewTrackDialog::update_driver_info()
         QString driver = audiodevice().get_driver_type();
         if (driver == "Jack") {
                 jackTrackFrame->show();
-                busConfigGroupBox->hide();
+                busesFrame->hide();
         } else {
                 jackTrackFrame->hide();
-                busConfigGroupBox->show();
+                busesFrame->show();
         }
 }
 

@@ -114,7 +114,7 @@
         <property name="title">
          <string>Routing Configuration</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
           <widget class="QFrame" name="jackTrackFrame">
            <layout class="QVBoxLayout" name="verticalLayout">
@@ -183,49 +183,55 @@
           </widget>
          </item>
          <item>
-          <widget class="QFrame" name="frame_2">
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <widget class="QFrame" name="busesFrame">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Output (Buses)</string>
-              </property>
+             <widget class="QFrame" name="frame_2">
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>Output (Buses)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="outputsBus"/>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="outputsBus"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="inputBusFrame">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Input (HW)</string>
-              </property>
+             <widget class="QFrame" name="inputBusFrame">
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item>
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>Input (HW)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="inputsHW"/>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="inputsHW"/>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QFrame" name="frame">
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Output (HW)</string>
-              </property>
+             <widget class="QFrame" name="frame">
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Output (HW)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="outputsHW"/>
+               </item>
+              </layout>
              </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="outputsHW"/>
             </item>
            </layout>
           </widget>
