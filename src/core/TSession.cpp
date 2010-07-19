@@ -367,7 +367,6 @@ Command* TSession::toggle_effects_mode()
 Command* TSession::start_transport()
 {
         if (m_parentSession) {
-                PERROR("Implement me!");
                 return m_parentSession->start_transport();
         }
         return 0;
