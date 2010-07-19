@@ -1631,17 +1631,23 @@ Command* TMainWindow::show_newtrack_dialog()
         }
 
         TSession* activeSession = m_project->get_current_session();
-        if (activeSession->get_parent_session()) {
-                TTrackSelector selector(this, activeSession->get_parent_session(), activeSession);
-                selector.exec();
-                return 0;
+        Sheet* sheet = qobject_cast<Sheet*>(activeSession);
+        Project* project = qobject_cast<Project*>(activeSession);
+
+        if (sheet || project) {
+                if (! m_newTrackDialog) {
+                        m_newTrackDialog = new NewTrackDialog(this);
+                }
+
+                m_newTrackDialog->show();
+        } else {
+                if (activeSession->get_parent_session()) {
+                        TTrackSelector selector(this, activeSession->get_parent_session(), activeSession);
+                        selector.exec();
+                        return 0;
+                }
         }
 
-	if (! m_newTrackDialog) {
-		m_newTrackDialog = new NewTrackDialog(this);
-	}
-	
-	m_newTrackDialog->show();
 	
 	return 0;
 }
