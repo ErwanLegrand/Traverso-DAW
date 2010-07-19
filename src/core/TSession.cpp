@@ -203,6 +203,15 @@ SnapList* TSession::get_snap_list() const
         return m_snaplist;
 }
 
+Snappable* TSession::get_work_snap() const
+{
+        if (m_parentSession) {
+                return m_parentSession->get_work_snap();
+        }
+
+        return m_workSnap;
+}
+
 TimeLine* TSession::get_timeline() const
 {
         if (m_parentSession) {

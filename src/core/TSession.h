@@ -63,7 +63,7 @@ public:
         virtual QList<Track*> get_tracks() const;
         QList<TBusTrack*> get_bus_tracks() const;
         QList<TSession*> get_child_sessions() const {return m_childSessions;}
-        Snappable* get_work_snap() {return m_workSnap;}
+        Snappable* get_work_snap() const;
         virtual bool is_snap_on() const	{return m_isSnapOn;}
 
 
