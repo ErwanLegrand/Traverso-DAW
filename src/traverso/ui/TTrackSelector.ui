@@ -38,7 +38,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="nameLineEdit_2"/>
+      <widget class="QLineEdit" name="filterLineEdit"/>
      </item>
     </layout>
    </item>
