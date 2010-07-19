@@ -1158,11 +1158,9 @@ Command* SheetView::browse_to_context_item_below()
         if (data.currentContext == "AudioTrackView" || data.currentContext == "TBusTrackView") {
                 QList<TrackView*> views = get_track_views();
                 int index = views.indexOf(data.tv);
-                if (index < views.size()) {
+                if (index < (views.size() - 1)) {
                         index += 1;
-                        if (index < views.size()) {
-                                browse_to_track(views.at(index)->get_track());
-                        }
+                        browse_to_track(views.at(index)->get_track());
                 }
 
                 return 0;
