@@ -90,6 +90,10 @@ void TSession::set_parent_session(TSession *parentSession)
 
         m_parentSession = parentSession;
 
+        if (!m_isProjectSession) {
+                set_history_stack(m_parentSession->get_history_stack());
+        }
+
         emit scrollBarValueChanged();
         emit hzoomChanged();
 }
@@ -103,6 +107,22 @@ int TSession::set_state( const QDomNode & node )
 
         m_name = e.attribute("name", "" );
         m_id = e.attribute("id", "0").toLongLong();
+
+        QDomNode tracksNode = node.firstChildElement("Tracks");
+        QDomNode trackNode = tracksNode.firstChild();
+
+        while(!trackNode.isNull()) {
+                QDomElement e = trackNode.toElement();
+
+                qint64 id = e.attribute("id", "0").toLongLong();
+                Track* track = m_parentSession->get_track(id);
+                if (track) {
+                        add_track(track);
+                }
+
+                trackNode = trackNode.nextSibling();
+        }
+
 
         return 1;
 }
@@ -452,6 +472,5 @@ void TSession::remove_child_session(TSession *child)
 {
         m_childSessions.removeAll(child);
         emit sessionRemoved(child);
-        printf("removed child session\n");
 }
 
