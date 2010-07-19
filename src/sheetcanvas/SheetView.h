@@ -215,6 +215,7 @@ public slots:
         Command* workcursor_to_playhead();
 	Command* center_playhead();
         Command* toggle_expand_all_tracks(int height = -1);
+        Command* edit_properties();
 	
 private slots:
 	void scale_factor_changed();

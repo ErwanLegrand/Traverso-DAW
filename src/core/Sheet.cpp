@@ -835,9 +835,9 @@ int Sheet::process_export( nframes_t nframes )
 
 	// update the m_transportFrame
 // 	m_transportFrame += nframes;
-	m_transportLocation.add_frames(nframes, audiodevice().get_sample_rate());
+        m_transportLocation.add_frames(nframes, audiodevice().get_sample_rate());
 
-	return 1;
+        return 1;
 }
 
 

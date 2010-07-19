@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 
 
 #include <QScrollBar>
+#include <QInputDialog>
 
 #include "Config.h"
 #include "Curve.h"
@@ -1374,4 +1375,17 @@ QList<TrackView*> SheetView::get_track_views() const
                 views.append(m_projectMasterOutView);
         }
         return views;
+}
+
+Command* SheetView::edit_properties()
+{
+        bool ok;
+        QString text = QInputDialog::getText(m_clipsViewPort, tr("Edit Sheet Name"),
+                                        tr("Enter new name"),
+                                        QLineEdit::Normal, m_session->get_name(), &ok);
+        if (ok && !text.isEmpty()) {
+                m_session->set_name(text);
+        }
+
+        return 0;
 }

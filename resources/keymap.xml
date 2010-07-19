@@ -218,6 +218,7 @@
 				<Object objectname="AudioClipView" slotsignature="edit_properties" modes="All" sortorder="11" />
                                 <Object objectname="TimeLineView" slotsignature="TMainWindow::show_marker_dialog" modes="All" />
                                 <Object objectname="Zoom" modes="All" sortorder="1" slotsignature="toggle_expand_all_tracks" />
+                                <Object objectname="SheetView" slotsignature="edit_properties" modes="All" sortorder="11" modifierkeys="SHIFT" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="N" >
