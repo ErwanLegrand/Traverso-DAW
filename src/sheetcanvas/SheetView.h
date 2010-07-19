@@ -109,7 +109,7 @@ public :
         void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) {}
 	QRectF boundingRect() const {return QRectF();}
 	
-        TSession* get_sheet() const {return m_sheet;}
+        TSession* get_sheet() const {return m_session;}
 	TrackPanelViewPort* get_trackpanel_view_port() const;
 	ClipsViewPort* get_clips_viewport() const;
         TimeLineViewPort* get_timeline_viewport() const;
@@ -146,7 +146,7 @@ public :
 	qint64		timeref_scalefactor;
 
 private:
-        TSession*		m_sheet;
+        TSession*		m_session;
 	Curve*			m_shuttleCurve;
 	Curve*			m_dragShuttleCurve;
 	PlayHead*		m_playCursor;

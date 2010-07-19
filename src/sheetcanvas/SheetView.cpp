@@ -71,12 +71,12 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	ClipsViewPort* viewPort,
 	TrackPanelViewPort* tpvp,
 	TimeLineViewPort* tlvp,
-        TSession* sheet)
-	: ViewItem(0, sheet)
+        TSession* session)
+        : ViewItem(0, session)
 {
 	setZValue(1);
 	
-	m_sheet = sheet;
+        m_session = session;
 	m_clipsViewPort = viewPort;
 	m_tpvp = tpvp;
 	m_tlvp = tlvp;
@@ -87,16 +87,23 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	
 	m_clipsViewPort->scene()->addItem(this);
 
-	m_playCursor = new PlayHead(this, m_sheet, m_clipsViewPort);
-	m_workCursor = new WorkCursor(this, m_sheet);
-        m_sheetMasterOutView = new TBusTrackView(this, m_sheet->get_master_out());
-        m_projectMasterOutView = new TBusTrackView(this, pm().get_project()->get_master_out());
+        m_playCursor = new PlayHead(this, m_session, m_clipsViewPort);
+        m_workCursor = new WorkCursor(this, m_session);
+
+        Sheet* sheet = qobject_cast<Sheet*>(m_session);
+        if (sheet) {
+                m_sheetMasterOutView = new TBusTrackView(this, m_session->get_master_out());
+                m_projectMasterOutView = new TBusTrackView(this, pm().get_project()->get_master_out());
+        } else {
+                m_sheetMasterOutView = 0;
+                m_projectMasterOutView = 0;
+        }
 	
-	connect(m_sheet, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
-	connect(m_sheet, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
-	connect(m_sheet, SIGNAL(transportPosSet()), this, SLOT(transport_position_set()));
-	connect(m_sheet, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
-        connect(m_sheet, SIGNAL(scrollBarValueChanged()), this, SLOT(session_scrollbar_position_changed()));
+        connect(m_session, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));
+        connect(m_session, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
+        connect(m_session, SIGNAL(transportPosSet()), this, SLOT(transport_position_set()));
+        connect(m_session, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
+        connect(m_session, SIGNAL(scrollBarValueChanged()), this, SLOT(session_scrollbar_position_changed()));
 	
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
@@ -111,12 +118,12 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	
 	sheet_mode_changed();
 	
-	connect(m_sheet, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
-	connect(m_sheet, SIGNAL(tempFollowChanged(bool)), this, SLOT(set_follow_state(bool)));
-        connect(m_sheet, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_track_view(Track*)));
-        connect(m_sheet, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_track_view(Track*)));
-	connect(m_sheet, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
-	connect(m_sheet, SIGNAL(modeChanged()), this, SLOT(sheet_mode_changed()));
+        connect(m_session, SIGNAL(hzoomChanged()), this, SLOT(scale_factor_changed()));
+        connect(m_session, SIGNAL(tempFollowChanged(bool)), this, SLOT(set_follow_state(bool)));
+        connect(m_session, SIGNAL(trackAdded(Track*)), this, SLOT(add_new_track_view(Track*)));
+        connect(m_session, SIGNAL(trackRemoved(Track*)), this, SLOT(remove_track_view(Track*)));
+        connect(m_session, SIGNAL(lastFramePositionChanged()), this, SLOT(update_scrollbars()));
+        connect(m_session, SIGNAL(modeChanged()), this, SLOT(sheet_mode_changed()));
 	connect(&m_shuttletimer, SIGNAL(timeout()), this, SLOT (update_shuttle()));
 	connect(m_hScrollBar, SIGNAL(sliderMoved(int)), this, SLOT(stop_follow_play_head()));
 	connect(m_hScrollBar, SIGNAL(actionTriggered(int)), this, SLOT(hscrollbar_action(int)));
@@ -124,9 +131,9 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)), m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
 	
 	m_shuttleCurve = new Curve(0);
-        m_shuttleCurve->set_sheet(m_sheet);
+        m_shuttleCurve->set_sheet(m_session);
 	m_dragShuttleCurve = new Curve(0);
-        m_dragShuttleCurve->set_sheet(m_sheet);
+        m_dragShuttleCurve->set_sheet(m_session);
 	
 	// Use these variables to fine tune the scroll behavior
 	float whens[7] = {0.0, 0.2, 0.3, 0.4, 0.6, 0.9, 1.2};
@@ -148,7 +155,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
         // fill the view with trackviews, add_new_trackview()
         // doesn't yet layout the new tracks.
-        foreach(Track* track, m_sheet->get_tracks()) {
+        foreach(Track* track, m_session->get_tracks()) {
                 add_new_track_view(track);
         }
 
@@ -158,8 +165,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
         // Everything is in place to scroll to the last position
         // we were at, at closing this view.
-        QPoint p = m_sheet->get_scrollbar_xy();
-        m_sheet->set_scrollbar_xy(p.x(), p.y());
+        QPoint p = m_session->get_scrollbar_xy();
+        m_session->set_scrollbar_xy(p.x(), p.y());
 }
 
 SheetView::~SheetView()
@@ -170,9 +177,9 @@ SheetView::~SheetView()
 		
 void SheetView::scale_factor_changed( )
 {
-        qreal zoom = m_sheet->get_hzoom();
+        qreal zoom = m_session->get_hzoom();
         if (zoom == 0.0f) {
-                PERROR("Session %s return 0 hzoom factor!", m_sheet->get_name().toAscii().data());
+                PERROR("Session %s return 0 hzoom factor!", m_session->get_name().toAscii().data());
                 // Woopsy, zoom can't be zero, if we allow that, timeref_scalefactor
                 // will be zero too, and we use timeref_scalefactor as a divider so...:
                 zoom = config().get_property("Sheet", "hzoomLevel", 8192).toInt();
@@ -186,7 +193,7 @@ void SheetView::scale_factor_changed( )
 
 void SheetView::sheet_mode_changed()
 {
-	int mode = m_sheet->get_mode();
+        int mode = m_session->get_mode();
 	m_clipsViewPort->set_current_mode(mode);
 	m_tlvp->set_current_mode(mode);
 	m_tpvp->set_current_mode(mode);
@@ -226,7 +233,7 @@ TrackView* SheetView::get_trackview_under( QPointF point )
 void SheetView::move_trackview_up(TrackView *trackView)
 {
         int index = trackView->get_track()->get_sort_index();
-        if (index == 0 || trackView->get_track() == m_sheet->get_master_out()) {
+        if (index == 0 || trackView->get_track() == m_session->get_master_out()) {
                 // can't move any further up
                 return;
         }
@@ -264,7 +271,7 @@ void SheetView::move_trackview_up(TrackView *trackView)
 void SheetView::move_trackview_down(TrackView *trackView)
 {
         int index = trackView->get_track()->get_sort_index();
-        if (index >= m_audioTrackViews.size() || trackView->get_track() == m_sheet->get_master_out()) {
+        if (index >= m_audioTrackViews.size() || trackView->get_track() == m_session->get_master_out()) {
                 // can't move any further down
                 return;
         }
@@ -429,7 +436,7 @@ void SheetView::remove_track_view(Track* track)
 
 void SheetView::update_scrollbars()
 {
-	int width = (int)(m_sheet->get_last_location() / timeref_scalefactor) - (m_clipsViewPort->width() / 4);
+        int width = (int)(m_session->get_last_location() / timeref_scalefactor) - (m_clipsViewPort->width() / 4);
 	if (width < m_clipsViewPort->width() / 4) {
 		width = m_clipsViewPort->width() / 4;
 	}
@@ -540,7 +547,7 @@ void SheetView::set_track_height(TrackView *view, int newheight)
 void SheetView::hzoom(qreal factor)
 {
 	PENTER;
-	m_sheet->set_hzoom(m_sheet->get_hzoom() * factor);
+        m_session->set_hzoom(m_session->get_hzoom() * factor);
 	center();
 }
 
@@ -578,10 +585,10 @@ Command* SheetView::center()
 {
 	PENTER2;
 	TimeRef centerX;
-	if (m_sheet->is_transport_rolling() && m_actOnPlayHead) { 
-		centerX = m_sheet->get_transport_location();
+        if (m_session->is_transport_rolling() && m_actOnPlayHead) {
+                centerX = m_session->get_transport_location();
 	} else {
-		centerX = m_sheet->get_work_location();
+                centerX = m_session->get_work_location();
 	}
 	
 	int x = qRound(centerX / timeref_scalefactor);
@@ -592,7 +599,7 @@ Command* SheetView::center()
 
 void SheetView::transport_position_set()
 {
-        if (!m_sheet->is_transport_rolling()) {
+        if (!m_session->is_transport_rolling()) {
                 m_playCursor->update_position();
         }
 }
@@ -600,13 +607,13 @@ void SheetView::transport_position_set()
 
 void SheetView::stop_follow_play_head()
 {
-	m_sheet->set_temp_follow_state(false);
+        m_session->set_temp_follow_state(false);
 }
 
 
 void SheetView::follow_play_head()
 {
-	m_sheet->set_temp_follow_state(true);
+        m_session->set_temp_follow_state(true);
 }
 
 
@@ -736,7 +743,7 @@ void SheetView::update_shuttle()
 Command* SheetView::goto_begin()
 {
 	stop_follow_play_head();
-	m_sheet->set_work_at(TimeRef());
+        m_session->set_work_at(TimeRef());
 	center();
 	return (Command*) 0;
 }
@@ -745,8 +752,8 @@ Command* SheetView::goto_begin()
 Command* SheetView::goto_end()
 {
 	stop_follow_play_head();
-	TimeRef lastlocation = m_sheet->get_last_location();
-	m_sheet->set_work_at(lastlocation);
+        TimeRef lastlocation = m_session->get_last_location();
+        m_session->set_work_at(lastlocation);
 	center();
 	return (Command*) 0;
 }
@@ -769,28 +776,28 @@ TimeLineViewPort* SheetView::get_timeline_viewport() const
 
 Command * SheetView::touch( )
 {
-        m_sheet->set_work_at(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
+        m_session->set_work_at(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
 
 	return 0;
 }
 
 Command * SheetView::touch_play_cursor( )
 {
-        m_sheet->set_transport_pos(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
+        m_session->set_transport_pos(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
 
 	return 0;
 }
 
 Command * SheetView::play_to_begin( )
 {
-	m_sheet->set_transport_pos(TimeRef());
+        m_session->set_transport_pos(TimeRef());
 
 	return 0;
 }
 
 Command* SheetView::play_to_end()
 {
-        m_sheet->set_transport_pos(m_sheet->get_last_location());
+        m_session->set_transport_pos(m_session->get_last_location());
 
         return 0;
 }
@@ -808,7 +815,7 @@ Command * SheetView::work_cursor_move( )
 void SheetView::set_snap_range(int start)
 {
 // 	printf("SheetView::set_snap_range\n");
-        m_sheet->get_snap_list()->set_range(TimeRef(start * timeref_scalefactor),
+        m_session->get_snap_list()->set_range(TimeRef(start * timeref_scalefactor),
                                 TimeRef((start + m_clipsViewPort->viewport()->width()) * timeref_scalefactor),
                                 timeref_scalefactor);
 }
@@ -893,11 +900,11 @@ Command * SheetView::add_marker_at_work_cursor()
 
 Command * SheetView::playhead_to_workcursor( )
 {
-	TimeRef worklocation = m_sheet->get_work_location();
+        TimeRef worklocation = m_session->get_work_location();
 
-	m_sheet->set_transport_pos(worklocation);
+        m_session->set_transport_pos(worklocation);
 	
-	if (!m_sheet->is_transport_rolling()) {
+        if (!m_session->is_transport_rolling()) {
 		center();
 	}
 
@@ -906,13 +913,13 @@ Command * SheetView::playhead_to_workcursor( )
 
 Command* SheetView::workcursor_to_playhead()
 {
-        m_sheet->set_work_at(m_sheet->get_transport_location());
+        m_session->set_work_at(m_session->get_transport_location());
         return 0;
 }
 
 Command * SheetView::center_playhead( )
 {
-	TimeRef centerX = m_sheet->get_transport_location();
+        TimeRef centerX = m_session->get_transport_location();
 	set_hscrollbar_value(int(centerX / timeref_scalefactor - m_clipsViewPort->width() / 2));
 	
 	follow_play_head();
@@ -922,7 +929,7 @@ Command * SheetView::center_playhead( )
 
 void SheetView::set_hscrollbar_value(int value)
 {
-        m_sheet->set_scrollbar_xy(value, m_vScrollBar->value());
+        m_session->set_scrollbar_xy(value, m_vScrollBar->value());
 }
 
 void SheetView::set_vscrollbar_value(int value)
@@ -933,12 +940,12 @@ void SheetView::set_vscrollbar_value(int value)
         if (value < 0) {
                 value = 0;
         }
-        m_sheet->set_scrollbar_xy(m_hScrollBar->value(), value);
+        m_session->set_scrollbar_xy(m_hScrollBar->value(), value);
 }
 
 void SheetView::session_scrollbar_position_changed()
 {
-        QPoint p = m_sheet->get_scrollbar_xy();
+        QPoint p = m_session->get_scrollbar_xy();
 
         m_clipsViewPort->verticalScrollBar()->setValue(p.y());
         m_vScrollBar->setValue(p.y());
@@ -950,8 +957,12 @@ void SheetView::session_scrollbar_position_changed()
 void SheetView::browse_to_track(Track *track)
 {
         QList<TrackView*> views = get_track_views();
-        views.append(m_sheetMasterOutView);
-        views.append(m_projectMasterOutView);
+        if (m_sheetMasterOutView) {
+                views.append(m_sheetMasterOutView);
+        }
+        if (m_projectMasterOutView) {
+                views.append(m_projectMasterOutView);
+        }
 
         foreach(TrackView* view, views) {
                 if (view->get_track() == track) {
@@ -961,7 +972,7 @@ void SheetView::browse_to_track(Track *track)
 
                         cpointer().set_active_context_items_by_keyboard_input(list);
 
-                        move_edit_point_to(m_sheet->get_work_location(), view->scenePos().y() + view->boundingRect().height() / 2);
+                        move_edit_point_to(m_session->get_work_location(), view->scenePos().y() + view->boundingRect().height() / 2);
 
                         return;
                 }
@@ -1082,7 +1093,7 @@ Command* SheetView::to_upper_context_level()
         if (data.currentContext == "TimeLineView"|| data.currentContext == "MarkerView") {
                 browse_to_track(data.tv->get_track());
         } else if (data.currentContext == "AudioTrackView") {
-                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_sheet->get_work_location());
+                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_session->get_work_location());
                 if (nearestClipView) {
                         browse_to_audio_clip_view(nearestClipView);
                 }
@@ -1128,7 +1139,7 @@ Command* SheetView::browse_to_context_item_below()
                                 if (!data.atv) {
                                         return 0;
                                 }
-                                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_sheet->get_work_location());
+                                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_session->get_work_location());
                                 if (nearestClipView) {
                                         browse_to_audio_clip_view(nearestClipView);
                                         return 0;
@@ -1178,7 +1189,7 @@ Command* SheetView::browse_to_context_item_above()
                         int index = get_track_views().indexOf(data.atv);
                         if (index >= 1) {
                                 data.atv = (AudioTrackView*)get_track_views().at(index -1);
-                                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_sheet->get_work_location());
+                                AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_session->get_work_location());
                                 if (nearestClipView) {
                                         browse_to_audio_clip_view(nearestClipView);
                                         return 0;
@@ -1213,7 +1224,7 @@ Command* SheetView::browse_to_next_context_item()
         collect_item_browser_data(data);
 
         if (data.currentContext == "TimeLineView" || data.currentContext == "MarkerView") {
-                MarkerView* markerView = m_tlvp->get_timeline_view()->get_marker_view_after(m_sheet->get_work_location());
+                MarkerView* markerView = m_tlvp->get_timeline_view()->get_marker_view_after(m_session->get_work_location());
                 if (!markerView) {
                         return 0;
                 }
@@ -1221,7 +1232,7 @@ Command* SheetView::browse_to_next_context_item()
 
         }
         if (data.currentContext == "CurveView") {
-                CurveNodeView* nodeView = data.curveView->get_node_view_after(m_sheet->get_work_location());
+                CurveNodeView* nodeView = data.curveView->get_node_view_after(m_session->get_work_location());
                 if (!nodeView) {
                         return 0;
                 }
@@ -1268,7 +1279,7 @@ Command* SheetView::browse_to_previous_context_item()
         collect_item_browser_data(data);
 
         if (data.currentContext == "TimeLineView" || data.currentContext == "MarkerView") {
-                MarkerView* markerView = m_tlvp->get_timeline_view()->get_marker_view_before(m_sheet->get_work_location());
+                MarkerView* markerView = m_tlvp->get_timeline_view()->get_marker_view_before(m_session->get_work_location());
                 if (!markerView) {
                         return 0;
                 }
@@ -1277,7 +1288,7 @@ Command* SheetView::browse_to_previous_context_item()
         }
 
         if (data.currentContext == "CurveView") {
-                CurveNodeView* nodeView = data.curveView->get_node_view_before(m_sheet->get_work_location());
+                CurveNodeView* nodeView = data.curveView->get_node_view_before(m_session->get_work_location());
                 if (!nodeView) {
                         return 0;
                 }
@@ -1326,7 +1337,7 @@ void SheetView::center_in_view(ViewItem *item, enum Qt::AlignmentFlag flag)
 
 void SheetView::move_edit_point_to(TimeRef location, int sceneY)
 {
-        m_sheet->set_work_at(location);
+        m_session->set_work_at(location);
 
         int x = m_clipsViewPort->mapFromScene(m_workCursor->scenePos()).x();
         int y = m_clipsViewPort->mapFromScene(0, sceneY).y();
@@ -1355,7 +1366,11 @@ QList<TrackView*> SheetView::get_track_views() const
         QList<TrackView*> views;
         views.append(m_audioTrackViews);
         views.append(m_busTrackViews);
-        views.append(m_sheetMasterOutView);
-        views.append(m_projectMasterOutView);
+        if (m_sheetMasterOutView) {
+                views.append(m_sheetMasterOutView);
+        }
+        if (m_projectMasterOutView) {
+                views.append(m_projectMasterOutView);
+        }
         return views;
 }
