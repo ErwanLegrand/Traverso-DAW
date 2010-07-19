@@ -1630,6 +1630,13 @@ Command* TMainWindow::show_newtrack_dialog()
                 return 0;
         }
 
+        TSession* activeSession = m_project->get_current_session();
+        if (activeSession->get_parent_session()) {
+                TTrackSelector selector(this, activeSession->get_parent_session(), activeSession);
+                selector.exec();
+                return 0;
+        }
+
 	if (! m_newTrackDialog) {
 		m_newTrackDialog = new NewTrackDialog(this);
 	}
