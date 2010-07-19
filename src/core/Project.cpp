@@ -111,6 +111,7 @@ Project::Project(const QString& title)
 
         connect(this, SIGNAL(privateSheetRemoved(Sheet*)), this, SLOT(sheet_removed(Sheet*)));
         connect(this, SIGNAL(privateSheetAdded(Sheet*)), this, SLOT(sheet_added(Sheet*)));
+        connect(this, SIGNAL(exportFinished()), this, SLOT(export_finished()));
         connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 }
 
@@ -1123,6 +1124,9 @@ TSession* Project::get_current_session() const
 int Project::export_project(ExportSpecification* spec)
 {
 	PENTER;
+
+        // lets first disconnect from audio device!
+        disconnect_from_audio_device();
 	
 	if (!m_exportThread) {
 		m_exportThread = new ExportThread(this);
@@ -1159,7 +1163,7 @@ int Project::start_export(ExportSpecification* spec)
 {
 	PMESG("Starting export, rate is %d bitdepth is %d", spec->sample_rate, spec->data_width );
 
-	spec->blocksize = 32768;
+        spec->blocksize = audiodevice().get_buffer_size(); //32768;
 
 	spec->dataF = new audio_sample_t[spec->blocksize * spec->channels];
 	audio_sample_t* readbuffer = new audio_sample_t[spec->blocksize * spec->channels];
@@ -1252,6 +1256,11 @@ int Project::start_export(ExportSpecification* spec)
 	emit exportFinished();
 
 	return 1;
+}
+
+void Project::export_finished()
+{
+        connect_to_audio_device();
 }
 
 /* returns the total time of the data that will be written to CD */

@@ -215,6 +215,7 @@ private slots:
 	void private_remove_sheet(Sheet* sheet);
         void sheet_removed(Sheet* sheet);
         void sheet_added(Sheet* sheet);
+        void export_finished();
 
 signals:
         void currentSessionChanged(TSession* );
