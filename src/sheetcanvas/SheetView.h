@@ -117,6 +117,7 @@ public :
         AudioTrackView* get_audio_trackview_under(QPointF point);
         TrackView* get_trackview_under(QPointF point);
         QList<TrackView*> get_track_views() const;
+        int get_track_height(Track* track) const;
 	
 	void load_theme_data();
 	void start_shuttle(bool start, bool drag=false);
@@ -225,7 +226,8 @@ private slots:
 	void sheet_mode_changed();
 	void hscrollbar_value_changed(int);
 	void hscrollbar_action(int);
-        void session_scrollbar_position_changed();
+        void session_vertical_scrollbar_position_changed();
+        void session_horizontal_scrollbar_position_changed();
 };
 
 

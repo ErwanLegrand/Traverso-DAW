@@ -58,6 +58,7 @@ public:
         TimeLine* get_timeline() const;
         TSession* get_parent_session() const {return m_parentSession;}
         QString get_name() const {return m_name;}
+        int get_track_height(qint64 trackId) const {return m_trackHeights.value(trackId, 150);}
 
         TBusTrack* get_master_out() const;
         virtual QList<Track*> get_tracks() const;
@@ -70,9 +71,12 @@ public:
         void set_hzoom(qreal hzoom);
         virtual void set_work_at(TimeRef location, bool isFolder=false);
         void set_scrollbar_xy(int x, int y);
+        void set_scrollbar_x(int x);
+        void set_scrollbar_y(int y);
         void set_parent_session(TSession* parentSession);
         void set_is_project_session(bool isProjectSession) {m_isProjectSession = isProjectSession;}
         void set_name(const QString& name);
+        void set_track_height(qint64 trackId, int height) {m_trackHeights.insert(trackId, height);}
 
         Command* add_track(Track* api, bool historable=true);
         Command* remove_track(Track* api, bool historable=true);
@@ -96,6 +100,7 @@ protected:
         QList<AudioTrack*>      m_audioTracks;
         QList<TBusTrack*>       m_busTracks;
         TBusTrack*              m_masterOut;
+        QHash<qint64, int>      m_trackHeights;
 
         SnapList*	m_snaplist;
         Snappable*	m_workSnap;
@@ -151,7 +156,8 @@ signals:
         void transportStopped();
         void workingPosChanged();
         void transportPosSet();
-        void scrollBarValueChanged();
+        void horizontalScrollBarValueChanged();
+        void verticalScrollBarValueChanged();
         void propertyChanged();
 };
 

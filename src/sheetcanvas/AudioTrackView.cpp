@@ -81,7 +81,7 @@ void AudioTrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 	
 	if (m_paintBackground) {
 		QColor color = themer()->get_color("Track:background");
-		painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_track->get_height() - m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_sv->get_track_height(m_track) - m_bottomborderwidth, color);
 	}
 }
 
@@ -112,7 +112,7 @@ int AudioTrackView::get_childview_y_offset() const
 
 int AudioTrackView::get_height( )
 {
-	return m_track->get_height() - (m_topborderwidth + m_bottomborderwidth + m_clipbottommargin + m_cliptopmargin);
+        return m_sv->get_track_height(m_track) - (m_topborderwidth + m_bottomborderwidth + m_clipbottommargin + m_cliptopmargin);
 }
 
 

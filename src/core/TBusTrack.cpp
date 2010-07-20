@@ -24,12 +24,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioBus.h"
 #include "PluginChain.h"
 #include "Utils.h"
+#include "TSession.h"
 
 TBusTrack::TBusTrack(TSession* session, const QString& name, int channelCount)
         : Track(session)
 {
         QObject::tr("Bus Track");
-        m_height = 60;
+        session->set_track_height(m_id, 60);
         m_id = create_id();
         m_name = name;
         m_channelCount = channelCount;

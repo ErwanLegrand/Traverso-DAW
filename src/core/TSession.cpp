@@ -78,14 +78,14 @@ void TSession::set_parent_session(TSession *parentSession)
                         disconnect(m_parentSession, SIGNAL(transportPosSet()), this, SIGNAL(transportPosSet()));
                         disconnect(m_parentSession, SIGNAL(workingPosChanged()), this, SIGNAL(workingPosChanged()));
                         disconnect(m_parentSession, SIGNAL(hzoomChanged()), this, SIGNAL(hzoomChanged()));
-                        disconnect(m_parentSession, SIGNAL(scrollBarValueChanged()), this, SIGNAL(scrollBarValueChanged()));
+                        disconnect(m_parentSession, SIGNAL(horizontalScrollBarValueChanged()), this, SIGNAL(horizontalScrollBarValueChanged()));
                 }
                 connect(parentSession, SIGNAL(transportStarted()), this, SIGNAL(transportStarted()));
                 connect(parentSession, SIGNAL(transportStopped()), this, SIGNAL(transportStopped()));
                 connect(parentSession, SIGNAL(transportPosSet()), this, SIGNAL(transportPosSet()));
                 connect(parentSession, SIGNAL(workingPosChanged()), this, SIGNAL(workingPosChanged()));
                 connect(parentSession, SIGNAL(hzoomChanged()), this, SIGNAL(hzoomChanged()));
-                connect(parentSession, SIGNAL(scrollBarValueChanged()), this, SIGNAL(scrollBarValueChanged()));
+                connect(parentSession, SIGNAL(horizontalScrollBarValueChanged()), this, SIGNAL(horizontalScrollBarValueChanged()));
 //        }
 
         m_parentSession = parentSession;
@@ -94,7 +94,7 @@ void TSession::set_parent_session(TSession *parentSession)
                 set_history_stack(m_parentSession->get_history_stack());
         }
 
-        emit scrollBarValueChanged();
+        emit horizontalScrollBarValueChanged();
         emit hzoomChanged();
 }
 
@@ -107,6 +107,8 @@ int TSession::set_state( const QDomNode & node )
 
         m_name = e.attribute("name", "" );
         m_id = e.attribute("id", "0").toLongLong();
+        m_sbx = e.attribute("sbx", "0").toInt();
+        m_sby = e.attribute("sby", "0").toInt();
 
         QDomNode tracksNode = node.firstChildElement("Tracks");
         QDomNode trackNode = tracksNode.firstChild();
@@ -115,9 +117,11 @@ int TSession::set_state( const QDomNode & node )
                 QDomElement e = trackNode.toElement();
 
                 qint64 id = e.attribute("id", "0").toLongLong();
+
                 Track* track = m_parentSession->get_track(id);
                 if (track) {
                         add_track(track);
+                        set_track_height(track->get_id(), e.attribute("height", "160").toInt());
                 }
 
                 trackNode = trackNode.nextSibling();
@@ -133,6 +137,8 @@ QDomNode TSession::get_state(QDomDocument doc)
 
         sheetNode.setAttribute("id", m_id);
         sheetNode.setAttribute("name", m_name);
+        sheetNode.setAttribute("sbx", get_scrollbar_xy().x());
+        sheetNode.setAttribute("sby", get_scrollbar_xy().y());
 
         QDomNode tracksNode = doc.createElement("Tracks");
 
@@ -140,6 +146,7 @@ QDomNode TSession::get_state(QDomDocument doc)
                 QDomElement trackNode = doc.createElement("Track");
 
                 trackNode.setAttribute("id", track->get_id() );
+                trackNode.setAttribute("height", get_track_height(track->get_id()));
                 tracksNode.appendChild(trackNode);
         }
 
@@ -259,10 +266,15 @@ qreal TSession::get_hzoom() const
 
 QPoint TSession::get_scrollbar_xy()
 {
+        QPoint point;
+
         if (m_parentSession) {
-                return m_parentSession->get_scrollbar_xy();
+                point.setX(m_parentSession->get_scrollbar_xy().x());
         }
-        return QPoint(m_sbx, m_sby);
+
+        point.setY(m_sby);
+
+        return point;
 }
 
 int TSession::is_transport_rolling() const
@@ -323,7 +335,7 @@ void TSession::set_temp_follow_state(bool state)
         emit tempFollowChanged(state);
 }
 
-void TSession::set_scrollbar_xy(int x, int y)
+void TSession::set_scrollbar_x(int x)
 {
         // this session mirrors a parent session
         // when transport rolls, this sessions playhead will _also_ try to
@@ -335,13 +347,21 @@ void TSession::set_scrollbar_xy(int x, int y)
         }
 
         if (m_parentSession) {
-                return m_parentSession->set_scrollbar_xy(x, y);
+                return m_parentSession->set_scrollbar_x(x);
         }
 
-        m_sbx = x; m_sby = y;
+        m_sbx = x;
 
-        emit scrollBarValueChanged();
+        emit horizontalScrollBarValueChanged();
 }
+
+void TSession::set_scrollbar_y(int y)
+{
+        m_sby = y;
+
+        emit verticalScrollBarValueChanged();
+}
+
 
 Command* TSession::set_editing_mode( )
 {
@@ -385,6 +405,7 @@ Command* TSession::start_transport()
 Command* TSession::add_track(Track* track, bool historable)
 {
         if (m_parentSession) {
+                set_track_height(track->get_id(), m_parentSession->get_track_height(track->get_id()));
                 private_track_added(track);
                 return 0;
         }

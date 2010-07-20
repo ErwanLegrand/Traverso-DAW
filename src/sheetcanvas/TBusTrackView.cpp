@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TBusTrack.h"
 
 #include "TrackPanelView.h"
+#include "SheetView.h"
 
 #include <Debugger.h>
 
@@ -32,6 +33,8 @@ TBusTrackView::TBusTrackView(SheetView* sv, TBusTrack* group)
         : TrackView(sv, group)
 {
         PENTERCONS;
+
+        m_sv = sv;
 
         load_theme_data();
 
@@ -52,7 +55,7 @@ void TBusTrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
 
 //        if (m_paintBackground) {
                 QColor color = themer()->get_color("BusTrack:background");
-                painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_track->get_height() - m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_topborderwidth, pixelcount+1, m_sv->get_track_height(m_track) - m_bottomborderwidth, color);
 //        }
 }
 

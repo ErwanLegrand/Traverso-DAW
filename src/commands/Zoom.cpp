@@ -209,7 +209,7 @@ void Zoom::track_vzoom_in(bool autorepeat)
                 return;
         }
 
-        int trackheight = m_tv->get_track()->get_height();
+        int trackheight = m_sv->get_track_height(m_tv->get_track());
         trackheight *= 1.3;
 
         m_sv->set_track_height(m_tv, trackheight);
@@ -223,7 +223,7 @@ void Zoom::track_vzoom_out(bool autorepeat)
                 return;
         }
 
-        int trackheight = m_tv->get_track()->get_height();
+        int trackheight = m_sv->get_track_height(m_tv->get_track());
         trackheight *= 0.7;
 
         m_sv->set_track_height(m_tv, trackheight);

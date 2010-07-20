@@ -75,6 +75,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
 {
         PENTERCONS;
 
+        m_sv = view->get_sheetview();
+
         m_trackView = view;
         m_viewPort = m_trackView->get_sheetview()->get_trackpanel_view_port();
         m_track = m_trackView->get_track();
@@ -103,9 +105,6 @@ TrackPanelView::TrackPanelView(TrackView* view)
         m_outBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSOUT);
 
         m_viewPort->scene()->addItem(this);
-
-        m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
-
 
         connect(m_track, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
         connect(m_track, SIGNAL(muteChanged(bool)), m_muteLed, SLOT(ison_changed(bool)));
@@ -161,10 +160,10 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 
         if (m_trackView->m_bottomborderwidth > 0) {
                 QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_track->get_height() - m_trackView->m_bottomborderwidth, pixelcount, m_trackView->m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_sv->get_track_height(m_track) - m_trackView->m_bottomborderwidth, pixelcount, m_trackView->m_bottomborderwidth, color);
         }
 
-        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_track->get_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
+        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_sv->get_track_height(m_track) - 1, themer()->get_color("TrackPanel:trackseparation"));
 
         if (xstart < 180) {
                 draw_panel_name(painter);
@@ -192,7 +191,7 @@ void TrackPanelView::draw_panel_name(QPainter* painter)
 {
         QString title = QString::number(m_track->get_sort_index() + 1) + "  " + m_track->get_name();
 
-        if (m_track->get_height() < SMALL_HEIGHT) {
+        if (m_sv->get_track_height(m_track) < SMALL_HEIGHT) {
                 QFontMetrics fm(themer()->get_font("TrackPanel:fontscale:name"));
                 title = fm.elidedText(title, Qt::ElideMiddle, 110);
         }
@@ -208,13 +207,13 @@ void TrackPanelView::draw_panel_name(QPainter* painter)
 void TrackPanelView::calculate_bounding_rect()
 {
         prepareGeometryChange();
-        m_boundingRect = QRectF(0, 0, 200, m_track->get_height());
+        m_boundingRect = QRectF(0, 0, 200, m_sv->get_track_height(m_track));
         layout_panel_items();
 }
 
 void TrackPanelView::layout_panel_items()
 {
-        int height =  m_track->get_height();
+        int height =  m_sv->get_track_height(m_track);
         int adjust = 0;
 
         Qt::Orientation orientation = (Qt::Orientation)config().get_property("Themer", "VUOrientation", Qt::Vertical).toInt();
@@ -339,7 +338,7 @@ void TBusTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem
         int pixelcount = (int)option->exposedRect.width();
 
         QColor color = themer()->get_color("BusTrack:background");
-        painter->fillRect(xstart, m_trackView->m_topborderwidth, pixelcount, m_track->get_height() - m_trackView->m_bottomborderwidth, color);
+        painter->fillRect(xstart, m_trackView->m_topborderwidth, pixelcount, m_sv->get_track_height(m_track) - m_trackView->m_bottomborderwidth, color);
 
         TrackPanelView::paint(painter, option, widget);
 }

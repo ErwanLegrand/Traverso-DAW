@@ -105,7 +105,9 @@ SheetView::SheetView(SheetWidget* sheetwidget,
         connect(m_session, SIGNAL(transportStarted()), this, SLOT(follow_play_head()));
         connect(m_session, SIGNAL(transportPosSet()), this, SLOT(transport_position_set()));
         connect(m_session, SIGNAL(workingPosChanged()), this, SLOT(stop_follow_play_head()));
-        connect(m_session, SIGNAL(scrollBarValueChanged()), this, SLOT(session_scrollbar_position_changed()));
+        connect(m_session, SIGNAL(verticalScrollBarValueChanged()), this, SLOT(session_vertical_scrollbar_position_changed()));
+        connect(m_session, SIGNAL(horizontalScrollBarValueChanged()), this, SLOT(session_horizontal_scrollbar_position_changed()));
+
 	
 	m_clipsViewPort->scene()->addItem(m_playCursor);
 	m_clipsViewPort->scene()->addItem(m_workCursor);
@@ -168,7 +170,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
         // Everything is in place to scroll to the last position
         // we were at, at closing this view.
         QPoint p = m_session->get_scrollbar_xy();
-        m_session->set_scrollbar_xy(p.x(), p.y());
+        m_session->set_scrollbar_x(p.x());
+        m_session->set_scrollbar_y(p.y());
 }
 
 SheetView::~SheetView()
@@ -492,14 +495,14 @@ void SheetView::vzoom(qreal factor)
         for (int i=0; i<m_audioTrackViews.size(); ++i) {
                 TrackView* view = m_audioTrackViews.at(i);
                 Track* track = view->get_track();
-                int height = track->get_height();
+                int height = get_track_height(track);
 		height = (int) (height * factor);
 		if (height > m_trackMaximumHeight) {
 			height = m_trackMaximumHeight;
 		} else if (height < m_trackMinimumHeight) {
 			height = m_trackMinimumHeight;
 		}
-                track->set_height(height);
+                m_session->set_track_height(track->get_id(), height);
 	}
 	
         update_tracks_bounding_rect();
@@ -512,16 +515,16 @@ Command* SheetView::toggle_expand_all_tracks(int height)
         if (height < 0) {
                 if (m_meanTrackHeight > m_trackMinimumHeight) {
                         foreach(TrackView* view, get_track_views()) {
-                                view->get_track()->set_height(m_trackMinimumHeight);
+                                m_session->set_track_height(view->get_track()->get_id(), m_trackMinimumHeight);
                         }
                 } else {
                         foreach(TrackView* view, get_track_views()) {
-                                view->get_track()->set_height(85);
+                                m_session->set_track_height(view->get_track()->get_id(), 85);
                         }
                 }
         } else {
                 foreach(TrackView* view, get_track_views()) {
-                        view->get_track()->set_height(height);
+                        m_session->set_track_height(view->get_track()->get_id(), height);
                 }
         }
 
@@ -541,7 +544,8 @@ void SheetView::set_track_height(TrackView *view, int newheight)
                 newheight = m_trackMinimumHeight;
         }
 
-        view->get_track()->set_height(newheight);
+        m_session->set_track_height(view->get_track()->get_id(), newheight);
+
         view->calculate_bounding_rect();
         layout_tracks();
 }
@@ -563,7 +567,7 @@ void SheetView::layout_tracks()
         for (int i=0; i<views.size(); ++i) {
                 TrackView* view = views.at(i);
 		view->move_to(0, verticalposition);
-                verticalposition += (view->get_track()->get_height() + m_trackSeperatingHeight);
+                verticalposition += (get_track_height(view->get_track()) + m_trackSeperatingHeight);
 	}
 
 	m_sceneHeight = verticalposition;
@@ -931,7 +935,7 @@ Command * SheetView::center_playhead( )
 
 void SheetView::set_hscrollbar_value(int value)
 {
-        m_session->set_scrollbar_xy(value, m_vScrollBar->value());
+        m_session->set_scrollbar_x(value);
 }
 
 void SheetView::set_vscrollbar_value(int value)
@@ -942,15 +946,20 @@ void SheetView::set_vscrollbar_value(int value)
         if (value < 0) {
                 value = 0;
         }
-        m_session->set_scrollbar_xy(m_hScrollBar->value(), value);
+        m_session->set_scrollbar_y(value);
 }
 
-void SheetView::session_scrollbar_position_changed()
+void SheetView::session_vertical_scrollbar_position_changed()
 {
         QPoint p = m_session->get_scrollbar_xy();
 
         m_clipsViewPort->verticalScrollBar()->setValue(p.y());
         m_vScrollBar->setValue(p.y());
+}
+
+void SheetView::session_horizontal_scrollbar_position_changed()
+{
+        QPoint p = m_session->get_scrollbar_xy();
 
         m_clipsViewPort->horizontalScrollBar()->setValue(p.x());
         m_hScrollBar->setValue(p.x());
@@ -1166,7 +1175,7 @@ Command* SheetView::browse_to_context_item_below()
                 return 0;
         }
 
-        // Where not yet in the viewport, at least not upon a track,
+        // We're not yet in the viewport, at least not upon a track,
         // browse to top most track
         if (get_track_views().size()) {
                 browse_to_track(get_track_views().first()->get_track());
@@ -1373,6 +1382,11 @@ QList<TrackView*> SheetView::get_track_views() const
                 views.append(m_projectMasterOutView);
         }
         return views;
+}
+
+int SheetView::get_track_height(Track *track) const
+{
+        return m_session->get_track_height(track->get_id());
 }
 
 Command* SheetView::edit_properties()

@@ -45,11 +45,9 @@ public:
         static const int INITIAL_HEIGHT = 60;
 
         void get_state(QDomDocument& doc, QDomElement& element, bool istemplate=false);
-        int get_height() const {return m_height;}
         int get_sort_index() const;
         VUMonitors get_vumonitors() const {return m_vumonitors;}
 
-        virtual void set_height(int h);
         void set_muted_by_solo(bool muted);
         void set_solo(bool solo);
         void set_sort_index(int index);
@@ -82,7 +80,6 @@ public:
 protected:
         VUMonitors      m_vumonitors;
         int     m_sortIndex;
-        int     m_height;
         int     m_type;
         bool    m_mutedBySolo;
         bool    m_isSolo;

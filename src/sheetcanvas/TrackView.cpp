@@ -83,7 +83,7 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 
         if (m_bottomborderwidth > 0) {
                 QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_track->get_height() - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
+                painter->fillRect(xstart, m_sv->get_track_height(m_track) - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
         }
 
         if (m_isMoving || m_track->has_active_context()) {
@@ -93,7 +93,7 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                 pen.setColor(themer()->get_color("Track:mousehover"));
                 painter->setPen(pen);
                 painter->drawLine(xstart, m_topborderwidth, xstart+pixelcount, m_topborderwidth);
-                painter->drawLine(xstart, m_track->get_height(), xstart+pixelcount, m_track->get_height());
+                painter->drawLine(xstart, m_sv->get_track_height(m_track), xstart+pixelcount, m_sv->get_track_height(m_track));
         }
 }
 
@@ -111,7 +111,7 @@ void TrackView::move_to( int x, int y )
 
 int TrackView::get_height( )
 {
-        return m_track->get_height() - (m_topborderwidth + m_bottomborderwidth + m_clipbottommargin + m_cliptopmargin);
+        return m_sv->get_track_height(m_track) - (m_topborderwidth + m_bottomborderwidth + m_clipbottommargin + m_cliptopmargin);
 }
 
 Command* TrackView::edit_properties( )
@@ -168,7 +168,7 @@ void TrackView::set_moving(bool move)
 void TrackView::calculate_bounding_rect()
 {
         prepareGeometryChange();
-        m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, m_track->get_height());
+        m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, m_sv->get_track_height(m_track));
         m_panel->calculate_bounding_rect();
         ViewItem::calculate_bounding_rect();
 }

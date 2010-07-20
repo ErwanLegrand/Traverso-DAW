@@ -75,8 +75,8 @@ void Track::get_state(QDomDocument& doc, QDomElement& node, bool istemplate)
         node.setAttribute("mute", m_isMuted);
         node.setAttribute("solo", m_isSolo);
         node.setAttribute("mutedbysolo", m_mutedBySolo);
-        node.setAttribute("height", m_height);
         node.setAttribute("sortindex", m_sortIndex);
+        node.setAttribute("height", m_session->get_track_height(m_id));
 
         QDomNode pluginChainNode = doc.createElement("PluginChain");
         pluginChainNode.appendChild(m_pluginChain->get_state(node.toDocument()));
@@ -99,7 +99,6 @@ int Track::set_state( const QDomNode & node )
 {
         QDomElement e = node.toElement();
 
-        set_height(e.attribute( "height", "160" ).toInt() );
         m_sortIndex = e.attribute( "sortindex", "-1" ).toInt();
         m_name = e.attribute( "name", "" );
         set_muted(e.attribute( "mute", "" ).toInt());
@@ -112,6 +111,8 @@ int Track::set_state( const QDomNode & node )
         if (m_id == 0) {
                 m_id = create_id();
         }
+
+        m_session->set_track_height(m_id, e.attribute( "height", "160" ).toInt());
 
         QDomNode m_pluginChainNode = node.firstChildElement("PluginChain");
         if (!m_pluginChainNode.isNull()) {
@@ -183,12 +184,6 @@ bool Track::is_solo()
 bool Track::is_muted_by_solo()
 {
         return m_mutedBySolo;
-}
-
-
-void Track::set_height(int h)
-{
-        m_height = h;
 }
 
 
