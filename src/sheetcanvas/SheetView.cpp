@@ -95,7 +95,9 @@ SheetView::SheetView(SheetWidget* sheetwidget,
         Project* project = qobject_cast<Project*>(m_session);
         if (sheet  || project) {
                 m_sheetMasterOutView = new TBusTrackView(this, m_session->get_master_out());
-                m_projectMasterOutView = new TBusTrackView(this, pm().get_project()->get_master_out());
+                if (sheet) {
+                        m_projectMasterOutView = new TBusTrackView(this, pm().get_project()->get_master_out());
+                }
         } else {
                 m_sheetMasterOutView = 0;
                 m_projectMasterOutView = 0;
