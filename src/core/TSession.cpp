@@ -270,6 +270,8 @@ QPoint TSession::get_scrollbar_xy()
 
         if (m_parentSession) {
                 point.setX(m_parentSession->get_scrollbar_xy().x());
+        } else {
+                point.setX(m_sbx);
         }
 
         point.setY(m_sby);
