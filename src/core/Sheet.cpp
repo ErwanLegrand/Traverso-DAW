@@ -148,6 +148,7 @@ void Sheet::init()
 
         m_hs = new QUndoStack(pm().get_undogroup());
         set_history_stack(m_hs);
+        m_timeline->set_history_stack(m_hs);
 
         m_acmanager = new AudioClipManager(this);
         set_context_item( m_acmanager );
