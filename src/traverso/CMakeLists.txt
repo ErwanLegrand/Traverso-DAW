@@ -40,10 +40,8 @@ dialogs/PluginSelectorDialog.cpp
 dialogs/ProjectConverterDialog.cpp
 dialogs/ExportDialog.cpp
 dialogs/CDWritingDialog.cpp
-dialogs/AudioIODialog.cpp
 dialogs/ThemeModifierDialog.cpp
 dialogs/TTrackSelector.cpp
-widgets/AudioIOPage.cpp
 widgets/BusMonitor.cpp
 widgets/CorrelationMeterWidget.cpp
 widgets/ExportFormatOptionsWidget.cpp
@@ -58,8 +56,6 @@ widgets/WelcomeWidget.cpp
 )
 
 SET(TRAVERSO_UI_FILES
-ui/AudioIODialog.ui
-ui/AudioIOPage.ui
 ui/AudioSourcesManagerWidget.ui
 ui/ExportFormatOptionsWidget.ui
 ui/SpectralMeterConfigWidget.ui
@@ -109,7 +105,6 @@ dialogs/project/OpenProjectDialog.h
 dialogs/project/ProjectManagerDialog.h
 dialogs/settings/SettingsDialog.h
 dialogs/settings/Pages.h
-dialogs/AudioIODialog.h
 dialogs/ThemeModifierDialog.h
 dialogs/TTrackSelector.h
 widgets/BusMonitor.h
@@ -122,7 +117,6 @@ widgets/MeterWidget.h
 widgets/SpectralMeterWidget.h
 widgets/TransportConsoleWidget.h
 widgets/VUMeter.h
-widgets/AudioIOPage.h
 widgets/WelcomeWidget.h
 )
 

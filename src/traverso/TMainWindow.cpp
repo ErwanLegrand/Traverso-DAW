@@ -75,7 +75,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/ExportDialog.h"
 #include "dialogs/CDWritingDialog.h"
 #include "dialogs/project/ImportClipsDialog.h"
-#include "dialogs/AudioIODialog.h"
 #include "dialogs/TTrackSelector.h"
 
 // Always put me below _all_ includes, this is needed
@@ -672,13 +671,6 @@ void TMainWindow::create_menus( )
         m_projectToolBar->addAction(action);
         connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 
-        action = menu->addAction(tr("Audio I/O..."));
-        m_projectMenuToolbarActions.append(action);
-        connect(action, SIGNAL(triggered()), this, SLOT(audio_io_dialog()));
-        list.clear();
-        list.append(QKeySequence("F6"));
-        action->setShortcuts(list);
-
 	action = menu->addAction(tr("&Export..."));
         m_projectMenuToolbarActions.append(action);
         list.clear();
@@ -962,7 +954,7 @@ Command * TMainWindow::show_context_menu( )
 				toplevelmenu = create_context_menu(item);
 				if (! toplevelmenu ) {
 					if (items.size() > 1) {
-						toplevelmenu = new QMenu();
+                                                toplevelmenu = new QMenu(this);
 					} else {
 						return 0;
 					}
@@ -1329,7 +1321,7 @@ void TMainWindow::set_fade_out_shape( QAction * action )
 
 QMenu* TMainWindow::create_fade_selector_menu(const QString& fadeTypeName)
 {
-	QMenu* menu = new QMenu();
+        QMenu* menu = new QMenu(this);
 	
 	foreach(QString name, FadeCurve::defaultShapes) {
 		QAction* action = menu->addAction(name);
@@ -1889,18 +1881,6 @@ void TMainWindow::update_sheet_tabs_appearance()
                         }
                 }
         }
-}
-
-Command* TMainWindow::audio_io_dialog()
-{
-        if (!m_project) {
-                return 0;
-        }
-
-        AudioIODialog aiodlg(this);
-        aiodlg.exec();
-
-        return 0;
 }
 
 Command* TMainWindow::show_welcome_page()

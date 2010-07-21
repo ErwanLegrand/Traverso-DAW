@@ -249,7 +249,6 @@ public slots :
         Command* show_add_child_session_dialog();
         Command* show_welcome_page();
         Command* show_current_sheet();
-        Command* audio_io_dialog();
         Command* start_transport();
 	Command* set_recordable_and_start_transport();
         Command* show_track_finder();
