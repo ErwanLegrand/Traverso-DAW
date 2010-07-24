@@ -242,6 +242,7 @@ void ViewPort::leaveEvent(QEvent *)
         // Force the next mouse move event to do something
         // even if the mouse didn't move, so switching viewports
         // does update the current context!
+        cpointer().set_current_viewport(0);
         m_oldMousePos = QPoint();
 }
 
