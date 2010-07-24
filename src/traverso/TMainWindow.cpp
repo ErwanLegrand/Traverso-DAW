@@ -368,6 +368,9 @@ void TMainWindow::add_session(TSession *session)
         if (session->is_project_session() || !session->get_parent_session()) {
                 TSessionTabWidget* tabWidget = new TSessionTabWidget(this, session);
                 m_sessionTabsToolbar->addWidget(tabWidget);
+                QWidget* spacer = new QWidget(tabWidget);
+                spacer->setMinimumWidth(10);
+                m_sessionTabsToolbar->addWidget(spacer);
                 m_sessionTabWidgets.insert(session, tabWidget);
         }
 
@@ -623,7 +626,7 @@ void TMainWindow::create_menus( )
 
         QMenuBar* mainMenuBar = new QMenuBar(mainToolBar);
         QLabel* webAddressLabel = new QLabel(mainToolBar);
-        webAddressLabel->setText(".      <a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
+        webAddressLabel->setText("<a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
         webAddressLabel->setOpenExternalLinks(true);
 
         mainToolBar->addWidget(mainMenuBar);

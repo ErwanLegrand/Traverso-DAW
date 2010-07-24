@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-static const int BUTTON_HEIGHT = 28;
+static const int BUTTON_HEIGHT = 22;
 
 TSessionTabWidget::TSessionTabWidget(QWidget *parent, TSession *session)
         : QPushButton(parent)
@@ -71,7 +71,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, TSession *session)
 
         m_hLayout = new QHBoxLayout();
         m_hLayout->setMargin(0);
-        m_hLayout->setSpacing(0);
+        m_hLayout->setSpacing(4);
 
         m_childLayout = new QHBoxLayout;
 
