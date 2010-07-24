@@ -234,6 +234,10 @@ void ContextPointer::set_current_viewport(AbstractViewPort *vp)
 {
         PENTER;
         m_port = vp;
+        if (!m_port) {
+                QList<ContextItem *> items;
+                set_active_context_items(items);
+        }
 }
 
 void ContextPointer::set_edit_point_position(int x, int y)
@@ -286,7 +290,9 @@ void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
                 item->set_has_active_context(true);
         }
 
-        m_port->update_holdcursor_shape();
+        if (m_port) {
+                m_port->update_holdcursor_shape();
+        }
 }
 
 void ContextPointer::remove_from_active_context_list(ContextItem *item)
