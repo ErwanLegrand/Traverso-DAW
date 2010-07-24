@@ -127,6 +127,10 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, TSession *session)
         connect(session, SIGNAL(propertyChanged()), this, SLOT(session_property_changed()));
         connect(this, SIGNAL(clicked()), this, SLOT(button_clicked()));
         connect(pm().get_project(), SIGNAL(currentSessionChanged(TSession*)), this, SLOT(project_current_session_changed(TSession*)));
+
+        if (pm().get_project()->get_current_session() == m_session) {
+                project_current_session_changed(m_session);
+        }
 }
 
 void TSessionTabWidget::child_session_added(TSession *session)
@@ -204,7 +208,7 @@ void TSessionTabWidget::arrow_button_clicked()
 
 void TSessionTabWidget::shortcut_click()
 {
-        animateClick(150);
+        animateClick(120);
 }
 
 void TSessionTabWidget::leaveEvent( QEvent * )

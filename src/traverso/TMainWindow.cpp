@@ -365,9 +365,10 @@ void TMainWindow::add_sheetwidget(Sheet* sheet)
 
 void TMainWindow::add_session(TSession *session)
 {
-        if (session == m_project || !session->get_parent_session()) {
+        if (session->is_project_session() || !session->get_parent_session()) {
                 TSessionTabWidget* tabWidget = new TSessionTabWidget(this, session);
                 m_sessionTabsToolbar->addWidget(tabWidget);
+                m_sessionTabWidgets.insert(session, tabWidget);
         }
 
         SheetWidget* sheetWidget = new SheetWidget(session, m_centerAreaWidget);
@@ -396,8 +397,12 @@ void TMainWindow::remove_session(TSession* session)
                         m_currentSheetWidget = 0;
                 }
                 delete sw;
-        }
 
+                TSessionTabWidget* tabWidget = m_sessionTabWidgets.take(session);
+                if (tabWidget) {
+                        delete tabWidget;
+                }
+        }
 }
 
 

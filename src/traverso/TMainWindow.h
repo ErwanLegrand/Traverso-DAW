@@ -75,6 +75,7 @@ class Ui_QuickStartDialog;
 class RestoreProjectBackupDialog;
 class ProgressToolBar;
 class WelcomeWidget;
+class TSessionTabWidget;
 struct MenuData;
 
 class TTabWidget : public QTabWidget
@@ -143,6 +144,7 @@ private:
         int                     m_previousCenterAreaWidgetIndex;
         int                     m_vuLevelUpdateFrequency;
         QHash<TSession*, SheetWidget* > m_sheetWidgets;
+        QHash<TSession*, TSessionTabWidget* > m_sessionTabWidgets;
         SheetWidget*		m_currentSheetWidget;
 	QList<ViewPort* > 	currentProjectViewPortList;
 	QHash<QString, QMenu*>	m_contextMenus;
