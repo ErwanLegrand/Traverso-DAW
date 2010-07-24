@@ -1749,6 +1749,11 @@ Command* Project::remove_child_session()
                 return 0;
         }
 
+        if (m_activeSession->is_project_session()) {
+                // Oh no, we're not gonna delete project itself!
+                return 0;
+        }
+
         Sheet* sheet = qobject_cast<Sheet*>(m_activeSession->get_parent_session());
         if (!sheet) {
                 // m_activeSession wasn't a child session, do nothing
