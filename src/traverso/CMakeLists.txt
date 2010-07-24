@@ -53,6 +53,7 @@ widgets/SpectralMeterWidget.cpp
 widgets/TransportConsoleWidget.cpp
 widgets/VUMeter.cpp
 widgets/WelcomeWidget.cpp
+widgets/TSessionTabWidget.cpp
 )
 
 SET(TRAVERSO_UI_FILES
@@ -118,6 +119,7 @@ widgets/SpectralMeterWidget.h
 widgets/TransportConsoleWidget.h
 widgets/VUMeter.h
 widgets/WelcomeWidget.h
+widgets/TSessionTabWidget.h
 )
 
 QT4_ADD_RESOURCES(TRAVERSO_RESOURCES

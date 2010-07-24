@@ -75,6 +75,7 @@ public:
         void set_scrollbar_y(int y);
         void set_parent_session(TSession* parentSession);
         void set_is_project_session(bool isProjectSession) {m_isProjectSession = isProjectSession;}
+        bool is_project_session() const {return m_isProjectSession;}
         void set_name(const QString& name);
         void set_track_height(qint64 trackId, int height) {m_trackHeights.insert(trackId, height);}
 

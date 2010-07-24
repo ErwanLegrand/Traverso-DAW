@@ -119,7 +119,7 @@ SystemResources::SystemResources(QWidget * parent)
         m_cpuUsage->set_text("DSP");
         m_diskIOCPUUsage->set_text("R/W CPU");
 	
-	QHBoxLayout* lay = new QHBoxLayout(this);
+        QHBoxLayout* lay = new QHBoxLayout(this);
 	lay->addSpacing(6);
 	lay->addWidget(m_readBufferStatus);
 	lay->addWidget(m_icon);
@@ -189,7 +189,7 @@ DriverInfo::DriverInfo( QWidget * parent )
 	m_driver->setFlat(true);
 	m_driver->setFocusPolicy(Qt::NoFocus);
 	
-	QHBoxLayout* lay = new QHBoxLayout(this);
+        QHBoxLayout* lay = new QHBoxLayout(this);
 	lay->addWidget(m_driver);
 	lay->setMargin(0);
 	setLayout(lay);
@@ -268,7 +268,7 @@ HDDSpaceInfo::HDDSpaceInfo(QWidget* parent )
 	m_button->setFocusPolicy(Qt::NoFocus);
 	m_button->setEnabled(false);
 	
-	QHBoxLayout* lay = new QHBoxLayout;
+        QHBoxLayout* lay = new QHBoxLayout;
 	lay->setMargin(0);
 	lay->addWidget(m_button);
 	setLayout(lay);
@@ -448,12 +448,12 @@ SysInfoToolBar::SysInfoToolBar(QWidget * parent)
 	: QToolBar(parent)
 {
 	setObjectName(tr("System Information"));
-	message = new MessageWidget(this);
+        message = new MessageWidget(this);
 	resourcesInfo = new SystemResources(this);
 	hddInfo = new HDDSpaceInfo(this);
 	driverInfo = new DriverInfo(this);
 	
-	setMovable(false);
+        setMovable(false);
 	
 	QAction* action;
 	
@@ -466,8 +466,8 @@ SysInfoToolBar::SysInfoToolBar(QWidget * parent)
 	action = addWidget(hddInfo);
 	action->setVisible(true);
 	addSeparator();
-	action = addWidget(message);
-	action->setVisible(true);
+        action = addWidget(message);
+        action->setVisible(true);
 }
 
 SystemValueBar::SystemValueBar(QWidget * parent)

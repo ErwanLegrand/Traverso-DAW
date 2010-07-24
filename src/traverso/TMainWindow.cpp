@@ -61,6 +61,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "widgets/SpectralMeterWidget.h"
 #include "widgets/TransportConsoleWidget.h"
 #include "widgets/WelcomeWidget.h"
+#include "widgets/TSessionTabWidget.h"
 
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"
@@ -149,12 +150,10 @@ TMainWindow::TMainWindow()
 //        m_mainLayout = new QGridLayout(this);
 //        mainWidget->setLayout(m_mainLayout);
 //        setCentralWidget(mainWidget);
-        m_centerAreaWidget = new TTabWidget(this);
+        m_centerAreaWidget = new QStackedWidget(this);
 //        m_mainLayout->addWidget(m_centerAreaWidget, 0, 0);
         setCentralWidget(m_centerAreaWidget);
 
-        connect(m_centerAreaWidget, SIGNAL(currentChanged(int)), this, SLOT(sheet_tab_index_changed(int)));
-	
 	// HistoryView 
 	historyDW = new QDockWidget(tr("History"), this);
 	historyDW->setObjectName("HistoryDockWidget");
@@ -213,6 +212,10 @@ TMainWindow::TMainWindow()
 	m_editToolBar = new QToolBar(this);
 	m_editToolBar->setObjectName("Edit Toolbar");
 	addToolBar(m_editToolBar);
+
+        m_sessionTabsToolbar = new QToolBar(this);
+        m_sessionTabsToolbar->setObjectName("Sheet Tabs");
+        addToolBar(m_sessionTabsToolbar);
 	
 	transportConsole = new TransportConsoleWidget(this);
 	transportConsole->setObjectName("Transport Console");
@@ -231,9 +234,11 @@ TMainWindow::TMainWindow()
 	m_projectToolBar->setIconSize(QSize(iconsize, iconsize));
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 
+
+
         m_welcomeWidget = new WelcomeWidget(this);
         m_welcomeWidget->show();
-        m_centerAreaWidget->addTab(m_welcomeWidget, tr("&0: Welcome"));
+        m_centerAreaWidget->addWidget(m_welcomeWidget/*, tr("&0: Welcome")*/);
         m_welcomeWidget->setFocus(Qt::MouseFocusReason);
 
 	// Some default values.
@@ -335,14 +340,14 @@ void TMainWindow::project_load_finished()
         connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(add_sheetwidget(Sheet*)));
         connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(remove_sheetwidget(Sheet*)));
 
+        add_session(m_project);
+
         foreach(Sheet* sheet, m_project->get_sheets()) {
                 add_session(sheet);
                 foreach(TSession* session, sheet->get_child_sessions()) {
                         add_session(session);
                 }
         }
-
-        add_session(m_project);
 
         show_session(m_project->get_current_session());
 
@@ -360,48 +365,25 @@ void TMainWindow::add_sheetwidget(Sheet* sheet)
 
 void TMainWindow::add_session(TSession *session)
 {
-//        Project* project = qobject_cast<Project*>(session);
-
-        SheetWidget* mixer = m_sheetWidgets.value(m_project);
-        int mixerIndex = -1;
-        if (mixer) {
-                mixerIndex =  m_centerAreaWidget->indexOf(mixer);
-                m_centerAreaWidget->removeTab(mixerIndex);
+        if (session == m_project || !session->get_parent_session()) {
+                TSessionTabWidget* tabWidget = new TSessionTabWidget(this, session);
+                m_sessionTabsToolbar->addWidget(tabWidget);
         }
 
         SheetWidget* sheetWidget = new SheetWidget(session, m_centerAreaWidget);
-
-//        if (!project) {
-        int index = m_centerAreaWidget->addTab(sheetWidget, "");
-        m_centerAreaWidget->get_tab_bar()->setTabData(index, session->get_id());
-//      }
-
         m_sheetWidgets.insert(session, sheetWidget);
+        m_centerAreaWidget->addWidget(sheetWidget);
 
-        connect(session, SIGNAL(transportStarted()), this, SLOT(sheet_transport_state_changed()));
-        connect(session, SIGNAL(transportStopped()), this, SLOT(sheet_transport_state_changed()));
         connect(session, SIGNAL(transportStopped()), this, SLOT(update_follow_state()));
         connect(session, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
         connect(session, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
-        connect(session, SIGNAL(propertyChanged()), this, SLOT(update_sheet_tabs_appearance()));
 
         Sheet* sheet = qobject_cast<Sheet*>(session);
         if (sheet) {
-                connect(session, SIGNAL(recordingStateChanged()), this, SLOT(sheet_transport_state_changed()));
                 connect(session, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
                 connect(session, SIGNAL(sessionAdded(TSession*)), this, SLOT(add_session(TSession*)));
                 connect(session, SIGNAL(sessionRemoved(TSession*)), this, SLOT(remove_session(TSession*)));
         }
-
-        if (mixer) {
-                m_centerAreaWidget->addTab(mixer, "");
-        }
-
-//        if (project) {
-//                m_mainLayout->addWidget(sheetWidget, 0, 1);
-//        }
-
-        update_sheet_tabs_appearance();
 }
 
 void TMainWindow::remove_session(TSession* session)
@@ -409,8 +391,7 @@ void TMainWindow::remove_session(TSession* session)
         SheetWidget* sw = m_sheetWidgets.value(session);
         if (sw) {
                 m_sheetWidgets.remove(session);
-                int index =  m_centerAreaWidget->indexOf(sw);
-                m_centerAreaWidget->removeTab(index);
+                m_centerAreaWidget->removeWidget(sw);
                 if (m_currentSheetWidget == sw) {
                         m_currentSheetWidget = 0;
                 }
@@ -463,7 +444,7 @@ void TMainWindow::show_session(TSession* session)
 
         if (session) {
                 pm().get_undogroup()->setActiveStack(session->get_history_stack());
-                setWindowTitle(m_project->get_title() + ": Sheet " + session->get_name() + " - Traverso");
+//                setWindowTitle(m_project->get_title() + ": Sheet " + session->get_name() + " - Traverso");
 	}
 }
 
@@ -566,7 +547,7 @@ bool TMainWindow::eventFilter(QObject * obj, QEvent * event)
 //			if (vp && !ie().is_holding()) {
 //				vp->mouseMoveEvent(mouseEvent);
 //			}
-		} else {
+                } else {
 			return false;
 		}
 	}
@@ -630,7 +611,24 @@ void TMainWindow::create_menus( )
 	QAction* action;
         QList<QKeySequence> list;
 
-        QMenu* menu = menuBar()->addMenu(tr("&File"));
+        QToolBar* mainToolBar = new QToolBar(this);
+        mainToolBar->setObjectName("MainToolBar");
+        mainToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
+        mainToolBar->setMovable(false);
+
+        QMenuBar* mainMenuBar = new QMenuBar(mainToolBar);
+        QLabel* webAddressLabel = new QLabel(mainToolBar);
+        webAddressLabel->setText(".      <a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
+        webAddressLabel->setOpenExternalLinks(true);
+
+        mainToolBar->addWidget(mainMenuBar);
+        mainToolBar->addWidget(m_sessionTabsToolbar);
+        mainToolBar->addWidget(webAddressLabel);
+
+        addToolBar(Qt::TopToolBarArea, mainToolBar);
+
+
+        QMenu* menu = mainMenuBar->addMenu(tr("&File"));
         menu->installEventFilter(this);
 
         action = menu->addAction(tr("&New..."));
@@ -708,10 +706,10 @@ void TMainWindow::create_menus( )
         connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 
 
-        menu = menuBar()->addMenu(tr("&Edit"));
+        menu = mainMenuBar->addMenu(tr("&Edit"));
         menu->installEventFilter(this);
 
-	action = menu->addAction(tr("Undo"));
+        action = menu->addAction(tr("Undo"));
         m_projectMenuToolbarActions.append(action);
         action->setIcon(QIcon(":/undo"));
 	action->setShortcuts(QKeySequence::Undo);
@@ -767,7 +765,7 @@ void TMainWindow::create_menus( )
 	m_editToolBar->addAction(m_effectAction);
 	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
 
-        menu = menuBar()->addMenu(tr("Vi&ew"));
+        menu = mainMenuBar->addMenu(tr("Vi&ew"));
         menu->installEventFilter(this);
 
 	menu->addAction(historyDW->toggleViewAction());
@@ -808,7 +806,7 @@ void TMainWindow::create_menus( )
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 
 
-        m_sheetMenu = menuBar()->addMenu(tr("&Sheet"));
+        m_sheetMenu = mainMenuBar->addMenu(tr("&Sheet"));
         m_sheetMenu->installEventFilter(this);
 
         action = m_sheetMenu->addAction(tr("New &Sheet(s)..."));
@@ -822,7 +820,7 @@ void TMainWindow::create_menus( )
 	
 	menu->addSeparator();
 	
-	menu = menuBar()->addMenu(tr("Se&ttings"));
+        menu = mainMenuBar->addMenu(tr("Se&ttings"));
         menu->installEventFilter(this);
 	
         m_encodingMenu = menu->addMenu(tr("&Recording File Format"));
@@ -860,7 +858,7 @@ void TMainWindow::create_menus( )
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
 	
 	
-	menu = menuBar()->addMenu(tr("&Help"));
+        menu = mainMenuBar->addMenu(tr("&Help"));
         menu->installEventFilter(this);
 
 	action = menu->addAction(tr("&Getting Started"));
@@ -1860,29 +1858,6 @@ void TMainWindow::update_effects_state()
 	}
 }
 
-void TMainWindow::update_sheet_tabs_appearance()
-{
-        if (!m_project) {
-		return;
-	}
-
-        for (int i=1; i<m_centerAreaWidget->count(); i++) {
-                SheetWidget* widget = qobject_cast<SheetWidget*>(m_centerAreaWidget->widget(i));
-                if (widget) {
-                        TSession* session = widget->get_sheet();
-                        if (session && m_project) {
-                                QString string;
-                                if (session == m_project) {
-                                        string = "&" + QString::number(i) + ": Mixer";
-                                } else {
-                                        string = "&" + QString::number(i) + ": " + session->get_name();
-                                }
-                                m_centerAreaWidget->setTabText(i, string);
-                        }
-                }
-        }
-}
-
 Command* TMainWindow::show_welcome_page()
 {
         m_previousCenterAreaWidgetIndex = m_centerAreaWidget->currentIndex();
@@ -1897,37 +1872,6 @@ Command* TMainWindow::show_current_sheet()
         return 0;
 }
 
-void TMainWindow::sheet_tab_index_changed(int index)
-{
-        if (index && m_project) {
-                m_previousCenterAreaWidgetIndex = index;
-
-                qint64 id = m_centerAreaWidget->get_tab_bar()->tabData(index).toLongLong();
-                m_project->set_current_session(id);
-        }
-}
-
-void TMainWindow::sheet_transport_state_changed()
-{
-        QTabBar* bar = m_centerAreaWidget->get_tab_bar();
-        for (int i=1; i<m_centerAreaWidget->count(); i++) {
-                SheetWidget* widget = qobject_cast<SheetWidget*>(m_centerAreaWidget->widget(i));
-                if (widget) {
-                        TSession* session = widget->get_sheet();
-                        if (session) {
-                                Sheet* sheet = qobject_cast<Sheet*>(session);
-                                if (session->is_transport_rolling() && sheet && sheet->is_recording()) {
-                                        bar->setTabTextColor(i, QColor(Qt::red));
-                                } else if (session->is_transport_rolling()) {
-                                                bar->setTabTextColor(i, QColor(Qt::blue));
-                                } else if (!session->is_transport_rolling()) {
-                                        bar->setTabTextColor(i, QColor(Qt::black));
-                                }
-                        }
-                }
-        }
-
-}
 
 Command* TMainWindow::show_track_finder()
 {

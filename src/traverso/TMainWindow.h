@@ -139,7 +139,7 @@ protected:
 
 private:
         QGridLayout*            m_mainLayout;
-        TTabWidget*             m_centerAreaWidget;
+        QStackedWidget*         m_centerAreaWidget;
         int                     m_previousCenterAreaWidgetIndex;
         int                     m_vuLevelUpdateFrequency;
         QHash<TSession*, SheetWidget* > m_sheetWidgets;
@@ -178,7 +178,7 @@ private:
 	QToolBar* 		mainToolBar;
 	QToolBar*		m_projectToolBar;
 	QToolBar*		m_editToolBar;
-	QToolButton*		openGlButton;
+        QToolBar*               m_sessionTabsToolbar;
 	QAction*		m_snapAction;
 	QAction*		m_followAction;
 	QAction*		m_effectAction;
@@ -271,9 +271,6 @@ private slots:
 	void follow_state_changed(bool state);
 	void update_follow_state();
 	void update_temp_follow_state(bool state);
-        void update_sheet_tabs_appearance();
-        void sheet_tab_index_changed(int index);
-        void sheet_transport_state_changed();
         void track_finder_model_index_changed(const QModelIndex& index);
         void track_finder_return_pressed();
 };
