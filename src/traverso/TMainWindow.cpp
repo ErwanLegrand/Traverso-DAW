@@ -366,7 +366,7 @@ void TMainWindow::add_sheetwidget(Sheet* sheet)
 void TMainWindow::add_session(TSession *session)
 {
         if ( ! session->is_child_session()) {
-                TSessionTabWidget* tabWidget = new TSessionTabWidget(this, session);
+                TSessionTabWidget* tabWidget = new TSessionTabWidget(this, m_sessionTabsToolbar, session);
                 m_sessionTabsToolbar->addWidget(tabWidget);
                 QWidget* spacer = new QWidget(tabWidget);
                 spacer->setMinimumWidth(10);
@@ -630,10 +630,11 @@ void TMainWindow::create_menus( )
         webAddressLabel->setOpenExternalLinks(true);
 
         mainToolBar->addWidget(mainMenuBar);
-        mainToolBar->addWidget(m_sessionTabsToolbar);
+//        mainToolBar->addWidget(m_sessionTabsToolbar);
         mainToolBar->addWidget(webAddressLabel);
 
         addToolBar(Qt::TopToolBarArea, mainToolBar);
+        addToolBar(Qt::LeftToolBarArea, m_sessionTabsToolbar);
 
 
         QMenu* menu = mainMenuBar->addMenu(tr("&File"));

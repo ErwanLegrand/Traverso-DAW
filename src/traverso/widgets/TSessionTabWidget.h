@@ -27,13 +27,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class QLabel;
 class QHBoxLayout;
 class QVBoxLayout;
+class QToolBar;
 class TSession;
 
 class TSessionTabWidget : public QPushButton
 {
         Q_OBJECT
 public:
-        TSessionTabWidget(QWidget* parent, TSession* session);
+        TSessionTabWidget(QWidget* parent, QToolBar* toolBar, TSession* session);
 
         TSession* get_session() const {return m_session;}
 
@@ -48,8 +49,7 @@ private:
         QPushButton*    m_arrowButton;
         QMenu*          m_arrowButtonMenu;
         QHBoxLayout*    m_childLayout;
-        QHBoxLayout*    m_hLayout;
-        QVBoxLayout*    m_vLayout;
+        QToolBar*       m_toolBar;
         QList<TSessionTabWidget*> m_childTabWidgets;
 
 private:
@@ -70,6 +70,7 @@ private slots:
         void add_track_action_triggered();
         void add_new_work_view_action_triggered();
         void project_current_session_changed(TSession* session);
+        void toolbar_orientation_changed (Qt::Orientation orientation);
 };
 
 #endif // TSESSIONTABWIDGET_H
