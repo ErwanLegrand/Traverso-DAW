@@ -1353,8 +1353,9 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 Command* Project::select()
 {
 	int index = ie().collected_number();
-	if (index <= m_sheets.size() && index > 0) {
-                set_current_session(m_sheets.at(index - 1)->get_id());
+        QList<TSession*> sessions = get_sessions();
+        if (index <= sessions.size() && index > 0) {
+                set_current_session(sessions.at(index - 1)->get_id());
 	}
 	return (Command*) 0;
 }
