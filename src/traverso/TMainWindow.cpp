@@ -365,7 +365,7 @@ void TMainWindow::add_sheetwidget(Sheet* sheet)
 
 void TMainWindow::add_session(TSession *session)
 {
-        if (session->is_project_session() || !session->get_parent_session()) {
+        if ( ! session->is_child_session()) {
                 TSessionTabWidget* tabWidget = new TSessionTabWidget(this, session);
                 m_sessionTabsToolbar->addWidget(tabWidget);
                 QWidget* spacer = new QWidget(tabWidget);
@@ -1588,18 +1588,24 @@ Command* TMainWindow::show_add_child_session_dialog()
         }
 
         Sheet* activeSheet = m_project->get_active_sheet();
+        TSession* activeSession = m_project->get_current_session();
+        TSession* parentSession = 0;
 
-        if (!activeSheet) {
+        if (activeSession->is_project_session()) {
+                parentSession = activeSession;
+        } else if (activeSheet) {
+                parentSession = activeSheet;
+        } else {
                 info().information(tr("No Sheet active to add child view to"));
                 return 0;
         }
 
-        TSession* session = new TSession(activeSheet);
+        TSession* session = new TSession(parentSession);
 
-        TTrackSelector selector(this, activeSheet, session);
+        TTrackSelector selector(this, parentSession, session);
         selector.exec();
 
-        activeSheet->add_child_session(session);
+        parentSession->add_child_session(session);
         m_project->set_current_session(session->get_id());
 
         return 0;

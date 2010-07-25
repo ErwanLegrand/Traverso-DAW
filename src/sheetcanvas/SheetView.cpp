@@ -85,22 +85,21 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	m_hScrollBar = sheetwidget->m_hScrollBar;
 	m_actOnPlayHead = true;
 	m_viewportReady = false;
-	
+        m_sheetMasterOutView = 0;
+        m_projectMasterOutView = 0;
+
 	m_clipsViewPort->scene()->addItem(this);
 
         m_playCursor = new PlayHead(this, m_session, m_clipsViewPort);
         m_workCursor = new WorkCursor(this, m_session);
 
         Sheet* sheet = qobject_cast<Sheet*>(m_session);
-        Project* project = qobject_cast<Project*>(m_session);
-        if (sheet  || project) {
+
+        if (m_session->is_project_session()) {
+                m_projectMasterOutView = new TBusTrackView(this, pm().get_project()->get_master_out());
+        }
+        if (sheet) {
                 m_sheetMasterOutView = new TBusTrackView(this, m_session->get_master_out());
-                if (sheet) {
-                        m_projectMasterOutView = new TBusTrackView(this, pm().get_project()->get_master_out());
-                }
-        } else {
-                m_sheetMasterOutView = 0;
-                m_projectMasterOutView = 0;
         }
 	
         connect(m_session, SIGNAL(workingPosChanged()), m_workCursor, SLOT(update_position()));

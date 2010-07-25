@@ -96,10 +96,12 @@ public :
 	QString get_error_string() const {return m_errorString;}
 	QList<Sheet* > get_sheets() const;
         TSession* get_session(qint64 id);
+        QList<TSession*> get_sessions();
         TSession* get_current_session() const ;
         Sheet* get_active_sheet() const {return m_activeSheet;}
 	Sheet* get_sheet(qint64 id) const;
         int get_sheet_index(qint64 id);
+        int get_session_index(qint64 id);
         int get_keyboard_arrow_key_navigation_speed() const {return m_keyboardArrowNavigationSpeed;}
 	QDomNode get_state(QDomDocument doc, bool istemplate=false);
 

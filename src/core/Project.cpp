@@ -1066,19 +1066,11 @@ Sheet* Project::get_sheet(qint64 id) const
 
 TSession* Project::get_session(qint64 id)
 {
-        if(id == m_id) {
-                return this;
-        }
+        QList<TSession*> sessions = get_sessions();
 
-        foreach(Sheet* sheet, m_sheets) {
-                if (sheet->get_id() == id) {
-                        return sheet;
-                }
-
-                foreach(TSession* session, sheet->get_child_sessions()) {
-                        if (session->get_id() == id) {
-                                return session;
-                        }
+        foreach(TSession* session, sessions) {
+                if (session->get_id() == id) {
+                        return session;
                 }
         }
 
@@ -1414,6 +1406,33 @@ int Project::get_sheet_index(qint64 id)
 	return 0;
 }
 
+int Project::get_session_index(qint64 id)
+{
+        QList<TSession*> sessions = get_sessions();
+
+        for(int i=0; i<sessions.size(); ++i) {
+                if (sessions.at(i)->get_id() == id) {
+                        return i + 1;
+                }
+        }
+
+        return -1;
+}
+
+QList<TSession*> Project::get_sessions()
+{
+        QList<TSession*> sessions;
+        sessions.append(this);
+        sessions.append(get_child_sessions());
+        foreach(Sheet* sheet, m_sheets) {
+                sessions.append(sheet);
+                foreach(TSession* session, sheet->get_child_sessions()) {
+                        sessions.append(session);
+                }
+        }
+
+        return sessions;
+}
 
 int Project::get_current_sheet_id( ) const
 {
@@ -1754,17 +1773,16 @@ Command* Project::remove_child_session()
                 return 0;
         }
 
-        Sheet* sheet = qobject_cast<Sheet*>(m_activeSession->get_parent_session());
-        if (!sheet) {
-                // m_activeSession wasn't a child session, do nothing
+        if (!m_activeSession->is_child_session()) {
                 return 0;
         }
 
         TSession* toBeRemoved = m_activeSession;
+        TSession* parentSession = m_activeSession->get_parent_session();
 
-        set_current_session(sheet->get_id());
+        set_current_session(parentSession->get_id());
 
-        sheet->remove_child_session(toBeRemoved);
+        parentSession->remove_child_session(toBeRemoved);
 
         delete toBeRemoved;
 

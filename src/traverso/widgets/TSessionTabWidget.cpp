@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QShortcut>
 #include <QMenu>
 
 #include "ProjectManager.h"
@@ -39,11 +38,6 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, TSession *session)
         : QPushButton(parent)
 {
         m_session = session;
-        if (m_session->is_project_session()) {
-                m_number = 1;
-        } else {
-                m_number = 2;
-        }
 
         m_nameLabel = new QLabel();
         m_nameLabel->setMaximumWidth(75);
@@ -51,7 +45,6 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, TSession *session)
         m_nameLabel->setEnabled(false);
 
         m_arrowButton = new QPushButton(this);
-        m_arrowButton->setMinimumSize(28, BUTTON_HEIGHT - 2);
         m_arrowButton->setStyleSheet("background-color: none; border: none;");
         show_shortcut();
 
@@ -61,10 +54,6 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, TSession *session)
         // is processed in the correct order.
         m_arrowButtonMenu = new QMenu(TMainWindow::instance());
         connect(m_arrowButton, SIGNAL(clicked()), this, SLOT(arrow_button_clicked()));
-
-        QAction* action;
-        action = m_arrowButtonMenu->addAction(tr("Add Track"));
-        connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
 
         m_vLayout = new QVBoxLayout();
         m_vLayout->setMargin(0);
@@ -81,7 +70,9 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, TSession *session)
         m_childLayout->addWidget(m_arrowButton);
         m_childLayout->setMargin(0);
 
-        if (!m_session->get_parent_session()) {
+        QAction* action;
+
+        if ( ! m_session->is_child_session()) {
 //                setMinimumSize(90, BUTTON_HEIGHT + m_session->get_child_sessions().count() * BUTTON_HEIGHT);
 
                 QWidget* widget = new QWidget(this);
@@ -95,24 +86,27 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, TSession *session)
                 m_hLayout->setAlignment(widget, Qt::AlignVCenter);
                 setLayout(m_hLayout);
 
+                action = m_arrowButtonMenu->addAction(tr("New Track"));
+                connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
+
                 action = m_arrowButtonMenu->addAction(tr("New Work View"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_new_work_view_action_triggered()));
-                QShortcut* shortCut = new QShortcut(QKeySequence::mnemonic(QString("&%1").arg(m_number)), this);
-                connect(shortCut, SIGNAL(activatedAmbiguously()), this, SLOT(shortcut_click()));
         }
 
         foreach(TSession* session, m_session->get_child_sessions()) {
                 child_session_added(session);
         }
 
-        if (m_session->get_parent_session()) {
+        if (m_session->is_child_session()) {
                 setMinimumSize(90, BUTTON_HEIGHT - 1);
                 setLayout(m_childLayout);
 
-                if (!m_session->is_project_session()) {
-                        action = m_arrowButtonMenu->addAction(QIcon(":/exit"), tr("Close View"));
-                        connect(action, SIGNAL(triggered()), this, SLOT(close_action_triggered()));
-                }
+                action = m_arrowButtonMenu->addAction(tr("Add Track"));
+                connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
+
+                m_arrowButtonMenu->addSeparator();
+                action = m_arrowButtonMenu->addAction(QIcon(":/exit"), tr("Close View"));
+                connect(action, SIGNAL(triggered()), this, SLOT(close_action_triggered()));
         }
 
         m_nameLabel->setStyleSheet("color: black; border: none; background-color: none;");
@@ -159,15 +153,11 @@ void TSessionTabWidget::child_session_removed(TSession *session)
 
 void TSessionTabWidget::child_layout_changed()
 {
-        if (!m_session->get_parent_session()) {
+        if (!m_session->is_child_session()) {
 //                setMinimumSize(90, BUTTON_HEIGHT + m_session->get_child_sessions().count() * BUTTON_HEIGHT);
 
                 setMinimumSize(90 + 8 + m_session->get_child_sessions().count() * 92, BUTTON_HEIGHT);
                 setMaximumSize(90 + 8 + m_session->get_child_sessions().count() * 92, BUTTON_HEIGHT);
-        }
-
-        for (int i=0; i<m_childTabWidgets.size(); i++) {
-                m_childTabWidgets.at(i)->set_number(i + 3);
         }
 }
 
@@ -193,7 +183,11 @@ void TSessionTabWidget::session_property_changed()
 
 void TSessionTabWidget::button_clicked()
 {
-        pm().get_project()->set_current_session(m_session->get_id());
+        if (pm().get_project()->get_current_session() != m_session) {
+                pm().get_project()->set_current_session(m_session->get_id());
+        } else {
+                arrow_button_clicked();
+        }
 }
 
 void TSessionTabWidget::arrow_button_clicked()
@@ -216,10 +210,10 @@ void TSessionTabWidget::leaveEvent( QEvent * )
         m_arrowButton->setStyleSheet("background-color: none; border: none;");
 }
 
-void TSessionTabWidget::enterEvent( QEvent * )
+void TSessionTabWidget::enterEvent( QEvent * e)
 {
         if (pm().get_project()->get_current_session() == m_session) {
-                m_arrowButton->setStyleSheet("background-color: pink;");
+                m_arrowButton->setStyleSheet("background-color: lightblue;");
         }
 }
 
@@ -250,18 +244,16 @@ void TSessionTabWidget::project_current_session_changed(TSession *session)
 
 void TSessionTabWidget::show_icon()
 {
-        m_arrowButton->setText("");
+        PENTER;
+//        m_arrowButton->setText("");
+        m_arrowButton->setMinimumSize(45, BUTTON_HEIGHT - 2);
         m_arrowButton->setIcon(QIcon(":/down"));
 }
 
 void TSessionTabWidget::show_shortcut()
 {
-        m_arrowButton->setText(QString("&%1").arg(m_number));
+        m_arrowButton->setMinimumSize(28, BUTTON_HEIGHT - 2);
+        int number = pm().get_project()->get_session_index(m_session->get_id());
+        m_arrowButton->setText(QString("&%1").arg(number));
         m_arrowButton->setIcon(QIcon());
-}
-
-void TSessionTabWidget::set_number(int number)
-{
-        m_number = number;
-        project_current_session_changed(pm().get_project()->get_current_session());
 }

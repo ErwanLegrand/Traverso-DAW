@@ -76,6 +76,7 @@ public:
         void set_parent_session(TSession* parentSession);
         void set_is_project_session(bool isProjectSession) {m_isProjectSession = isProjectSession;}
         bool is_project_session() const {return m_isProjectSession;}
+        bool is_child_session() const;
         void set_name(const QString& name);
         void set_track_height(qint64 trackId, int height) {m_trackHeights.insert(trackId, height);}
 

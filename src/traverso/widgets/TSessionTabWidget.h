@@ -36,7 +36,6 @@ public:
         TSessionTabWidget(QWidget* parent, TSession* session);
 
         TSession* get_session() const {return m_session;}
-        void set_number(int number);
 
 protected:
         void leaveEvent( QEvent* );
@@ -51,7 +50,6 @@ private:
         QHBoxLayout*    m_childLayout;
         QHBoxLayout*    m_hLayout;
         QVBoxLayout*    m_vLayout;
-        int             m_number;
         QList<TSessionTabWidget*> m_childTabWidgets;
 
 private:

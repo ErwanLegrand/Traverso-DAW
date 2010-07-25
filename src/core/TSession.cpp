@@ -287,6 +287,19 @@ int TSession::is_transport_rolling() const
         return m_transport;
 }
 
+bool TSession::is_child_session() const
+{
+        if (is_project_session()) {
+                return false;
+        }
+
+        if (!m_parentSession) {
+                return false;
+        }
+
+        return true;
+}
+
 void TSession::set_hzoom( qreal hzoom )
 {
         if (m_parentSession) {
@@ -406,7 +419,7 @@ Command* TSession::start_transport()
 
 Command* TSession::add_track(Track* track, bool historable)
 {
-        if (m_parentSession) {
+        if (m_parentSession && !is_project_session()) {
                 set_track_height(track->get_id(), m_parentSession->get_track_height(track->get_id()));
                 private_track_added(track);
                 return 0;
