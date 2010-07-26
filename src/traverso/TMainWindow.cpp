@@ -215,6 +215,7 @@ TMainWindow::TMainWindow()
 
         m_sessionTabsToolbar = new QToolBar(this);
         m_sessionTabsToolbar->setObjectName("Sheet Tabs");
+        m_sessionTabsToolbar->toggleViewAction()->setText("Sheet Tabs");
         addToolBar(m_sessionTabsToolbar);
         if (m_sessionTabsToolbar->layout()) {
                 m_sessionTabsToolbar->layout()->setSpacing(6);
@@ -621,6 +622,7 @@ void TMainWindow::create_menus( )
 
         QToolBar* mainToolBar = new QToolBar(this);
         mainToolBar->setObjectName("MainToolBar");
+        mainToolBar->toggleViewAction()->setText("Main Tool Bar");
         mainToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
         mainToolBar->setMovable(false);
 
@@ -810,25 +812,15 @@ void TMainWindow::create_menus( )
 	m_editToolBar->toggleViewAction()->setText(tr("Edit"));
 #endif
 
-	menu->addAction(m_sysinfo->toggleViewAction());
+        menu->addAction(mainToolBar->toggleViewAction());
+        menu->addAction(m_sessionTabsToolbar->toggleViewAction());
+
+        menu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 
-
-        m_sheetMenu = mainMenuBar->addMenu(tr("&Sheet"));
-        m_sheetMenu->installEventFilter(this);
-
-        action = m_sheetMenu->addAction(tr("New &Sheet(s)..."));
-        m_projectMenuToolbarActions.append(action);
-        action->setIcon(QIcon(":/new-sheet"));
-	connect(action, SIGNAL(triggered()), this, SLOT(show_newsheet_dialog()));
-		
-        action = m_sheetMenu->addAction(tr("New &Track(s)..."));
-        m_projectMenuToolbarActions.append(action);
-        connect(action, SIGNAL(triggered()), this, SLOT(show_newtrack_dialog()));
-	
 	menu->addSeparator();
 	
-        menu = mainMenuBar->addMenu(tr("Se&ttings"));
+        menu = mainMenuBar->addMenu(tr("&Settings"));
         menu->installEventFilter(this);
 	
         m_encodingMenu = menu->addMenu(tr("&Recording File Format"));

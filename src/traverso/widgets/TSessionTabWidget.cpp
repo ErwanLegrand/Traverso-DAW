@@ -83,11 +83,29 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
 
                 toolbar_orientation_changed(toolBar->orientation());
 
+                if (m_session->is_project_session()) {
+                        action = m_arrowButtonMenu->addAction(tr("Edit"));
+                        connect(action, SIGNAL(triggered()), TMainWindow::instance(), SLOT(show_project_manager_dialog()));
+                        action = m_arrowButtonMenu->addSeparator();
+                }
+
                 action = m_arrowButtonMenu->addAction(tr("New Track"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
 
+                if (m_session->is_project_session()) {
+                        action = m_arrowButtonMenu->addAction(tr("New Sheet"));
+                        connect(action, SIGNAL(triggered()), TMainWindow::instance(), SLOT(show_newsheet_dialog()));
+                }
+
                 action = m_arrowButtonMenu->addAction(tr("New Sub View"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_new_work_view_action_triggered()));
+
+                if (m_session->is_project_session()) {
+                        action = m_arrowButtonMenu->addSeparator();
+
+                        action = m_arrowButtonMenu->addAction(tr("Close Project"));
+                        connect(action, SIGNAL(triggered()), &pm(), SLOT(close_current_project()));
+                }
         }
 
         foreach(TSession* session, m_session->get_child_sessions()) {

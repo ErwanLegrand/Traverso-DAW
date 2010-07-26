@@ -186,7 +186,6 @@ private:
 	QAction*		m_effectAction;
 	QMenu*			m_encodingMenu;
 	QMenu*			m_resampleQualityMenu;
-        QMenu*                  m_sheetMenu;
         QList<QAction*>         m_projectMenuToolbarActions;
         QLineEdit*              m_trackFinder;
         QCompleter*             m_trackFinderCompleter;
