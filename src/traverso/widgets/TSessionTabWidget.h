@@ -45,6 +45,7 @@ protected:
 private:
         TSession*       m_session;
         QWidget*        m_mainWidget;
+        QWidget*        m_spacer;
         QLabel*         m_nameLabel;
         QPushButton*    m_arrowButton;
         QMenu*          m_arrowButtonMenu;

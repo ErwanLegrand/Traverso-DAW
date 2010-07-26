@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-static const int HOR_BUTTON_HEIGHT = 22;
+static const int HOR_BUTTON_HEIGHT = 26;
 static const int VER_BUTTON_HEIGHT = 28;
 static const int LABEL_WIDTH = 65;
 static const int TAB_WIDTH = 105;
@@ -43,6 +43,9 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
 {
         m_toolBar = toolBar;
         m_session = session;
+
+        m_spacer = new QWidget(this);
+        m_spacer->setMinimumWidth(4);
 
         m_nameLabel = new QLabel();
         m_nameLabel->setMinimumWidth(LABEL_WIDTH);
@@ -90,8 +93,10 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
                 child_session_added(session);
         }
 
+        // called twice, else the m_spacer doesn't show up (for whatever reason)
+        toolbar_orientation_changed(toolBar->orientation());
+
         if (m_session->is_child_session()) {
-                setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT - 1);
                 setLayout(m_childLayout);
 
                 action = m_arrowButtonMenu->addAction(tr("Add Track"));
@@ -103,8 +108,6 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         }
 
         m_nameLabel->setStyleSheet("color: black; border: none; background-color: none;");
-        m_nameLabel->setMinimumHeight(HOR_BUTTON_HEIGHT - 2);
-
 
         child_layout_changed();
 
@@ -132,6 +135,7 @@ void TSessionTabWidget::toolbar_orientation_changed(Qt::Orientation orientation)
 
                 if (layout()) {
                         layout()->removeWidget(m_mainWidget);
+                        layout()->removeWidget(m_spacer);
                 }
 
                 delete layout();
@@ -152,8 +156,24 @@ void TSessionTabWidget::toolbar_orientation_changed(Qt::Orientation orientation)
                         layout()->addWidget(tabWidget);
                 }
 
+                layout()->addWidget(m_spacer);
+
                 child_layout_changed();
+        } else {
+                if (orientation == Qt::Vertical) {
+                        setMinimumSize(TAB_WIDTH, VER_BUTTON_HEIGHT);
+                } else {
+                        setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT - 2);
+                }
         }
+
+        if (orientation == Qt::Vertical) {
+                m_nameLabel->setMinimumHeight(VER_BUTTON_HEIGHT);
+        } else {
+                m_nameLabel->setMinimumHeight(HOR_BUTTON_HEIGHT);
+        }
+
+
 }
 
 void TSessionTabWidget::child_session_added(TSession *session)
@@ -186,9 +206,11 @@ void TSessionTabWidget::child_layout_changed()
                         setMinimumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
                         setMaximumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
                 } else {
-                        setMinimumSize(TAB_WIDTH + m_session->get_child_sessions().count() * TAB_WIDTH, HOR_BUTTON_HEIGHT);
-                        setMaximumSize(TAB_WIDTH + m_session->get_child_sessions().count() * TAB_WIDTH, HOR_BUTTON_HEIGHT);
+                        setMinimumSize(TAB_WIDTH + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
+                        setMaximumSize(TAB_WIDTH + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
                 }
+
+                layout()->update();
         }
 }
 

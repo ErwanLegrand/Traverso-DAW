@@ -217,7 +217,7 @@ TMainWindow::TMainWindow()
         m_sessionTabsToolbar->setObjectName("Sheet Tabs");
         addToolBar(m_sessionTabsToolbar);
         if (m_sessionTabsToolbar->layout()) {
-                m_sessionTabsToolbar->layout()->setSpacing(20);
+                m_sessionTabsToolbar->layout()->setSpacing(10);
         }
 	
 	transportConsole = new TransportConsoleWidget(this);
@@ -633,7 +633,7 @@ void TMainWindow::create_menus( )
         mainToolBar->addWidget(webAddressLabel);
 
         addToolBar(Qt::TopToolBarArea, mainToolBar);
-        addToolBar(Qt::LeftToolBarArea, m_sessionTabsToolbar);
+        addToolBar(Qt::TopToolBarArea, m_sessionTabsToolbar);
 
 
         QMenu* menu = mainMenuBar->addMenu(tr("&File"));
