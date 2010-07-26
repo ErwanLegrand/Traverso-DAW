@@ -41,7 +41,7 @@ static const int LABEL_WIDTH = 65;
 static const int TAB_WIDTH = 105;
 
 TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
-        : QPushButton(toolBar)
+        : QPushButton(0)
 {
         m_toolBar = toolBar;
         m_session = session;
