@@ -305,13 +305,10 @@ TMainWindow::~TMainWindow()
 
 void TMainWindow::set_project(Project* project)
 {
-	PENTER;
+        PENTER;
 	
         foreach(SheetWidget* sw, m_sheetWidgets) {
                 remove_session(sw->get_sheet());
-        }
-        if (m_project) {
-                remove_session(m_project);
         }
 
         m_project = project;
@@ -327,7 +324,7 @@ void TMainWindow::set_project(Project* project)
 
 	} else {
                 m_welcomeWidget->setFocus(Qt::MouseFocusReason);
-		setWindowTitle("Traverso");
+                setWindowTitle("Traverso");
                 set_project_actions_enabled(false);
                 show_welcome_page();
 	}
@@ -372,7 +369,7 @@ void TMainWindow::add_sheetwidget(Sheet* sheet)
 void TMainWindow::add_session(TSession *session)
 {
         if ( ! session->is_child_session()) {
-                TSessionTabWidget* tabWidget = new TSessionTabWidget(this, m_sessionTabsToolbar, session);
+                TSessionTabWidget* tabWidget = new TSessionTabWidget(m_sessionTabsToolbar, session);
                 m_sessionTabsToolbar->addWidget(tabWidget);
                 m_sessionTabWidgets.insert(session, tabWidget);
         }
@@ -637,7 +634,6 @@ void TMainWindow::create_menus( )
         mainToolBar->addWidget(webAddressLabel);
 
         addToolBar(Qt::TopToolBarArea, mainToolBar);
-        addToolBar(Qt::TopToolBarArea, m_sessionTabsToolbar);
 
 
         QMenu* menu = mainMenuBar->addMenu(tr("&File"));

@@ -40,8 +40,8 @@ static const int VER_BUTTON_HEIGHT = 28;
 static const int LABEL_WIDTH = 65;
 static const int TAB_WIDTH = 105;
 
-TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSession *session)
-        : QPushButton(parent)
+TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
+        : QPushButton(toolBar)
 {
         m_toolBar = toolBar;
         m_session = session;
@@ -78,6 +78,9 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         QAction* action;
 
         if ( ! m_session->is_child_session()) {
+                QPalette pal = palette();
+                pal.setBrush(QPalette::Button, pal.button().color().darker(115));
+                setPalette(pal);
 
                 m_mainWidget = new QWidget(this);
                 m_mainWidget->setLayout(m_childLayout);
@@ -106,6 +109,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
                 connect(action, SIGNAL(triggered()), this, SLOT(add_new_work_view_action_triggered()));
 
                 if (m_session->is_project_session()) {
+
                         action = m_arrowButtonMenu->addSeparator();
 
                         action = m_arrowButtonMenu->addAction(tr("Close Project"));
@@ -122,6 +126,10 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         toolbar_orientation_changed(toolBar->orientation());
 
         if (m_session->is_child_session()) {
+                QPalette pal = TMainWindow::instance()->palette();
+                pal.setBrush(QPalette::Button, pal.button());
+                setPalette(pal);
+
                 setLayout(m_childLayout);
 
                 action = m_arrowButtonMenu->addAction(tr("Edit..."));
@@ -205,7 +213,7 @@ void TSessionTabWidget::toolbar_orientation_changed(Qt::Orientation orientation)
 
 void TSessionTabWidget::child_session_added(TSession *session)
 {
-        TSessionTabWidget* tabWidget = new TSessionTabWidget(TMainWindow::instance(), m_toolBar, session);
+        TSessionTabWidget* tabWidget = new TSessionTabWidget(m_toolBar, session);
         m_childTabWidgets.append(tabWidget);
         layout()->addWidget(tabWidget);
 
@@ -236,8 +244,6 @@ void TSessionTabWidget::child_layout_changed()
                         setMinimumSize(TAB_WIDTH + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
                         setMaximumSize(TAB_WIDTH + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
                 }
-
-                layout()->update();
         }
 }
 
@@ -314,6 +320,10 @@ void TSessionTabWidget::add_new_work_view_action_triggered()
 
 void TSessionTabWidget::project_current_session_changed(TSession *session)
 {
+        if (!session) {
+                return;
+        }
+
         if (session == m_session) {
                 show_icon();
         } else {

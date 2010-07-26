@@ -34,7 +34,7 @@ class TSessionTabWidget : public QPushButton
 {
         Q_OBJECT
 public:
-        TSessionTabWidget(QWidget* parent, QToolBar* toolBar, TSession* session);
+        TSessionTabWidget(QToolBar* toolBar, TSession* session);
 
         TSession* get_session() const {return m_session;}
 

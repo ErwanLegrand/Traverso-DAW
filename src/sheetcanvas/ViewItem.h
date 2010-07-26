@@ -68,7 +68,7 @@ public:
 #endif
         }
 
-        virtual ~ViewItem() {};
+        virtual ~ViewItem() {}
 	
 	enum {Type = UserType + 1};
 	
@@ -89,8 +89,8 @@ public:
 	 *      Reimplement and call update() in the reimplementation
 	 *	to make the theme change visible.
 	 */
-	virtual void load_theme_data() {};
-        virtual void mouse_hover_move_event() {};
+        virtual void load_theme_data() {}
+        virtual void mouse_hover_move_event() {}
 	
 	SheetView* get_sheetview() const {return m_sv;}
 	
