@@ -109,7 +109,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
 
                         action = m_arrowButtonMenu->addAction(tr("Close Project"));
                         action->setIcon(QIcon(":/exit"));
-                        connect(action, SIGNAL(triggered()), &pm(), SLOT(close_current_project()));
+                        connect(action, SIGNAL(triggered()), this, SLOT(close_current_project()));
                 }
         }
 
@@ -343,3 +343,9 @@ void TSessionTabWidget::show_shortcut()
         }
         m_arrowButton->setIcon(QIcon());
 }
+
+void TSessionTabWidget::close_current_project()
+{
+        QMetaObject::invokeMethod(&pm(), "close_project", Qt::QueuedConnection);
+}
+

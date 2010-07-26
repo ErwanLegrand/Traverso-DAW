@@ -73,6 +73,7 @@ private slots:
         void project_current_session_changed(TSession* session);
         void project_session_is_current(TSession* session);
         void toolbar_orientation_changed (Qt::Orientation orientation);
+        void close_current_project();
 };
 
 #endif // TSESSIONTABWIDGET_H
