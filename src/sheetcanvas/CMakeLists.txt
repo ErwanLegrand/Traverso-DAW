@@ -38,6 +38,7 @@ ViewPort.cpp
 dialogs/AudioClipEditDialog.cpp
 dialogs/TTrackManagerDialog.cpp
 VUMeterView.cpp
+TEditCursor.cpp
 )
 
 SET(TRAVERSO_SONGCANVAS_MOC_CLASSES
@@ -64,6 +65,7 @@ TimeLineView.h
 LineView.h
 ViewPort.h
 VUMeterView.h
+TEditCursor.h
 )
 
 SET(TRAVERSO_SONGCANVAS_UI_FILES
