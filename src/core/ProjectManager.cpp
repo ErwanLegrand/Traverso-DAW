@@ -640,11 +640,6 @@ Command* ProjectManager::close_current_project()
         return 0;
 }
 
-void ProjectManager::close_project()
-{
-        set_current_project(0);
-}
-
 QStringList ProjectManager::get_projects_list()
 {
         QString path = config().get_property("Project", "directory", "none").toString();

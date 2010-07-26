@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QLabel>
 #include <QMenu>
 #include <QToolBar>
+#include <QApplication>
 
 #include "ProjectManager.h"
 #include "Project.h"
@@ -346,6 +347,11 @@ void TSessionTabWidget::show_shortcut()
 
 void TSessionTabWidget::close_current_project()
 {
-        QMetaObject::invokeMethod(&pm(), "close_project", Qt::QueuedConnection);
+        // for some reason if we have focus, and the project closes
+        // all it's views, Qt crashes somewhere in it's widget backingstore
+        // so unset the focus first to the main window, seems to help :)
+        TMainWindow::instance()->setFocus(Qt::MouseFocusReason);
+        qApp->processEvents();
+        pm().close_current_project();
 }
 
