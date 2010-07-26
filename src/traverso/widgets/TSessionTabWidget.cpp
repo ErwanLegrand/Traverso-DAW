@@ -86,7 +86,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
                 action = m_arrowButtonMenu->addAction(tr("New Track"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
 
-                action = m_arrowButtonMenu->addAction(tr("New Work View"));
+                action = m_arrowButtonMenu->addAction(tr("New Sub View"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_new_work_view_action_triggered()));
         }
 
@@ -100,7 +100,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         if (m_session->is_child_session()) {
                 setLayout(m_childLayout);
 
-                action = m_arrowButtonMenu->addAction(tr("Edit / Add Tracks"));
+                action = m_arrowButtonMenu->addAction(tr("Edit"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
 
                 m_arrowButtonMenu->addSeparator();

@@ -40,7 +40,7 @@ TTrackSelector::TTrackSelector(QWidget* parent, TSession* parentSession, TSessio
         }
 
         if (childSession->get_name().isEmpty()) {
-                nameLineEdit->setText(QString("SubView %1").arg(parentSession->get_child_sessions().size() + 1));
+                nameLineEdit->setText(QString("Sub View %1").arg(parentSession->get_child_sessions().size() + 1));
                 nameLineEdit->selectAll();
         } else {
                 nameLineEdit->setText(childSession->get_name());

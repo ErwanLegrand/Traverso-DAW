@@ -217,7 +217,7 @@ TMainWindow::TMainWindow()
         m_sessionTabsToolbar->setObjectName("Sheet Tabs");
         addToolBar(m_sessionTabsToolbar);
         if (m_sessionTabsToolbar->layout()) {
-                m_sessionTabsToolbar->layout()->setSpacing(10);
+                m_sessionTabsToolbar->layout()->setSpacing(6);
         }
 	
 	transportConsole = new TransportConsoleWidget(this);
