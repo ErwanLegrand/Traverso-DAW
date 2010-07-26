@@ -1081,6 +1081,12 @@ void Project::set_current_session(qint64 id)
 {
         PENTER;
 
+        // check if this session is allready current
+        if (m_activeSession && m_activeSession->get_id() == id) {
+                emit sessionIsAlreadyCurrent(m_activeSession);
+                return;
+        }
+
         TSession* session = get_session(id);
 
         if (!session) {

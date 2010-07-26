@@ -62,6 +62,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         // that the menu close vs view deletion vs context pointer set_view_port()
         // is processed in the correct order.
         m_arrowButtonMenu = new QMenu(TMainWindow::instance());
+        m_arrowButton->installEventFilter(TMainWindow::instance());
         connect(m_arrowButton, SIGNAL(clicked()), this, SLOT(arrow_button_clicked()));
 
         m_childLayout = new QHBoxLayout;
@@ -99,7 +100,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         if (m_session->is_child_session()) {
                 setLayout(m_childLayout);
 
-                action = m_arrowButtonMenu->addAction(tr("Add Track"));
+                action = m_arrowButtonMenu->addAction(tr("Edit / Add Tracks"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
 
                 m_arrowButtonMenu->addSeparator();
@@ -119,6 +120,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         connect(m_toolBar, SIGNAL(orientationChanged(Qt::Orientation)), this, SLOT(toolbar_orientation_changed(Qt::Orientation)));
         connect(this, SIGNAL(clicked()), this, SLOT(button_clicked()));
         connect(pm().get_project(), SIGNAL(currentSessionChanged(TSession*)), this, SLOT(project_current_session_changed(TSession*)));
+        connect(pm().get_project(), SIGNAL(sessionIsAlreadyCurrent(TSession*)), this, SLOT(project_session_is_current(TSession*)));
 
         if (pm().get_project()->get_current_session() == m_session) {
                 project_current_session_changed(m_session);
@@ -291,6 +293,13 @@ void TSessionTabWidget::project_current_session_changed(TSession *session)
                 show_icon();
         } else {
                 show_shortcut();
+        }
+}
+
+void TSessionTabWidget::project_session_is_current(TSession *session)
+{
+        if (session == m_session) {
+                arrow_button_clicked();
         }
 }
 

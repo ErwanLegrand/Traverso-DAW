@@ -221,6 +221,7 @@ private slots:
 
 signals:
         void currentSessionChanged(TSession* );
+        void sessionIsAlreadyCurrent(TSession* );
         void privateSheetAdded(Sheet*);
 	void sheetAdded(Sheet*);
         void privateSheetRemoved(Sheet*);

@@ -31,8 +31,6 @@ TTrackSelector::TTrackSelector(QWidget* parent, TSession* parentSession, TSessio
 {
         setupUi(this);
 
-        nameLineEdit->setText(parentSession->get_name() + ": " + QString("child %1").arg(parentSession->get_child_sessions().size()));
-
         QList<Track*> tracks = parentSession->get_tracks();
         foreach(Track* track, tracks) {
                 QListWidgetItem* item = new QListWidgetItem(tracksListWidget);
@@ -40,6 +38,17 @@ TTrackSelector::TTrackSelector(QWidget* parent, TSession* parentSession, TSessio
                 item->setData(Qt::UserRole, track->get_id());
                 tracksListWidget->addItem(item);
         }
+
+        if (childSession->get_name().isEmpty()) {
+                nameLineEdit->setText(QString("SubView %1").arg(parentSession->get_child_sessions().size() + 1));
+                nameLineEdit->selectAll();
+        } else {
+                nameLineEdit->setText(childSession->get_name());
+                tracksListWidget->setFocus(Qt::MouseFocusReason);
+        }
+
+        filterLineEdit->hide();
+        filterNameLabel->hide();
 }
 
 void TTrackSelector::accept()
@@ -53,10 +62,10 @@ void TTrackSelector::accept()
 
         m_childSession->set_name(nameLineEdit->text());
 
-        hide();
+        done(QDialog::Accepted);
 }
 
 void TTrackSelector::reject()
 {
-        hide();
+        done(QDialog::Rejected);
 }
