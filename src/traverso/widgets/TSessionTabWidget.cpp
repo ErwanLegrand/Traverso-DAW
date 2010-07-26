@@ -35,6 +35,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 static const int HOR_BUTTON_HEIGHT = 22;
 static const int VER_BUTTON_HEIGHT = 28;
+static const int LABEL_WIDTH = 65;
+static const int TAB_WIDTH = 105;
 
 TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSession *session)
         : QPushButton(parent)
@@ -43,11 +45,12 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         m_session = session;
 
         m_nameLabel = new QLabel();
-        m_nameLabel->setMaximumWidth(75);
+        m_nameLabel->setMinimumWidth(LABEL_WIDTH);
         session_property_changed();
         m_nameLabel->setEnabled(false);
 
         m_arrowButton = new QPushButton(this);
+        m_arrowButton->setMinimumSize(TAB_WIDTH - LABEL_WIDTH, HOR_BUTTON_HEIGHT - 2);
         m_arrowButton->setStyleSheet("background-color: none; border: none;");
         show_shortcut();
 
@@ -60,7 +63,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
 
         m_childLayout = new QHBoxLayout;
 
-        m_childLayout->addSpacing(10);
+        m_childLayout->addSpacing(6);
         m_childLayout->addWidget(m_nameLabel);
         m_childLayout->addStretch(1);
         m_childLayout->addWidget(m_arrowButton);
@@ -88,7 +91,7 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         }
 
         if (m_session->is_child_session()) {
-                setMinimumSize(90, HOR_BUTTON_HEIGHT - 1);
+                setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT - 1);
                 setLayout(m_childLayout);
 
                 action = m_arrowButtonMenu->addAction(tr("Add Track"));
@@ -122,8 +125,6 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
 
 void TSessionTabWidget::toolbar_orientation_changed(Qt::Orientation orientation)
 {
-        PENTER;
-
         if ( ! m_session->is_child_session()) {
                 foreach(TSessionTabWidget* tabWidget, m_childTabWidgets) {
                         layout()->removeWidget(tabWidget);
@@ -142,7 +143,6 @@ void TSessionTabWidget::toolbar_orientation_changed(Qt::Orientation orientation)
                 } else {
                         QHBoxLayout* hLayout = new QHBoxLayout();
                         hLayout->setMargin(0);
-                        hLayout->setSpacing(4);
                         setLayout(hLayout);
                 }
 
@@ -183,11 +183,11 @@ void TSessionTabWidget::child_layout_changed()
 {
         if (!m_session->is_child_session()) {
                 if (m_toolBar->orientation() == Qt::Vertical) {
-                        setMinimumSize(100, VER_BUTTON_HEIGHT + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
-                        setMaximumSize(100, VER_BUTTON_HEIGHT + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
+                        setMinimumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
+                        setMaximumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
                 } else {
-                        setMinimumSize(90 + 8 + m_session->get_child_sessions().count() * 92, HOR_BUTTON_HEIGHT);
-                        setMaximumSize(90 + 8 + m_session->get_child_sessions().count() * 92, HOR_BUTTON_HEIGHT);
+                        setMinimumSize(TAB_WIDTH + m_session->get_child_sessions().count() * TAB_WIDTH, HOR_BUTTON_HEIGHT);
+                        setMaximumSize(TAB_WIDTH + m_session->get_child_sessions().count() * TAB_WIDTH, HOR_BUTTON_HEIGHT);
                 }
         }
 }
@@ -250,7 +250,6 @@ void TSessionTabWidget::enterEvent( QEvent * e)
 
 void TSessionTabWidget::close_action_triggered()
 {
-        PENTER;
         pm().get_project()->remove_child_session();
 }
 
@@ -275,16 +274,17 @@ void TSessionTabWidget::project_current_session_changed(TSession *session)
 
 void TSessionTabWidget::show_icon()
 {
-        PENTER;
 //        m_arrowButton->setText("");
-        m_arrowButton->setMinimumSize(45, HOR_BUTTON_HEIGHT - 2);
         m_arrowButton->setIcon(QIcon(":/down"));
 }
 
 void TSessionTabWidget::show_shortcut()
 {
-        m_arrowButton->setMinimumSize(28, HOR_BUTTON_HEIGHT - 2);
         int number = pm().get_project()->get_session_index(m_session->get_id());
-        m_arrowButton->setText(QString("&%1").arg(number));
+        if (number < 10) {
+                m_arrowButton->setText(QString("&%1").arg(number));
+        } else {
+                m_arrowButton->setText(QString("%1").arg(number));
+        }
         m_arrowButton->setIcon(QIcon());
 }

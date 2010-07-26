@@ -216,6 +216,9 @@ TMainWindow::TMainWindow()
         m_sessionTabsToolbar = new QToolBar(this);
         m_sessionTabsToolbar->setObjectName("Sheet Tabs");
         addToolBar(m_sessionTabsToolbar);
+        if (m_sessionTabsToolbar->layout()) {
+                m_sessionTabsToolbar->layout()->setSpacing(20);
+        }
 	
 	transportConsole = new TransportConsoleWidget(this);
 	transportConsole->setObjectName("Transport Console");
@@ -368,9 +371,6 @@ void TMainWindow::add_session(TSession *session)
         if ( ! session->is_child_session()) {
                 TSessionTabWidget* tabWidget = new TSessionTabWidget(this, m_sessionTabsToolbar, session);
                 m_sessionTabsToolbar->addWidget(tabWidget);
-                QWidget* spacer = new QWidget(tabWidget);
-                spacer->setMinimumWidth(10);
-                m_sessionTabsToolbar->addWidget(spacer);
                 m_sessionTabWidgets.insert(session, tabWidget);
         }
 
@@ -630,7 +630,6 @@ void TMainWindow::create_menus( )
         webAddressLabel->setOpenExternalLinks(true);
 
         mainToolBar->addWidget(mainMenuBar);
-//        mainToolBar->addWidget(m_sessionTabsToolbar);
         mainToolBar->addWidget(webAddressLabel);
 
         addToolBar(Qt::TopToolBarArea, mainToolBar);
