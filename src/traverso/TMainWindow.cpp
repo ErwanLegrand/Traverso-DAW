@@ -345,6 +345,9 @@ void TMainWindow::project_load_finished()
         connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(remove_sheetwidget(Sheet*)));
 
         add_session(m_project);
+        foreach(TSession* session, m_project->get_child_sessions()) {
+                add_session(session);
+        }
 
         foreach(Sheet* sheet, m_project->get_sheets()) {
                 add_session(sheet);
@@ -354,7 +357,6 @@ void TMainWindow::project_load_finished()
         }
 
         show_session(m_project->get_current_session());
-
 }
 
 void TMainWindow::remove_sheetwidget(Sheet* sheet)

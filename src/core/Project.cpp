@@ -399,6 +399,18 @@ int Project::load(QString projectfile)
 		sheetNode = sheetNode.nextSibling();
 	}
 
+        QDomNode workSheetsNode = docElem.firstChildElement("WorkSheets");
+        QDomNode workSheetNode = workSheetsNode.firstChild();
+
+        while(!workSheetNode.isNull()) {
+                TSession* childSession = new TSession(this);
+                childSession->set_state(workSheetNode);
+                add_child_session(childSession);
+
+                workSheetNode = workSheetNode.nextSibling();
+        }
+
+
         qint64 activeSheetId = e.attribute("currentsheetid", "0" ).toLongLong();
         qint64 activeSessionId = e.attribute("activesessionid", "0" ).toLongLong();
 
@@ -613,6 +625,14 @@ QDomNode Project::get_state(QDomDocument doc, bool istemplate)
 	}
 
 	projectNode.appendChild(sheetsNode);
+
+        QDomNode workSheetsNode = doc.createElement("WorkSheets");
+        foreach(TSession* session, m_childSessions) {
+                workSheetsNode.appendChild(session->get_state(doc));
+        }
+
+        projectNode.appendChild(workSheetsNode);
+
 	
 	return projectNode;
 }
