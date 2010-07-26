@@ -1873,6 +1873,15 @@ int InputEngine::collected_number( )
         return n;
 }
 
+bool InputEngine::has_collected_number()
+{
+        if (m_sCollectedNumber.isEmpty()) {
+                return false;
+        }
+
+        return true;
+}
+
 void InputEngine::set_numerical_input(const QString &number)
 {
         m_sCollectedNumber = number;

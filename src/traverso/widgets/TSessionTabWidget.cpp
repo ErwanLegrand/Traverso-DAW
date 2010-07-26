@@ -163,7 +163,7 @@ void TSessionTabWidget::toolbar_orientation_changed(Qt::Orientation orientation)
                 if (orientation == Qt::Vertical) {
                         setMinimumSize(TAB_WIDTH, VER_BUTTON_HEIGHT);
                 } else {
-                        setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT - 2);
+                        setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT);
                 }
         }
 

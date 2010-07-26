@@ -121,6 +121,7 @@ public:
         void catch_scroll(QWheelEvent * e );
 
         int collected_number();
+        bool has_collected_number();
         QString get_collected_number() const {return m_sCollectedNumber;}
 
 	bool is_jogging();
