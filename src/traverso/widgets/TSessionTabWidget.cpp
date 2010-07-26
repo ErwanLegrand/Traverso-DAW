@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Project.h"
 #include "TSession.h"
 #include "TMainWindow.h"
+#include "Utils.h"
 
 #include "Debugger.h"
 
@@ -84,26 +85,30 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
                 toolbar_orientation_changed(toolBar->orientation());
 
                 if (m_session->is_project_session()) {
-                        action = m_arrowButtonMenu->addAction(tr("Edit"));
+                        action = m_arrowButtonMenu->addAction(tr("Edit..."));
                         connect(action, SIGNAL(triggered()), TMainWindow::instance(), SLOT(show_project_manager_dialog()));
                         action = m_arrowButtonMenu->addSeparator();
                 }
 
-                action = m_arrowButtonMenu->addAction(tr("New Track"));
+                action = m_arrowButtonMenu->addAction(tr("New Track..."));
+                action->setIcon(find_pixmap(":/new"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
 
                 if (m_session->is_project_session()) {
-                        action = m_arrowButtonMenu->addAction(tr("New Sheet"));
+                        action = m_arrowButtonMenu->addAction(tr("New Sheet..."));
+                        action->setIcon(find_pixmap(":/new"));
                         connect(action, SIGNAL(triggered()), TMainWindow::instance(), SLOT(show_newsheet_dialog()));
                 }
 
-                action = m_arrowButtonMenu->addAction(tr("New Sub View"));
+                action = m_arrowButtonMenu->addAction(tr("New Sub View..."));
+                action->setIcon(find_pixmap(":/new"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_new_work_view_action_triggered()));
 
                 if (m_session->is_project_session()) {
                         action = m_arrowButtonMenu->addSeparator();
 
                         action = m_arrowButtonMenu->addAction(tr("Close Project"));
+                        action->setIcon(QIcon(":/exit"));
                         connect(action, SIGNAL(triggered()), &pm(), SLOT(close_current_project()));
                 }
         }
@@ -118,11 +123,12 @@ TSessionTabWidget::TSessionTabWidget(QWidget *parent, QToolBar* toolBar, TSessio
         if (m_session->is_child_session()) {
                 setLayout(m_childLayout);
 
-                action = m_arrowButtonMenu->addAction(tr("Edit"));
+                action = m_arrowButtonMenu->addAction(tr("Edit..."));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_track_action_triggered()));
 
                 m_arrowButtonMenu->addSeparator();
                 action = m_arrowButtonMenu->addAction(QIcon(":/exit"), tr("Close View"));
+                action->setIcon(QIcon(":/exit"));
                 connect(action, SIGNAL(triggered()), this, SLOT(close_action_triggered()));
         }
 
