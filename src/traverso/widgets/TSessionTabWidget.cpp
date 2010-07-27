@@ -40,6 +40,10 @@ static const int VER_BUTTON_HEIGHT = 28;
 static const int LABEL_WIDTH = 65;
 static const int TAB_WIDTH = 105;
 
+
+// QToolBar items don't like to have a parent widget. Moving the toolbar
+// to another area crashes T when closing a project when adding a parent widget
+// to the QPushButton constructor!!
 TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
         : QPushButton(0)
 {

@@ -205,22 +205,32 @@ TMainWindow::TMainWindow()
 	addToolBar(Qt::BottomToolBarArea, m_progressBar);
 	m_progressBar->hide();
 
+
+        m_mainMenuToolBar = new QToolBar(this);
+        m_mainMenuToolBar->setObjectName("MainToolBar");
+        m_mainMenuToolBar->toggleViewAction()->setText("Main Tool Bar");
+        m_mainMenuToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
+        m_mainMenuToolBar->setMovable(false);
+
+        m_mainMenuBar = new QMenuBar(m_mainMenuToolBar);
+        QLabel* webAddressLabel = new QLabel(m_mainMenuToolBar);
+        webAddressLabel->setText("<a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
+        webAddressLabel->setOpenExternalLinks(true);
+
+        m_mainMenuToolBar->addWidget(m_mainMenuBar);
+        m_mainMenuToolBar->addWidget(webAddressLabel);
+        addToolBar(Qt::TopToolBarArea, m_mainMenuToolBar);
+        addToolBarBreak();
+
+
 	m_projectToolBar = new QToolBar(this);
 	m_projectToolBar->setObjectName("Project Toolbar");
-	addToolBar(m_projectToolBar);
+        addToolBar(Qt::TopToolBarArea, m_projectToolBar);
 	
 	m_editToolBar = new QToolBar(this);
 	m_editToolBar->setObjectName("Edit Toolbar");
-	addToolBar(m_editToolBar);
+        addToolBar(Qt::TopToolBarArea, m_editToolBar);
 
-        m_sessionTabsToolbar = new QToolBar(this);
-        m_sessionTabsToolbar->setObjectName("Sheet Tabs");
-        m_sessionTabsToolbar->toggleViewAction()->setText("Sheet Tabs");
-        addToolBar(m_sessionTabsToolbar);
-        if (m_sessionTabsToolbar->layout()) {
-                m_sessionTabsToolbar->layout()->setSpacing(6);
-        }
-	
 	transportConsole = new TransportConsoleWidget(this);
 	transportConsole->setObjectName("Transport Console");
 #if defined (Q_WS_MAC)
@@ -239,6 +249,15 @@ TMainWindow::TMainWindow()
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 
 
+        addToolBarBreak();
+
+        m_sessionTabsToolbar = new QToolBar(this);
+        m_sessionTabsToolbar->setObjectName("Sheet Tabs");
+        m_sessionTabsToolbar->toggleViewAction()->setText("Sheet Tabs");
+        addToolBar(Qt::TopToolBarArea, m_sessionTabsToolbar);
+        if (m_sessionTabsToolbar->layout()) {
+                m_sessionTabsToolbar->layout()->setSpacing(6);
+        }
 
         m_welcomeWidget = new WelcomeWidget(this);
         m_welcomeWidget->show();
@@ -619,24 +638,7 @@ void TMainWindow::create_menus( )
 	QAction* action;
         QList<QKeySequence> list;
 
-        QToolBar* mainToolBar = new QToolBar(this);
-        mainToolBar->setObjectName("MainToolBar");
-        mainToolBar->toggleViewAction()->setText("Main Tool Bar");
-        mainToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
-        mainToolBar->setMovable(false);
-
-        QMenuBar* mainMenuBar = new QMenuBar(mainToolBar);
-        QLabel* webAddressLabel = new QLabel(mainToolBar);
-        webAddressLabel->setText("<a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
-        webAddressLabel->setOpenExternalLinks(true);
-
-        mainToolBar->addWidget(mainMenuBar);
-        mainToolBar->addWidget(webAddressLabel);
-
-        addToolBar(Qt::TopToolBarArea, mainToolBar);
-
-
-        QMenu* menu = mainMenuBar->addMenu(tr("&File"));
+        QMenu* menu = m_mainMenuBar->addMenu(tr("&File"));
         menu->installEventFilter(this);
 
         action = menu->addAction(tr("&New..."));
@@ -714,7 +716,7 @@ void TMainWindow::create_menus( )
         connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 
 
-        menu = mainMenuBar->addMenu(tr("&Edit"));
+        menu = m_mainMenuBar->addMenu(tr("&Edit"));
         menu->installEventFilter(this);
 
         action = menu->addAction(tr("Undo"));
@@ -773,7 +775,7 @@ void TMainWindow::create_menus( )
 	m_editToolBar->addAction(m_effectAction);
 	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
 
-        menu = mainMenuBar->addMenu(tr("Vi&ew"));
+        menu = m_mainMenuBar->addMenu(tr("Vi&ew"));
         menu->installEventFilter(this);
 
 	menu->addAction(historyDW->toggleViewAction());
@@ -810,7 +812,7 @@ void TMainWindow::create_menus( )
 	m_editToolBar->toggleViewAction()->setText(tr("Edit"));
 #endif
 
-        menu->addAction(mainToolBar->toggleViewAction());
+        menu->addAction(m_mainMenuToolBar->toggleViewAction());
         menu->addAction(m_sessionTabsToolbar->toggleViewAction());
 
         menu->addAction(m_sysinfo->toggleViewAction());
@@ -818,7 +820,7 @@ void TMainWindow::create_menus( )
 
 	menu->addSeparator();
 	
-        menu = mainMenuBar->addMenu(tr("&Settings"));
+        menu = m_mainMenuBar->addMenu(tr("&Settings"));
         menu->installEventFilter(this);
 	
         m_encodingMenu = menu->addMenu(tr("&Recording File Format"));
@@ -856,7 +858,7 @@ void TMainWindow::create_menus( )
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
 	
 	
-        menu = mainMenuBar->addMenu(tr("&Help"));
+        menu = m_mainMenuBar->addMenu(tr("&Help"));
         menu->installEventFilter(this);
 
 	action = menu->addAction(tr("&Getting Started"));

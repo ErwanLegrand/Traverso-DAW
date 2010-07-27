@@ -177,7 +177,8 @@ private:
 	bool			m_isFollowing;
 
 	BusMonitor* 		busMonitor;
-	QToolBar* 		mainToolBar;
+        QToolBar*               m_mainMenuToolBar;
+        QMenuBar*               m_mainMenuBar;
 	QToolBar*		m_projectToolBar;
 	QToolBar*		m_editToolBar;
         QToolBar*               m_sessionTabsToolbar;
