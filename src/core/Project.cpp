@@ -1439,7 +1439,7 @@ int Project::get_session_index(qint64 id)
 
         for(int i=0; i<sessions.size(); ++i) {
                 if (sessions.at(i)->get_id() == id) {
-                        return i + 1;
+                        return i;
                 }
         }
 
@@ -1807,9 +1807,10 @@ Command* Project::remove_child_session()
         TSession* toBeRemoved = m_activeSession;
         TSession* parentSession = m_activeSession->get_parent_session();
 
+        parentSession->remove_child_session(toBeRemoved);
+
         set_current_session(parentSession->get_id());
 
-        parentSession->remove_child_session(toBeRemoved);
 
         delete toBeRemoved;
 

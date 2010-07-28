@@ -54,8 +54,7 @@ private:
         QList<TSessionTabWidget*> m_childTabWidgets;
 
 private:
-        void show_icon();
-        void show_shortcut();
+        void update_arrow_button_shortcut_and_icon();
         void child_layout_changed();
 
 private slots:

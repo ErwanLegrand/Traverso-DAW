@@ -61,7 +61,7 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
         m_arrowButton = new QPushButton(this);
         m_arrowButton->setMinimumSize(TAB_WIDTH - LABEL_WIDTH, HOR_BUTTON_HEIGHT - 2);
         m_arrowButton->setStyleSheet("background-color: none; border: none;");
-        show_shortcut();
+        update_arrow_button_shortcut_and_icon();
 
         // IMPORTANT: this menu needs MainWindow as parent, if the 'close view'
         // action is triggered, mouse events are dispatched correctly by Qt so
@@ -328,10 +328,12 @@ void TSessionTabWidget::project_current_session_changed(TSession *session)
                 return;
         }
 
+        update_arrow_button_shortcut_and_icon();
+
         if (session == m_session) {
-                show_icon();
+                m_arrowButton->setIcon(QIcon(":/down"));
         } else {
-                show_shortcut();
+                m_arrowButton->setIcon(QIcon());
         }
 }
 
@@ -342,13 +344,7 @@ void TSessionTabWidget::project_session_is_current(TSession *session)
         }
 }
 
-void TSessionTabWidget::show_icon()
-{
-//        m_arrowButton->setText("");
-        m_arrowButton->setIcon(QIcon(":/down"));
-}
-
-void TSessionTabWidget::show_shortcut()
+void TSessionTabWidget::update_arrow_button_shortcut_and_icon()
 {
         int number = pm().get_project()->get_session_index(m_session->get_id());
         if (number < 10) {
@@ -356,7 +352,6 @@ void TSessionTabWidget::show_shortcut()
         } else {
                 m_arrowButton->setText(QString("%1").arg(number));
         }
-        m_arrowButton->setIcon(QIcon());
 }
 
 void TSessionTabWidget::close_current_project()
