@@ -194,13 +194,6 @@ void TSessionTabWidget::toolbar_orientation_changed(Qt::Orientation orientation)
 
                 foreach(TSessionTabWidget* tabWidget, m_childTabWidgets) {
                         layout()->addWidget(tabWidget);
-                        if (orientation == Qt::Vertical) {
-                                tabWidget->setMinimumSize(TAB_WIDTH - 4, VER_BUTTON_HEIGHT);
-                                tabWidget->setStyleSheet("margin-left: 2px; margin-right: 2px;");
-                        } else {
-                                tabWidget->setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT - 2);
-                                tabWidget->setStyleSheet("margin-bottom: 1px; margin-top: 1px;");
-                        }
                 }
 
                 layout()->addWidget(m_spacer);
@@ -213,7 +206,9 @@ void TSessionTabWidget::child_session_added(TSession *session)
 {
         TSessionTabWidget* tabWidget = new TSessionTabWidget(m_toolBar, session);
         m_childTabWidgets.append(tabWidget);
+        layout()->removeWidget(m_spacer);
         layout()->addWidget(tabWidget);
+        layout()->addWidget(m_spacer);
 
         calculate_size();
 }
@@ -242,6 +237,16 @@ void TSessionTabWidget::calculate_size()
                         setMinimumSize(TAB_WIDTH + 4 + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
                         setMaximumSize(TAB_WIDTH + 4 + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
                 }
+                foreach(TSessionTabWidget* tabWidget, m_childTabWidgets) {
+                        if (m_toolBar->orientation() == Qt::Vertical) {
+                                tabWidget->setMinimumSize(TAB_WIDTH - 4, VER_BUTTON_HEIGHT);
+                                tabWidget->setStyleSheet("margin-left: 2px; margin-right: 2px;");
+                        } else {
+                                tabWidget->setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT - 2);
+                                tabWidget->setStyleSheet("margin-bottom: 1px; margin-top: 1px;");
+                        }
+                }
+
         }
 }
 
