@@ -196,7 +196,9 @@ void TSessionTabWidget::toolbar_orientation_changed(Qt::Orientation orientation)
                         layout()->addWidget(tabWidget);
                 }
 
-                layout()->addWidget(m_spacer);
+                if (m_childTabWidgets.size()) {
+                        layout()->addWidget(m_spacer);
+                }
 
                 calculate_size();
         }
@@ -223,6 +225,9 @@ void TSessionTabWidget::child_session_removed(TSession *session)
                         break;
                 }
         }
+        if (!m_childTabWidgets.size()) {
+                layout()->removeWidget(m_spacer);
+        }
 
         calculate_size();
 }
@@ -231,8 +236,8 @@ void TSessionTabWidget::calculate_size()
 {
         if (!m_session->is_child_session()) {
                 if (m_toolBar->orientation() == Qt::Vertical) {
-                        setMinimumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
-                        setMaximumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
+                        setMinimumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + 4 + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
+                        setMaximumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + 4 + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
                 } else {
                         setMinimumSize(TAB_WIDTH + 4 + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
                         setMaximumSize(TAB_WIDTH + 4 + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
