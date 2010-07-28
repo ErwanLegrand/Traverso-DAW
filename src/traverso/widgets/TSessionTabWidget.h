@@ -55,7 +55,7 @@ private:
 
 private:
         void update_arrow_button_shortcut_and_icon();
-        void child_layout_changed();
+        void calculate_size();
 
 private slots:
         void child_session_added(TSession* session);
