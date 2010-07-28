@@ -507,7 +507,6 @@ int Sheet::render(ExportSpecification* spec)
 {
 	int chn;
 	uint32_t x;
-	int ret = -1;
         int progress = 0;
 
         nframes_t diff = (spec->cdTrackEnd - spec->pos).to_frame(audiodevice().get_sample_rate());
@@ -564,7 +563,7 @@ int Sheet::render(ExportSpecification* spec)
 			Mixer::apply_gain_to_buffer(spec->dataF, bufsize, spec->normvalue);
 		}
 		if (m_exportSource->process (nframes)) {
-			goto out;
+                        return -1;
 		}
 	}
 	
@@ -580,17 +579,7 @@ int Sheet::render(ExportSpecification* spec)
                 m_project->set_sheet_export_progress(progress);
         }
 
-
-	/* and we're good to go */
-
-	ret = 1;
-
-out:
-	if (!ret) {
-		spec->status = ret;
-	}
-
-	return ret;
+        return 1;
 }
 
 void Sheet::set_artists(const QString& pArtists)
@@ -705,55 +694,6 @@ void Sheet::solo_track(Track *track)
 
 }
 
-Command* Sheet::toggle_solo()
-{
-	bool hasSolo = false;
-
-        QList<Track*> tracks= get_tracks();
-
-        foreach(Track* track, tracks) {
-		if (track->is_solo()) hasSolo = true;
-	}
-
-        foreach(Track* track, tracks) {
-                track->set_solo(!hasSolo);
-		track->set_muted_by_solo(false);
-	}
-
-	return (Command*) 0;
-}
-
-Command *Sheet::toggle_mute()
-{
-	bool hasMute = false;
-        foreach(AudioTrack* track, m_audioTracks) {
-                if (track->is_muted()) hasMute = true;
-	}
-	
-        foreach(AudioTrack* track, m_audioTracks) {
-                track->set_muted(!hasMute);
-	}
-
-	return (Command*) 0;
-}
-
-Command *Sheet::toggle_arm()
-{
-	bool hasArmed = false;
-        foreach(AudioTrack* track, m_audioTracks) {
-                if (track->armed()) hasArmed = true;
-	}
-
-        foreach(AudioTrack* track, m_audioTracks) {
-                if (hasArmed) {
-			track->disarm();
-		} else {
-			track->arm();
-		}
-	}
-
-	return (Command*) 0;
-}
 
 //
 //  Function called in RealTime AudioThread processing path

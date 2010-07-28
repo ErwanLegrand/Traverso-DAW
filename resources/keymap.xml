@@ -166,7 +166,6 @@
                                 <Object objectname="TMainWindow" slotsignature="start_transport" modes="All" sortorder="1" />
                                 <Object objectname="TMainWindow" slotsignature="set_recordable_and_start_transport" modes="All" modifierkeys="CTRL" sortorder="2" />
                                 <Object objectname="TSession" slotsignature="start_transport" modes="All" sortorder="1" />
-				<Object objectname="Sheet" slotsignature="set_recordable_and_start_transport" modes="All" modifierkeys="CTRL" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="A" >
@@ -590,17 +589,17 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="U" >
 			<Objects>
-				<Object objectname="Sheet" slotsignature="toggle_mute" modes="All" sortorder="25" />
+                                <Object objectname="TSession" slotsignature="toggle_mute" modes="All" sortorder="25" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="O" >
 			<Objects>
-				<Object objectname="Sheet" slotsignature="toggle_solo" modes="All" sortorder="26" />
+                                <Object objectname="TSession" slotsignature="toggle_solo" modes="All" sortorder="26" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="A" >
 			<Objects>
-				<Object objectname="Sheet" slotsignature="toggle_arm" modes="All" sortorder="24" />
+                                <Object objectname="TSession" slotsignature="toggle_arm" modes="All" sortorder="24" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="G" >

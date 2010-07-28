@@ -1777,7 +1777,7 @@ Command * TMainWindow::start_transport()
 Command * TMainWindow::set_recordable_and_start_transport()
 {
 	if (m_project) {
-                Sheet* sheet = qobject_cast<Sheet*>(m_project->get_active_sheet());
+                Sheet* sheet = m_project->get_active_sheet();
 		if (sheet) {
 			return sheet->set_recordable_and_start_transport();
 		}

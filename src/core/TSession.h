@@ -35,9 +35,18 @@ class TBusTrack;
 class Track;
 class TimeLine;
 
+struct EditPointLocation {
+        TimeRef location;
+        int     sceneY;
+};
+
 class TSession : public ContextItem
 {
         Q_OBJECT
+        Q_CLASSINFO("toggle_solo", tr("Solo: On/Off"))
+        Q_CLASSINFO("toggle_mute", tr("Mute: On/Off"))
+        Q_CLASSINFO("toggle_arm", tr("Arm: On/Off"))
+
 public:
         TSession(TSession* parentSession = 0);
 
@@ -50,6 +59,7 @@ public:
         int get_mode() const {return m_mode;}
         int is_transport_rolling() const;
         TimeRef get_work_location() const;
+        EditPointLocation get_edit_point_location() {return m_editPointLocation;}
         virtual TimeRef get_last_location() const;
         TimeRef get_new_transport_location() const {return m_newTransportLocation;}
         virtual TimeRef get_transport_location() const;
@@ -70,6 +80,7 @@ public:
 
         void set_hzoom(qreal hzoom);
         virtual void set_work_at(TimeRef location, bool isFolder=false);
+        void set_edit_point_location(const EditPointLocation& editPoint);
         void set_scrollbar_xy(int x, int y);
         void set_scrollbar_x(int x);
         void set_scrollbar_y(int y);
@@ -107,6 +118,7 @@ protected:
         SnapList*	m_snaplist;
         Snappable*	m_workSnap;
         TimeLine*	m_timeline;
+        EditPointLocation m_editPointLocation;
         QString         m_name;
 
         int		m_mode;
@@ -134,6 +146,9 @@ public slots:
         Command* set_editing_mode();
         Command* set_effects_mode();
         Command* toggle_effects_mode();
+        Command* toggle_solo();
+        Command* toggle_mute();
+        Command* toggle_arm();
         virtual Command* start_transport();
 
 protected slots:

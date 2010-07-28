@@ -338,6 +338,12 @@ void TSession::set_work_at(TimeRef location, bool isFolder)
         }
 }
 
+void TSession::set_edit_point_location(const EditPointLocation& editPoint)
+{
+        m_editPointLocation.location = editPoint.location;
+        m_editPointLocation.sceneY = editPoint.sceneY;
+}
+
 void TSession::set_transport_pos(TimeRef location)
 {
         if (m_parentSession) {
@@ -407,6 +413,69 @@ Command* TSession::toggle_effects_mode()
         }
         return 0;
 }
+
+Command* TSession::toggle_solo()
+{
+        if (m_parentSession) {
+                return m_parentSession->toggle_solo();
+        }
+
+        bool hasSolo = false;
+
+        QList<Track*> tracks= get_tracks();
+
+        foreach(Track* track, tracks) {
+                if (track->is_solo()) hasSolo = true;
+        }
+
+        foreach(Track* track, tracks) {
+                track->set_solo(!hasSolo);
+                track->set_muted_by_solo(false);
+        }
+
+        return (Command*) 0;
+}
+
+Command* TSession::toggle_mute()
+{
+        if (m_parentSession) {
+                return m_parentSession->toggle_mute();
+        }
+
+        bool hasMute = false;
+        foreach(AudioTrack* track, m_audioTracks) {
+                if (track->is_muted()) hasMute = true;
+        }
+
+        foreach(AudioTrack* track, m_audioTracks) {
+                track->set_muted(!hasMute);
+        }
+
+        return (Command*) 0;
+}
+
+Command* TSession::toggle_arm()
+{
+        if (m_parentSession) {
+                return m_parentSession->toggle_arm();
+        }
+
+        bool hasArmed = false;
+        foreach(AudioTrack* track, m_audioTracks) {
+                if (track->armed()) hasArmed = true;
+        }
+
+        foreach(AudioTrack* track, m_audioTracks) {
+                if (hasArmed) {
+                        track->disarm();
+                } else {
+                        track->arm();
+                }
+        }
+
+        return (Command*) 0;
+}
+
 
 Command* TSession::start_transport()
 {

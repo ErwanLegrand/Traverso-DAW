@@ -57,9 +57,6 @@ class Sheet : public TSession, public APILinkedListNode
 	Q_CLASSINFO("undo", tr("Undo"))
 	Q_CLASSINFO("redo", tr("Redo"))
 	Q_CLASSINFO("toggle_snap", tr("Snap: On/Off"))
-	Q_CLASSINFO("toggle_solo", tr("Solo: On/Off"))
-	Q_CLASSINFO("toggle_mute", tr("Mute: On/Off"))
-	Q_CLASSINFO("toggle_arm", tr("Arm: On/Off"))
         Q_CLASSINFO("toggle_effects_mode", tr("Toggle Curve Mode: On/Off"))
 	Q_CLASSINFO("prev_skip_pos", tr("To previous snap position"))
 	Q_CLASSINFO("next_skip_pos", tr("To next snap position"))
@@ -188,9 +185,6 @@ public slots :
 	Command* set_recordable();
 	Command* set_recordable_and_start_transport();
 	Command* toggle_snap();
-	Command* toggle_solo();
-	Command* toggle_mute();
-	Command* toggle_arm();
 
 signals:
 	void seekStart();
