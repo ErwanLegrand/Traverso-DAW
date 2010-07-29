@@ -69,7 +69,7 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
         // that the menu close vs view deletion vs context pointer set_view_port()
         // is processed in the correct order.
         m_arrowButtonMenu = new QMenu(TMainWindow::instance());
-        m_arrowButton->installEventFilter(TMainWindow::instance());
+        m_arrowButtonMenu->installEventFilter(TMainWindow::instance());
         connect(m_arrowButton, SIGNAL(clicked()), this, SLOT(arrow_button_clicked()));
 
         m_childLayout = new QHBoxLayout;
