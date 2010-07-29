@@ -466,6 +466,7 @@ void TMainWindow::show_session(TSession* session)
         }
 
         m_currentSheetWidget = sheetWidget;
+        m_currentSheetWidget->setFocus(Qt::MouseFocusReason);
 
         m_centerAreaWidget->setCurrentWidget(m_currentSheetWidget);
 
