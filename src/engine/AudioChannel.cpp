@@ -172,7 +172,6 @@ audio_sample_t VUMonitor::get_peak_value( )
         }
 
         float result = m_peak;
-        m_flag = 1;
 
         return result;
 }

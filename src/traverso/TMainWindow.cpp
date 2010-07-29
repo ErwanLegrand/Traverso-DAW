@@ -2000,10 +2000,25 @@ void TMainWindow::unregister_vumeter_level(AbstractVUMeterLevel *level)
         m_vuLevels.removeAll(level);
 }
 
+#include "AudioChannel.h"
 void TMainWindow::update_vu_levels_peak()
 {
+        if (!m_project) {
+                return;
+        }
+
         for(int i=0; i<m_vuLevels.size(); i++) {
                 m_vuLevels.at(i)->update_peak();
+        }
+
+        QList<Track*> tracks = m_project->get_sheet_tracks();
+        tracks.append(m_project->get_tracks());
+        tracks.append(m_project->get_master_out());
+        for(int i = 0; i< tracks.size(); i++) {
+                VUMonitors monitors = tracks.at(i)->get_vumonitors();
+                for (int j=0; j<monitors.size(); ++j) {
+                        monitors.at(j)->set_read();
+                }
         }
 }
 

@@ -54,6 +54,7 @@ public:
         }
 
         audio_sample_t get_peak_value();
+        inline void set_read() {m_flag = 1;}
 
 private:
         int    m_flag;

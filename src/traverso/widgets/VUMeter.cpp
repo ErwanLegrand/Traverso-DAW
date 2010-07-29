@@ -622,6 +622,7 @@ void VUMeterLevel::resize_level_pixmap( )
 void VUMeterLevel::update_peak( )
 {
         peak = m_monitor->get_peak_value();
+        m_monitor->set_read();
 
 	// if the meter drops to -inf, reset the 'over LED' and peak hold values
 	if ((peak == 0.0) && (tailDeltaY <= -70.0)) {
