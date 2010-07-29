@@ -83,10 +83,6 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
         QAction* action;
 
         if ( ! m_session->is_child_session()) {
-                QPalette pal = palette();
-                pal.setBrush(QPalette::Button, pal.button().color().darker(117));
-                setPalette(pal);
-
                 m_mainWidget = new QWidget(this);
                 m_mainWidget->setLayout(m_childLayout);
                 m_mainWidget->setStyleSheet("background-color: none;");
@@ -121,6 +117,8 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
                         action->setIcon(QIcon(":/exit"));
                         connect(action, SIGNAL(triggered()), this, SLOT(close_current_project()));
                 }
+
+                m_nameLabel->setStyleSheet("color: black; border: none; background-color: none; font-size: 12px;");
         }
 
         foreach(TSession* session, m_session->get_child_sessions()) {
@@ -132,7 +130,7 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
 
         if (m_session->is_child_session()) {
                 QPalette pal = TMainWindow::instance()->palette();
-                pal.setBrush(QPalette::Button, pal.button());
+                pal.setBrush(QPalette::Button, pal.button().color().darker(115));
                 setPalette(pal);
 
                 setLayout(m_childLayout);
@@ -144,9 +142,10 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
                 action = m_arrowButtonMenu->addAction(QIcon(":/exit"), tr("Close View"));
                 action->setIcon(QIcon(":/exit"));
                 connect(action, SIGNAL(triggered()), this, SLOT(close_action_triggered()));
+
+                m_nameLabel->setStyleSheet("color: black; border: none; background-color: none; font-size: 11px;");
         }
 
-        m_nameLabel->setStyleSheet("color: black; border: none; background-color: none;");
 
         calculate_size();
 
@@ -260,14 +259,22 @@ void TSessionTabWidget::session_transport_started()
         TSession* session = pm().get_project()->get_current_session();
         if (session == m_session || !m_session->get_parent_session()) {
                 QString stylesheet = "color: blue; border: none; margin-left: 0px; background-color: none;";
-                m_nameLabel->setStyleSheet(stylesheet);
+                if (!m_session->is_child_session()) {
+                        m_nameLabel->setStyleSheet(stylesheet);
+                } else {
+                        m_nameLabel->setStyleSheet(stylesheet + " font-size: 11px;");
+                }
         }
 }
 
 void TSessionTabWidget::session_transport_stopped()
 {
         QString stylesheet = "color: black; border: none; margin-left: 0px; background-color: none;";
-        m_nameLabel->setStyleSheet(stylesheet);
+        if (!m_session->is_child_session()) {
+                m_nameLabel->setStyleSheet(stylesheet);
+        } else {
+                m_nameLabel->setStyleSheet(stylesheet + " font-size: 11px;");
+        }
 }
 
 void TSessionTabWidget::session_property_changed()

@@ -1380,8 +1380,8 @@ Command* Project::select()
 {
 	int index = ie().collected_number();
         QList<TSession*> sessions = get_sessions();
-        if (index <= sessions.size() && index > 0) {
-                set_current_session(sessions.at(index - 1)->get_id());
+        if (index < sessions.size() && index >= 0) {
+                set_current_session(sessions.at(index)->get_id());
 	}
 	return (Command*) 0;
 }
