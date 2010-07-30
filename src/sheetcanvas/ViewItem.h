@@ -63,9 +63,6 @@ public:
                 m_parentViewItem = parentViewItem;
                 setCursor(themer()->get_cursor("Default"));
                 m_hasMouseTracking = false;
-#if QT_VERSION >= 0x040600
-                setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
-#endif
         }
 
         virtual ~ViewItem() {}

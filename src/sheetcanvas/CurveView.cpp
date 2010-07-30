@@ -46,7 +46,8 @@ CurveView::CurveView(SheetView* sv, ViewItem* parentViewItem, Curve* curve)
 	, m_curve(curve)
 {
 	setZValue(parentViewItem->zValue() + 1);
-	
+        setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
+
 	m_sv = sv;
 	load_theme_data();
 	

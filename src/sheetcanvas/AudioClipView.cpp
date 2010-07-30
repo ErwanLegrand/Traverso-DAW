@@ -65,6 +65,7 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
         PENTERCONS;
 
         setZValue(parent->zValue() + 1);
+        setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
 
         m_sv = sv;
         m_sheet = m_clip->get_sheet();

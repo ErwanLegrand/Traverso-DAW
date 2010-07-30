@@ -46,7 +46,7 @@ FadeView::FadeView(SheetView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	, m_fadeCurve(fadeCurve)
 {
 	PENTERCONS;
-	m_sv = sv;
+        m_sv = sv;
 	m_holdactive = false;
 	m_guicurve = new Curve(0);
 	m_guicurve->set_sheet(m_sv->get_sheet());
@@ -62,8 +62,10 @@ FadeView::FadeView(SheetView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 	}
 	
 	load_theme_data();
+
 	setCursor(themer()->get_cursor("Fade"));
-	
+        setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
+
 	connect(m_fadeCurve, SIGNAL(stateChanged()), this, SLOT(state_changed()));
 	connect(m_fadeCurve, SIGNAL(rangeChanged()), this, SLOT(state_changed()));
 }

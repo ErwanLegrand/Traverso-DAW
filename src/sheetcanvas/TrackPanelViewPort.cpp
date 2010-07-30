@@ -39,7 +39,7 @@ TrackPanelViewPort::TrackPanelViewPort(QGraphicsScene* scene, SheetWidget* sw)
 	m_sw = sw;
         m_sv = sw->get_sheetview();
 	
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 

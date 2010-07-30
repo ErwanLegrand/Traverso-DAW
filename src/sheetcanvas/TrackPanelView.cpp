@@ -531,7 +531,7 @@ TrackPanelLed::TrackPanelLed(TrackPanelView* view, Track *track, const QString& 
 void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
-	
+
         int roundfactor = 10;
 	
 	painter->save();

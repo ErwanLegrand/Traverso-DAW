@@ -100,6 +100,8 @@ TimeLineView::TimeLineView(SheetView* view)
 	m_zooms[     4 * 640] = "0:00.010";
 	m_zooms[     2 * 640] = "0:00.005";
 	m_zooms[     1 * 640] = "0:00.002";
+
+        setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
 }
 
 

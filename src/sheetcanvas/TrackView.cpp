@@ -47,6 +47,7 @@ TrackView::TrackView(SheetView* sv, Track * track)
         PENTERCONS;
 
         setZValue(sv->zValue() + 1);
+        setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
 
         m_sv = sv;
         sv->scene()->addItem(this);
