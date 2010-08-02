@@ -896,7 +896,7 @@ Command * AudioClipView::set_audio_file()
                         return ie().failure();
                 }
 
-                QString filename = QFileDialog::getOpenFileName(0,
+                QString filename = QFileDialog::getOpenFileName(TMainWindow::instance(),
                                 tr("Reset Audio File for Clip: %1").arg(m_clip->get_name()),
                                    rs->get_filename(),
                                                    tr("All files (*);;Audio files (*.wav *.flac)"));

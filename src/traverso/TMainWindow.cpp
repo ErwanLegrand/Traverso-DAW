@@ -24,7 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <libtraversocore.h>
 #include "libtraversosheetcanvas.h"
 #include "commands.h"
-#include <AudioDevice.h> 
+
+#include "AudioChannel.h"
+#include <AudioDevice.h>
 
 #include <QDockWidget>
 #include <QUndoView>
@@ -1403,14 +1405,23 @@ void TMainWindow::config_changed()
 
 void TMainWindow::import_audio()
 {
+        Project* project = pm().get_project();
+        if (!project) {
+                return;
+        }
+
         Sheet* sheet = qobject_cast<Sheet*>(m_currentSheetWidget->get_sheet());
         if (!sheet || !sheet->get_numtracks()) {
 		return;
 	}
 
-	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Audio Files"),
-			config().get_property("Project", "directory", "/directory/unknown").toString(),
+        QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Audio Files"),
+                        project->get_import_dir(),
 			tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
+
+        if (files.isEmpty()) {
+                return;
+        }
 
         QList<AudioTrack*> tracks = sheet->get_audio_tracks();
 	AudioTrack*	track = tracks.first();
@@ -2000,7 +2011,6 @@ void TMainWindow::unregister_vumeter_level(AbstractVUMeterLevel *level)
         m_vuLevels.removeAll(level);
 }
 
-#include "AudioChannel.h"
 void TMainWindow::update_vu_levels_peak()
 {
         if (!m_project) {

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ReadSource.h"
 #include "Import.h"
 #include "Utils.h"
+#include "TMainWindow.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -95,7 +96,7 @@ int Import::prepare_actions()
 	} else if (m_fileName.isEmpty()) {
 		QString allFiles = tr("All files (*)");
 		QString activeFilter = tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)");
-		m_fileName = QFileDialog::getOpenFileName(0,
+                m_fileName = QFileDialog::getOpenFileName(TMainWindow::instance(),
 				tr("Import audio source"),
                                 pm().get_project()->get_import_dir(),
 				allFiles + ";;" + activeFilter,
