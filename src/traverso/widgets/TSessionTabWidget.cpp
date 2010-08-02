@@ -35,9 +35,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-static const int HOR_BUTTON_HEIGHT = 28;
+static const int HOR_BUTTON_HEIGHT = 30;
 static const int VER_BUTTON_HEIGHT = 28;
-static const int LABEL_WIDTH = 70;
+static const int LABEL_WIDTH = 80;
 static const int TAB_WIDTH = 110;
 
 
@@ -60,8 +60,8 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
         m_nameLabel->setEnabled(false);
 
         m_arrowButton = new QPushButton(this);
-        m_arrowButton->setMinimumSize(TAB_WIDTH - LABEL_WIDTH, HOR_BUTTON_HEIGHT - 2);
-        m_arrowButton->setStyleSheet("background-color: none; border: none;");
+        m_arrowButton->setFixedSize(TAB_WIDTH - LABEL_WIDTH, HOR_BUTTON_HEIGHT - 8);
+        m_arrowButton->setStyleSheet("background-color: none; border: none; margin: 0;");
         update_arrow_button_shortcut_and_icon();
 
         // IMPORTANT: this menu needs MainWindow as parent, if the 'close view'
@@ -126,11 +126,11 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
         }
 
         // called twice, else the m_spacer doesn't show up (for whatever reason)
-        toolbar_orientation_changed(toolBar->orientation());
+//        toolbar_orientation_changed(toolBar->orientation());
 
         if (m_session->is_child_session()) {
                 QPalette pal = TMainWindow::instance()->palette();
-                pal.setBrush(QPalette::Button, pal.button().color().darker(115));
+                pal.setBrush(QPalette::Button, pal.button().color().darker(117));
                 setPalette(pal);
 
                 setLayout(m_childLayout);
@@ -246,8 +246,8 @@ void TSessionTabWidget::calculate_size()
                                 tabWidget->setMinimumSize(TAB_WIDTH - 4, VER_BUTTON_HEIGHT);
                                 tabWidget->setStyleSheet("margin-left: 2px; margin-right: 2px;");
                         } else {
-                                tabWidget->setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT - 2);
-                                tabWidget->setStyleSheet("margin-bottom: 1px; margin-top: 1px;");
+                                tabWidget->setMinimumSize(TAB_WIDTH, HOR_BUTTON_HEIGHT - 4);
+                                tabWidget->setStyleSheet("margin-bottom: 2; margin-top: 2;");
                         }
                 }
 
@@ -259,27 +259,36 @@ void TSessionTabWidget::session_transport_started()
         TSession* session = pm().get_project()->get_current_session();
         if (session == m_session || !m_session->get_parent_session()) {
                 QString stylesheet = "color: blue; border: none; margin-left: 0px; background-color: none;";
-                if (!m_session->is_child_session()) {
-                        m_nameLabel->setStyleSheet(stylesheet);
+                if (session == m_session) {
+                        if (!m_session->is_child_session()) {
+                                m_nameLabel->setStyleSheet(stylesheet + " font: bold italic;");
+                        } else {
+                                m_nameLabel->setStyleSheet(stylesheet + " font-size: 11px; font: bold italic;");
+                        }
                 } else {
-                        m_nameLabel->setStyleSheet(stylesheet + " font-size: 11px;");
+                        if (!m_session->is_child_session()) {
+                                m_nameLabel->setStyleSheet(stylesheet + " font-size: 12px;");
+                        } else {
+                                m_nameLabel->setStyleSheet(stylesheet + " font-size: 11px;");
+                        }
                 }
         }
 }
 
 void TSessionTabWidget::session_transport_stopped()
 {
-        QString stylesheet = "color: black; border: none; margin-left: 0px; background-color: none;";
-        if (!m_session->is_child_session()) {
-                m_nameLabel->setStyleSheet(stylesheet);
-        } else {
-                m_nameLabel->setStyleSheet(stylesheet + " font-size: 11px;");
-        }
+        TSession* session = pm().get_project()->get_current_session();
+        project_current_session_changed(session);
 }
 
 void TSessionTabWidget::session_property_changed()
 {
-        m_nameLabel->setText(m_session->get_name());
+        if (m_session->is_project_session()) {
+                m_nameLabel->setText(tr("Mixer"));
+        } else {
+                m_nameLabel->setText(m_session->get_name());
+
+        }
 }
 
 void TSessionTabWidget::button_clicked()
@@ -314,7 +323,7 @@ void TSessionTabWidget::leaveEvent( QEvent * )
 void TSessionTabWidget::enterEvent( QEvent * e)
 {
         if (pm().get_project()->get_current_session() == m_session) {
-                m_arrowButton->setStyleSheet("background-color: lightblue;");
+                m_arrowButton->setStyleSheet("background-color: lightblue; margin: 0;");
         }
 }
 
@@ -341,11 +350,19 @@ void TSessionTabWidget::project_current_session_changed(TSession *session)
 
         update_arrow_button_shortcut_and_icon();
 
+        QString stylesheet = "color: black; border: none; margin-left: 0px; background-color: none;";
         if (session == m_session) {
-                QPixmap pix(":/down");
-                m_arrowButton->setIcon(QIcon(pix.scaled(12, 10, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+                if (!m_session->is_child_session()) {
+                        m_nameLabel->setStyleSheet(stylesheet + " font: bold italic;");
+                } else {
+                        m_nameLabel->setStyleSheet(stylesheet + " font-size: 11px; font: bold italic;");
+                }
         } else {
-                m_arrowButton->setIcon(QIcon());
+                if (!m_session->is_child_session()) {
+                        m_nameLabel->setStyleSheet(stylesheet + " font-size: 12px;");
+                } else {
+                        m_nameLabel->setStyleSheet(stylesheet + " font-size: 11px;");
+                }
         }
 }
 
