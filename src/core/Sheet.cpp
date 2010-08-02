@@ -94,7 +94,8 @@ Sheet::Sheet(Project* project, int numtracks)
                 QString trackname = QString("Audio Track %1").arg(i);
                 AudioTrack* track = new AudioTrack(this, trackname, height);
                 private_add_track(track);
-	}
+                private_track_added(track);
+        }
 
         resize_buffer(audiodevice().get_buffer_size());
 }
