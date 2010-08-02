@@ -105,7 +105,7 @@ TSessionTabWidget::TSessionTabWidget(QToolBar* toolBar, TSession *session)
                         connect(action, SIGNAL(triggered()), TMainWindow::instance(), SLOT(show_newsheet_dialog()));
                 }
 
-                action = m_arrowButtonMenu->addAction(tr("New Sub View..."));
+                action = m_arrowButtonMenu->addAction(tr("New Work View..."));
                 action->setIcon(find_pixmap(":/new"));
                 connect(action, SIGNAL(triggered()), this, SLOT(add_new_work_view_action_triggered()));
 
@@ -323,7 +323,7 @@ void TSessionTabWidget::leaveEvent( QEvent * )
 void TSessionTabWidget::enterEvent( QEvent * e)
 {
         if (pm().get_project()->get_current_session() == m_session) {
-                m_arrowButton->setStyleSheet("background-color: lightblue; margin: 0;");
+                m_arrowButton->setStyleSheet("background-color: lightblue; margin: 0; margin-right: 2;");
         }
 }
 
