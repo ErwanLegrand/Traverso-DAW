@@ -59,6 +59,7 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
 
         update_gain_indicator();
         update_pan_indicator();
+        update_track_status_buttons(true);
 
         nameLineEdit->setText(m_track->get_name());
 
