@@ -67,6 +67,11 @@ private slots:
         void on_preSendsRemoveButton_clicked();
         void on_routingInputRemoveButton_clicked();
 
+        void on_muteButton_clicked();
+        void on_soloButton_clicked();
+        void on_recordButton_clicked();
+        void on_monitorButton_clicked();
+
         void pre_sends_selection_changed();
         void post_sends_selection_changed();
         void track_gain_value_changed(int value);
@@ -75,6 +80,8 @@ private slots:
         void pre_sends_pan_value_changed(int value);
         void post_sends_gain_value_changed(int value);
         void post_sends_pan_value_changed(int value);
+
+        void update_track_status_buttons(bool);
 
 };
 

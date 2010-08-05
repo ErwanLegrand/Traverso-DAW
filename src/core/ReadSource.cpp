@@ -146,7 +146,7 @@ QDomNode ReadSource::get_state( QDomDocument doc )
 	node.setAttribute("origsheetid", m_origSheetId);
 	node.setAttribute("dir", m_dir);
 	node.setAttribute("id", m_id);
-	node.setAttribute("name", m_name);
+        node.setAttribute("name", m_name);
 	node.setAttribute("origbitdepth", m_origBitDepth);
 	node.setAttribute("wasrecording", m_wasRecording);
 	node.setAttribute("length", m_length.universal_frame());

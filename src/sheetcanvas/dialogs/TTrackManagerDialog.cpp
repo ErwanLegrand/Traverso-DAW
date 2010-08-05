@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TBusTrack.h"
 #include "Utils.h"
 #include "TSend.h"
+#include "Themer.h"
+#include "TMainWindow.h"
 
 #include <QMenu>
 
@@ -69,6 +71,11 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
                 routingInputButton->setText("Add Input");
         }
 
+        prePluginsUpButton->setIcon(QIcon(":/up"));
+        prePluginsDownButton->setIcon(QIcon(":/down"));
+        postPluginsUpButton->setIcon(QIcon(":/up"));
+        postPluginsDownButton->setIcon(QIcon(":/down"));
+
         MasterOutSubGroup* master = qobject_cast<MasterOutSubGroup*>(m_track);
         if (master) {
                 // Master Buses are not allowed to be renamed to avoid confusion
@@ -78,7 +85,14 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
 
         connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan_indicator()));
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain_indicator()));
-
+        connect(m_track, SIGNAL(soloChanged(bool)), this, SLOT(update_track_status_buttons(bool)));
+        connect(m_track, SIGNAL(muteChanged(bool)), this, SLOT(update_track_status_buttons(bool)));
+        AudioTrack* audiotrack = qobject_cast<AudioTrack*>(m_track);
+        if (audiotrack) {
+                connect(audiotrack, SIGNAL(armedChanged(bool)), this, SLOT(update_track_status_buttons(bool)));
+        } else {
+                recordButton->hide();
+        }
         connect(pm().get_project(), SIGNAL(trackRoutingChanged()), this, SLOT(update_routing_input_output_widget_view()));
 
         connect(preSendsListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(pre_sends_selection_changed()));
@@ -490,4 +504,57 @@ void TTrackManagerDialog::post_sends_pan_value_changed(int value)
         QByteArray panString = QByteArray::number(pan, 'f', 2);
         postSendPanLabel->setText(panString);
         m_selectedPostSend->set_pan(pan);
+}
+
+void TTrackManagerDialog::on_muteButton_clicked()
+{
+        m_track->mute();
+}
+
+void TTrackManagerDialog::on_soloButton_clicked()
+{
+        m_track->solo();
+}
+
+void TTrackManagerDialog::on_recordButton_clicked()
+{
+        AudioTrack* audiotrack = qobject_cast<AudioTrack*>(m_track);
+        if (audiotrack) {
+                audiotrack->toggle_arm();
+        }
+}
+
+void TTrackManagerDialog::on_monitorButton_clicked()
+{
+//        m_track->monitor();
+}
+
+void TTrackManagerDialog::update_track_status_buttons(bool)
+{
+        QPalette defaultPalette = TMainWindow::instance()->palette();
+        QPalette highlightedPalette = TMainWindow::instance()->palette();
+
+        if (m_track->is_muted()) {
+                highlightedPalette.setColor(QPalette::Button, themer()->get_color("TrackPanel:muteled"));
+                muteButton->setPalette(highlightedPalette);
+        } else {
+                muteButton->setPalette(defaultPalette);
+        }
+
+        if (m_track->is_solo()) {
+                highlightedPalette.setColor(QPalette::Button, themer()->get_color("TrackPanel:sololed"));
+                soloButton->setPalette(highlightedPalette);
+        } else {
+                soloButton->setPalette(defaultPalette);
+        }
+
+        AudioTrack* audiotrack = qobject_cast<AudioTrack*>(m_track);
+        if (audiotrack) {
+                if (audiotrack->armed()) {
+                        highlightedPalette.setColor(QPalette::Button, themer()->get_color("TrackPanel:recled"));
+                        recordButton->setPalette(highlightedPalette);
+                } else {
+                        recordButton->setPalette(defaultPalette);
+                }
+        }
 }
