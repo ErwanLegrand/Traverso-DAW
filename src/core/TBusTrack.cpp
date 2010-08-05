@@ -96,6 +96,12 @@ void TBusTrack::create_process_bus()
         m_processBus = new AudioBus(busConfig);
 }
 
+void TBusTrack::set_name( const QString & name )
+{
+        m_processBus->set_name(name);
+        ProcessingData::set_name(name);
+}
+
 int TBusTrack::process(nframes_t nframes)
 {
         if (m_isMuted || (get_gain() == 0.0f) ) {

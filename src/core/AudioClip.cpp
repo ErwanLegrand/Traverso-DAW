@@ -205,7 +205,7 @@ QDomNode AudioClip::get_state( QDomDocument doc )
 	node.setAttribute("length", m_length.universal_frame());
 	node.setAttribute("mute", m_isMuted);
 	node.setAttribute("take", m_isTake);
-	node.setAttribute("clipname", m_name );
+        node.setAttribute("clipname", m_name );
 	node.setAttribute("id", m_id );
 	node.setAttribute("sheet", m_sheetId );
 	node.setAttribute("locked", m_isLocked);

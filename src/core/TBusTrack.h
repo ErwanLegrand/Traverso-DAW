@@ -36,6 +36,7 @@ public:
 
         QDomNode get_state(QDomDocument doc, bool istemplate=false);
         virtual int set_state( const QDomNode & node );
+        void set_name(const QString& name);
         int process(nframes_t nframes);
 
 protected:
