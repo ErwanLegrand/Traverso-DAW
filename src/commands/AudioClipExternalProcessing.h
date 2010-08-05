@@ -29,6 +29,8 @@ class AudioTrack;
 
 class AudioClipExternalProcessing : public Command
 {
+        Q_OBJECT
+
 public :
 	AudioClipExternalProcessing(AudioClip* object);
 	~AudioClipExternalProcessing();

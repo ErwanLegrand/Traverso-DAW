@@ -42,17 +42,22 @@ MoveCommand.cpp
 )
 
 SET(TRAVERSO_COMMANDS_MOC_CLASSES
+ArmTracks.h
+AudioClipExternalProcessing.h
 ArrowKeyBrowser.h
+ClipSelection.h
 Crop.h
 ExternalProcessingDialog.h
 Fade.h
 Gain.h
+Import.h
 MoveClip.h
 MoveCurveNode.h
 MoveEdge.h
 MoveMarker.h
 Shuttle.h
 MoveTrack.h
+RemoveClip.h
 SplitClip.h
 TrackPan.h
 WorkCursorMove.h

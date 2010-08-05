@@ -123,47 +123,47 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AlsaDriver</name>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="191"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="194"/>
         <source>ALSA Driver: The playback device %1 is already in use. Please stop the application using it and run Traverso again</source>
         <translation>ALSA Драйвер: Устройството за просвирване %1 е заето. Моля спрете програмата, която го използва и стартирайте отново Traverso.</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="197"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="200"/>
         <source>ALSA Driver: You do not have permission to open the audio device %1 for playback</source>
         <translation>ALSA Драйвер: Нямате права за да използвате това устройство за просвирване</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="201"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="204"/>
         <source>snd_pcm_open(playback_handle, ..) failed with unknown error type</source>
         <translation>snd_pcm_open(playback_handle, ..) не успя - непозната грешка</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="216"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="219"/>
         <source>ALSA Driver: The capture device %1 is already in use. Please stop the application using it and run Traverso again</source>
         <translation>ALSA Драйвер: Устройството за запис %1 е заето. Моля спрете програмата, която го използва и стартирайте отново Traverso.</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="222"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="225"/>
         <source>ALSA Driver: You do not have permission to open the audio device %1 for capture</source>
         <translation>ALSA Драйвер: Нямате права за да използвате това устройство за запис</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="226"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="229"/>
         <source>ALSA Driver: snd_pcm_open(capture_handle, ...) failed with unknown error type</source>
         <translation>ALSA Драйвер: snd_pcm_open(capture_handle, ...) не успя - непозната грешка</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="242"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="245"/>
         <source>ALSA Driver: Cannot open PCM device %1 for playback. Falling back to capture-only mode</source>
         <translation>ALSA Драйвер: Не може да се отвори за просвирване устройството %1. Връщаме се към режим само запис.</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="257"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="260"/>
         <source>ALSA: Cannot open PCM device %1 for capture. Falling back to playback-only mode</source>
         <translation>ALSA: Не може да се отвори за запис устройството %1. Връщаме се към режим само просвирване.</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AlsaDriver.cpp" line="615"/>
+        <location filename="../../src/engine/AlsaDriver.cpp" line="618"/>
         <source>ALSA Driver: Unable to configure hardware, is it in use by another application?</source>
         <translation>ALSA Драйвер: Не мога да конфигурирам хардуера - използва ли го някоя друга програма?</translation>
     </message>
@@ -171,77 +171,82 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AppearenceConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="446"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="452"/>
         <source>Icons only</source>
         <translation>Само икони</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="447"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="453"/>
         <source>Text only</source>
         <translation>Само текст</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="448"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="454"/>
         <source>Text beside Icons</source>
         <translation>Текст до иконите</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="449"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="455"/>
         <source>Text below Icons</source>
         <translation>Текст под иконите</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="527"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="535"/>
         <source>Default Language</source>
         <translation>Език по подразбиране</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="591"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="601"/>
         <source>Select default project dir</source>
         <translation>Изберете директория на проекта по подразбиране</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="13"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="14"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="23"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="24"/>
         <source>Theme</source>
         <translation>Изглед</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="35"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="36"/>
         <source>Theme selector</source>
         <translation>Избор на Изглед</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="63"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="58"/>
         <source>Path to theme files</source>
         <translation>Път към файловете с изгледи</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="140"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="135"/>
         <source>Available themes</source>
         <translation>Налични Изгледи</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="167"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="156"/>
         <source>Adjust theme color</source>
         <translation>Нагласи цвят на Изгледа</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="189"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="190"/>
+        <source>Edit Theme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="202"/>
         <source>Theme Options</source>
         <translation>Настройки на Изгледа</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="201"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="214"/>
         <source>Paint audio rectified</source>
         <translation>Рисувай аудиото ректифицирано</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="208"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="221"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -251,68 +256,73 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Рисуването на вълната с контур е по-детайлно, но изисква процесорно време.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ако имате забавяне при много клипове, или по време на анимирано превъртане, размракирайте тази опция!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="216"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="229"/>
         <source>Paint audio with outline</source>
         <translation>Рисуивай аудиото с контур</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="223"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="236"/>
         <source>Paint stereo audio as mono audio</source>
         <translation>Рисувай стереото като моно аудио</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="230"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="243"/>
         <source>Draw lines at 0 and -6 dB</source>
         <translation>Чертай линии на 0 и -6 децибела</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="240"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="250"/>
+        <source>Orientate Track VU&apos;s horizontally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="260"/>
         <source>Style Options</source>
         <translation>Настройки на Стила</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="260"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="280"/>
         <source>Select style</source>
         <translation>Избери Стил</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="279"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="299"/>
         <source>Use selected style&apos;s palette</source>
         <translation>Използвай палета на избрания стил</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="303"/>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="309"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="310"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="316"/>
         <source>Toolbars</source>
         <translation>Ленти с инструменти</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="317"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="324"/>
         <source>Icon size</source>
         <translation>Размер на Икона</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="331"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="338"/>
         <source>Button style</source>
         <translation>Стил на Бутон</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="345"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="352"/>
         <source>Transport Console size</source>
         <translation>Размер на Транспортната Конзола</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="374"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="381"/>
         <source>Language</source>
         <translation>Език</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="380"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="387"/>
         <source>Interface Language</source>
         <translation>Език на Интетрфейса</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="393"/>
+        <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="400"/>
         <source>Changing the language of the Interface will take
 effect after restarting Traverso!</source>
         <translation>Смяната на езика на интерфейса ще влезе в сила
@@ -330,72 +340,32 @@ effect after restarting Traverso!</source>
 <context>
     <name>AudioClip</name>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="572"/>
-        <source>Unable to Record to Track</source>
-        <translation>Не мога да записвам на трака</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClip.cpp" line="573"/>
-        <source>AudioDevice doesn&apos;t have this Capture Bus: %1 (Track %2)</source>
-        <translation>АудиоУстройството няма този бус за запис: %1 (Трак %2)</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClip.cpp" line="650"/>
+        <location filename="../../src/core/AudioClip.cpp" line="651"/>
         <source>Toggle Mute</source>
         <translation>Превключи Заглушаване</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="657"/>
+        <location filename="../../src/core/AudioClip.cpp" line="658"/>
         <source>Toggle Lock</source>
         <translation>Превключи Заключване</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="684"/>
+        <location filename="../../src/core/AudioClip.cpp" line="685"/>
         <source>Remove Fades</source>
         <translation>Премахни затихванията/усилванията</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="889"/>
+        <location filename="../../src/core/AudioClip.cpp" line="892"/>
         <source>Normalization</source>
         <translation>Нормализиране</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="890"/>
+        <location filename="../../src/core/AudioClip.cpp" line="893"/>
         <source>Set Normalization level:</source>
         <translation>Задай ниво за Нормализиране</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.h" line="48"/>
-        <source>Mute</source>
-        <translation>Заглуши</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClip.h" line="49"/>
-        <source>In: Remove</source>
-        <translation>Вход: Премахни</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClip.h" line="50"/>
-        <source>Out: Remove</source>
-        <translation>Изход: Премахни</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClip.h" line="51"/>
-        <source>Both: Remove</source>
-        <translation>Всичко: Премахни</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClip.h" line="52"/>
-        <source>Normalize</source>
-        <translation>Нормализирай</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClip.h" line="53"/>
-        <source>Lock</source>
-        <translation>Заключи</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClip.cpp" line="899"/>
+        <location filename="../../src/core/AudioClip.cpp" line="902"/>
         <source>AudioClip: Normalize</source>
         <translation type="unfinished"></translation>
     </message>
@@ -531,135 +501,85 @@ effect after restarting Traverso!</source>
         <source>Selection: Invert</source>
         <translation>Селекция: Вмъкни</translation>
     </message>
-    <message>
-        <location filename="../../src/core/AudioClipManager.h" line="37"/>
-        <source>Select all</source>
-        <translation>Избери всичко</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioClipManager.h" line="38"/>
-        <source>Invert</source>
-        <translation>Обърни</translation>
-    </message>
 </context>
 <context>
     <name>AudioClipView</name>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="141"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="142"/>
         <source>Click to reset AudioFile !</source>
         <translation>Кликнете за да възстановите АудиоФайл !</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="880"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="900"/>
         <source>Reset Audio File for Clip: %1</source>
         <translation>Възстанови Аудио Файла за Клип: %1</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="882"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="902"/>
         <source>All files (*);;Audio files (*.wav *.flac)</source>
         <translation>Всички файлове (*);;Аудио файлове (*.wav *.flac)</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="885"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="905"/>
         <source>No file selected!</source>
         <translation>Няма избран файл!</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="901"/>
+        <location filename="../../src/sheetcanvas/AudioClipView.cpp" line="921"/>
         <source>Succesfully set AudioClip file to %1</source>
         <translation>Успешно бе зададен АудиоКлип файл за %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.h" line="45"/>
-        <source>Closest: Adjust Length</source>
-        <translation>Най-близко: Нагласи Дължина</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.h" line="46"/>
-        <source>In: Adjust Length</source>
-        <translation>Вход: Нагласи Дължина</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.h" line="47"/>
-        <source>Out: Adjust Length</source>
-        <translation>Изход: Нагласи Дължина</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.h" line="48"/>
-        <source>In: Select Preset</source>
-        <translation>Вход: Избери Настройка</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.h" line="49"/>
-        <source>Out: Select Preset</source>
-        <translation>Изход: Избери Настройка</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.h" line="50"/>
-        <source>Closest: Delete</source>
-        <translation>Най-близко: Изтрий</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.h" line="51"/>
-        <source>Reset Audio File</source>
-        <translation>Възстанови Аудио Файл</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/AudioClipView.h" line="52"/>
-        <source>Edit Properties</source>
-        <translation>Редактирай Аксесоари</translation>
     </message>
 </context>
 <context>
     <name>AudioDevice</name>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="160"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="164"/>
         <source>No Driver Loaded</source>
         <translation>Не е зареден драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="415"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="401"/>
         <source>Audiodevice: Failed to create the Jack Driver</source>
         <translation>АудиоУстройство: не може да се създаде Jack драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="430"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="416"/>
         <source>Audiodevice: Failed to create the ALSA Driver</source>
         <translation>АудиоУстройство: не може да се създаде ALSA драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="444"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="430"/>
         <source>Audiodevice: Failed to create the PortAudio Driver</source>
         <translation>АудиоУстройство: не може да се създаде PortAudio драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="458"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="444"/>
         <source>Audiodevice: Failed to create the PulseAudio Driver</source>
         <translation>АудиоУстройство: не може да се създаде PulseAudio драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="473"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="459"/>
         <source>Audiodevice: Failed to create the CoreAudio Driver</source>
         <translation>АудиоУстройство: не може да се създаде CoreAudio драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="856"/>
-        <location filename="../../src/engine/AudioDevice.cpp" line="867"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="671"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="682"/>
         <source>No Device Configured</source>
         <translation>Няма конфигурирано устройство</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="997"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="823"/>
         <source>The Jack server has been shutdown!</source>
         <translation>Jack сървъра беше спрян!</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="1010"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="836"/>
         <source>AudioDevice:: Buffer underrun &apos;Storm&apos; detected, switching to Null Driver</source>
         <translation>АудиоУстройство: Засечено е прекъсване на буфер &quot;Storm&quot;, превключвам на Нулев Драйвер</translation>
     </message>
     <message>
-        <location filename="../../src/engine/AudioDevice.cpp" line="1011"/>
+        <location filename="../../src/engine/AudioDevice.cpp" line="837"/>
         <source>AudioDevice:: For trouble shooting this problem, please see Chapter 11 from the user manual!</source>
         <translation>АудиоУстройство: За решаване на този проблем, моля вижте Глава 11 от ръководството на потребителя</translation>
     </message>
@@ -675,7 +595,7 @@ effect after restarting Traverso!</source>
 <context>
     <name>AudioDriverConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="210"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="212"/>
         <source>System default</source>
         <translation>Системен Драйвер</translation>
     </message>
@@ -811,126 +731,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>AudioIODialog</name>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIODialog.ui" line="14"/>
-        <source>Audio I/O</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIODialog.ui" line="20"/>
-        <source>Audio Device</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIODialog.ui" line="31"/>
-        <source>Output</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>AudioIOPage</name>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="39"/>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="233"/>
-        <source>Left</source>
-        <translation type="unfinished">Ляво</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="40"/>
-        <source>Center</source>
-        <translation type="unfinished">Център</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="41"/>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="234"/>
-        <source>Right</source>
-        <translation type="unfinished">Дясно</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="69"/>
-        <source>Bus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="195"/>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="221"/>
-        <source>Capture</source>
-        <translation type="unfinished">Запис</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="198"/>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="224"/>
-        <source>Playback</source>
-        <translation type="unfinished">Просвирване</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="201"/>
-        <source>%1 %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="207"/>
-        <source>Mono</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="328"/>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="339"/>
-        <source>Change Bus Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="329"/>
-        <location filename="../../src/traverso/widgets/AudioIOPage.cpp" line="340"/>
-        <source>Bus Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>AudioIOPageWidget</name>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIOPage.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished">Форма</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIOPage.ui" line="39"/>
-        <source>Bus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIOPage.ui" line="49"/>
-        <source>Add &amp;Mono Bus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIOPage.ui" line="56"/>
-        <source>Add &amp;Stereo Bus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIOPage.ui" line="79"/>
-        <source>&amp;Remove Bus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIOPage.ui" line="88"/>
-        <source>Jack Options</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIOPage.ui" line="94"/>
-        <source>&amp;Add Port</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/AudioIOPage.ui" line="101"/>
-        <source>&amp;Remove Port</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>AudioSourcesManagerWidget</name>
     <message>
         <location filename="../../src/traverso/ui/AudioSourcesManagerWidget.ui" line="16"/>
@@ -961,6 +761,39 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/traverso/ui/AudioSourcesManagerWidget.ui" line="111"/>
         <source>AudioSources</source>
         <translation>Аудио източници</translation>
+    </message>
+</context>
+<context>
+    <name>AudioTrack</name>
+    <message>
+        <location filename="../../src/core/AudioTrack.cpp" line="132"/>
+        <source>Track: AudioClip with id %1 not found in Resources database!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/AudioTrack.cpp" line="182"/>
+        <source>Unable to Record to AudioTrack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/AudioTrack.cpp" line="183"/>
+        <source>AudioDevice doesn&apos;t have this Capture Bus: %1 (Track %2)</source>
+        <translation type="unfinished">АудиоУстройството няма този бус за запис: %1 (Трак %2)</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/AudioTrack.cpp" line="350"/>
+        <source>Silence Others</source>
+        <translation type="unfinished">Заглуши останалите</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/AudioTrack.cpp" line="435"/>
+        <source>Remove Clip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/AudioTrack.cpp" line="449"/>
+        <source>Add Clip</source>
+        <translation type="unfinished">Добави Клип</translation>
     </message>
 </context>
 <context>
@@ -1052,29 +885,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/traverso/ui/BehaviorConfigPage.ui" line="213"/>
         <source>Continuously adjust audio while dragging</source>
         <translation>Настройвай аудиото по време на влачене</translation>
-    </message>
-</context>
-<context>
-    <name>BusSelectorDialog</name>
-    <message>
-        <location filename="../../src/traverso/ui/BusSelectorDialog.ui" line="14"/>
-        <source>Bus Selector</source>
-        <translation>Избор на бус</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/BusSelectorDialog.ui" line="34"/>
-        <source>Track</source>
-        <translation>Трак</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/BusSelectorDialog.ui" line="68"/>
-        <source>Capture Buses</source>
-        <translation>Бусове за запис</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/BusSelectorDialog.ui" line="86"/>
-        <source>Playback Buses</source>
-        <translation>Бусове за просвирване</translation>
     </message>
 </context>
 <context>
@@ -1256,7 +1066,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ClipsViewPort</name>
     <message numerus="yes">
-        <location filename="../../src/sheetcanvas/ClipsViewPort.cpp" line="142"/>
+        <location filename="../../src/sheetcanvas/ClipsViewPort.cpp" line="130"/>
         <source>Import %n audiofile(s)</source>
         <translation>
             <numerusform>Вмъкни %n аудио файл(ове)</numerusform>
@@ -1283,18 +1093,18 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Curve</name>
     <message>
-        <location filename="../../src/core/Curve.cpp" line="697"/>
+        <location filename="../../src/core/Curve.cpp" line="701"/>
         <source>There is allready a node at this exact position, not adding a new node</source>
         <translation>Вече има точка точно на тази позиция, не се добавя нова</translation>
     </message>
     <message>
-        <location filename="../../src/core/Curve.cpp" line="708"/>
+        <location filename="../../src/core/Curve.cpp" line="712"/>
         <source>Add CurveNode</source>
         <translation>Добави Точка на кривата</translation>
     </message>
     <message>
-        <location filename="../../src/core/Curve.cpp" line="736"/>
-        <location filename="../../src/core/Curve.cpp" line="747"/>
+        <location filename="../../src/core/Curve.cpp" line="740"/>
+        <location filename="../../src/core/Curve.cpp" line="751"/>
         <source>Remove CurveNode</source>
         <translation>Премахни Точка на кривата</translation>
     </message>
@@ -1302,39 +1112,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CurveView</name>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.cpp" line="556"/>
-        <source>Drag Node</source>
-        <translation>Влачи Точка</translation>
+        <location filename="../../src/sheetcanvas/CurveView.cpp" line="420"/>
+        <source>Move Curve Node</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/CurveView.cpp" line="654"/>
+        <location filename="../../src/sheetcanvas/CurveView.cpp" line="518"/>
         <source>Clear Nodes</source>
         <translation>Изчисти Точка</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="90"/>
-        <source>New node</source>
-        <translation>Нова Точка</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="91"/>
-        <source>Remove node</source>
-        <translation>Премахни Точка</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="92"/>
-        <source>Remove all Nodes</source>
-        <translation>Премахни всички точки</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="93"/>
-        <source>Move node</source>
-        <translation>Премеасти Точка</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="94"/>
-        <source>Move node (vertical only)</source>
-        <translation>Премести Точка (само вертикално)</translation>
     </message>
 </context>
 <context>
@@ -1358,41 +1143,15 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DigitalClock</name>
     <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1315"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1497"/>
         <source>Digital Clock</source>
         <translation>Цифров часовник</translation>
     </message>
 </context>
 <context>
-    <name>DragMarker</name>
-    <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="38"/>
-        <source>Move Left</source>
-        <translation>Премести Вляво</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="39"/>
-        <source>Move right</source>
-        <translation>Премести Вдясно</translation>
-    </message>
-</context>
-<context>
-    <name>DragNode</name>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="39"/>
-        <source>Move Up</source>
-        <translation>Премести Нагоре</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/CurveView.h" line="40"/>
-        <source>Move Down</source>
-        <translation>Премести Надолу</translation>
-    </message>
-</context>
-<context>
     <name>DriverInfo</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="156"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="188"/>
         <source>Change Audio Device settings</source>
         <translation>Промени настройките на Аудио Устройството</translation>
     </message>
@@ -1473,8 +1232,8 @@ p, li { white-space: pre-wrap; }
         <translation>Бързо</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="255"/>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="381"/>
+        <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="255"/>
         <source>Bitrate</source>
         <translation>Битрейт</translation>
     </message>
@@ -1484,8 +1243,8 @@ p, li { white-space: pre-wrap; }
         <translation>Среден Битрейт</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="266"/>
         <location filename="../../src/traverso/ui/ExportFormatOptionsWidget.ui" line="538"/>
+        <location filename="../../src/traverso/widgets/ExportFormatOptionsWidget.cpp" line="266"/>
         <source>Maximum Bitrate</source>
         <translation>Максимален Битрейт</translation>
     </message>
@@ -1620,14 +1379,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeBend</name>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="152"/>
-        <location filename="../../src/commands/Fade.cpp" line="160"/>
+        <location filename="../../src/commands/Fade.cpp" line="203"/>
+        <location filename="../../src/commands/Fade.cpp" line="211"/>
         <source>Fade In: bend</source>
         <translation>Засилване: извивка</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="152"/>
-        <location filename="../../src/commands/Fade.cpp" line="160"/>
+        <location filename="../../src/commands/Fade.cpp" line="203"/>
+        <location filename="../../src/commands/Fade.cpp" line="211"/>
         <source>Fade Out: bend</source>
         <translation>Затихване: извивка</translation>
     </message>
@@ -1635,40 +1394,20 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeCurve</name>
     <message>
-        <location filename="../../src/core/FadeCurve.cpp" line="241"/>
+        <location filename="../../src/core/FadeCurve.cpp" line="275"/>
         <source>Fade Preset</source>
         <translation>Настройки на Засилване / Затихване</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/FadeCurve.h" line="40"/>
-        <source>Toggle Bypass</source>
-        <translation>Превключи Байпас</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/FadeCurve.h" line="41"/>
-        <source>Cycle Shape</source>
-        <translation>Кръгла Форма</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/FadeCurve.h" line="42"/>
-        <source>Remove Fade</source>
-        <translation>Премахни Засилване / Затихване</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/FadeCurve.h" line="43"/>
-        <source>Toggle Raster</source>
-        <translation>Превчключи Растер</translation>
     </message>
 </context>
 <context>
     <name>FadeMode</name>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="338"/>
+        <location filename="../../src/commands/Fade.cpp" line="389"/>
         <source>Fade In: shape</source>
         <translation>Засилване: форма</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="338"/>
+        <location filename="../../src/commands/Fade.cpp" line="389"/>
         <source>Fade Out: shape</source>
         <translation>Затихване: форма</translation>
     </message>
@@ -1676,22 +1415,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeRange</name>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="51"/>
+        <location filename="../../src/commands/Fade.cpp" line="55"/>
         <source>Fade In: length</source>
         <translation>Засилване: дължина</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="51"/>
+        <location filename="../../src/commands/Fade.cpp" line="55"/>
         <source>Fade Out: length</source>
         <translation>Затихване: дължина</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="63"/>
+        <location filename="../../src/commands/Fade.cpp" line="69"/>
         <source>Fade In: remove</source>
         <translation>Засилване: премахни</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="63"/>
+        <location filename="../../src/commands/Fade.cpp" line="69"/>
         <source>Fade Out: remove</source>
         <translation>Затихване: премахни</translation>
     </message>
@@ -1699,34 +1438,16 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FadeStrength</name>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="244"/>
-        <location filename="../../src/commands/Fade.cpp" line="252"/>
+        <location filename="../../src/commands/Fade.cpp" line="295"/>
+        <location filename="../../src/commands/Fade.cpp" line="303"/>
         <source>Fade In: strength</source>
         <translation>Засилване: сила</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Fade.cpp" line="244"/>
-        <location filename="../../src/commands/Fade.cpp" line="252"/>
+        <location filename="../../src/commands/Fade.cpp" line="295"/>
+        <location filename="../../src/commands/Fade.cpp" line="303"/>
         <source>Fade Out: strength</source>
         <translation>Затихване: сила</translation>
-    </message>
-</context>
-<context>
-    <name>FadeView</name>
-    <message>
-        <location filename="../../src/sheetcanvas/FadeView.h" line="36"/>
-        <source>Adjust Bend</source>
-        <translation>Настрой Извивка</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/FadeView.h" line="37"/>
-        <source>Adjust Strength</source>
-        <translation>Настрой Сила</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/FadeView.h" line="38"/>
-        <source>Select Preset</source>
-        <translation>Избери Настройки</translation>
     </message>
 </context>
 <context>
@@ -1756,35 +1477,35 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Import</name>
     <message>
-        <location filename="../../src/commands/Import.cpp" line="48"/>
-        <location filename="../../src/commands/Import.cpp" line="56"/>
-        <location filename="../../src/commands/Import.cpp" line="62"/>
+        <location filename="../../src/commands/Import.cpp" line="49"/>
+        <location filename="../../src/commands/Import.cpp" line="57"/>
+        <location filename="../../src/commands/Import.cpp" line="63"/>
         <source>Import Audio File</source>
         <translation>Вмъкни Аудио Файл</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Import.cpp" line="50"/>
+        <location filename="../../src/commands/Import.cpp" line="51"/>
         <source>Insert Silence</source>
         <translation>Вмъкни Тишина</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Import.cpp" line="92"/>
         <location filename="../../src/commands/Import.cpp" line="93"/>
+        <location filename="../../src/commands/Import.cpp" line="94"/>
         <source>Silence</source>
         <translation>Тишина</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Import.cpp" line="96"/>
+        <location filename="../../src/commands/Import.cpp" line="97"/>
         <source>All files (*)</source>
         <translation>Всички файлове(*)</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Import.cpp" line="97"/>
+        <location filename="../../src/commands/Import.cpp" line="98"/>
         <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
         <translation>Аудио файлове(*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
     </message>
     <message>
-        <location filename="../../src/commands/Import.cpp" line="99"/>
+        <location filename="../../src/commands/Import.cpp" line="100"/>
         <source>Import audio source</source>
         <translation>Вмъкни аудио източник</translation>
     </message>
@@ -1810,24 +1531,33 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>InputEngine</name>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="246"/>
+        <location filename="../../src/core/InputEngine.cpp" line="271"/>
         <source>Modifier key actions are not supported from Context Menu</source>
         <translation>Действията на определящите клавиши не се поддържат от контекстното меню</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="256"/>
+        <location filename="../../src/core/InputEngine.cpp" line="281"/>
         <source>Hold actions are not supported from Context Menu</source>
         <translation>Действията със задържане на се поддържат от контекстното меню</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="377"/>
+        <location filename="../../src/core/InputEngine.cpp" line="418"/>
         <source>Command Plugin %1 not found!</source>
         <translation>Командна Добавка %1 не бе намерена!</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="380"/>
+        <location filename="../../src/core/InputEngine.cpp" line="421"/>
         <source>Plugin %1 doesn&apos;t implement Command %2</source>
         <translation>Добавка %1 не поддържа Команда %2</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/InputEngine.cpp" line="1556"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1629"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1632"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1635"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1638"/>
+        <source>Input Engine: Loaded keymap has this unrecognized key: %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1844,408 +1574,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>Interface</name>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="129"/>
-        <source>History</source>
-        <translation>История</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="137"/>
-        <source>Resources Bin</source>
-        <translation>Място за ресурси</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="146"/>
-        <source>Correlation Meter</source>
-        <translation>Корелационен Индикатор</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="154"/>
-        <source>FFT Spectrum</source>
-        <translation>FFT спектър</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="375"/>
-        <source>Traverso %1 (built with Qt %2)
-
-A multitrack audio recording and editing program.
-
-Look in the Help menu for more info.
-
-Traverso is brought to you by R. Sijrier and others,
-including all the people from the Free Software world
-who contributed the important technologies on which
-Traverso is based (Gcc, Qt, Xorg, Linux, and so on)</source>
-        <translation>Traverso %1 (със Qt %2)Многотракова програма за запис и обработка на аудио.Вижте Помощното меню за повече информация.Traverso е реализиран от R. Sijrier и други,включително всички хора от Free Software worldкоито спомогнаха с технологиите, на които Traverso е базиран (Gcc, Qt, Xorg, Linux, и т.н.)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="382"/>
-        <location filename="../../src/traverso/Interface.h" line="77"/>
-        <source>About Traverso</source>
-        <translation>За Traverso</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="512"/>
-        <source>&amp;New...</source>
-        <translation>&amp;Нов...</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="517"/>
-        <source>&amp;Open...</source>
-        <translation>&amp;Отвори...</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="524"/>
-        <source>&amp;Save</source>
-        <translation>&amp;Запази</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="532"/>
-        <source>&amp;Close Project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="540"/>
-        <source>&amp;Manage Project...</source>
-        <translation>&amp;Управление на Проект</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="557"/>
-        <source>&amp;Export...</source>
-        <translation>&amp;Експорт</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="566"/>
-        <source>&amp;CD Writing...</source>
-        <translation>&amp;CD запис</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="575"/>
-        <source>&amp;Restore Backup...</source>
-        <translation>&amp;Въстанови резервно копие</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="586"/>
-        <source>&amp;Quit</source>
-        <translation>&amp;Изход</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="594"/>
-        <source>&amp;Edit</source>
-        <translation>&amp;Редакция</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="596"/>
-        <source>Undo</source>
-        <translation>Стъпка назад</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="603"/>
-        <source>Redo</source>
-        <translation>Стъпка напред</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="613"/>
-        <source>Import &amp;Audio...</source>
-        <translation>Вмъкни &amp;Аудио</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="619"/>
-        <source>Insert Si&amp;lence...</source>
-        <translation>Вмъкни Ти&amp;шина</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="628"/>
-        <source>&amp;Snap</source>
-        <translation>&amp;Захващане</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="632"/>
-        <source>Snap items to edges of other items while dragging.</source>
-        <translation>Захвани обекта за краищата на други обекти при влачене.</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="636"/>
-        <source>S&amp;croll Playback</source>
-        <translation>Пр&amp;евърти просвирване</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="640"/>
-        <source>Keep play cursor in view while playing or recording.</source>
-        <translation>Пази курсора в полезрението при запис и възпроизвеждане</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="644"/>
-        <source>&amp;Show Effects</source>
-        <translation>&amp;Покажи Ефекти</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="648"/>
-        <source>Show effect plugins and automation curves on tracks</source>
-        <translation>Покажи линията на добавките и  автоматизацията на траковете</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="652"/>
-        <source>&amp;View</source>
-        <translation>&amp;Покажи</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="658"/>
-        <source>Marker Editor...</source>
-        <translation>Редактор на маркери</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="668"/>
-        <source>ToolBars</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="672"/>
-        <source>Transport Console</source>
-        <translation>Конзола за управление</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="678"/>
-        <source>Project</source>
-        <translation>Проект</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="681"/>
-        <source>Edit</source>
-        <translation>Редакция</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="685"/>
-        <source>System Information</source>
-        <translation>Информация за Системата</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="687"/>
-        <source>&amp;Sheet</source>
-        <translation>&amp;Плот</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="689"/>
-        <source>New &amp;Sheet(s)...</source>
-        <translation>Нов &amp;Плот(ове)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="694"/>
-        <source>New &amp;Track(s)...</source>
-        <translation>Нов &amp;Трак(ове)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="550"/>
-        <source>Audio I/O...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="163"/>
-        <location filename="../../src/traverso/Interface.cpp" line="164"/>
-        <source>VU Meters</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="510"/>
-        <source>&amp;File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="700"/>
-        <source>Se&amp;ttings</source>
-        <translation>На&amp;стройки</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="702"/>
-        <source>&amp;Recording File Format</source>
-        <translation>Файлов Формат за &amp;Запис</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="714"/>
-        <source>&amp;Resample Quality</source>
-        <translation>Качество на &amp;Ресемплиране</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="715"/>
-        <source>Best</source>
-        <translation>Най-добро</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="718"/>
-        <source>High</source>
-        <translation>Високо</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="721"/>
-        <source>Medium</source>
-        <translation>Средно</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="724"/>
-        <source>Fast</source>
-        <translation>Бързо</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="733"/>
-        <source>&amp;Preferences...</source>
-        <translation>&amp;Настройки</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="737"/>
-        <source>&amp;Help</source>
-        <translation>&amp;Помощ</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="738"/>
-        <source>&amp;Getting Started</source>
-        <translation>&amp;В Началото</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="741"/>
-        <source>&amp;User Manual</source>
-        <translation>&amp;Ръководство на потребителя</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="745"/>
-        <source>&amp;About Traverso</source>
-        <translation>&amp;Отностно Traverso</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="922"/>
-        <source>&lt;b&gt;Description&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Описание&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="922"/>
-        <source>&lt;b&gt;Key Sequence&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Последователност клавиши&lt;/b&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1240"/>
-        <source>Open Audio Files</source>
-        <translation>Отвори Аудио Файлове</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1242"/>
-        <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
-        <translation>Аудио файлове(*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1282"/>
-        <source>%1: %2</source>
-        <translation>%1: %2</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1436"/>
-        <source>Opening User Manual in external browser!</source>
-        <translation>Отваря Ръководство на Потребителя във външа програма</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1442"/>
-        <source>Traverso - Important</source>
-        <translation>Traverso - Важно</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1443"/>
-        <source>A Project directory changed outside of Traverso. 
-
-This is NOT supported! Please undo this change now!
-
-If you want to rename a Project, use the Project Manager instead!</source>
-        <translation>Директотията на проекта е променена извън Traverso
-
-Това НЕ СЕ поддържа! Моля отменете промените сега!
-
-Ако искате да преименувате Проект, използвайте Управление на Проект!</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1475"/>
-        <source>Traverso - Project load failed</source>
-        <translation>Traverso - Зареждането на проект е неуспешно</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1476"/>
-        <source>The requested Project `%1` 
-could not be loaded for the following reason:
-
-&apos;%2&apos;
-
-You will now be given a list of available backups (if any) 
-to restore the Project from.</source>
-        <translation>Проекта &apos;%1&apos;
-не може да се зареди поради следните причини:
-
-&apos;%2&apos;
-
-Сега ще видите списък с наличните резервни копия (ако има такива)
-за да възстановите Проекта от тях.</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1496"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1503"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1509"/>
-        <source>Changed encoding for recording to %1</source>
-        <translation>Кодирането на записа е сменено на %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.cpp" line="1515"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1521"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1527"/>
-        <location filename="../../src/traverso/Interface.cpp" line="1533"/>
-        <source>Changed resample quality to: %1</source>
-        <translation>Качеството на ресемплиране променено на: %1</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.h" line="75"/>
-        <source>Show Export Dialog</source>
-        <translation>Покажи Диалог за Експортиране</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.h" line="76"/>
-        <source>Show Context Menu</source>
-        <translation>Покажи Контекстно Мену</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.h" line="78"/>
-        <source>Show Project Management Dialog</source>
-        <translation>Покажи диалога за Управление на Проекта</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.h" line="79"/>
-        <source>Full Screen</source>
-        <translation>Пълен Екран</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.h" line="80"/>
-        <source>Export keymap</source>
-        <translation>Експортитай план на клавишите</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.h" line="81"/>
-        <source>Play</source>
-        <translation>Просвири</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.h" line="82"/>
-        <source>Record</source>
-        <translation>Запиши</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/Interface.h" line="83"/>
-        <source>Show Audio I/O dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>JackDriver</name>
     <message>
-        <location filename="../../src/engine/JackDriver.cpp" line="109"/>
+        <location filename="../../src/engine/JackDriver.cpp" line="104"/>
         <source>Jack Driver: Couldn&apos;t connect to the jack server, is jack running?</source>
         <translation>Jack драйвер: Не може да се осъществи връзка с jack сървър, стартиран ли е jack?</translation>
     </message>
     <message>
-        <location filename="../../src/engine/JackDriver.cpp" line="272"/>
+        <location filename="../../src/engine/JackDriver.cpp" line="197"/>
         <source>Jack Driver: Connected successfully to the jack server!</source>
         <translation>Jack драйвер: Връзката със Jack сървъра е успешна!</translation>
     </message>
@@ -2253,94 +1589,123 @@ to restore the Project from.</source>
 <context>
     <name>KeyboardConfigPage</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="788"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="822"/>
         <source>No description set for this keymap</source>
         <translation>Не е дадено описание за този киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="811"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="845"/>
         <source>KeyMap Export</source>
         <translation>Експортиране на киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="812"/>
+        <location filename="../../src/traverso/dialogs/settings/Pages.cpp" line="846"/>
         <source>The exported keymap can be found here:
 
  %1</source>
         <translation>Експортирания киймап може да бъде намеррен тук %1</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="13"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="14"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="19"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="20"/>
         <source>Configure Keyboard</source>
         <translation>Конфигурация на клавиатурата</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="33"/>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Double fact timeout:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The maximum time in miliseconds between 2 key presses &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;to determine if the 2 key presses are a double fact ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; or &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; or 2 individual key presses ( a &amp;lt; K &amp;gt; and &amp;lt; K &amp;gt; action, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;or &amp;lt; KK &amp;gt; and &amp;lt; KK &amp;gt; action for example).&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Experienced users can set this value as low as 150 ms, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 180 ms.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, see chapter 7: Key Actions. of the User Manual&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Прекъсване за двойно събитие:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Максималното време в милисекунди между две натискания на клавиш &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;за да се определи дали имаме двойно натискане ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; or &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt; или просто две отделни натискания на клавиш ( a &amp;lt; K &amp;gt; and &amp;lt; K &amp;gt; action, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;или &amp;lt; KK &amp;gt; и &amp;lt; KK &amp;gt; събития например).&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Опитните потребители биха моглли да използват стойност до 150 мс, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;ако все още сте неопитни, моля оставете стойноста на 180 мс.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;За повече информация,вижте глава 7: Клавишни действия. в Ръководство на Потербителя&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="48"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="54"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Double fact timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Прекъсване за двойно събитие: (мс)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="84"/>
-        <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="34"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Hold timeout:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The maximum time to consider a pressed key a hold key fact, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;like [ K ] or [ KK ].&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The shorter this time, the sooner a pressed key will be &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;detected as a hold action. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Experienced users can set this value as low as 110 ms, &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 150 ms.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;For more information, see chapter 7: &quot;Key Actions&quot; of the User Manual.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Прекъсване за задържане на клавиш:&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Максималното време, за да се отчете задържане на клавиш, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;като [ K ] или [ KK ].&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Колкото по-малко е времето, толкова по-бързо едно натискане &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;може да се определи като задържане. &lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Опитните потребители биха моглли да използват стойност до 110 мс, &lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;ако все още сте неопитни, моля оставете стойноста на 150 мс.&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;За повече информация,вижте глава 7: Клавишни действия. в Ръководство на Потербителя.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600;&quot;&gt;Double fact timeout:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;The maximum time in miliseconds between 2 key presses &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;to determine if the 2 key presses are a&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;double fact ( &amp;lt;&amp;lt; K &amp;gt;&amp;gt; or &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;or 2 individual key presses ( a &amp;lt; K &amp;gt; and &amp;lt; K &amp;gt; action, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;or &amp;lt; KK &amp;gt; and &amp;lt; KK &amp;gt; action for example).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Experienced users can set this value as low as 150 ms, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 220 ms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;For more information, see chapter 7: Key Actions. of the User Manual&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="100"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="90"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600;&quot;&gt;Hold timeout:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;The maximum time to consider a pressed key a hold key fact, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;like [ K ] or [ KK ].&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;The shorter this time, the sooner a pressed key will be &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;detected as a hold action. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Experienced users can set this value as low as 130 ms, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 180 ms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;For more information, see chapter 7: &amp;quot;Key Actions&amp;quot; of the User Manual.&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="110"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hold timeout (ms)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Bitstream Vera Sans; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Прекъсване за задържане на клавиш (мс)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="131"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="141"/>
+        <source>Configure Mouse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="147"/>
+        <source>Mouse takes over keyboard navigation with:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="154"/>
+        <source>Left Mouse button click</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="163"/>
+        <source>Mouse movement. Treshold:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="194"/>
         <source>Keymap</source>
         <translation>Киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="145"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="208"/>
         <source>Select keymap</source>
         <translation>Избери Киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="206"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="269"/>
         <source>Export Keymap</source>
         <translation>Експортирай Киймап</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="213"/>
+        <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="276"/>
         <source>Print Keymap</source>
         <translation>Принтирай Киймап</translation>
     </message>
@@ -2482,6 +1847,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>MarkerView</name>
+    <message>
+        <location filename="../../src/sheetcanvas/MarkerView.cpp" line="211"/>
+        <source>Drag Marker</source>
+        <translation type="unfinished">Влачи Маркер</translation>
+    </message>
+</context>
+<context>
     <name>MoveClip</name>
     <message>
         <location filename="../../src/commands/MoveClip.cpp" line="73"/>
@@ -2522,7 +1895,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MoveEdge</name>
     <message>
-        <location filename="../../src/commands/MoveEdge.cpp" line="38"/>
+        <location filename="../../src/commands/MoveEdge.cpp" line="39"/>
         <source>Move Clip Edge</source>
         <translation>Мести Край на Клип</translation>
     </message>
@@ -2555,17 +1928,18 @@ p, li { white-space: pre-wrap; }
         <translation>Не</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="168"/>
+        <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="161"/>
+        <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="167"/>
         <source>Couldn&apos;t create project (%1)</source>
         <translation>Не може да се създаде проект (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="212"/>
+        <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="225"/>
         <source>Open Audio Files</source>
         <translation>Отвори Аудио Файл</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="214"/>
+        <location filename="../../src/traverso/dialogs/project/NewProjectDialog.cpp" line="227"/>
         <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
         <translation>Аудио файлове(*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
     </message>
@@ -2684,32 +2058,109 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NewTrackDialog</name>
     <message>
-        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="44"/>
+        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="77"/>
         <source>I can&apos;t create a new Track if there is no Project loaded!!</source>
         <translation>Не може да се създава нов Трак ако не е зареден Проект!!</translation>
     </message>
-    <message numerus="yes">
-        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="68"/>
-        <source>Added %n Track(s)</source>
-        <translation>
-            <numerusform>Добавени %n Трак(а)</numerusform>
-            <numerusform></numerusform>
-        </translation>
+    <message>
+        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="170"/>
+        <source>Added %1: %2</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="13"/>
+        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="176"/>
+        <source>Created new Track &apos;%1&apos;&apos; in Sheet &apos;%2&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="257"/>
+        <source>Fill in Track name, and hit enter to add new Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="14"/>
         <source>New Track(s)</source>
         <translation>Нов Трал</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="33"/>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="40"/>
         <source>Track name</source>
         <translation>Име на Трак</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="53"/>
-        <source>Track count</source>
-        <translation>Брой Тракове</translation>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="60"/>
+        <source>Track is a:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="67"/>
+        <source>Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="77"/>
+        <source>Bus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="84"/>
+        <source>Bounce</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="115"/>
+        <source>Routing Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="126"/>
+        <source>Jack port count:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="146"/>
+        <source>Mono</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="156"/>
+        <source>Stereo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="165"/>
+        <source>Create Jack In ports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="175"/>
+        <source>Create Jack Out ports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="194"/>
+        <source>Output (Buses)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="210"/>
+        <source>Input (HW)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="226"/>
+        <source>Output (HW)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="248"/>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="254"/>
+        <source>No Translation needed</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3035,27 +2486,32 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>PluginView</name>
+    <name>ProcessingDataView</name>
     <message>
-        <location filename="../../src/sheetcanvas/PluginView.h" line="39"/>
-        <source>Edit...</source>
-        <translation>Редактирай...</translation>
+        <location filename="../../src/sheetcanvas/ProcessingDataView.h" line="36"/>
+        <source>Edit properties</source>
+        <translation type="unfinished">Редактирай свойства</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/PluginView.h" line="40"/>
-        <source>Remove</source>
-        <translation>Премахни</translation>
+        <location filename="../../src/sheetcanvas/ProcessingDataView.h" line="37"/>
+        <source>Add new Plugin</source>
+        <translation type="unfinished">Добави нова добавка</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ProcessingDataView.h" line="38"/>
+        <source>Select Bus</source>
+        <translation type="unfinished">Избери бус</translation>
     </message>
 </context>
 <context>
     <name>ProgressToolBar</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="577"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="611"/>
         <source>Importing file %1 of %2: %p%</source>
         <translation>Вмъква файл %1 от %2: %p%</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="534"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="568"/>
         <source>Progress Toolbar</source>
         <translation>Лента за прогреса</translation>
     </message>
@@ -3063,105 +2519,120 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Project</name>
     <message>
-        <location filename="../../src/core/Project.cpp" line="103"/>
-        <location filename="../../src/core/Project.cpp" line="140"/>
-        <location filename="../../src/core/Project.cpp" line="154"/>
+        <location filename="../../src/core/Project.cpp" line="94"/>
+        <location filename="../../src/core/Project.cpp" line="347"/>
+        <source>Master</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/Project.cpp" line="142"/>
+        <location filename="../../src/core/Project.cpp" line="187"/>
+        <location filename="../../src/core/Project.cpp" line="201"/>
         <source>Cannot create dir %1</source>
         <translation>Не може да се създаде директория %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="132"/>
+        <location filename="../../src/core/Project.cpp" line="179"/>
         <source>Created new Project %1</source>
         <translation>Създаден е нов Проект %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="178"/>
+        <location filename="../../src/core/Project.cpp" line="225"/>
+        <location filename="../../src/core/Project.cpp" line="445"/>
         <source>Project %1: Cannot open project.tpf file! (Reason: %2)</source>
         <translation>Проект %1: Не може да се отвори project.tpf файл! (Причина: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="196"/>
+        <location filename="../../src/core/Project.cpp" line="243"/>
+        <location filename="../../src/core/Project.cpp" line="453"/>
         <source>Project %1: Failed to parse project.tpf file! (Reason: %2)</source>
         <translation>Проект %1: Не може да се интерпретира project.tpf файл! (Причина: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="206"/>
+        <location filename="../../src/core/Project.cpp" line="253"/>
+        <location filename="../../src/core/Project.cpp" line="463"/>
         <source>Project File Version does not match, unable to load Project!</source>
         <translation>Версията на Проектния файл не съвпада, не може да се зареди проекта!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="261"/>
+        <location filename="../../src/core/Project.cpp" line="430"/>
         <source>Project %1 loaded</source>
         <translation>Проект %1 е зареден</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="279"/>
+        <location filename="../../src/core/Project.cpp" line="474"/>
+        <location filename="../../src/core/Project.cpp" line="496"/>
         <source>Couldn&apos;t open Project properties file for writing! (File %1. Reason: %2)</source>
         <translation>Не може да се пише в Проектния файл с настройки(Файл %1, Причина: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="289"/>
+        <location filename="../../src/core/Project.cpp" line="506"/>
         <source>Project %1 saved </source>
         <translation>Проект %1 е запазен.</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="483"/>
+        <location filename="../../src/core/Project.cpp" line="960"/>
         <source>Project with title &apos;%1&apos; allready exists, not setting new title!</source>
         <translation>Проект с име &apos;%1&apos; вече съществува, не е зададено ново име!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="492"/>
+        <location filename="../../src/core/Project.cpp" line="969"/>
         <source>Project directory %1 no longer exists, did you rename it? Shame on you! Please undo that, and come back later to rename your Project...</source>
         <translation>Проектната директория %1 не съществува, случайно да сте я преименували? Как не ви е срам! Отменете това и после се върнете пак да преименувате Проекта...</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="506"/>
-        <location filename="../../src/core/Project.cpp" line="1060"/>
+        <location filename="../../src/core/Project.cpp" line="983"/>
+        <location filename="../../src/core/Project.cpp" line="1672"/>
         <source>Traverso - Information</source>
         <translation>Traverso: Информация</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="507"/>
+        <location filename="../../src/core/Project.cpp" line="984"/>
         <source>Project title changed, Project will to be reloaded to ensure proper operation</source>
         <translation>Името на проекта е променено, Проекта трябва да се презареди за правилна работа</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="577"/>
+        <location filename="../../src/core/Project.cpp" line="1054"/>
         <source>Sheet %1 added</source>
         <translation>Плот %1 добавен</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="603"/>
-        <source>Sheet &apos;%1&apos; doesn&apos;t exist!</source>
-        <translation>Плот &apos;%1&apos; не съществува!</translation>
+        <location filename="../../src/core/Project.cpp" line="1701"/>
+        <source>Sheets behave as Tracks Folder</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="650"/>
+        <location filename="../../src/core/Project.cpp" line="1703"/>
+        <source>Sheets NO longer behave as Tracks Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/Project.cpp" line="1066"/>
         <source>Remove Sheet %1</source>
         <translation>Премахни Плот %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="667"/>
+        <location filename="../../src/core/Project.cpp" line="1154"/>
         <source>Export already in progress, cannot start it twice!</source>
         <translation>Експортирането вече тече, не можете да го стартирате два пъти!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="674"/>
+        <location filename="../../src/core/Project.cpp" line="1161"/>
         <source>Unable to create export directory! Please check permissions for this directory: %1</source>
         <translation>Не може да се създаде директория за експорт! Моля проверете позволенията за тази директория: %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="743"/>
+        <location filename="../../src/core/Project.cpp" line="1230"/>
         <source>Detected clipping in exported audio! (%1)</source>
         <translation>Засечено е клипиране (твърде  високо ниво)  в експортираното аудио!(%1)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="748"/>
+        <location filename="../../src/core/Project.cpp" line="1235"/>
         <source>calculated norm factor: %1</source>
         <translation>изчислен фактор за нормализиране: %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1061"/>
+        <location filename="../../src/core/Project.cpp" line="1673"/>
         <source>You&apos;re still recording, please stop recording first to be able to exit the application!</source>
         <translation>Все още записвате. Моля спрете записа, за да можете да излезете от програмата!</translation>
     </message>
@@ -3182,6 +2653,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/core/ProjectConverter.cpp" line="103"/>
         <source>Starting to convert Project from version 2 to version 3</source>
         <translation>Започва конвертиране от версия 2 към версия 3</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/ProjectConverter.cpp" line="262"/>
+        <source>Sheet Master</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/core/ProjectConverter.cpp" line="268"/>
@@ -3306,389 +2782,398 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ProjectManager</name>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="111"/>
-        <location filename="../../src/core/ProjectManager.h" line="42"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="115"/>
         <source>Save Project</source>
         <translation>Запази Проект</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="112"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="116"/>
         <source>Should Project &apos;%1&apos; be safed before closing it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="146"/>
-        <location filename="../../src/core/ProjectManager.cpp" line="169"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="157"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="180"/>
         <source>Project %1 already exists!</source>
         <translation>Проект %1 вече съществува!</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="157"/>
-        <location filename="../../src/core/ProjectManager.cpp" line="180"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="168"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="191"/>
         <source>Unable to create new Project %1</source>
         <translation>Не мжое да се създаде нов Проект %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="226"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="231"/>
         <source>Unable to load Project %1</source>
         <translation>Не може да се зареди Проект %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="294"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="300"/>
         <source>No Project to save, open or create a Project first!</source>
         <translation>Няма Проект за запазване, отворете или създайте нов първо!</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="386"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="392"/>
         <source>Could not rename Project directory to %1</source>
         <translation>Не може да се преименува Проектната директория на %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="472"/>
+        <location filename="../../src/core/ProjectManager.cpp" line="477"/>
         <source>Projectfile backup: The project file %1 could not be opened for reading (Reason: %2)</source>
         <translation>Резервно копие на проектен файл %1 не може да се отвори за четене! (Причина: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.cpp" line="626"/>
-        <source>Cannot create dir %1</source>
-        <translation>Не може да се създаде директория %1</translation>
+        <location filename="../../src/core/ProjectManager.cpp" line="487"/>
+        <source>Projectfile backup: The project file %1 could not be opened for writing (Reason: %2)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/ProjectManager.h" line="43"/>
-        <source>Exit application</source>
-        <translation>Изход от програмата</translation>
+        <location filename="../../src/core/ProjectManager.cpp" line="630"/>
+        <source>Cannot create dir %1</source>
+        <translation>Не може да се създаде директория %1</translation>
     </message>
 </context>
 <context>
     <name>ProjectManagerDialog</name>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="173"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="202"/>
         <source>No new Sheet name was supplied!</source>
         <translation>Не е зададено име на нов Плот!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="236"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="265"/>
         <source>Save Template</source>
         <translation>Запази Шаблон</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="237"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="266"/>
         <source>Enter Template name</source>
         <translation>Впишете име на Шаблон</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="248"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="277"/>
         <source>Unable to create directory %1!</source>
         <translation>Не може да се създаде директория %1!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="259"/>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="295"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="288"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="356"/>
         <source>Traverso - Information</source>
         <translation>Traverso: Информация</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="260"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="289"/>
         <source>Template with name %1 already exists!
  Do you want to overwrite it?</source>
         <translation>Шаблон с име %1 вече съшествува! 
 Искате ли да го замените?</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="276"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="305"/>
         <source>Saved Project Template: %1</source>
         <translation>Запазен е Проектен Шаблон: %1</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="278"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="307"/>
         <source>Couldn&apos;t open file %1 for writing!</source>
         <translation>Не може да се отвори файл %1 за писане!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="296"/>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="321"/>
+        <source>Choose or create a new Audio Sources Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="357"/>
         <source>Project with title &apos;%1&apos; allready exists, please supply a different title!</source>
         <translation>Проект с име &apos;%1&apos; вече съществува, моля изберете друго име!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="19"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="20"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="19"/>
         <source>Dialog</source>
         <translation>Диалог</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="35"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="36"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="35"/>
         <source>Project</source>
         <translation>Проект</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="47"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="48"/>
         <source>Informational</source>
         <translation>Информационно</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="73"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="68"/>
         <source>Title</source>
         <translation>Име</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="106"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="101"/>
         <source>Description</source>
         <translation>Описание</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="139"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="134"/>
         <source>Engineer</source>
         <translation>Инженер</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="160"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="146"/>
+        <source>Sheets behave as Track Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="162"/>
         <source>Export</source>
         <translation>Експортиране</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="172"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="174"/>
         <source>Sheet(s)</source>
         <translation>Плот(ове)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="179"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="181"/>
         <source>Template</source>
         <translation>Шаблон</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="219"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="221"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="40"/>
         <source>Sheets</source>
         <translation>Плотове</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="246"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="242"/>
         <source>Sheet Name</source>
         <translation>Име на Плот</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="251"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="247"/>
         <source>Tracks</source>
         <translation>Тракове</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="256"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="252"/>
         <source>Length</source>
         <translation>Дължина</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="272"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="277"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="78"/>
         <source>Selected Sheet</source>
         <translation>Избран Плот</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="302"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="317"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="108"/>
         <source>Delete</source>
         <translation>Изтрий</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="328"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="343"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="134"/>
         <source>Rename</source>
         <translation>Преименувай</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="340"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="355"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="146"/>
         <source>New Sheet</source>
         <translation>Нов Плот</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="360"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="375"/>
         <location filename="../../src/traverso/ui/SheetManagerDialog.ui" line="166"/>
         <source>Create new Sheet</source>
         <translation>Създай нов Плот</translation>
     </message>
-    <message utf8="true">
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="388"/>
-        <source>CD Text</source>
-        <translation>CD текс</translation>
+    <message>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="403"/>
+        <source>CD Text</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="406"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="421"/>
         <source>Performer</source>
         <translation>Изпълнител</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="422"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="437"/>
         <source>Disc ID:</source>
         <translation>Диск ID:</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="438"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="453"/>
         <source>UPC EAN:</source>
         <translation>UPS EAN:</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="454"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="469"/>
         <source>Genre:</source>
         <translation>Жанр:</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="462"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="477"/>
         <source>Unused</source>
         <translation>Неизползвано</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="467"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="482"/>
         <source>Undefined</source>
         <translation>Недефинирано</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="472"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="487"/>
         <source>Adult Contemporary</source>
         <translation>Adult Contemporary</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="477"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="492"/>
         <source>Alternative Rock</source>
         <translation>Alternative Rock</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="482"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="497"/>
         <source>Childrens</source>
         <translation>Childrens</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="487"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="502"/>
         <source>Classical</source>
         <translation>Classical</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="492"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="507"/>
         <source>Contemporary Christian</source>
         <translation>Contemporary Christian</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="497"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="512"/>
         <source>Country</source>
         <translation>Country</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="502"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="517"/>
         <source>Dance</source>
         <translation>Dance</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="507"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="522"/>
         <source>Easy Listening</source>
         <translation>Easy Listening</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="512"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="527"/>
         <source>Erotic</source>
         <translation>Erotic</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="517"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="532"/>
         <source>Folk</source>
         <translation>Folk</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="522"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="537"/>
         <source>Gospel</source>
         <translation>Gospel</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="527"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="542"/>
         <source>Hip Hop</source>
         <translation>Hip Hop</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="532"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="547"/>
         <source>Jazz</source>
         <translation>Jazz</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="537"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="552"/>
         <source>Latin</source>
         <translation>Latin</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="542"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="557"/>
         <source>Musical</source>
         <translation>Musical</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="547"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="562"/>
         <source>New Age</source>
         <translation>New Age</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="552"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="567"/>
         <source>Opera</source>
         <translation>Opera</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="557"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="572"/>
         <source>Operette</source>
         <translation>Operette</translation>
     </message>
-    <message utf8="true">
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="562"/>
-        <source>Pop Music</source>
-        <translation>Pop Music</translation>
+    <message>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="577"/>
+        <source>Pop Music</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="567"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="582"/>
         <source>Rap</source>
         <translation>Rap</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="572"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="587"/>
         <source>Reggae</source>
         <translation>Reggae</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="577"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="592"/>
         <source>Rock Music</source>
         <translation>Rock Music</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="582"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="597"/>
         <source>Rhythm and Blues</source>
         <translation>Rhythm and Blues</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="587"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="602"/>
         <source>Sound Effects</source>
         <translation>Sound Effects</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="592"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="607"/>
         <source>Spoken Word</source>
         <translation>Spoken Word</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="597"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="612"/>
         <source>World Music</source>
         <translation>World Music</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="618"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="633"/>
         <source>Arranger</source>
         <translation>Аранжьор</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="628"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="643"/>
         <source>Songwriter</source>
         <translation>Автор на песента</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="638"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="653"/>
         <source>Message</source>
         <translation>Съобщение</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="674"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="689"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -3696,7 +3181,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Отмени последната промяна&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="693"/>
+        <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="708"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -3717,7 +3202,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="122"/>
+        <location filename="../../src/core/AudioClip.cpp" line="120"/>
         <source>AudioClip</source>
         <translation>АудиоКлип</translation>
     </message>
@@ -3732,7 +3217,7 @@ p, li { white-space: pre-wrap; }
         <translation>Точка на Крива</translation>
     </message>
     <message>
-        <location filename="../../src/core/FadeCurve.cpp" line="84"/>
+        <location filename="../../src/core/FadeCurve.cpp" line="85"/>
         <source>FadeCurve</source>
         <translation>Крива Усилване/Затихване</translation>
     </message>
@@ -3822,19 +3307,24 @@ p, li { white-space: pre-wrap; }
         <translation>маркер</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="150"/>
+        <location filename="../../src/core/Sheet.cpp" line="142"/>
         <source>Sheet</source>
         <translation>Плот</translation>
     </message>
     <message>
-        <location filename="../../src/core/TimeLine.cpp" line="39"/>
+        <location filename="../../src/core/TimeLine.cpp" line="40"/>
         <source>TimeLine</source>
         <translation>Времева линия</translation>
     </message>
     <message>
-        <location filename="../../src/core/Track.cpp" line="77"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="78"/>
         <source>Track</source>
         <translation>Трак</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TBusTrack.cpp" line="32"/>
+        <source>Bus Track</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4160,225 +3650,92 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Sheet</name>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="84"/>
-        <location filename="../../src/core/Sheet.cpp" line="96"/>
-        <source>Untitled</source>
-        <translation>Без име</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.cpp" line="86"/>
-        <location filename="../../src/core/Sheet.cpp" line="98"/>
+        <location filename="../../src/core/Sheet.cpp" line="88"/>
         <source>No artists name set</source>
         <translation>Не е зададено име на артист</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="348"/>
-        <source>Add Track</source>
-        <translation>Добави Трак</translation>
+        <location filename="../../src/core/Sheet.cpp" line="86"/>
+        <source>Sheet %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="357"/>
-        <source>Remove Track</source>
-        <translation>Премахни Трак</translation>
+        <location filename="../../src/core/Sheet.cpp" line="179"/>
+        <location filename="../../src/core/Sheet.cpp" line="226"/>
+        <source>Sheet Master</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="457"/>
+        <location filename="../../src/core/Sheet.cpp" line="422"/>
         <source>No audio to export! (Is everything muted?)</source>
         <translation>Няма аудо за експорт! (Може би всичко е заглушено?)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="461"/>
+        <location filename="../../src/core/Sheet.cpp" line="426"/>
         <source>Export start frame starts beyond export end frame!!</source>
         <translation>Началното време за експорт е след неговто крайно време!!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="466"/>
+        <location filename="../../src/core/Sheet.cpp" line="431"/>
         <source>Export tries to render to 0 channels wav file??</source>
         <translation>Експортирането ще доведе до файл с 0 канала??</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="519"/>
+        <location filename="../../src/core/Sheet.cpp" line="484"/>
         <source>Rendering Sheet %1 - Track %2 of %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="522"/>
+        <location filename="../../src/core/Sheet.cpp" line="487"/>
         <source>Normalising Sheet %1 - Track %2 of %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1107"/>
-        <location filename="../../src/core/Sheet.cpp" line="1116"/>
+        <location filename="../../src/core/Sheet.cpp" line="875"/>
+        <source>Cannot create dir %1</source>
+        <translation type="unfinished">Не може да се създаде директория %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/Sheet.cpp" line="886"/>
+        <location filename="../../src/core/Sheet.cpp" line="895"/>
         <source>Hard Disk overload detected!</source>
         <translation>Претоварване на твърдия диск!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1108"/>
+        <location filename="../../src/core/Sheet.cpp" line="887"/>
         <source>Failed to fill ReadBuffer in time</source>
         <translation>Буфера за Четене не се запълни навреме!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1117"/>
+        <location filename="../../src/core/Sheet.cpp" line="896"/>
         <source>Failed to empty WriteBuffer in time</source>
         <translation>Буфер за Писане не се изпразни навреме!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Sheet.cpp" line="1217"/>
+        <location filename="../../src/core/Sheet.cpp" line="943"/>
         <source>No Tracks armed for recording!</source>
         <translation>Няма заредени за запис тракове!</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../src/core/Sheet.cpp" line="1399"/>
+        <location filename="../../src/core/Sheet.cpp" line="1130"/>
         <source>Recording to %n Clip(s)</source>
         <translation>
             <numerusform>Записва в %n Клип(а)</numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="57"/>
-        <source>Play</source>
-        <translation>Просвирване</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="58"/>
-        <source>Record</source>
-        <translation>Запис</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="59"/>
-        <source>Workcursor: To next edge</source>
-        <translation>РаботенКурсор: Към следващ ръб</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="60"/>
-        <source>Workcursor: To previous edge</source>
-        <translation>РаботенКурсор: Към предишен ръб</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="61"/>
-        <source>Undo</source>
-        <translation>Отмени</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="62"/>
-        <source>Redo</source>
-        <translation>Повтори</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="63"/>
-        <source>Snap: On/Off</source>
-        <translation>Прилепване: Вкл./Изкл.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="64"/>
-        <source>Solo: On/Off</source>
-        <translation>Соло: Вкл./Изкл.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="65"/>
-        <source>Mute: On/Off</source>
-        <translation>Заглушаване: Вкл./Изкл.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="66"/>
-        <source>Arm: On/Off</source>
-        <translation>Заредено: Вкл./Изкл.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="67"/>
-        <source>Mode: Edit</source>
-        <translation>Режим: Редакция</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="68"/>
-        <source>Mode: Curve</source>
-        <translation>Режим: Крива</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="69"/>
-        <source>To previous snap position</source>
-        <translation>Към предна точка на прилепване</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Sheet.h" line="70"/>
-        <source>To next snap position</source>
-        <translation>Към следваща точка на прилепване</translation>
-    </message>
 </context>
 <context>
     <name>SheetView</name>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="43"/>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="44"/>
-        <source>Set</source>
-        <translation>Задай</translation>
+        <location filename="../../src/sheetcanvas/SheetView.cpp" line="1399"/>
+        <source>Edit Sheet Name</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="45"/>
-        <source>Center View</source>
-        <translation>Центрирай изгледа</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="46"/>
-        <source>Right</source>
-        <translation>Дясно</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="47"/>
-        <source>Left</source>
-        <translation>Ляво</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="48"/>
-        <source>Up</source>
-        <translation>Горе</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="49"/>
-        <source>Down</source>
-        <translation>Долу</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="50"/>
-        <source>To start</source>
-        <translation>Към началото</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="51"/>
-        <source>To end</source>
-        <translation>Към края</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="52"/>
-        <source>To Start</source>
-        <translation>Към Началото</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="53"/>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="54"/>
-        <source>Move</source>
-        <translation>Премести</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="55"/>
-        <source>Add Marker</source>
-        <translation>Добави Маркер</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="56"/>
-        <source>Add Marker at Playhead</source>
-        <translation>Добави Маркер в позицията на Курсора за Просвирване</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="57"/>
-        <source>To workcursor</source>
-        <translation>Към Работния Курсор</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/SheetView.h" line="58"/>
-        <source>Center</source>
-        <translation>Център</translation>
+        <location filename="../../src/sheetcanvas/SheetView.cpp" line="1400"/>
+        <source>Enter new name</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4555,42 +3912,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SpectralMeterView</name>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="501"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="508"/>
         <source>Screen Capture file name</source>
         <translation>Име на Екранна Снимка</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="509"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="516"/>
         <source>FFT: Unable to write captured image to hard disk</source>
         <translation>FFT: Не може да за се запише получената снимка на твърдия диск</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="520"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="527"/>
         <source>FFT: No average curve used, not data to export!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="521"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="528"/>
         <source>FFT: Enable average curve with &lt; M &gt; to generate data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="529"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="536"/>
         <source>FFT: No average data to export!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="542"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="549"/>
         <source>Select output format</source>
         <translation>Изберете изходен формат</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="542"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="549"/>
         <source>Output format:</source>
         <translation>Изходен формат:</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="550"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="557"/>
         <source>Export average dB curve</source>
         <translation>Експортирай кривата за средни db</translation>
     </message>
@@ -4606,7 +3963,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SysInfoToolBar</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="416"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="450"/>
         <source>System Information</source>
         <translation>Информация за Системата</translation>
     </message>
@@ -4674,25 +4031,657 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SystemResources</name>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="73"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="77"/>
         <source>Read Buffer Status</source>
         <translation>Състояние на Буфер за Четене</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="74"/>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="78"/>
         <source>Write Buffer Status</source>
         <translation>Състояние на Буфер за Писане</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="177"/>
+        <source>Num. Input: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TMainWindow</name>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="160"/>
+        <source>History</source>
+        <translation type="unfinished">История</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="168"/>
+        <source>Resources Bin</source>
+        <translation type="unfinished">Място за ресурси</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="177"/>
+        <source>Correlation Meter</source>
+        <translation type="unfinished">Корелационен Индикатор</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="185"/>
+        <source>FFT Spectrum</source>
+        <translation type="unfinished">FFT спектър</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="194"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="195"/>
+        <source>VU Meters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="484"/>
+        <source>Traverso %1 (built with Qt %2)
+
+A multitrack audio recording and editing program.
+
+Look in the Help menu for more info.
+
+Traverso is brought to you by R. Sijrier and others,
+including all the people from the Free Software world
+who contributed the important technologies on which
+Traverso is based (Gcc, Qt, Xorg, Linux, and so on)</source>
+        <translation type="unfinished">Traverso %1 (със Qt %2)Многотракова програма за запис и обработка на аудио.Вижте Помощното меню за повече информация.Traverso е реализиран от R. Sijrier и други,включително всички хора от Free Software worldкоито спомогнаха с технологиите, на които Traverso е базиран (Gcc, Qt, Xorg, Linux, и т.н.)</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="491"/>
+        <source>About Traverso</source>
+        <translation type="unfinished">За Traverso</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="644"/>
+        <source>&amp;File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="647"/>
+        <source>&amp;New...</source>
+        <translation type="unfinished">&amp;Нов...</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="652"/>
+        <source>&amp;Open...</source>
+        <translation type="unfinished">&amp;Отвори...</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="659"/>
+        <source>&amp;Save</source>
+        <translation type="unfinished">&amp;Запази</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="667"/>
+        <source>&amp;Close Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="675"/>
+        <source>&amp;Manage Project...</source>
+        <translation type="unfinished">&amp;Управление на Проект</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="685"/>
+        <source>&amp;Export...</source>
+        <translation type="unfinished">&amp;Експорт</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="694"/>
+        <source>&amp;CD Writing...</source>
+        <translation type="unfinished">&amp;CD запис</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="703"/>
+        <source>&amp;Restore Backup...</source>
+        <translation type="unfinished">&amp;Въстанови резервно копие</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="714"/>
+        <source>&amp;Quit</source>
+        <translation type="unfinished">&amp;Изход</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="722"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished">&amp;Редакция</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="725"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="732"/>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="742"/>
+        <source>Import &amp;Audio...</source>
+        <translation type="unfinished">Вмъкни &amp;Аудио</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="748"/>
+        <source>Insert Si&amp;lence...</source>
+        <translation type="unfinished">Вмъкни Ти&amp;шина</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="757"/>
+        <source>&amp;Snap</source>
+        <translation type="unfinished">&amp;Захващане</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="761"/>
+        <source>Snap items to edges of other items while dragging.</source>
+        <translation type="unfinished">Захвани обекта за краищата на други обекти при влачене.</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="765"/>
+        <source>S&amp;croll Playback</source>
+        <translation type="unfinished">Пр&amp;евърти просвирване</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="769"/>
+        <source>Keep play cursor in view while playing or recording.</source>
+        <translation type="unfinished">Пази курсора в полезрението при запис и възпроизвеждане</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="773"/>
+        <source>&amp;Show Effects</source>
+        <translation type="unfinished">&amp;Покажи Ефекти</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="777"/>
+        <source>Show effect plugins and automation curves on tracks</source>
+        <translation type="unfinished">Покажи линията на добавките и  автоматизацията на траковете</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="781"/>
+        <source>Vi&amp;ew</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="788"/>
+        <source>Marker Editor...</source>
+        <translation type="unfinished">Редактор на маркери</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="792"/>
+        <source>Toggle Full Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="801"/>
+        <source>ToolBars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="806"/>
+        <source>Transport Console</source>
+        <translation type="unfinished">Конзола за управление</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="812"/>
+        <source>Project</source>
+        <translation type="unfinished">Проект</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="815"/>
+        <source>Edit</source>
+        <translation type="unfinished">Редакция</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="822"/>
+        <source>System Information</source>
+        <translation type="unfinished">Информация за Системата</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="826"/>
+        <source>&amp;Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="829"/>
+        <source>&amp;Recording File Format</source>
+        <translation type="unfinished">Файлов Формат за &amp;Запис</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="841"/>
+        <source>&amp;Resample Quality</source>
+        <translation type="unfinished">Качество на &amp;Ресемплиране</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="842"/>
+        <source>Best</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="845"/>
+        <source>High</source>
+        <translation type="unfinished">Високо</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="848"/>
+        <source>Medium</source>
+        <translation type="unfinished">Средно</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="851"/>
+        <source>Fast</source>
+        <translation type="unfinished">Бързо</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="860"/>
+        <source>&amp;Preferences...</source>
+        <translation type="unfinished">&amp;Настройки</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="864"/>
+        <source>&amp;Help</source>
+        <translation type="unfinished">&amp;Помощ</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="867"/>
+        <source>&amp;Getting Started</source>
+        <translation type="unfinished">&amp;В Началото</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="870"/>
+        <source>&amp;User Manual</source>
+        <translation type="unfinished">&amp;Ръководство на потребителя</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="874"/>
+        <source>&amp;About Traverso</source>
+        <translation type="unfinished">&amp;Отностно Traverso</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="879"/>
+        <source>Audio Clip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="880"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="889"/>
+        <source>Audio Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="881"/>
+        <source>Curve</source>
+        <translation type="unfinished">Крива</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="882"/>
+        <source>Curve Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="883"/>
+        <source>Fade Curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="884"/>
+        <source>Marker</source>
+        <translation type="unfinished">маркер</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="885"/>
+        <source>Sheet</source>
+        <translation type="unfinished">Плот</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="886"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="888"/>
+        <source>Bus Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="887"/>
+        <source>Time Line</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="890"/>
+        <source>Plugin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1101"/>
+        <source>Description</source>
+        <translation type="unfinished">Описание</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1101"/>
+        <source>Key Sequence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1418"/>
+        <source>Open Audio Files</source>
+        <translation type="unfinished">Отвори Аудио Файл</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1420"/>
+        <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
+        <translation type="unfinished">Аудио файлове(*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1464"/>
+        <source>%1: %2</source>
+        <translation type="unfinished">%1: %2</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1603"/>
+        <source>No Sheet active to add child view to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1668"/>
+        <source>Opening User Manual in external browser!</source>
+        <translation type="unfinished">Отваря Ръководство на Потребителя във външа програма</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1674"/>
+        <source>Traverso - Important</source>
+        <translation type="unfinished">Traverso - Важно</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1675"/>
+        <source>A Project directory changed outside of Traverso. 
+
+This is NOT supported! Please undo this change now!
+
+If you want to rename a Project, use the Project Manager instead!</source>
+        <translation type="unfinished">Директотията на проекта е променена извън Traverso
+
+Това НЕ СЕ поддържа! Моля отменете промените сега!
+
+Ако искате да преименувате Проект, използвайте Управление на Проект!</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1707"/>
+        <source>Traverso - Project load failed</source>
+        <translation type="unfinished">Traverso - Зареждането на проект е неуспешно</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1708"/>
+        <source>The requested Project `%1` 
+could not be loaded for the following reason:
+
+&apos;%2&apos;
+
+You will now be given a list of available backups (if any) 
+to restore the Project from.</source>
+        <translation type="unfinished">Проекта &apos;%1&apos;
+не може да се зареди поради следните причини:
+
+&apos;%2&apos;
+
+Сега ще видите списък с наличните резервни копия (ако има такива)
+за да възстановите Проекта от тях.</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1728"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1735"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1741"/>
+        <source>Changed encoding for recording to %1</source>
+        <translation type="unfinished">Кодирането на записа е сменено на %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1747"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1753"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1759"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1765"/>
+        <source>Changed resample quality to: %1</source>
+        <translation type="unfinished">Качеството на ресемплиране променено на: %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1974"/>
+        <source>Track Finder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TSession</name>
+    <message>
+        <location filename="../../src/core/TSession.cpp" line="500"/>
+        <source>Added %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TSession.cpp" line="514"/>
+        <source>Removed %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TSessionTabWidget</name>
+    <message>
+        <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="93"/>
+        <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="138"/>
+        <source>Edit...</source>
+        <translation type="unfinished">Редактирай...</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="98"/>
+        <source>New Track...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="103"/>
+        <source>New Sheet...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="108"/>
+        <source>New Work View...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="116"/>
+        <source>Close Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="142"/>
+        <source>Close View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="287"/>
+        <source>Mixer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TTrackManagerDialog</name>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="14"/>
+        <source>Track Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="28"/>
+        <source>Track name</source>
+        <translation type="unfinished">Име на Трак</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="51"/>
+        <source>Mute</source>
+        <translation type="unfinished">Заглуши</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="58"/>
+        <source>Solo</source>
+        <translation type="unfinished">Соло</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="65"/>
+        <source>Record</source>
+        <translation type="unfinished">Запис</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="72"/>
+        <source>Monitor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="118"/>
+        <source>&amp;1 Pan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="156"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="365"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="858"/>
+        <source>0.00</source>
+        <translation type="unfinished">0.00</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="186"/>
+        <source>&amp;3 Inputs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="198"/>
+        <source>Add / Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="230"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="399"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="892"/>
+        <source>Remove Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="240"/>
+        <source>&amp;4 Pre Sends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="252"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="512"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="699"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="742"/>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="286"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="776"/>
+        <source>Gain</source>
+        <translation type="unfinished">Усилване</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="306"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="555"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="796"/>
+        <source>0 dB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="345"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="838"/>
+        <source>Pan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="421"/>
+        <source>&amp;5 Pre Fader Plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="467"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="654"/>
+        <source>Edit</source>
+        <translation type="unfinished">Редакция</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="531"/>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="718"/>
+        <source>Remove</source>
+        <translation type="unfinished">Премахни</translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="549"/>
+        <source>&amp;2 Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="602"/>
+        <source>&amp;6 Post Fader Plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="730"/>
+        <source>&amp;7 Outputs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="66"/>
+        <source>Audio Track:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="70"/>
+        <source>Bus Track:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="83"/>
+        <source>Master Bus:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TTrackSelector</name>
+    <message>
+        <location filename="../../src/traverso/ui/TTrackSelector.ui" line="14"/>
+        <source>Track Selector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/TTrackSelector.ui" line="22"/>
+        <source>Name</source>
+        <translation type="unfinished">Име</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/TTrackSelector.ui" line="36"/>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ThemeModifierDialog</name>
+    <message>
+        <location filename="../../src/traverso/ui/ThemeModifierDialog.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished">Диалог</translation>
+    </message>
+</context>
+<context>
+    <name>Themer</name>
+    <message>
+        <location filename="../../src/core/Themer.cpp" line="628"/>
+        <source>&lt;color name=&quot;%1&quot;  red=&quot;%2&quot; green=&quot;%3&quot; blue=&quot;%4&quot;  alpha=&quot;%5&quot; /&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TimeLine</name>
     <message>
-        <location filename="../../src/core/TimeLine.cpp" line="82"/>
+        <location filename="../../src/core/TimeLine.cpp" line="83"/>
         <source>Add Marker</source>
         <translation>Добави Маркер</translation>
     </message>
     <message>
-        <location filename="../../src/core/TimeLine.cpp" line="99"/>
+        <location filename="../../src/core/TimeLine.cpp" line="100"/>
         <source>Remove Marker</source>
         <translation>Премахни Маркер</translation>
     </message>
@@ -4700,94 +4689,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TimeLineView</name>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="347"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="256"/>
         <source>End</source>
         <translation>Край</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="355"/>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="72"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="264"/>
         <source>Add Marker</source>
         <translation>Прибваи Маркер</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="378"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="287"/>
         <source>You have to remove all other markers first.</source>
         <translation>Трябва първо да премахнете всички маркери</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="467"/>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="75"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="376"/>
         <source>Drag Marker</source>
         <translation>Влачи Маркер</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="475"/>
+        <location filename="../../src/sheetcanvas/TimeLineView.cpp" line="384"/>
         <source>Clear Markers</source>
         <translation>Изчисти Маркери</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="73"/>
-        <source>Add Marker at Playhead</source>
-        <translation>Добави Маркер в позицията на Курсора за Просвирване</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="74"/>
-        <source>Remove Marker</source>
-        <translation>Премахни Маркер</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="76"/>
-        <source>Clear all Markers</source>
-        <translation>Изчисти всички Маркери</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TimeLineView.h" line="77"/>
-        <source>Playhead to Marker</source>
-        <translation>Курсора за Просвирване при Маркер</translation>
     </message>
 </context>
 <context>
     <name>Track</name>
     <message>
-        <location filename="../../src/core/Track.cpp" line="166"/>
-        <source>Track: AudioClip with id %1 not 						found in Resources database!</source>
-        <translation>Трак: АудиоКлипа не може да бъде намерен в базата данни!</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Track.cpp" line="221"/>
-        <source>Remove Clip</source>
-        <translation>Премахни Клип</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Track.cpp" line="235"/>
-        <source>Add Clip</source>
-        <translation>Добави Клип</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Track.cpp" line="503"/>
-        <source>Silence Others</source>
-        <translation>Заглуши останалите</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Track.h" line="44"/>
-        <source>Mute</source>
-        <translation>Заглуши</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Track.h" line="45"/>
-        <source>Record: On/Off</source>
-        <translation>Запис: Вкл./Изкл.</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Track.h" line="46"/>
-        <source>Solo</source>
-        <translation>Соло</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/Track.h" line="47"/>
-        <source>Silence other tracks</source>
-        <translation>Заглуши останалите тракове</translation>
+        <location filename="../../src/core/Track.cpp" line="149"/>
+        <source>Sheet Master</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4806,75 +4738,55 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TrackView</name>
     <message>
-        <location filename="../../src/sheetcanvas/TrackView.cpp" line="153"/>
-        <source>Set Track name</source>
-        <translation>Задай име на Трак</translation>
+        <location filename="../../src/sheetcanvas/TrackView.cpp" line="129"/>
+        <source>Edit name</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TrackView.cpp" line="154"/>
-        <source>Enter new Track name</source>
-        <translation>Впиши ново име на Трак</translation>
+        <location filename="../../src/sheetcanvas/TrackView.cpp" line="130"/>
+        <source>Enter new name</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/TrackView.cpp" line="165"/>
+        <location filename="../../src/sheetcanvas/TrackView.cpp" line="141"/>
         <source>Track %1:  %2</source>
         <translation>Трак %1:%2</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TrackView.h" line="36"/>
-        <source>Edit properties</source>
-        <translation>Редактирай свойства</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TrackView.h" line="37"/>
-        <source>Add new Plugin</source>
-        <translation>Добави нова добавка</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TrackView.h" line="38"/>
-        <source>Select Bus</source>
-        <translation>Избери бус</translation>
-    </message>
-    <message>
-        <location filename="../../src/sheetcanvas/TrackView.h" line="39"/>
-        <source>Insert Silence</source>
-        <translation>Вмъкни Тишина</translation>
     </message>
 </context>
 <context>
     <name>TransportConsoleWidget</name>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="60"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="63"/>
         <source>Skip to Start</source>
         <translation>Скочи в Началото</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="61"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="64"/>
         <source>Previous Snap Position</source>
         <translation>Предна Точка на Прилепване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="62"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="65"/>
         <source>Record</source>
         <translation>Запис</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="63"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="66"/>
         <source>Play / Stop</source>
         <translation>Свири/Спри</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="64"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="67"/>
         <source>Next Snap Position</source>
         <translation>Следваща точка на прилепване</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="65"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="68"/>
         <source>Skip to End</source>
         <translation>Скочи в Края</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="185"/>
+        <location filename="../../src/traverso/widgets/TransportConsoleWidget.cpp" line="198"/>
         <source>Recording to %1 Tracks, encoding format: %2</source>
         <translation>Записва в %1 Трака, формат на кодиране:%2</translation>
     </message>
@@ -4927,11 +4839,6 @@ p, li { white-space: pre-wrap; }
         <translation>Премахни Клип</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="40"/>
-        <source>Remove Track</source>
-        <translation>Премахни Трак</translation>
-    </message>
-    <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="41"/>
         <source>External Processing</source>
         <translation>Външна Обработка</translation>
@@ -4948,98 +4855,113 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="45"/>
+        <source>Move Up/Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="46"/>
         <source>Drag Edge</source>
         <translation>Влачи Края</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="46"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="47"/>
         <source>Move Or Resize Clip</source>
         <translation>Премести и оразмери Клип</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="47"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="48"/>
         <source>Split</source>
         <translation>Раздели</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="49"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="50"/>
         <source>Arm Tracks</source>
         <translation>Зареди Тракове</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="50"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="51"/>
         <source>Fold Sheet</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="51"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="52"/>
         <source>Fold Track</source>
         <translation>Сгъни Трак</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="52"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="53"/>
         <source>Fold Markers</source>
         <translation>Сгъни Маркери</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="53"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="54"/>
         <source>Vertical In</source>
         <translation>Вертикално Увеличаване</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="54"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="55"/>
         <source>Horizontal Out</source>
         <translation>Хоризонтално Намаляне</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="55"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="56"/>
         <source>Horizontal In</source>
         <translation>Хоризонтално Увеличаване</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="56"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="57"/>
         <source>Vertical Out</source>
         <translation>Вертикално Намаляне</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="57"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="58"/>
         <source>Omnidirectional</source>
         <translation>Разнопосочно</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="58"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="59"/>
         <source>Horizontal</source>
         <translation>Хоризонтално</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="59"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="60"/>
         <source>Vertical</source>
         <translation>Вертикално</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="60"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="61"/>
         <source>Right</source>
         <translation>Дясно</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="61"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="62"/>
         <source>Left</source>
         <translation>Ляво</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="62"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="63"/>
         <source>Up</source>
         <translation>Горе</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="63"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="64"/>
         <source>Down</source>
         <translation>Долу</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="64"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="65"/>
         <source>Shuttle</source>
         <translation type="unfinished">Совалка</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="66"/>
+        <source>Normalize</source>
+        <translation type="unfinished">Нормализирай</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="67"/>
+        <source>Arrow Key Browser</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="42"/>
@@ -5047,8 +4969,43 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="48"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="40"/>
+        <source>Remove</source>
+        <translation type="unfinished">Премахни</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="49"/>
         <source>Magnetic Cut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="236"/>
+        <source>Removing Track %1, but no active (Work) Sheet ??</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="241"/>
+        <source>It is not possible to remove the Master Out track!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="454"/>
+        <source>Normalization</source>
+        <translation type="unfinished">Нормализиране</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="455"/>
+        <source>Set Normalization level:</source>
+        <translation type="unfinished">Задай ниво за Нормализиране</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="466"/>
+        <source>Normalize Selected Clips</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="469"/>
+        <source>AudioClip: Normalize</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5060,7 +5017,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="159"/>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="163"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -5070,7 +5027,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="209"/>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="216"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -5079,23 +5036,55 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="308"/>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="318"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Explore Traverso&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Traverso is very suitable to record your band, orchestra, ensemble or any other natural source of music!&lt;br /&gt;It provides many tools from Recording to CD Burning!&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://traverso-daw.org/FirstTime&quot;&gt;&lt;span style=&quot; font-size:9pt; text-decoration: underline; color:#0000ff;&quot;&gt;Using Traverso for the first time&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Getting help:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://traverso-daw.org/forum/&quot;&gt;&lt;span style=&quot; font-size:9pt; text-decoration: underline; color:#0000ff;&quot;&gt;User Forum&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://traverso-daw.org/UserManual&quot;&gt;&lt;span style=&quot; font-size:9pt; text-decoration: underline; color:#0000ff;&quot;&gt;User Manual&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Giving help:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://traverso-daw.org/Support&quot;&gt;&lt;span style=&quot; font-size:9pt; text-decoration: underline; color:#0000ff;&quot;&gt;Ways to Support Traverso&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Explore Traverso&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Traverso is very well suited to record your band, orchestra, ensemble or any other source of music!&lt;br /&gt;It provides many tools from Recording to CD Burning!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Quick start:  &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/FirstTime&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;Using Traverso for the first time&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Getting help: &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/forum/&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;User Forum&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;http://traverso-daw.org/UserManual&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;User Manual&lt;/span&gt;&lt;/a&gt; &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Giving help:   &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/Support&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;Ways to Support Traverso&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="393"/>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="457"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Load previous:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="559"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Load existing:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="655"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Projects Dir:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="770"/>
+        <source>Create new Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="404"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -5104,54 +5093,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="424"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Load previous Project:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="512"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Load existing Project:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="555"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Projects directory:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="584"/>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="712"/>
         <source>Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="668"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Create new Project:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="697"/>
-        <source>Create</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="64"/>
-        <source>Resume loaded Project (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5160,16 +5103,21 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="68"/>
-        <source>Load previous Project</source>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="514"/>
+        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="616"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="69"/>
+        <source>Load</source>
+        <translation type="unfinished">Зареди</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="64"/>
+        <source>Resume loaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="69"/>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="466"/>
-        <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="609"/>
-        <source>Load</source>
-        <translation type="unfinished">Зареди</translation>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="68"/>
+        <source>Load previous;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="84"/>
@@ -5179,50 +5127,53 @@ Do you really wish to reload it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="159"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="151"/>
         <source>Choose an existing or create a new Project Directory</source>
         <translation type="unfinished">Изберете съществуваща или създайте нова директория за Проекта</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="169"/>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="180"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="161"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="172"/>
         <source>Traverso - Warning</source>
         <translation type="unfinished">Traverso - Предупреждение</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="170"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="162"/>
         <source>This directory is not writable by you! 
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не можете да записвате в тази директория!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="171"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="163"/>
         <source>Please check permission for this directory or choose another one:
 
  %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Моля, проверете за тази директория или изберете друга:
+
+%1</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="180"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="172"/>
         <source>Unable to create Project directory! 
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Не може да се създаде директория за Проекта</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="181"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="173"/>
         <source>Please check permission for this directory: %1</source>
         <translation type="unfinished">Моля, проверете позволенията за тази директория: %1</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="184"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="176"/>
         <source>Traverso - Information</source>
         <translation type="unfinished">Traverso: Информация</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="184"/>
+        <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="176"/>
         <source>Created new Project directory for you here: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Създадена е нова Проектна директория за вас тук:%1
+</translation>
     </message>
 </context>
 </TS>

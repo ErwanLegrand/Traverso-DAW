@@ -46,7 +46,7 @@ ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SheetWidget* sw)
 {
 	m_sw = sw;
 	viewport()->setAttribute(Qt::WA_OpaquePaintEvent);
-	
+
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }

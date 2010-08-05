@@ -27,7 +27,8 @@
 
 class PADriver : public Driver
 {
-	
+        Q_OBJECT
+
 public:
 	PADriver(AudioDevice* dev, int rate, nframes_t bufferSize);
 	~PADriver();

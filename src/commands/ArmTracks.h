@@ -30,6 +30,7 @@ class AudioTrack;
 
 class ArmTracks : public Command
 {
+        Q_OBJECT
 
 public :
 	ArmTracks(SheetView* view);

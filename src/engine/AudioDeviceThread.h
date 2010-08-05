@@ -29,6 +29,7 @@ class AudioDevice;
 
 class AudioDeviceThread : public QThread
 {
+        Q_OBJECT
 
 public:
         AudioDeviceThread(AudioDevice* device);

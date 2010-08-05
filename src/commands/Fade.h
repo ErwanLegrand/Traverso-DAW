@@ -81,10 +81,12 @@ public slots:
 
 class FadeStrength : public Command
 {
+        Q_OBJECT
+
 public :
 	FadeStrength(FadeView* fadeview);
 	FadeStrength(FadeCurve* fade, double val);
-        ~FadeStrength(){};
+        ~FadeStrength(){}
 
         int begin_hold();
 	int finish_hold();
@@ -110,10 +112,12 @@ private :
 
 class FadeBend : public Command
 {
+        Q_OBJECT
+
 public :
 	FadeBend(FadeView* fadeview);
 	FadeBend(FadeCurve* fade, double val);
-        ~FadeBend(){};
+        ~FadeBend(){}
 
         int begin_hold();
 	int finish_hold();
@@ -139,9 +143,11 @@ private :
 
 class FadeMode : public Command
 {
+        Q_OBJECT
+
 public :
 	FadeMode(FadeCurve* fade, int oldMode, int newMode);
-        ~FadeMode(){};
+        ~FadeMode(){}
 
         int prepare_actions();
         int do_action();

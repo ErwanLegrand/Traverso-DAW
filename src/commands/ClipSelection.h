@@ -31,6 +31,8 @@ class AudioClipManager;
 
 class ClipSelection : public Command
 {
+        Q_OBJECT
+
 public :
 	ClipSelection(AudioClip* clip, QVariantList args);
 	ClipSelection(QList<AudioClip*> clips, AudioClipManager* manager, const char* slot, const QString& des);

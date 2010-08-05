@@ -30,9 +30,11 @@ class AudioTrack;
 
 class AddRemoveClip : public Command
 {
+        Q_OBJECT
+
 public :
 	AddRemoveClip(AudioClip* clip, int type);
-	~AddRemoveClip() {};
+        ~AddRemoveClip() {}
 	
 	enum {
 		ADD,

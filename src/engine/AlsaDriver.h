@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class AlsaDriver : public Driver
 {
+        Q_OBJECT
 public:
 	AlsaDriver(AudioDevice* dev, int rate, nframes_t bufferSize);
 	~AlsaDriver();

@@ -25,6 +25,8 @@
 
 #include "Command.h"
 
+#include "defines.h"
+
 class QString;
 class AudioClip;
 class AudioTrack;
@@ -33,6 +35,8 @@ struct TimeRef;
 
 class Import : public Command
 {
+        Q_OBJECT
+
 public :
 	Import(const QString& fileName);
         Import(AudioTrack* track, const TimeRef& length, bool silent = false);
@@ -48,7 +52,7 @@ public :
 	void create_audioclip();
         void set_track(AudioTrack* track);
 	void set_position(const TimeRef& position);
-	ReadSource* readsource() {return m_source;};
+        ReadSource* readsource() {return m_source;}
 
 private :
         AudioTrack*	m_track;

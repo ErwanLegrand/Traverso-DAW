@@ -139,6 +139,7 @@ private slots:
 
 class SysInfoToolBar : public QToolBar
 {
+        Q_OBJECT
 public:
 	SysInfoToolBar(QWidget* parent);
 

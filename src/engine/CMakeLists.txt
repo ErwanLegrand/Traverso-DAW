@@ -6,6 +6,7 @@ SET(TRAVERSO_ENGINE_MOC_CLASSES
 AudioBus.h
 AudioChannel.h
 AudioDevice.h
+AudioDeviceThread.h
 Client.h
 )
 
@@ -24,6 +25,10 @@ IF(HAVE_ALSA)
 	AlsaDriver.cpp
 	${TRAVERSO_ENGINE_SOURCES}
 	)
+        SET(TRAVERSO_ENGINE_MOC_CLASSES
+        AlsaDriver.h
+        ${TRAVERSO_ENGINE_MOC_CLASSES}
+        )
 ENDIF(HAVE_ALSA)
 
 IF(HAVE_JACK)
@@ -42,6 +47,10 @@ IF(HAVE_PORTAUDIO)
 	PADriver.cpp
 	${TRAVERSO_ENGINE_SOURCES}
 	)
+        SET(TRAVERSO_ENGINE_MOC_CLASSES
+        PADriver.h
+        ${TRAVERSO_ENGINE_MOC_CLASSES}
+        )
 ENDIF(HAVE_PORTAUDIO)
 
 IF(HAVE_PULSEAUDIO)
