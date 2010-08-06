@@ -201,7 +201,7 @@ class PeakDataReader
 {
 public:
 	PeakDataReader(Peak::ChannelData* data);
-        ~PeakDataReader(){}
+	~PeakDataReader(){};
 
 	nframes_t read_from(DecodeBuffer* buffer, nframes_t start, nframes_t count);
 
