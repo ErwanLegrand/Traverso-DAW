@@ -157,6 +157,15 @@ void AudioBus::audiodevice_params_changed()
         }
 }
 
+bool AudioBus::is_valid() const
+{
+        if (m_channels.count()) {
+                return true;
+        }
+
+        return false;
+}
+
 /**
  * If set to true, all the data going through the AudioChannels in this AudioBus
  * will be monitored for their highest peak value.

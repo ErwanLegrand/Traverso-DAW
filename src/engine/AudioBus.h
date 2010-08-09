@@ -63,6 +63,7 @@ public:
         void set_monitoring(bool monitor);
         bool is_input() {return m_type == ChannelIsInput;}
         bool is_output() {return m_type == ChannelIsOutput;}
+        bool is_valid() const;
         int get_type() const {return m_type;}
         int get_bus_type() const {return m_busType;}
         qint64 get_id() const {return m_id;}

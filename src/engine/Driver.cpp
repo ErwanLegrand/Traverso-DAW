@@ -70,11 +70,11 @@ int Driver::_read( nframes_t  )
 
 int Driver::_write( nframes_t nframes )
 {
-	foreach(AudioChannel* chan, m_playbackChannels) {
-		chan->silence_buffer(nframes);
-	}
+        foreach(AudioChannel* chan, m_playbackChannels) {
+                chan->silence_buffer(nframes);
+        }
 
-	return 1;
+        return 1;
 }
 
 int Driver::_null_cycle( nframes_t  )
@@ -92,32 +92,32 @@ int Driver::setup(bool capture, bool playback, const QString& cardDevice)
 
 int Driver::attach( )
 {
-	int port_flags;
-	char buf[32];
-	AudioChannel* chan;
+        int port_flags;
+        char buf[32];
+        AudioChannel* chan;
 
-	device->set_buffer_size (frames_per_cycle);
-	device->set_sample_rate (frame_rate);
+        device->set_buffer_size (frames_per_cycle);
+        device->set_sample_rate (frame_rate);
 
-	port_flags = PortIsOutput|PortIsPhysical|PortIsTerminal;
+        port_flags = PortIsOutput|PortIsPhysical|PortIsTerminal;
 
-	// Create 2 fake capture channels
-	for (uint chn=0; chn<2; chn++) {
-		snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
+        // Create 2 fake capture channels
+        for (uint chn=0; chn<2; chn++) {
+                snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
 
                 chan = add_capture_channel(buf);
-		chan->set_latency( frames_per_cycle + capture_frame_latency );
-	}
+                chan->set_latency( frames_per_cycle + capture_frame_latency );
+        }
 
-	// Create 2 fake playback channels
-	for (uint chn=0; chn<2; chn++) {
-		snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
+        // Create 2 fake playback channels
+        for (uint chn=0; chn<2; chn++) {
+                snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
 
                 chan = add_playback_channel(buf);
-		chan->set_latency( frames_per_cycle + capture_frame_latency );
-	}
+                chan->set_latency( frames_per_cycle + capture_frame_latency );
+        }
 
-	return 1;
+        return 1;
 }
 
 AudioChannel* Driver::add_capture_channel(const QString& chanName)

@@ -116,7 +116,7 @@ void TTrackManagerDialog::create_routing_input_menu()
 
         if (m_track->get_type() == Track::AUDIOTRACK) {
                 foreach(AudioBus* bus, pm().get_project()->get_hardware_buses()) {
-                        if (bus->is_input()) {
+                        if (bus->is_input() && bus->is_valid()) {
                                 QAction* action = m_routingInputMenu->addAction(bus->get_name());
                                 action->setData(bus->get_id());
                         }
@@ -246,7 +246,7 @@ QMenu* TTrackManagerDialog::create_sends_menu()
 
 
         foreach(AudioBus* bus, pm().get_project()->get_hardware_buses()) {
-                if (bus->is_output()) {
+                if (bus->is_output() && bus->is_valid()) {
                         action = menu->addAction(bus->get_name());
                         action->setData(bus->get_id());
                 }
@@ -325,7 +325,15 @@ void TTrackManagerDialog::update_routing_input_output_widget_view()
         }
 
         if (m_track->get_type() == Track::AUDIOTRACK) {
-                routingInputListWidget->addItem(m_track->get_bus_in_name());
+                QListWidgetItem* item = new QListWidgetItem(routingInputListWidget);
+                AudioBus* bus = m_track->get_input_bus();
+                if (bus) {
+                        item->setText(bus->get_name());
+                        if (!bus->is_valid()) {
+                                item->setTextColor(QColor(Qt::lightGray));
+                        }
+                        routingInputListWidget->addItem(item);
+                }
         }
 
 
@@ -335,6 +343,10 @@ void TTrackManagerDialog::update_routing_input_output_widget_view()
         foreach(TSend* send, postSends) {
                 QListWidgetItem* item = new QListWidgetItem(routingOutputListWidget);
                 item->setText(send->get_name());
+                AudioBus* bus = send->get_bus();
+                if (bus && !bus->is_valid()) {
+                        item->setTextColor(QColor(Qt::lightGray));
+                }
                 item->setData(Qt::UserRole, send->get_id());
                 routingOutputListWidget->addItem(item);
         }
@@ -344,6 +356,10 @@ void TTrackManagerDialog::update_routing_input_output_widget_view()
         foreach(TSend* send, preSends) {
                 QListWidgetItem* item = new QListWidgetItem(preSendsListWidget);
                 item->setText(send->get_name());
+                AudioBus* bus = send->get_bus();
+                if (bus && !bus->is_valid()) {
+                        item->setTextColor(QColor(Qt::lightGray));
+                }
                 item->setData(Qt::UserRole, send->get_id());
                 preSendsListWidget->addItem(item);
         }

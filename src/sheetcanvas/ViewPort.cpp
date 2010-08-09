@@ -106,7 +106,6 @@ ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
         // at least when using Qt < 4.6.0 ??
 	setOptimizationFlag(DontAdjustForAntialiasing);
         setOptimizationFlag(DontSavePainterState);
-	setOptimizationFlag(DontClipPainter);
 
 	m_holdcursor = new HoldCursor(this);
 	scene->addItem(m_holdcursor);
@@ -216,6 +215,12 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
                 item->mouse_hover_move_event();
         }
 
+        EditPointLocation editPoint;
+        editPoint.sceneY = mapToScene(event->pos()).y();
+        if (m_sv) {
+                editPoint.location = m_sv->get_sheet()->get_work_location();
+                m_sv->get_sheet()->set_edit_point_location(editPoint);
+        }
 	event->accept();
 }
 
