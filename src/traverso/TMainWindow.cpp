@@ -525,6 +525,7 @@ Command* TMainWindow::show_fft_meter_only()
                 m_windowState = saveState();
                 m_spectralMeterDW->show();
 
+                m_busMonitorDW->hide();
                 m_correlationMeterDW->hide();
                 m_historyDW->hide();
                 m_audioSourcesDW->hide();
