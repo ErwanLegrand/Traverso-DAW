@@ -520,13 +520,14 @@ Command* TMainWindow::show_fft_meter_only()
 {
         if (m_centerAreaWidget->isHidden()) {
                 m_centerAreaWidget->show();
-                m_projectToolBar->show();
-                m_editToolBar->show();
-                m_sessionTabsToolbar->show();
-                m_transportConsole->show();
-                m_spectralMeterDW->hide();
+                restoreState(m_windowState);
         } else {
+                m_windowState = saveState();
                 m_spectralMeterDW->show();
+
+                m_correlationMeterDW->hide();
+                m_historyDW->hide();
+                m_audioSourcesDW->hide();
                 m_projectToolBar->hide();
                 m_editToolBar->hide();
                 m_sessionTabsToolbar->hide();

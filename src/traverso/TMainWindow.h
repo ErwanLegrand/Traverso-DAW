@@ -174,6 +174,7 @@ private:
 	RestoreProjectBackupDialog* m_restoreProjectBackupDialog;
 	Project*		m_project;
 	bool			m_isFollowing;
+        QByteArray              m_windowState;
 
 	BusMonitor* 		busMonitor;
         QToolBar*               m_mainMenuToolBar;
