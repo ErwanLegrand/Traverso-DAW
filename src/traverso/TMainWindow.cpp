@@ -188,7 +188,7 @@ TMainWindow::TMainWindow()
 	spectralMeter->setFocusPolicy(Qt::NoFocus);
 	spectralMeterDW->setWidget(spectralMeter);
 	addDockWidget(Qt::TopDockWidgetArea, spectralMeterDW);
-	spectralMeterDW->hide();
+        spectralMeterDW->hide();
 
 	// BusMonitor
         busMonitorDW = new QDockWidget(tr("VU Meters"), this);
@@ -475,7 +475,7 @@ void TMainWindow::show_session(TSession* session)
         if (session) {
                 pm().get_undogroup()->setActiveStack(session->get_history_stack());
 //                setWindowTitle(m_project->get_title() + ": Sheet " + session->get_name() + " - Traverso");
-	}
+        }
 }
 
 Command* TMainWindow::about_traverso()
@@ -514,6 +514,20 @@ Command* TMainWindow::full_screen()
 	else
 		showFullScreen();
 	return (Command*) 0;
+}
+
+Command* TMainWindow::show_fft_meter_only()
+{
+        if (!pm().project_exists("fft-meter")) {
+                Project* project = pm().create_new_project(0, 0, "fft-meter");
+                project->save();
+                delete project;
+
+        }
+        pm().load_project("fft-meter");
+        spectralMeterDW->show();
+        m_centerAreaWidget->hide();
+        return 0;
 }
 
 void TMainWindow::timerEvent(QTimerEvent *event)

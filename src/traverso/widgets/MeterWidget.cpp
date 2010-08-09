@@ -152,9 +152,9 @@ void MeterView::hide_event()
 
 void MeterView::show_event()
 {
-        if (m_project && m_project->is_transport_rolling()) {
+//        if (m_project && m_project->is_transport_rolling()) {
                 transport_started();
-        }
+//        }
 }
 
 void MeterView::transport_started()

@@ -233,6 +233,7 @@ public slots :
 	void change_resample_quality_to_fast();
 
 	Command* full_screen();
+        Command* show_fft_meter_only();
 	Command* about_traverso();
 	Command* quick_start();
 	Command* export_keymap();
