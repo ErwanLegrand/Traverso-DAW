@@ -157,46 +157,46 @@ TMainWindow::TMainWindow()
         setCentralWidget(m_centerAreaWidget);
 
 	// HistoryView 
-	historyDW = new QDockWidget(tr("History"), this);
-	historyDW->setObjectName("HistoryDockWidget");
-	historyWidget = new HistoryWidget(pm().get_undogroup(), historyDW);
-	historyWidget->setFocusPolicy(Qt::NoFocus);
-	historyDW->setWidget(historyWidget);
-	addDockWidget(Qt::RightDockWidgetArea, historyDW);
+        m_historyDW = new QDockWidget(tr("History"), this);
+        m_historyDW->setObjectName("HistoryDockWidget");
+        m_historyWidget = new HistoryWidget(pm().get_undogroup(), m_historyDW);
+        m_historyWidget->setFocusPolicy(Qt::NoFocus);
+        m_historyDW->setWidget(m_historyWidget);
+        addDockWidget(Qt::RightDockWidgetArea, m_historyDW);
 	
 	// AudioSources View
-	AudioSourcesDW = new QDockWidget(tr("Resources Bin"), this);
-	AudioSourcesDW->setObjectName("AudioSourcesDockWidget");
-	audiosourcesview = new ResourcesWidget(AudioSourcesDW);
-	audiosourcesview->setFocusPolicy(Qt::NoFocus);
-	AudioSourcesDW->setWidget(audiosourcesview);
-	addDockWidget(Qt::TopDockWidgetArea, AudioSourcesDW);
-	AudioSourcesDW->hide();
+        m_audioSourcesDW = new QDockWidget(tr("Resources Bin"), this);
+        m_audioSourcesDW->setObjectName("AudioSourcesDockWidget");
+        m_audiosourcesview = new ResourcesWidget(m_audioSourcesDW);
+        m_audiosourcesview->setFocusPolicy(Qt::NoFocus);
+        m_audioSourcesDW->setWidget(m_audiosourcesview);
+        addDockWidget(Qt::TopDockWidgetArea, m_audioSourcesDW);
+        m_audioSourcesDW->hide();
 	
 	// Meter Widgets
-	correlationMeterDW = new QDockWidget(tr("Correlation Meter"), this);
-	correlationMeterDW->setObjectName("CorrelationMeterDockWidget");
-	correlationMeter = new CorrelationMeterWidget(correlationMeterDW);
-	correlationMeter->setFocusPolicy(Qt::NoFocus);
-	correlationMeterDW->setWidget(correlationMeter);
-	addDockWidget(Qt::TopDockWidgetArea, correlationMeterDW);
-	correlationMeterDW->hide();
+        m_correlationMeterDW = new QDockWidget(tr("Correlation Meter"), this);
+        m_correlationMeterDW->setObjectName("CorrelationMeterDockWidget");
+        m_correlationMeter = new CorrelationMeterWidget(m_correlationMeterDW);
+        m_correlationMeter->setFocusPolicy(Qt::NoFocus);
+        m_correlationMeterDW->setWidget(m_correlationMeter);
+        addDockWidget(Qt::TopDockWidgetArea, m_correlationMeterDW);
+        m_correlationMeterDW->hide();
 
-	spectralMeterDW = new QDockWidget(tr("FFT Spectrum"), this);
-	spectralMeterDW->setObjectName("SpectralMeterDockWidget");
-	spectralMeter = new SpectralMeterWidget(spectralMeterDW);
-	spectralMeter->setFocusPolicy(Qt::NoFocus);
-	spectralMeterDW->setWidget(spectralMeter);
-	addDockWidget(Qt::TopDockWidgetArea, spectralMeterDW);
-        spectralMeterDW->hide();
+        m_spectralMeterDW = new QDockWidget(tr("FFT Spectrum"), this);
+        m_spectralMeterDW->setObjectName("SpectralMeterDockWidget");
+        m_spectralMeter = new SpectralMeterWidget(m_spectralMeterDW);
+        m_spectralMeter->setFocusPolicy(Qt::NoFocus);
+        m_spectralMeterDW->setWidget(m_spectralMeter);
+        addDockWidget(Qt::TopDockWidgetArea, m_spectralMeterDW);
+        m_spectralMeterDW->hide();
 
 	// BusMonitor
-        busMonitorDW = new QDockWidget(tr("VU Meters"), this);
-        busMonitorDW->setObjectName(tr("VU Meters"));
+        m_busMonitorDW = new QDockWidget(tr("VU Meters"), this);
+        m_busMonitorDW->setObjectName(tr("VU Meters"));
 
-	busMonitor = new BusMonitor(busMonitorDW);
-	busMonitorDW->setWidget(busMonitor);
-	addDockWidget(Qt::RightDockWidgetArea, busMonitorDW);
+        busMonitor = new BusMonitor(m_busMonitorDW);
+        m_busMonitorDW->setWidget(busMonitor);
+        addDockWidget(Qt::RightDockWidgetArea, m_busMonitorDW);
 	
 	m_sysinfo = new SysInfoToolBar(this);
 	m_sysinfo->setObjectName("System Info Toolbar");
@@ -233,12 +233,12 @@ TMainWindow::TMainWindow()
 	m_editToolBar->setObjectName("Edit Toolbar");
         addToolBar(Qt::TopToolBarArea, m_editToolBar);
 
-	transportConsole = new TransportConsoleWidget(this);
-	transportConsole->setObjectName("Transport Console");
+        m_transportConsole = new TransportConsoleWidget(this);
+        m_transportConsole->setObjectName("Transport Console");
 #if defined (Q_WS_MAC)
 	addToolBar(Qt::BottomToolBarArea, transportConsole);
 #else
-	addToolBar(Qt::TopToolBarArea, transportConsole);
+        addToolBar(Qt::TopToolBarArea, m_transportConsole);
 #endif
 
 	if (config().get_property("Themer", "textundericons", false).toBool()) {
@@ -518,15 +518,21 @@ Command* TMainWindow::full_screen()
 
 Command* TMainWindow::show_fft_meter_only()
 {
-        if (!pm().project_exists("fft-meter")) {
-                Project* project = pm().create_new_project(0, 0, "fft-meter");
-                project->save();
-                delete project;
-
+        if (m_centerAreaWidget->isHidden()) {
+                m_centerAreaWidget->show();
+                m_projectToolBar->show();
+                m_editToolBar->show();
+                m_sessionTabsToolbar->show();
+                m_transportConsole->show();
+                m_spectralMeterDW->hide();
+        } else {
+                m_spectralMeterDW->show();
+                m_projectToolBar->hide();
+                m_editToolBar->hide();
+                m_sessionTabsToolbar->hide();
+                m_transportConsole->hide();
+                m_centerAreaWidget->hide();
         }
-        pm().load_project("fft-meter");
-        spectralMeterDW->show();
-        m_centerAreaWidget->hide();
         return 0;
 }
 
@@ -795,9 +801,9 @@ void TMainWindow::create_menus( )
         menu = m_mainMenuBar->addMenu(tr("Vi&ew"));
         menu->installEventFilter(this);
 
-	menu->addAction(historyDW->toggleViewAction());
-	menu->addAction(busMonitorDW->toggleViewAction());
-	menu->addAction(AudioSourcesDW->toggleViewAction());
+        menu->addAction(m_historyDW->toggleViewAction());
+        menu->addAction(m_busMonitorDW->toggleViewAction());
+        menu->addAction(m_audioSourcesDW->toggleViewAction());
 
         action = menu->addAction(tr("Marker Editor..."));
         m_projectMenuToolbarActions.append(action);
@@ -806,18 +812,21 @@ void TMainWindow::create_menus( )
         action = menu->addAction(tr("Toggle Full Screen"));
         connect(action, SIGNAL(triggered()), this, SLOT(full_screen()));
 
+        action = menu->addAction(tr("Toggle FFT Only"));
+        connect(action, SIGNAL(triggered()), this, SLOT(show_fft_meter_only()));
+
         menu->addSeparator();
 	
-	menu->addAction(correlationMeterDW->toggleViewAction());
-	menu->addAction(spectralMeterDW->toggleViewAction());
+        menu->addAction(m_correlationMeterDW->toggleViewAction());
+        menu->addAction(m_spectralMeterDW->toggleViewAction());
 
 	menu->addSeparator();
         action = menu->addAction(tr("ToolBars"));
         action->setEnabled(false);
 	menu->addSeparator();
 	
-	menu->addAction(transportConsole->toggleViewAction());
-	transportConsole->toggleViewAction()->setText(tr("Transport Console"));
+        menu->addAction(m_transportConsole->toggleViewAction());
+        m_transportConsole->toggleViewAction()->setText(tr("Transport Console"));
 
 	// if unifiedTitleAndToolBarOnMac == true we don't want the main toolbars
 	// to be hidden. thus only add the menu entries on systems != OS X
@@ -1413,8 +1422,8 @@ void TMainWindow::config_changed()
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 
 	int transportconsolesize = config().get_property("Themer", "transportconsolesize", "22").toInt();
-	transportConsole->setIconSize(QSize(transportconsolesize, transportconsolesize));
-	transportConsole->resize(transportConsole->sizeHint());
+        m_transportConsole->setIconSize(QSize(transportconsolesize, transportconsolesize));
+        m_transportConsole->resize(m_transportConsole->sizeHint());
 }
 
 void TMainWindow::import_audio()

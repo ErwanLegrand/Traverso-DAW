@@ -95,7 +95,8 @@ int main( int argc, char **argv )
 				printf("\t--d4  \t\t Set debug level to 4 (ALL)\n");
 				printf("\t--log \t\t Create a ~/traverso.log file instead of dumping debug messages to stdout\n");
 				printf("\t--show-compile-options\t\t Print options used during compilation\n");
-				printf("\n");
+                                printf("\t--fft-meter   \t\t Start Traverso as a Spectral Analyzer\n");
+                                printf("\n");
 				return 0;
 			}
 			if (strcmp(argv[i],"--memtrace")==0)
