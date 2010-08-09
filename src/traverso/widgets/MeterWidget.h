@@ -70,9 +70,6 @@ protected:
 	Project*	m_project;
         TSession*	m_session;
 
-protected slots:
-        void		set_session(TSession* session);
-
 private slots:
 	void		set_project( Project* );
         virtual void	update_data() {}

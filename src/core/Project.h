@@ -40,6 +40,9 @@ class ExportThread;
 class AudioDeviceClient;
 class TBusTrack;
 class TSend;
+class Plugin;
+class SpectralMeter;
+class CorrelationMeter;
 
 class Project : public TSession
 {
@@ -151,6 +154,8 @@ public :
         void connect_to_audio_device();
         int disconnect_from_audio_device();
 
+        void add_meter(Plugin* meter);
+
 
 public slots:
         void track_routing_changed();
@@ -168,6 +173,8 @@ private:
 	ResourcesManager* 	m_resourcesManager;
         ExportThread*           m_exportThread;
         AudioDeviceClient*	m_audiodeviceClient;
+        SpectralMeter*          m_spectralMeter;
+        CorrelationMeter*       m_correlationMeter;
 
         QList<AudioBus* >       m_hardwareAudioBuses;
 

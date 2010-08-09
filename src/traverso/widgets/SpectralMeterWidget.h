@@ -29,8 +29,6 @@
 #include "ui_SpectralMeterConfigWidget.h"
 #include <QDialog>
 
-class Sheet;
-class Project;
 class QRect;
 class QPixmap;
 class Command;
@@ -142,7 +140,6 @@ private slots:
 
 public slots:
 	void		load_configuration();
-	void		set_sheet(Sheet* sheet);
 
 	Command*	edit_properties();
 	Command*	set_mode();

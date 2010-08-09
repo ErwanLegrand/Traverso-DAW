@@ -63,6 +63,10 @@ SpectralMeterView::SpectralMeterView(SpectralMeterWidget* widget)
 {
 
 	m_config = 0;
+
+        m_meter = new SpectralMeter();
+        m_meter->init();
+
 	load_configuration();
 	
 	upper_freq_log = log10(upper_freq);
@@ -279,29 +283,6 @@ void SpectralMeterView::update_data()
 	update();
 }
 
-void SpectralMeterView::set_sheet(Sheet *sheet)
-{
-	MeterView::set_session(sheet);
-	
-	if ( ! m_session ) {
-		return;
-	}
-
-        PluginChain* chain = m_session->get_master_out()->get_plugin_chain();
-	sample_rate = audiodevice().get_sample_rate();
-	
-	foreach(Plugin* plugin, chain->get_plugin_list()) {
-		m_meter = qobject_cast<SpectralMeter*>(plugin);
-		
-		if (m_meter) {
-			return;
-		}
-	}
-	
-	m_meter = new SpectralMeter();
-	m_meter->init();
-	Command::process_command(chain->add_plugin(m_meter, false));
-}
 
 void SpectralMeterView::reduce_bands()
 {

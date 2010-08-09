@@ -102,6 +102,8 @@ MeterView::MeterView(MeterWidget* widget)
 	, m_meter(0)
         , m_session(0)
 {
+        m_project = 0;
+
 	// Nicola: Not sure if we need to initialize here, perhaps a 
 	// call to resize would suffice ?
 	m_boundingRect = QRectF();
@@ -116,8 +118,7 @@ MeterView::MeterView(MeterWidget* widget)
 MeterView::~MeterView()
 {
 	if (m_meter) {
-		// FIXME crashes here when deleting and not shown!
-// 		delete m_meter;
+                delete m_meter;
 	}
 }
 
@@ -135,62 +136,25 @@ void MeterView::set_project(Project *project)
 {
 	if (project) {
                 m_project = project;
-//                metaObject()->invokeMethod(this, "set_session", Q_ARG(TSession*, m_project));
-	} else {
+                m_project->add_meter(m_meter);
+                connect(m_project, SIGNAL(transportStarted()), this, SLOT(transport_started()));
+                connect(m_project, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
+        } else {
 		m_project = 0;
-                set_session(0);
 		timer.stop();
 	}
 }
 
-void MeterView::set_session(TSession *session)
-{
-	if (m_widget->parentWidget()->isHidden()) {
-                m_session = session;
-		return;
-	}
-	
-
-        if (m_session) {
-		if (m_meter) {
-			// FIXME The removed plugin still needs to be deleted!!!!!!
-                        Command::process_command(m_session->get_master_out()->get_plugin_chain()->remove_plugin(m_meter, false));
-			timer.stop();
-                        disconnect(m_session, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
-                        disconnect(m_session, SIGNAL(transportStarted()), this, SLOT(transport_started()));
-		}
-	}
-	
-        m_session = session;
-	
-        if ( ! m_session ) {
-		return;
-	}
-
-        connect(m_session, SIGNAL(transportStopped()), this, SLOT(transport_stopped()));
-        connect(m_session, SIGNAL(transportStarted()), this, SLOT(transport_started()));
-}
-
 void MeterView::hide_event()
 {
-        if (m_session) {
-		if (m_meter) {
-                        Command::process_command(m_session->get_master_out()->get_plugin_chain()->remove_plugin(m_meter, false));
-			timer.stop();
-		}
-	}
+        transport_stopped();
 }
 
 void MeterView::show_event()
 {
-        if (m_session) {
-		if (m_meter) {
-                        Command::process_command(m_session->get_master_out()->get_plugin_chain()->add_plugin(m_meter, false));
-                        timer.start(40);
-		} else {
-                        set_session(m_session);
-		}
-	}
+        if (m_project && m_project->is_transport_rolling()) {
+                transport_started();
+        }
 }
 
 void MeterView::transport_started()

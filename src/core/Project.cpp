@@ -47,6 +47,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TimeLine.h"
 #include "TBusTrack.h"
 #include "TSend.h"
+#include "SpectralMeter.h"
+#include "CorrelationMeter.h"
 
 #define PROJECT_FILE_VERSION 	3
 #define MASTER_OUT_SOFTWARE_BUS_ID 1
@@ -72,6 +74,8 @@ Project::Project(const QString& title)
         m_name = title;
 	m_exportThread = 0;
         m_activeSheet = 0;
+        m_spectralMeter = 0;
+        m_correlationMeter = 0;
         m_activeSession = 0;
         m_activeSessionId = m_activeSheetId = -1;
 	engineer = "";
@@ -286,7 +290,7 @@ int Project::load(QString projectfile)
                 uint number = e.attribute("number", "0").toInt();
                 qint64 id = e.attribute("id", "0").toLongLong();
 
-                int type;
+                int type = -1;
                 if (typeString == "input") {
                         type = ChannelIsInput;
                 }
@@ -722,6 +726,17 @@ int Project::disconnect_from_audio_device()
         return 1;
 }
 
+void Project::add_meter(Plugin *meter)
+{
+        SpectralMeter* sm = qobject_cast<SpectralMeter*>(meter);
+        if (sm) {
+                m_spectralMeter = sm;
+        }
+        CorrelationMeter* cm = qobject_cast<CorrelationMeter*>(meter);
+        if (cm) {
+                m_correlationMeter = cm;
+        }
+}
 
 /**
  * Get the Playback AudioBus instance with name \a name.
@@ -1716,6 +1731,14 @@ int Project::process( nframes_t nframes )
 
         apill_foreach(TBusTrack* busTrack, TBusTrack, m_rtBusTracks) {
                 busTrack->process(nframes);
+        }
+
+        if (m_correlationMeter) {
+                m_correlationMeter->process(m_masterOut->get_process_bus(), nframes);
+        }
+
+        if (m_spectralMeter) {
+                m_spectralMeter->process(m_masterOut->get_process_bus(), nframes);
         }
 
         // Mix the result into the AudioDevice "physical" buffers

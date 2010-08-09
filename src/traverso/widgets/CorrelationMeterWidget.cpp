@@ -48,7 +48,10 @@ CorrelationMeterWidget::CorrelationMeterWidget(QWidget* parent)
 CorrelationMeterView::CorrelationMeterView(CorrelationMeterWidget* widget)
 	: MeterView(widget)
 {
-	load_theme_data();
+        m_meter = new CorrelationMeter();
+        m_meter->init();
+
+        load_theme_data();
 	load_configuration();
 	connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme_data()), Qt::QueuedConnection);
 }
@@ -126,30 +129,6 @@ void CorrelationMeterView::update_data()
 
 	update();
 }
-
-void CorrelationMeterView::set_session(TSession *session)
-{
-        MeterView::set_session(session);
-	
-        if ( ! m_session ) {
-		return;
-	}
-	
-        PluginChain* chain = m_session->get_master_out()->get_plugin_chain();
-	
-	foreach(Plugin* plugin, chain->get_plugin_list()) {
-		m_meter = dynamic_cast<CorrelationMeter*>(plugin);
-		
-		if (m_meter) {
-			return;
-		}
-	}
-	
-	m_meter = new CorrelationMeter();
-	m_meter->init();
-	Command::process_command( chain->add_plugin(m_meter, false) );
-}
-
 
 Command* CorrelationMeterView::set_mode()
 {
