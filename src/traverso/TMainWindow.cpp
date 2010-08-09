@@ -1674,6 +1674,10 @@ Command* TMainWindow::show_newtrack_dialog()
 
                 m_newTrackDialog->show();
         } else {
+                if (!activeSession) {
+                        return 0;
+                }
+
                 if (activeSession->get_parent_session()) {
                         TTrackSelector selector(this, activeSession->get_parent_session(), activeSession);
                         selector.exec();
