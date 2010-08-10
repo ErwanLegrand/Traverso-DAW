@@ -158,7 +158,7 @@ public :
 
 
 public slots:
-        void track_routing_changed();
+        void track_property_changed();
 	Command* select();
         Command* start_transport();
         Command* remove_child_session();
@@ -239,7 +239,7 @@ signals:
 	void exportStartedForSheet(Sheet* );
 	void projectLoadFinished();
         void exportMessage(QString);
-        void trackRoutingChanged();
+        void trackPropertyChanged();
 };
 
 #endif

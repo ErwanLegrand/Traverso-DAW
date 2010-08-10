@@ -99,7 +99,7 @@ void TBusTrack::create_process_bus()
 void TBusTrack::set_name( const QString & name )
 {
         m_processBus->set_name(name);
-        ProcessingData::set_name(name);
+        Track::set_name(name);
 }
 
 int TBusTrack::process(nframes_t nframes)

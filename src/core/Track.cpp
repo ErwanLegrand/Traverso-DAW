@@ -49,7 +49,7 @@ Track::Track(TSession* session)
 
         Project* project = pm().get_project();
         if (project) {
-                connect(this, SIGNAL(routingConfigurationChanged()), project, SLOT(track_routing_changed()));
+                connect(this, SIGNAL(routingConfigurationChanged()), project, SLOT(track_property_changed()));
         }
 }
 
@@ -207,6 +207,17 @@ void Track::set_sort_index( int index )
 {
         m_sortIndex = index;
 }
+
+void Track::set_name( const QString & name )
+{
+        ProcessingData::set_name(name);
+
+        // 'broadcast' our name change
+        if (pm().get_project()) {
+                pm().get_project()->track_property_changed();
+        }
+}
+
 
 int Track::get_sort_index( ) const
 {

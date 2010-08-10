@@ -94,7 +94,7 @@ TTrackManagerDialog::TTrackManagerDialog(Track *track, QWidget *parent)
         } else {
                 recordButton->hide();
         }
-        connect(pm().get_project(), SIGNAL(trackRoutingChanged()), this, SLOT(update_routing_input_output_widget_view()));
+        connect(pm().get_project(), SIGNAL(trackPropertyChanged()), this, SLOT(update_routing_input_output_widget_view()));
 
         connect(preSendsListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(pre_sends_selection_changed()));
         connect(routingOutputListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(post_sends_selection_changed()));

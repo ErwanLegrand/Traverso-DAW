@@ -52,6 +52,7 @@ public:
         void set_solo(bool solo);
         void set_sort_index(int index);
         int set_state( const QDomNode& node );
+        virtual void set_name(const QString& name);
         int get_type() const {return m_type;}
 
         bool is_muted_by_solo();

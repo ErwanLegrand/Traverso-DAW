@@ -112,8 +112,8 @@ TrackPanelView::TrackPanelView(TrackView* view)
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain()));
         connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
 
-        connect(pm().get_project(), SIGNAL(trackRoutingChanged()), m_inBus, SLOT(bus_changed()));
-        connect(pm().get_project(), SIGNAL(trackRoutingChanged()), m_outBus, SLOT(bus_changed()));
+        connect(pm().get_project(), SIGNAL(trackPropertyChanged()), m_inBus, SLOT(bus_changed()));
+        connect(pm().get_project(), SIGNAL(trackPropertyChanged()), m_outBus, SLOT(bus_changed()));
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
         connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));

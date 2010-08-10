@@ -99,7 +99,7 @@ Project::Project(const QString& title)
         m_masterOut->set_gain(0.5);
         // FIXME: m_masterOut is a Track, but at this point in time, Track can't
         // get a reference to us via pm().get_project();
-        connect(m_masterOut, SIGNAL(routingConfigurationChanged()), this, SLOT(track_routing_changed()));
+        connect(m_masterOut, SIGNAL(routingConfigurationChanged()), this, SLOT(track_property_changed()));
 
 
         AudioBus* bus = m_masterOut->get_process_bus();
@@ -904,9 +904,9 @@ Track* Project::get_track(qint64 id) const
 }
 
 
-void Project::track_routing_changed()
+void Project::track_property_changed()
 {
-        emit trackRoutingChanged();
+        emit trackPropertyChanged();
 }
 
 /**
