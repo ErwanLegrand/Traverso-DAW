@@ -145,7 +145,7 @@ int Track::set_state( const QDomNode & node )
 
         // Keep old project files up to 0.49.x working, at least, try our best...
         // TODO: remove this at some point in future where everybody uses > 0.49.x
-        if (m_postSends.isEmpty()) {
+        if (m_postSends.isEmpty() && ! m_session->is_project_session()) {
                 QString busOutName = e.attribute( "OutputBus", tr("Sheet Master"));
                 Project* project = pm().get_project();
                 if (project) {

@@ -95,7 +95,7 @@ Project::Project(const QString& title)
         m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Project::process) );
         m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Project::transport_control) );
 
-        m_masterOut = new MasterOutSubGroup(this, tr("Master"));
+        m_masterOut = new MasterOutSubGroup(this, "");
         m_masterOut->set_gain(0.5);
         // FIXME: m_masterOut is a Track, but at this point in time, Track can't
         // get a reference to us via pm().get_project();
@@ -350,6 +350,17 @@ int Project::load(QString projectfile)
         // Force the proper name for our Master Bus
         m_masterOut->set_name(tr("Master"));
 
+        // If master out doesn't have post sends, the user won't hear anything!
+        // add the first logical 'hardware' output channels as post send if the
+        // driver != Jack, the Jack driver case is handled seperately.
+        if (!m_masterOut->get_post_sends().size()) {
+                if (audiodevice().get_driver_type() != "Jack") {
+                        AudioBus* bus = get_playback_bus("Playback 1-2");
+                        if (bus) {
+                                m_masterOut->add_post_send(bus->get_id());
+                        }
+                }
+        }
 
         // Lets see if there is already a Project Master out jack bus:
         // if not, create one, the user expects at least that Master shows up in the patchbay!
