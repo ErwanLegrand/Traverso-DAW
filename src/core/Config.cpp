@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-static const char* CONFIG_FILE_VERSION = "7";
+static const char* CONFIG_FILE_VERSION = "8";
 
 
 Config& config()
