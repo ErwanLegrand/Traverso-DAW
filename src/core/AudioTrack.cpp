@@ -53,7 +53,7 @@ AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
         sheet->set_track_height(m_id, height);
         m_pan = m_numtakes = 0;
 
-        m_busInName = "Capture 1";
+        m_busInName = "Capture 1-2";
 
         init();
 }

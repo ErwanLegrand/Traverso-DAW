@@ -120,7 +120,7 @@ int Track::set_state( const QDomNode & node )
         }
 
 
-        add_input_bus(e.attribute( "InputBus", "Capture 1"));
+        add_input_bus(e.attribute( "InputBus", "Capture 1-2"));
 
         QDomNode sendsNode = node.firstChildElement("Sends");
         if (!sendsNode.isNull()) {
