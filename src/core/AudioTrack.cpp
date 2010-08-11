@@ -76,6 +76,7 @@ AudioTrack::~AudioTrack()
 void AudioTrack::init()
 {
         QObject::tr("Track");
+
         m_type = AUDIOTRACK;
         m_isArmed = false;
         m_fader->set_gain(1.0);

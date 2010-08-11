@@ -41,8 +41,6 @@ class CorrelationMeterView : public MeterView
 {
 	Q_OBJECT
 
-	Q_CLASSINFO("set_mode", tr("Toggle display range"))
-
 public:
         CorrelationMeterView(CorrelationMeterWidget* widget);
 

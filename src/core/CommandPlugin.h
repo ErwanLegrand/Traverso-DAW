@@ -61,7 +61,8 @@ public:
 	 * @return On success a Command object, the caller takes authorship, or 0 on failure.
  */
 	virtual Command* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
-	
+        virtual void create_menu_translations() = 0;
+
 	virtual QStringList commands() const {
 		return QStringList(m_dict.keys());
 	}

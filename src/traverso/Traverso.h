@@ -37,6 +37,7 @@ public :
 
 
         void shutdown(int signal);
+        void create_interface();
 
 protected:
         void saveState ( QSessionManager& manager );
@@ -46,9 +47,6 @@ private :
 	void init_sse();
 	void setup_fpu();
         void prepare_audio_device();
-	
-private slots:
-	void create_interface();
 };
 
 #endif

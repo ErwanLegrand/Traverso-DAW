@@ -339,32 +339,32 @@ effect after restarting Traverso!</source>
 <context>
     <name>AudioClip</name>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="651"/>
+        <location filename="../../src/core/AudioClip.cpp" line="652"/>
         <source>Toggle Mute</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="658"/>
+        <location filename="../../src/core/AudioClip.cpp" line="659"/>
         <source>Toggle Lock</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="685"/>
+        <location filename="../../src/core/AudioClip.cpp" line="686"/>
         <source>Remove Fades</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="892"/>
+        <location filename="../../src/core/AudioClip.cpp" line="893"/>
         <source>Normalization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="893"/>
+        <location filename="../../src/core/AudioClip.cpp" line="894"/>
         <source>Set Normalization level:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="902"/>
+        <location filename="../../src/core/AudioClip.cpp" line="903"/>
         <source>AudioClip: Normalize</source>
         <translation type="unfinished"></translation>
     </message>
@@ -765,32 +765,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AudioTrack</name>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="132"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="133"/>
         <source>Track: AudioClip with id %1 not found in Resources database!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="182"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="183"/>
         <source>Unable to Record to AudioTrack</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="183"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="184"/>
         <source>AudioDevice doesn&apos;t have this Capture Bus: %1 (Track %2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="350"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="351"/>
         <source>Silence Others</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="435"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="436"/>
         <source>Remove Clip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="449"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="450"/>
         <source>Add Clip</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1135,14 +1135,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/PluginSelector.ui" line="67"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DigitalClock</name>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1497"/>
-        <source>Digital Clock</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1529,31 +1521,31 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>InputEngine</name>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="271"/>
+        <location filename="../../src/core/InputEngine.cpp" line="272"/>
         <source>Modifier key actions are not supported from Context Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="281"/>
+        <location filename="../../src/core/InputEngine.cpp" line="282"/>
         <source>Hold actions are not supported from Context Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="418"/>
+        <location filename="../../src/core/InputEngine.cpp" line="419"/>
         <source>Command Plugin %1 not found!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="421"/>
+        <location filename="../../src/core/InputEngine.cpp" line="422"/>
         <source>Plugin %1 doesn&apos;t implement Command %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="1556"/>
-        <location filename="../../src/core/InputEngine.cpp" line="1629"/>
-        <location filename="../../src/core/InputEngine.cpp" line="1632"/>
-        <location filename="../../src/core/InputEngine.cpp" line="1635"/>
-        <location filename="../../src/core/InputEngine.cpp" line="1638"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1557"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1630"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1633"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1636"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1639"/>
         <source>Input Engine: Loaded keymap has this unrecognized key: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2512,120 +2504,119 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Project</name>
     <message>
-        <location filename="../../src/core/Project.cpp" line="94"/>
-        <location filename="../../src/core/Project.cpp" line="347"/>
+        <location filename="../../src/core/Project.cpp" line="351"/>
         <source>Master</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="142"/>
-        <location filename="../../src/core/Project.cpp" line="187"/>
-        <location filename="../../src/core/Project.cpp" line="201"/>
+        <location filename="../../src/core/Project.cpp" line="146"/>
+        <location filename="../../src/core/Project.cpp" line="191"/>
+        <location filename="../../src/core/Project.cpp" line="205"/>
         <source>Cannot create dir %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="179"/>
+        <location filename="../../src/core/Project.cpp" line="183"/>
         <source>Created new Project %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="225"/>
-        <location filename="../../src/core/Project.cpp" line="445"/>
+        <location filename="../../src/core/Project.cpp" line="229"/>
+        <location filename="../../src/core/Project.cpp" line="460"/>
         <source>Project %1: Cannot open project.tpf file! (Reason: %2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="243"/>
-        <location filename="../../src/core/Project.cpp" line="453"/>
+        <location filename="../../src/core/Project.cpp" line="247"/>
+        <location filename="../../src/core/Project.cpp" line="468"/>
         <source>Project %1: Failed to parse project.tpf file! (Reason: %2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="253"/>
-        <location filename="../../src/core/Project.cpp" line="463"/>
+        <location filename="../../src/core/Project.cpp" line="257"/>
+        <location filename="../../src/core/Project.cpp" line="478"/>
         <source>Project File Version does not match, unable to load Project!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="430"/>
+        <location filename="../../src/core/Project.cpp" line="445"/>
         <source>Project %1 loaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="474"/>
-        <location filename="../../src/core/Project.cpp" line="496"/>
+        <location filename="../../src/core/Project.cpp" line="489"/>
+        <location filename="../../src/core/Project.cpp" line="511"/>
         <source>Couldn&apos;t open Project properties file for writing! (File %1. Reason: %2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="506"/>
+        <location filename="../../src/core/Project.cpp" line="521"/>
         <source>Project %1 saved </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="960"/>
+        <location filename="../../src/core/Project.cpp" line="986"/>
         <source>Project with title &apos;%1&apos; allready exists, not setting new title!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="969"/>
+        <location filename="../../src/core/Project.cpp" line="995"/>
         <source>Project directory %1 no longer exists, did you rename it? Shame on you! Please undo that, and come back later to rename your Project...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="983"/>
-        <location filename="../../src/core/Project.cpp" line="1672"/>
+        <location filename="../../src/core/Project.cpp" line="1009"/>
+        <location filename="../../src/core/Project.cpp" line="1698"/>
         <source>Traverso - Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="984"/>
+        <location filename="../../src/core/Project.cpp" line="1010"/>
         <source>Project title changed, Project will to be reloaded to ensure proper operation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1054"/>
+        <location filename="../../src/core/Project.cpp" line="1080"/>
         <source>Sheet %1 added</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1701"/>
+        <location filename="../../src/core/Project.cpp" line="1727"/>
         <source>Sheets behave as Tracks Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1703"/>
+        <location filename="../../src/core/Project.cpp" line="1729"/>
         <source>Sheets NO longer behave as Tracks Folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1066"/>
+        <location filename="../../src/core/Project.cpp" line="1092"/>
         <source>Remove Sheet %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1154"/>
+        <location filename="../../src/core/Project.cpp" line="1180"/>
         <source>Export already in progress, cannot start it twice!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1161"/>
+        <location filename="../../src/core/Project.cpp" line="1187"/>
         <source>Unable to create export directory! Please check permissions for this directory: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1230"/>
+        <location filename="../../src/core/Project.cpp" line="1256"/>
         <source>Detected clipping in exported audio! (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1235"/>
+        <location filename="../../src/core/Project.cpp" line="1261"/>
         <source>calculated norm factor: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1673"/>
+        <location filename="../../src/core/Project.cpp" line="1699"/>
         <source>You&apos;re still recording, please stop recording first to be able to exit the application!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3604,37 +3595,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="83"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="64"/>
+        <source>Restore Defaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="84"/>
         <source>Preferences - Traverso</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="103"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="104"/>
         <source>Behavior</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="109"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="110"/>
         <source>Appearance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="116"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="117"/>
         <source>Sound System</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="123"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="124"/>
         <source>Audio Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="130"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="131"/>
         <source>Keyboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="137"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="138"/>
         <source>Performance</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3903,42 +3899,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SpectralMeterView</name>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="508"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="489"/>
         <source>Screen Capture file name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="516"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="497"/>
         <source>FFT: Unable to write captured image to hard disk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="527"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="508"/>
         <source>FFT: No average curve used, not data to export!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="528"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="509"/>
         <source>FFT: Enable average curve with &lt; M &gt; to generate data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="536"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="517"/>
         <source>FFT: No average data to export!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="549"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="530"/>
         <source>Select output format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="549"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="530"/>
         <source>Output format:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="557"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="538"/>
         <source>Export average dB curve</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4051,6 +4047,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="177"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="916"/>
         <source>Correlation Meter</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4063,6 +4060,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/traverso/TMainWindow.cpp" line="194"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="195"/>
         <source>VU Meters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="212"/>
+        <source>MainToolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4085,304 +4087,314 @@ Traverso is based (Gcc, Qt, Xorg, Linux, and so on)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="644"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="666"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="647"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="669"/>
         <source>&amp;New...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="652"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="674"/>
         <source>&amp;Open...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="659"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="681"/>
         <source>&amp;Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="667"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="689"/>
         <source>&amp;Close Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="675"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="697"/>
         <source>&amp;Manage Project...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="685"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="707"/>
         <source>&amp;Export...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="694"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="716"/>
         <source>&amp;CD Writing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="703"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="725"/>
         <source>&amp;Restore Backup...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="714"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="736"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="722"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="744"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="725"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="747"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="732"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="754"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="742"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="764"/>
         <source>Import &amp;Audio...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="748"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="770"/>
         <source>Insert Si&amp;lence...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="757"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="779"/>
         <source>&amp;Snap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="761"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="783"/>
         <source>Snap items to edges of other items while dragging.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="765"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="787"/>
         <source>S&amp;croll Playback</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="769"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="791"/>
         <source>Keep play cursor in view while playing or recording.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="773"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="795"/>
         <source>&amp;Show Effects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="777"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="799"/>
         <source>Show effect plugins and automation curves on tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="781"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="803"/>
         <source>Vi&amp;ew</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="788"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="810"/>
         <source>Marker Editor...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="792"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="814"/>
         <source>Toggle Full Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="801"/>
-        <source>ToolBars</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="806"/>
-        <source>Transport Console</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="812"/>
-        <source>Project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="815"/>
-        <source>Edit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="822"/>
-        <source>System Information</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="817"/>
+        <source>Toggle FFT Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="826"/>
-        <source>&amp;Settings</source>
+        <source>ToolBars</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="829"/>
-        <source>&amp;Recording File Format</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="831"/>
+        <source>Transport Console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="841"/>
-        <source>&amp;Resample Quality</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="837"/>
+        <source>Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="842"/>
-        <source>Best</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="840"/>
+        <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="845"/>
-        <source>High</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="848"/>
-        <source>Medium</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="847"/>
+        <source>System Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="851"/>
-        <source>Fast</source>
+        <source>&amp;Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="860"/>
-        <source>&amp;Preferences...</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="854"/>
+        <source>&amp;Recording File Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="864"/>
-        <source>&amp;Help</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="866"/>
+        <source>&amp;Resample Quality</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="867"/>
-        <source>&amp;Getting Started</source>
+        <source>Best</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="870"/>
-        <source>&amp;User Manual</source>
+        <source>High</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="874"/>
-        <source>&amp;About Traverso</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="873"/>
+        <source>Medium</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="879"/>
-        <source>Audio Clip</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="880"/>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="889"/>
-        <source>Audio Track</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="881"/>
-        <source>Curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="882"/>
-        <source>Curve Node</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="883"/>
-        <source>Fade Curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="884"/>
-        <source>Marker</source>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="876"/>
+        <source>Fast</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="885"/>
+        <source>&amp;Preferences...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="889"/>
+        <source>&amp;Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="892"/>
+        <source>&amp;Getting Started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="895"/>
+        <source>&amp;User Manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="899"/>
+        <source>&amp;About Traverso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="904"/>
+        <source>Audio Clip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="905"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="914"/>
+        <source>Audio Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="906"/>
+        <source>Curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="907"/>
+        <source>Curve Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="908"/>
+        <source>Fade Curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="909"/>
+        <source>Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="910"/>
         <source>Sheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="886"/>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="888"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="911"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="913"/>
         <source>Bus Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="887"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="912"/>
         <source>Time Line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="890"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="915"/>
         <source>Plugin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1101"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="917"/>
+        <source>Spectral Analyzer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1128"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1101"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1128"/>
         <source>Key Sequence</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1418"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1445"/>
         <source>Open Audio Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1420"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1447"/>
         <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1464"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1491"/>
         <source>%1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1603"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1605"/>
         <source>No Sheet active to add child view to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1668"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1674"/>
         <source>Opening User Manual in external browser!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1674"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1680"/>
         <source>Traverso - Important</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1675"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1681"/>
         <source>A Project directory changed outside of Traverso. 
 
 This is NOT supported! Please undo this change now!
@@ -4391,12 +4403,12 @@ If you want to rename a Project, use the Project Manager instead!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1707"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1713"/>
         <source>Traverso - Project load failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1708"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1714"/>
         <source>The requested Project `%1` 
 could not be loaded for the following reason:
 
@@ -4407,23 +4419,546 @@ to restore the Project from.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1728"/>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1735"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1734"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1741"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1747"/>
         <source>Changed encoding for recording to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1747"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1753"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1759"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1765"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1771"/>
         <source>Changed resample quality to: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1974"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1980"/>
         <source>Track Finder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TMenuTranslator</name>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="38"/>
+        <source>Solo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="39"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="51"/>
+        <source>Mute</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="40"/>
+        <source>In: Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="41"/>
+        <source>Out: Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="42"/>
+        <source>Both: Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="43"/>
+        <source>Normalize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="44"/>
+        <source>Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="45"/>
+        <source>Select all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="46"/>
+        <source>Invert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="47"/>
+        <source>Toggle Bypass</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="48"/>
+        <source>Cycle Shape</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="49"/>
+        <source>Remove Fade</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="50"/>
+        <source>Toggle Raster</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="52"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="131"/>
+        <source>Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="53"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="132"/>
+        <source>Record</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="54"/>
+        <source>Workcursor: To next edge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="55"/>
+        <source>Workcursor: To previous edge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="56"/>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="57"/>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="58"/>
+        <source>Snap: On/Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="59"/>
+        <source>Toggle Curve Mode: On/Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="60"/>
+        <source>To previous snap position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="61"/>
+        <source>To next snap position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="62"/>
+        <source>Solo: On/Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="63"/>
+        <source>Mute: On/Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="64"/>
+        <source>Arm: On/Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="65"/>
+        <source>Closest: Adjust Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="66"/>
+        <source>In: Adjust Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="67"/>
+        <source>Out: Adjust Length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="68"/>
+        <source>In: Select Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="69"/>
+        <source>Out: Select Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="70"/>
+        <source>Closest: Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="71"/>
+        <source>Reset Audio File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="72"/>
+        <source>Edit Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="73"/>
+        <source>Insert Silence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="74"/>
+        <source>New node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="75"/>
+        <source>Remove node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="76"/>
+        <source>Remove all Nodes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="77"/>
+        <source>Move node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="78"/>
+        <source>Move node (vertical only)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="79"/>
+        <source>Adjust Bend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="80"/>
+        <source>Adjust Strength</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="81"/>
+        <source>Select Preset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="82"/>
+        <source>Edit...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="83"/>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="84"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="85"/>
+        <source>Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="86"/>
+        <source>Center View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="87"/>
+        <source>Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="88"/>
+        <source>Left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="89"/>
+        <source>Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="90"/>
+        <source>Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="91"/>
+        <source>To start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="92"/>
+        <source>To end</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="93"/>
+        <source>To Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="94"/>
+        <source>To End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="95"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="96"/>
+        <source>Move</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="97"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="113"/>
+        <source>Add Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="98"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="114"/>
+        <source>Add Marker at Playhead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="99"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="115"/>
+        <source>Add Marker at Work Cursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="100"/>
+        <source>To workcursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="101"/>
+        <source>To Playhead</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="102"/>
+        <source>Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="103"/>
+        <source>Add Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="104"/>
+        <source>Expand/Collapse Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="105"/>
+        <source>To Previous Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="106"/>
+        <source>To Next Track</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="107"/>
+        <source>One Context Layer Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="108"/>
+        <source>One Context Layer Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="109"/>
+        <source>To Previous Context Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="110"/>
+        <source>To Next Context Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="111"/>
+        <source>To Context Item Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="112"/>
+        <source>To Context Item Below</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="116"/>
+        <source>Remove Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="117"/>
+        <source>Drag Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="118"/>
+        <source>Clear all Markers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="119"/>
+        <source>Playhead to Marker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="120"/>
+        <source>Edit properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="121"/>
+        <source>Add new Plugin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="122"/>
+        <source>Select Bus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="123"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="125"/>
+        <source>Show Export Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="124"/>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="126"/>
+        <source>Show Context Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="127"/>
+        <source>About Traverso</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="128"/>
+        <source>Show Project Management Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="129"/>
+        <source>Full Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="130"/>
+        <source>Export keymap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="133"/>
+        <source>Show Audio I/O dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="134"/>
+        <source>Activate Track Finder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="135"/>
+        <source>Show Audio I/O Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="136"/>
+        <source>Browse to first Track in current View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="137"/>
+        <source>Browse to last Track in current View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="138"/>
+        <source>Toggle display range</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="139"/>
+        <source>Settings...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="140"/>
+        <source>Toggle average curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="141"/>
+        <source>Reset average curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="142"/>
+        <source>Export average curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="143"/>
+        <source>Capture Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="144"/>
+        <source>Bypass: On/Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="145"/>
+        <source>Save Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="146"/>
+        <source>Close Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="147"/>
+        <source>Exit application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="148"/>
+        <source>Record: On/Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/core/TMenuTranslator.cpp" line="149"/>
+        <source>Silence other tracks</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4605,17 +5140,17 @@ to restore the Project from.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="66"/>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="67"/>
         <source>Audio Track:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="70"/>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="71"/>
         <source>Bus Track:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="83"/>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="84"/>
         <source>Master Bus:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4775,217 +5310,217 @@ to restore the Project from.</source>
 <context>
     <name>TraversoCommands</name>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="31"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="148"/>
         <source>Gain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="32"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="149"/>
         <source>Gain: Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="33"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="150"/>
         <source>Panorama</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="34"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="151"/>
         <source>Panorama: Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="35"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="152"/>
         <source>Import Audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="36"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="153"/>
         <source>Insert Silence</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="37"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="154"/>
         <source>Copy Clip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="38"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="155"/>
         <source>New Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="39"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="156"/>
         <source>Remove Clip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="40"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="157"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="41"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="158"/>
         <source>External Processing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="42"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="159"/>
         <source>(De)Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="43"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="160"/>
         <source>(De)Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="44"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="161"/>
         <source>Move Clip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="45"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="162"/>
         <source>Move Up/Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="46"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="163"/>
         <source>Drag Edge</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="47"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="164"/>
         <source>Move Or Resize Clip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="48"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="165"/>
         <source>Split</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="49"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="166"/>
         <source>Magnetic Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="50"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="167"/>
         <source>Arm Tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="51"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="168"/>
         <source>Fold Sheet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="52"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="169"/>
         <source>Fold Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="53"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="170"/>
         <source>Fold Markers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="54"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="171"/>
         <source>Vertical In</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="55"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="172"/>
         <source>Horizontal Out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="56"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="173"/>
         <source>Horizontal In</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="57"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="174"/>
         <source>Vertical Out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="58"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="175"/>
         <source>Omnidirectional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="59"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="176"/>
         <source>Horizontal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="60"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="177"/>
         <source>Vertical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="61"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="178"/>
         <source>Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="62"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="179"/>
         <source>Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="63"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="180"/>
         <source>Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="64"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="181"/>
         <source>Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="65"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="182"/>
         <source>Shuttle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="66"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="183"/>
         <source>Normalize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="67"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="184"/>
         <source>Arrow Key Browser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="236"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="282"/>
         <source>Removing Track %1, but no active (Work) Sheet ??</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="241"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="287"/>
         <source>It is not possible to remove the Master Out track!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="454"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="500"/>
         <source>Normalization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="455"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="501"/>
         <source>Set Normalization level:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="466"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="512"/>
         <source>Normalize Selected Clips</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="469"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="515"/>
         <source>AudioClip: Normalize</source>
         <translation type="unfinished"></translation>
     </message>

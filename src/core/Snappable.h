@@ -30,7 +30,7 @@ class Snappable
 {
 public:
 	Snappable();
-        virtual ~Snappable() {};
+        virtual ~Snappable() {}
 
 	void set_snappable(bool snap);
 

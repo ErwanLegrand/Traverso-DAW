@@ -134,8 +134,6 @@ public:
 		return -1;
 	}
 	
-        void jog_start();
-        void jog_finished();
         void reset_cursor();
         void move_hardware_mouse_cursor_to(QPoint pos);
         void set_jog_bypass_distance(int distance);
@@ -175,6 +173,7 @@ private:
         // allow this function to create one instance
         friend ContextPointer& cpointer();
         friend class InputEngine;
+        friend class Traverso;
 
         int m_x;
         int m_y;
@@ -214,6 +213,8 @@ private:
 	
 private slots:
 	void update_jog();
+        void jog_start();
+        void jog_finished();
 };
 
 // use this function to access the context pointer

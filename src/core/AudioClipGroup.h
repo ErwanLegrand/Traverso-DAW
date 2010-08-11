@@ -29,7 +29,7 @@
 class AudioClipGroup
 {
 public:
-	AudioClipGroup(){};
+        AudioClipGroup(){}
 	AudioClipGroup(QList<AudioClip*> clips);
 	
 	void add_clip(AudioClip* clip);

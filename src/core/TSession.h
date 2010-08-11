@@ -43,9 +43,6 @@ struct EditPointLocation {
 class TSession : public ContextItem
 {
         Q_OBJECT
-        Q_CLASSINFO("toggle_solo", tr("Solo: On/Off"))
-        Q_CLASSINFO("toggle_mute", tr("Mute: On/Off"))
-        Q_CLASSINFO("toggle_arm", tr("Arm: On/Off"))
 
 public:
         TSession(TSession* parentSession = 0);

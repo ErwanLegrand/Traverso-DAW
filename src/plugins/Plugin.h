@@ -52,7 +52,6 @@ struct PluginInfo {
 class Plugin : public ContextItem
 {
 	Q_OBJECT
-	Q_CLASSINFO("toggle_bypass", tr("Bypass: On/Off"))
 	
 public:
         Plugin(TSession* session = 0);

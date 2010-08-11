@@ -42,6 +42,7 @@ ProcessingData.cpp
 ReadSource.cpp
 ResourcesManager.cpp
 TBusTrack.cpp
+TMenuTranslator.cpp
 TSend.cpp
 TSession.cpp
 Sheet.cpp
@@ -81,6 +82,7 @@ ResourcesManager.h
 Sheet.h
 TBusTrack.h
 Themer.h
+TMenuTranslator.h
 TimeLine.h
 Track.h
 TSession.h

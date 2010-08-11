@@ -34,7 +34,6 @@ class CurveView;
 class AudioTrackView : public TrackView
 {
 	Q_OBJECT
-	Q_CLASSINFO("insert_silence", tr("Insert Silence")) 
 
 public:
         AudioTrackView(SheetView* sv, AudioTrack* track);

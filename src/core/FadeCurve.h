@@ -36,12 +36,7 @@ class AudioBus;
 
 class FadeCurve : public Curve, public APILinkedListNode
 {
-	Q_OBJECT
-	
-	Q_CLASSINFO("toggle_bypass", tr("Toggle Bypass"))
-	Q_CLASSINFO("set_mode", tr("Cycle Shape"))
-	Q_CLASSINFO("reset", tr("Remove Fade"))
-	Q_CLASSINFO("toggle_raster", tr("Toggle Raster"))
+	Q_OBJECT	
 	
 public:
 	static QStringList defaultShapes;

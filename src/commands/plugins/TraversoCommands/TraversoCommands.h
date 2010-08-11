@@ -28,48 +28,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class TraversoCommands : public CommandPlugin
 {
 	Q_OBJECT
-	Q_CLASSINFO("Gain", tr("Gain"))
-	Q_CLASSINFO("ResetGain", tr("Gain: Reset"))
-	Q_CLASSINFO("TrackPan", tr("Panorama"))
-	Q_CLASSINFO("ResetTrackPan", tr("Panorama: Reset"))
-	Q_CLASSINFO("ImportAudio", tr("Import Audio"))
-	Q_CLASSINFO("InsertSilence", tr("Insert Silence"))
-	Q_CLASSINFO("CopyClip", tr("Copy Clip"))
-        Q_CLASSINFO("AddNewAudioTrack", tr("New Track"))
-	Q_CLASSINFO("RemoveClip", tr("Remove Clip"))
-        Q_CLASSINFO("RemoveTrack", tr("Remove"))
-	Q_CLASSINFO("AudioClipExternalProcessing", tr("External Processing"))
-	Q_CLASSINFO("ClipSelectionSelect", tr("(De)Select"))
-	Q_CLASSINFO("ClipSelectionSelectAll", tr("(De)Select All"))
-        Q_CLASSINFO("MoveClip", tr("Move Clip"))
-        Q_CLASSINFO("MoveTrack", tr("Move Up/Down"))
-        Q_CLASSINFO("DragEdge", tr("Drag Edge"))
-	Q_CLASSINFO("MoveClipOrEdge", tr("Move Or Resize Clip"))
-        Q_CLASSINFO("SplitClip", tr("Split"))
-        Q_CLASSINFO("CropClip", tr("Magnetic Cut"))
-        Q_CLASSINFO("ArmTracks", tr("Arm Tracks"))
-	Q_CLASSINFO("FoldSheet", tr("Fold Sheet"))
-	Q_CLASSINFO("FoldTrack", tr("Fold Track"))
-	Q_CLASSINFO("FoldMarkers", tr("Fold Markers"))
-	Q_CLASSINFO("VZoomIn", tr("Vertical In"))
-	Q_CLASSINFO("HZoomOut", tr("Horizontal Out"))
-	Q_CLASSINFO("HZoomIn", tr("Horizontal In"))
-	Q_CLASSINFO("VZoomOut", tr("Vertical Out"))
-	Q_CLASSINFO("Zoom", tr("Omnidirectional"))
-	Q_CLASSINFO("HJogZoom", tr("Horizontal"))
-	Q_CLASSINFO("VJogZoom", tr("Vertical"))
-	Q_CLASSINFO("ScrollRightHold", tr("Right"))
-	Q_CLASSINFO("ScrollLeftHold", tr("Left"))
-	Q_CLASSINFO("ScrollUpHold", tr("Up"))
-	Q_CLASSINFO("ScrollDownHold", tr("Down"))
-        Q_CLASSINFO("Shuttle", tr("Shuttle"))
-        Q_CLASSINFO("NormalizeClip", tr("Normalize"))
-        Q_CLASSINFO("ArrowKeyBrowser", tr("Arrow Key Browser"))
 
 public:
 	TraversoCommands();
 	Command* create(QObject* obj, const QString& command, QVariantList arguments);
-	
+        void create_menu_translations();
+
 private:
 	enum Commands {
 		GainCommand,

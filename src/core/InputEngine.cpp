@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Command.h"
 #include <CommandPlugin.h>
 #include "Utils.h"
+#include "TMenuTranslator.h"
 
 #include <QTime>
 #include <QFile>
@@ -209,7 +210,7 @@ InputEngine::InputEngine()
 	
 	foreach (QObject* obj, QPluginLoader::staticInstances()) {
 		CommandPlugin* plug = qobject_cast<CommandPlugin*>(obj);
-		m_commandplugins.insert(plug->metaObject()->className(), plug);
+                m_commandplugins.insert(plug->metaObject()->className(), plug);
 	}
 	
 #if !defined (STATIC_BUILD)
@@ -218,7 +219,7 @@ InputEngine::InputEngine()
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
 		CommandPlugin* plug = qobject_cast<CommandPlugin*>(loader.instance());
 		if (plug) {
-			m_commandplugins.insert(plug->metaObject()->className(), plug);
+                        m_commandplugins.insert(plug->metaObject()->className(), plug);
 			printf("InputEngine:: Succesfully loaded plugin: %s\n", plug->metaObject()->className());
 		} else {
 			printf("InputEngine:: Plugin load failed with %s\n", QS_C(loader.errorString()));
@@ -621,13 +622,13 @@ void InputEngine::update_jog_bypass_pos()
 
 void InputEngine::set_jogging(bool jog)
 {
-	if (jog) {
-		cpointer().jog_start();
-	} else {
-		cpointer().jog_finished();
-	}
-
         m_isJogging = jog;
+
+        if (m_isJogging) {
+                emit jogStarted();
+	} else {
+                emit jogFinished();
+	}
 }
 
 bool InputEngine::is_jogging()
@@ -695,7 +696,7 @@ void InputEngine::catch_key_release( QKeyEvent * e)
 	if (e->isAutoRepeat()) {
 		return;
 	}
-	PENTER4;
+        PENTER;
 	process_release_event(e->key());
 }
 
@@ -1905,6 +1906,7 @@ Command * InputEngine::get_holding_command() const
 void InputEngine::create_menudata_for_metaobject(const QMetaObject * mo, QList< MenuData > & list) const
 {
 	const char* classname = mo->className();
+        TMenuTranslator* translator = TMenuTranslator::instance();
 	
 	for (int i=0; i<m_ieActions.size(); i++) {
 		IEAction* ieaction = m_ieActions.at(i);
@@ -1922,56 +1924,10 @@ void InputEngine::create_menudata_for_metaobject(const QMetaObject * mo, QList< 
 			MenuData menudata;
 				
 			if ( ! iedata->pluginname.isEmpty() ) {
-				CommandPlugin* plug = m_commandplugins.value(iedata->pluginname);
-					
-				if ( ! plug) {
-					continue;
-				}
-				int classInfoIndex = plug->metaObject()->indexOfClassInfo(QS_C(iedata->commandname));
-				if (classInfoIndex >= 0) {
-					QMetaClassInfo classInfo = plug->metaObject()->classInfo(classInfoIndex);
-						// Set the translated string!
-					menudata.description = QCoreApplication::translate(classname, classInfo.value());
-				} else {
-					menudata.description = 
-							QString("Add a Q_CLASSINFO() in CommandPlug %1.h, Command %2 please")
-							.arg(iedata->pluginname).arg(iedata->commandname);
-					PWARN("%s", QS_C(menudata.description));
-				}
-		
-			} else {
-				int classInfoIndex = mo->indexOfClassInfo(QS_C(iedata->slotsignature));
-				int methodIndex = -1;
-					
-				for (int i=0; i < mo->methodCount(); i++) {
-				
-					if ( ! (mo->method(i).methodType() == QMetaMethod::Slot) ) {
-						continue;
-					}
-				
-					QString slotsignature = mo->method(i).signature();
-					slotsignature = slotsignature.left(slotsignature.indexOf("("));
-					if (iedata->slotsignature == slotsignature) {
-						methodIndex = i;
-						break;
-					}
-				}
-						
-					
-				if (classInfoIndex >= 0 && methodIndex >= 0) {
-					QMetaClassInfo classInfo = mo->classInfo(classInfoIndex);
-						// Set the translated string!
-					menudata.description = QCoreApplication::translate(classname, classInfo.value());
-				} else {
-					if (methodIndex >= 0) {
-						menudata.description = QString("Add a Q_CLASSINFO() for %1::%2 please")
-								.arg(classname).arg(iedata->slotsignature);
-						PWARN("%s", QS_C(menudata.description));
-					} else {
-						continue;
-					}
-				}
-			}
+                                menudata.description = translator->get_translation_for(QString("%1::%2").arg(iedata->pluginname).arg(iedata->commandname));
+                        } else {
+                                menudata.description = translator->get_translation_for(QString("%1::%2").arg(classname).arg(iedata->slotsignature));
+                        }
 				
 			menudata.keysequence = ieaction->keySequence;
 			menudata.iedata = ieaction->keySequence;

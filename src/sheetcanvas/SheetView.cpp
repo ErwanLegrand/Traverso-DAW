@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "TimeLineViewPort.h"
 #include "TimeLineView.h"
 #include "TrackPanelViewPort.h"
+#include "TEditCursor.h"
 #include "TSession.h"
 
 #include "AddRemove.h"
@@ -92,6 +93,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
         m_playCursor = new PlayHead(this, m_session, m_clipsViewPort);
         m_workCursor = new WorkCursor(this, m_session);
+        m_editCursor = new TEditCursor(this);
+        scene()->addItem(m_editCursor);
 
         Sheet* sheet = qobject_cast<Sheet*>(m_session);
 
@@ -1366,8 +1369,8 @@ void SheetView::move_edit_point_to(TimeRef location, int sceneY)
         QPoint pos = m_clipsViewPort->mapFromScene(location / timeref_scalefactor, sceneY);
         cpointer().set_edit_point_position(pos.x(), pos.y());
 
-        m_clipsViewPort->set_holdcursor_text(timeref_to_text(location, timeref_scalefactor));
-        m_clipsViewPort->set_holdcursor_pos(QPointF(location / timeref_scalefactor, sceneY));
+        m_editCursor->set_text(timeref_to_text(location, timeref_scalefactor));
+        m_editCursor->set_pos(QPointF(location / timeref_scalefactor, sceneY));
 }
 
 
@@ -1401,4 +1404,10 @@ Command* SheetView::edit_properties()
         }
 
         return 0;
+}
+
+void SheetView::set_cursor_shape(const QString& shape)
+{
+        m_editCursor->set_cursor_shape(shape);
+        move_edit_point_to(m_session->get_work_location(), m_session->get_edit_point_location().sceneY);
 }

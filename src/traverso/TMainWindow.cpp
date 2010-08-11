@@ -123,7 +123,7 @@ TMainWindow::TMainWindow()
         m_instance = this;
 
 	setWindowTitle("Traverso");
-	setMinimumSize(400, 300);
+        setMinimumSize(400, 300);
 	setWindowIcon(QPixmap (":/windowicon") );
 
         // Track finder and related
@@ -209,7 +209,7 @@ TMainWindow::TMainWindow()
 
 
         m_mainMenuToolBar = new QToolBar(this);
-        m_mainMenuToolBar->setObjectName("MainToolBar");
+        m_mainMenuToolBar->setObjectName(tr("MainToolBar"));
         m_mainMenuToolBar->toggleViewAction()->setText("Main Tool Bar");
         m_mainMenuToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
         m_mainMenuToolBar->setMovable(false);
@@ -913,6 +913,8 @@ void TMainWindow::create_menus( )
         m_contextMenuDict.insert("TBusTrackPanel", tr("Bus Track"));
         m_contextMenuDict.insert("AudioTrackPanel",tr("Audio Track"));
         m_contextMenuDict.insert("Plugin",tr("Plugin"));
+        m_contextMenuDict.insert("CorrelationMeter", tr("Correlation Meter"));
+        m_contextMenuDict.insert("SpectralMeter", tr("Spectral Analyzer"));
 }
 
 void TMainWindow::set_project_actions_enabled(bool enable)
@@ -1505,31 +1507,6 @@ void TMainWindow::import_audio()
 	}
 
 	delete importClips;
-}
-
-DigitalClock::DigitalClock(QWidget *parent)
-	: QLCDNumber(parent)
-{
-	setSegmentStyle(Outline);
-	setFrameStyle(QFrame::StyledPanel);
-
-	QTimer *timer = new QTimer(this);
-	connect(timer, SIGNAL(timeout()), this, SLOT(showTime()));
-	timer->start(1000);
-	
-	showTime();
-
-	setWindowTitle(tr("Digital Clock"));
-	resize(150, 60);
-}
-
-void DigitalClock::showTime()
-{
-	QTime time = QTime::currentTime();
-	QString text = time.toString("hh:mm");
-	if ((time.second() % 2) == 0)
-		text[2] = ' ';
-	display(text);
 }
 
 

@@ -40,7 +40,6 @@ class TSession;
 class LV2Plugin : public Plugin
 {
 	Q_OBJECT
-	Q_CLASSINFO("toggle_bypass", tr("Bypass: On/Off"))
 
 public:
         LV2Plugin(TSession* session, bool slave=false);

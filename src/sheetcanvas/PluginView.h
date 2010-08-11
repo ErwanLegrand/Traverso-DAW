@@ -36,8 +36,6 @@ class PluginChain;
 class PluginView : public ViewItem
 {
         Q_OBJECT
-	Q_CLASSINFO("edit_properties", tr("Edit..."))
-	Q_CLASSINFO("remove_plugin", tr("Remove"))
 
 public:
 	PluginView(PluginChainView* pcv, PluginChain* chain, Plugin* plugin, int index);

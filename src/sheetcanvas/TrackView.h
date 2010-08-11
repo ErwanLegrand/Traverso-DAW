@@ -33,9 +33,6 @@ class PluginChainView;
 class TrackView : public ViewItem
 {
         Q_OBJECT
-        Q_CLASSINFO("edit_properties", tr("Edit properties"))
-        Q_CLASSINFO("add_new_plugin", tr("Add new Plugin"))
-        Q_CLASSINFO("select_bus", tr("Select Bus"))
 
 public:
         TrackView(SheetView* sv, Track* track);

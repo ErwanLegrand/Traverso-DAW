@@ -83,7 +83,7 @@ FadeCurve::~ FadeCurve( )
 void FadeCurve::init()
 {
 	QObject::tr("FadeCurve");
-	
+
 	// Populate the curve with 12 CurveNodes
 	float f = 0.0;
 	int nodecount = 11;

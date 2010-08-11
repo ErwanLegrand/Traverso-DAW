@@ -37,7 +37,7 @@ class ClipsViewPort : public ViewPort
 
 public:
 	ClipsViewPort(QGraphicsScene* scene, SheetWidget* sw);
-	~ClipsViewPort() {};
+        ~ClipsViewPort() {}
 	
 
 protected:

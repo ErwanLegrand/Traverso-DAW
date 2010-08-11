@@ -32,11 +32,7 @@ class AudioClipView;
 class FadeView : public ViewItem
 {
 	Q_OBJECT
-	
-	Q_CLASSINFO("bend", tr("Adjust Bend"))
-	Q_CLASSINFO("strength", tr("Adjust Strength"))
-	Q_CLASSINFO("select_fade_shape", tr("Select Preset"))
-	
+		
 public:
 	FadeView(SheetView* sv, AudioClipView* parent, FadeCurve* fadeCuve);
 	~FadeView();

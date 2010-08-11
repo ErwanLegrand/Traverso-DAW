@@ -78,14 +78,6 @@ class WelcomeWidget;
 class TSessionTabWidget;
 struct MenuData;
 
-class TTabWidget : public QTabWidget
-{
-public:
-        TTabWidget(QWidget* parent) : QTabWidget(parent) {}
-
-        QTabBar* get_tab_bar() {return tabBar();}
-};
-
 class AbstractVUMeterLevel
 {
 public:
@@ -98,20 +90,7 @@ public:
 
 class TMainWindow : public QMainWindow
 {
-	Q_OBJECT
-	Q_CLASSINFO("show_export_widget", tr("Show Export Dialog"))
-	Q_CLASSINFO("show_context_menu", tr("Show Context Menu"))
-	Q_CLASSINFO("about_traverso", tr("About Traverso"))
-	Q_CLASSINFO("show_project_manager_dialog", tr("Show Project Management Dialog"))
-	Q_CLASSINFO("full_screen", tr("Full Screen"))
-	Q_CLASSINFO("export_keymap", tr("Export keymap"))
-	Q_CLASSINFO("start_transport", tr("Play"))
-        Q_CLASSINFO("set_recordable_and_start_transport", tr("Record"));
-        Q_CLASSINFO("sheet_audio_io_dialog", tr("Show Audio I/O dialog"));
-        Q_CLASSINFO("show_track_finder", tr("Activate Track Finder"));
-        Q_CLASSINFO("audio_io_dialog", tr("Show Audio I/O Dialog"));
-        Q_CLASSINFO("browse_to_first_track_in_active_sheet", tr("Browse to first Track in current View"))
-        Q_CLASSINFO("browse_to_last_track_in_active_sheet", tr("Browse to last Track in current View"))
+        Q_OBJECT
 
 public :
         TMainWindow();
@@ -276,20 +255,6 @@ private slots:
 	void update_temp_follow_state(bool state);
         void track_finder_model_index_changed(const QModelIndex& index);
         void track_finder_return_pressed();
-};
-
-
-#include <QLCDNumber>
-
-class DigitalClock : public QLCDNumber
-{
-	Q_OBJECT
-
-	public:
-		DigitalClock(QWidget *parent = 0);
-
-	private slots:
-		void showTime();
 };
 
 #endif

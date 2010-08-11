@@ -108,25 +108,7 @@ Traverso::Traverso(int &argc, char **argv )
 	srand ( time(NULL) );
 	
 	init_sse();
-	
-        create_interface();
 
-        if (argc > 1) {
-                for (int i=1; i<argc; i++) {
-                        if (strcmp(argv[i],"--fft-meter")==0) {
-                                printf("Using Traverso in FFT Meter only mode\n");
-                                if (!pm().project_exists("fft-meter")) {
-                                        Project* project = pm().create_new_project(1, 1, "fft-meter");
-                                        project->save();
-                                        delete project;
-
-                                }
-                                pm().load_project("fft-meter");
-                                TMainWindow::instance()->show_fft_meter_only();
-                        }
-                }
-        }
-	
 	connect(this, SIGNAL(lastWindowClosed()), &pm(), SLOT(exit()));
 }
 

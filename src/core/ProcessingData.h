@@ -38,8 +38,6 @@ class ProcessingData : public ContextItem, public APILinkedListNode
 {
         Q_OBJECT
 
-        Q_CLASSINFO("mute", tr("Mute"))
-
 public:
         ProcessingData (TSession* session=0);
         virtual ~ProcessingData () {}

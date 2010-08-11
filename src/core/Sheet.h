@@ -50,16 +50,6 @@ struct ExportSpecification;
 class Sheet : public TSession, public APILinkedListNode
 {
 	Q_OBJECT
-	Q_CLASSINFO("start_transport", tr("Play"))
-	Q_CLASSINFO("set_recordable_and_start_transport", tr("Record"));
-	Q_CLASSINFO("work_next_edge", tr("Workcursor: To next edge"))
-	Q_CLASSINFO("work_previous_edge", tr("Workcursor: To previous edge"))
-	Q_CLASSINFO("undo", tr("Undo"))
-	Q_CLASSINFO("redo", tr("Redo"))
-	Q_CLASSINFO("toggle_snap", tr("Snap: On/Off"))
-        Q_CLASSINFO("toggle_effects_mode", tr("Toggle Curve Mode: On/Off"))
-	Q_CLASSINFO("prev_skip_pos", tr("To previous snap position"))
-	Q_CLASSINFO("next_skip_pos", tr("To next snap position"))
 
 public:
 

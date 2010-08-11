@@ -74,6 +74,8 @@ ContextPointer::ContextPointer()
         m_mouseLeftClickBypassesJog = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
 	
 	connect(&m_jogTimer, SIGNAL(timeout()), this, SLOT(update_jog()));
+        connect(&ie(), SIGNAL(jogStarted()), this, SLOT(jog_start()));
+        connect(&ie(), SIGNAL(jogFinished()), this, SLOT(jog_finished()));
 }
 
 /**

@@ -90,9 +90,29 @@ void Config::check_and_load_configuration( )
 	}
 }
 
+#include <QPluginLoader>
+#include "CommandPlugin.h"
 
 void Config::init_input_engine( )
 {
+        foreach (QObject* obj, QPluginLoader::staticInstances()) {
+                CommandPlugin* plug = qobject_cast<CommandPlugin*>(obj);
+                if (plug) {
+                        plug->create_menu_translations();
+                }
+        }
+
+#if !defined (STATIC_BUILD)
+        QDir pluginsDir("lib/commandplugins");
+        foreach (const QString &fileName, pluginsDir.entryList(QDir::Files)) {
+                QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+                CommandPlugin* plug = qobject_cast<CommandPlugin*>(loader.instance());
+                if (plug) {
+                        plug->create_menu_translations();
+        }
+
+#endif
+
 	ie().init_map(config().get_property("CCE", "keymap", "default").toString());
         ie().set_hold_sensitiveness(config().get_property("CCE", "holdTimeout", 180).toInt());
         ie().set_double_fact_interval(config().get_property("CCE", "doublefactTimeout", 220).toInt());

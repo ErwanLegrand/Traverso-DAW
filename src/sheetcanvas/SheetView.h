@@ -43,6 +43,7 @@ class AudioTrackView;
 class Track;
 class PlayHead;
 class WorkCursor;
+class TEditCursor;
 class Curve;
 
 struct ItemBrowserData {
@@ -67,35 +68,6 @@ struct ItemBrowserData {
 class SheetView : public ViewItem
 {
         Q_OBJECT
-	Q_CLASSINFO("touch", tr("Set"))
-	Q_CLASSINFO("touch_play_cursor", tr("Set"))
-	Q_CLASSINFO("center", tr("Center View"))
-	Q_CLASSINFO("scroll_right", tr("Right"))
-	Q_CLASSINFO("scroll_left", tr("Left"))
-	Q_CLASSINFO("scroll_up", tr("Up"))
-	Q_CLASSINFO("scroll_down", tr("Down"))
-	Q_CLASSINFO("goto_begin", tr("To start"))
-	Q_CLASSINFO("goto_end", tr("To end"))
-        Q_CLASSINFO("play_to_begin", tr("To Start"))
-        Q_CLASSINFO("play_to_end", tr("To End"))
-        Q_CLASSINFO("play_cursor_move", tr("Move"))
-	Q_CLASSINFO("work_cursor_move", tr("Move"))
-	Q_CLASSINFO("add_marker", tr("Add Marker"))
-	Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
-        Q_CLASSINFO("add_marker_at_work_cursor", tr("Add Marker at Work Cursor"))
-        Q_CLASSINFO("playhead_to_workcursor", tr("To workcursor"))
-        Q_CLASSINFO("workcursor_to_playhead", tr("To Playhead"));
-	Q_CLASSINFO("center_playhead", tr("Center"))
-        Q_CLASSINFO("add_track", tr("Add Track"))
-        Q_CLASSINFO("toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
-        Q_CLASSINFO("activate_previous_track", tr("To Previous Track"));
-        Q_CLASSINFO("activate_next_track", tr("To Next Track"));
-        Q_CLASSINFO("to_upper_context_level", tr("One Context Layer Up"));
-        Q_CLASSINFO("to_lower_context_level", tr("One Context Layer Down"));
-        Q_CLASSINFO("browse_to_previous_context_item", tr("To Previous Context Item"));
-        Q_CLASSINFO("browse_to_next_context_item", tr("To Next Context Item"));
-        Q_CLASSINFO("browse_to_context_item_above", tr("To Context Item Above"));
-        Q_CLASSINFO("browse_to_context_item_below", tr("To Context Item Below"));
 
 public :
 
@@ -136,6 +108,9 @@ public :
         void set_hscrollbar_value(int value);
         void set_vscrollbar_value(int value);
 
+        void set_cursor_shape(const QString& cursor);
+
+
         void browse_to_track(Track* track);
         void browse_to_audio_clip_view(AudioClipView* acv);
         void browse_to_curve_view(CurveView* curveView);
@@ -159,6 +134,7 @@ private:
         TrackView*              m_sheetMasterOutView;
         TrackView*              m_projectMasterOutView;
         WorkCursor*		m_workCursor;
+        TEditCursor*            m_editCursor;
 	int			m_shuttleXfactor;
 	int			m_shuttleYfactor;
 	int			m_sceneHeight;

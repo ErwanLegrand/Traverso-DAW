@@ -45,12 +45,6 @@ class PluginChain;
 class AudioClip : public ProcessingData, public Snappable
 {
 	Q_OBJECT
-	Q_CLASSINFO("mute", tr("Mute"))
-	Q_CLASSINFO("reset_fade_in", tr("In: Remove"))
-	Q_CLASSINFO("reset_fade_out", tr("Out: Remove"))
-	Q_CLASSINFO("reset_fade_both", tr("Both: Remove"))
-	Q_CLASSINFO("normalize", tr("Normalize"))
-	Q_CLASSINFO("lock", tr("Lock"))
 
 public:
 

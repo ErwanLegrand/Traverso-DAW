@@ -61,6 +61,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 	QPushButton* cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 	QPushButton* okButton = buttonBox->addButton(QDialogButtonBox::Ok); 
 	QPushButton* restoreDefaultsButton = buttonBox->addButton(QDialogButtonBox::RestoreDefaults); 
+        restoreDefaultsButton->setText(tr("Restore Defaults"));
 	
 	connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(okButton, SIGNAL(clicked()), this, SLOT(save_config()));

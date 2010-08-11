@@ -39,9 +39,6 @@ class QFileSystemWatcher;
 class ProjectManager : public ContextItem
 {
 	Q_OBJECT
-        Q_CLASSINFO("save_project", tr("Save Project"))
-        Q_CLASSINFO("close_current_project", tr("Close Project"))
-        Q_CLASSINFO("exit", tr("Exit application"))
 	
 public:
 	Project* create_new_project(int numSheet, int numTracks, const QString& projectName);

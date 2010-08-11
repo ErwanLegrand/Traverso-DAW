@@ -39,8 +39,6 @@ class Sheet;
 class AudioTrack : public Track
 {
         Q_OBJECT
-        Q_CLASSINFO("toggle_arm", tr("Record: On/Off"))
-        Q_CLASSINFO("silence_others", tr("Silence other tracks"))
 
 public :
         AudioTrack(Sheet* sheet, const QString& name, int height);

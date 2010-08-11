@@ -61,7 +61,7 @@ void TEditCursor::set_text( const QString & text )
         }
 }
 
-void TEditCursor::set_type( const QString & type )
+void TEditCursor::set_cursor_shape( const QString & type )
 {
         QPointF origPos = scenePos();
         origPos.setX(origPos.x() + (qreal(m_pixmap.width()) / 2));

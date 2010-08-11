@@ -266,6 +266,8 @@ private slots:
 
 signals:
         void collectedNumberChanged();
+        void jogStarted();
+        void jogFinished();
 };
 
 // use this function to get the InputEngine object

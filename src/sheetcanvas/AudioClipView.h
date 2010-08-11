@@ -42,14 +42,6 @@ class Peak;
 class AudioClipView : public ViewItem
 {
 	Q_OBJECT
-	Q_CLASSINFO("fade_range", tr("Closest: Adjust Length"))
-	Q_CLASSINFO("clip_fade_in", tr("In: Adjust Length"))
-	Q_CLASSINFO("clip_fade_out", tr("Out: Adjust Length"))
-	Q_CLASSINFO("select_fade_in_shape", tr("In: Select Preset"));
-	Q_CLASSINFO("select_fade_out_shape", tr("Out: Select Preset"));
-	Q_CLASSINFO("reset_fade", tr("Closest: Delete"));
-	Q_CLASSINFO("set_audio_file", tr("Reset Audio File"));
-	Q_CLASSINFO("edit_properties", tr("Edit Properties"));
 
 public:
 	AudioClipView(SheetView* view, AudioTrackView* parent, AudioClip* clip);

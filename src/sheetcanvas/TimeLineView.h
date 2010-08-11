@@ -35,13 +35,6 @@ class Marker;
 class TimeLineView : public ViewItem
 {
         Q_OBJECT
-	Q_CLASSINFO("add_marker", tr("Add Marker"))
-        Q_CLASSINFO("add_marker_at_playhead", tr("Add Marker at Playhead"))
-        Q_CLASSINFO("add_marker_at_work_cursor", tr("Add Marker at Work Cursor"))
-        Q_CLASSINFO("remove_marker", tr("Remove Marker"))
-	Q_CLASSINFO("drag_marker", tr("Drag Marker"))
-	Q_CLASSINFO("clear_markers", tr("Clear all Markers"))
-	Q_CLASSINFO("playhead_to_marker", tr("Playhead to Marker"))
 
 public:
         TimeLineView(SheetView* view);

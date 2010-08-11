@@ -34,8 +34,6 @@ class Sheet;
 class AudioClipManager : public ContextItem
 {
 	Q_OBJECT
-	Q_CLASSINFO("select_all_clips", tr("Select all"))
-	Q_CLASSINFO("invert_clip_selection", tr("Invert"))
 
 public:
 	AudioClipManager(Sheet* sheet);

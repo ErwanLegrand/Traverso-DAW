@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <commands.h>
 #include <float.h>
 #include <QInputDialog>
+#include "TMenuTranslator.h"
 
 
 // Always put me below _all_ includes, this is needed
@@ -139,6 +140,51 @@ TraversoCommands::TraversoCommands()
         m_dict.insert("NormalizeClip", NormalizeClipCommand);
         m_dict.insert("ArrowKeyBrowser", ArrowKeyBrowserCommand);
 }
+
+void TraversoCommands::create_menu_translations()
+{
+        TMenuTranslator* translator = TMenuTranslator::instance();
+
+        translator->add_entry("TraversoCommands::Gain", tr("Gain"));
+        translator->add_entry("TraversoCommands::ResetGain", tr("Gain: Reset"));
+        translator->add_entry("TraversoCommands::TrackPan", tr("Panorama"));
+        translator->add_entry("TraversoCommands::ResetTrackPan", tr("Panorama: Reset"));
+        translator->add_entry("TraversoCommands::ImportAudio", tr("Import Audio"));
+        translator->add_entry("TraversoCommands::InsertSilence", tr("Insert Silence"));
+        translator->add_entry("TraversoCommands::CopyClip", tr("Copy Clip"));
+        translator->add_entry("TraversoCommands::AddNewAudioTrack", tr("New Track"));
+        translator->add_entry("TraversoCommands::RemoveClip", tr("Remove Clip"));
+        translator->add_entry("TraversoCommands::RemoveTrack", tr("Remove"));
+        translator->add_entry("TraversoCommands::AudioClipExternalProcessing", tr("External Processing"));
+        translator->add_entry("TraversoCommands::ClipSelectionSelect", tr("(De)Select"));
+        translator->add_entry("TraversoCommands::ClipSelectionSelectAll", tr("(De)Select All"));
+        translator->add_entry("TraversoCommands::MoveClip", tr("Move Clip"));
+        translator->add_entry("TraversoCommands::MoveTrack", tr("Move Up/Down"));
+        translator->add_entry("TraversoCommands::DragEdge", tr("Drag Edge"));
+        translator->add_entry("TraversoCommands::MoveClipOrEdge", tr("Move Or Resize Clip"));
+        translator->add_entry("TraversoCommands::SplitClip", tr("Split"));
+        translator->add_entry("TraversoCommands::CropClip", tr("Magnetic Cut"));
+        translator->add_entry("TraversoCommands::ArmTracks", tr("Arm Tracks"));
+        translator->add_entry("TraversoCommands::FoldSheet", tr("Fold Sheet"));
+        translator->add_entry("TraversoCommands::FoldTrack", tr("Fold Track"));
+        translator->add_entry("TraversoCommands::FoldMarkers", tr("Fold Markers"));
+        translator->add_entry("TraversoCommands::VZoomIn", tr("Vertical In"));
+        translator->add_entry("TraversoCommands::HZoomOut", tr("Horizontal Out"));
+        translator->add_entry("TraversoCommands::HZoomIn", tr("Horizontal In"));
+        translator->add_entry("TraversoCommands::VZoomOut", tr("Vertical Out"));
+        translator->add_entry("TraversoCommands::Zoom", tr("Omnidirectional"));
+        translator->add_entry("TraversoCommands::HJogZoom", tr("Horizontal"));
+        translator->add_entry("TraversoCommands::VJogZoom", tr("Vertical"));
+        translator->add_entry("TraversoCommands::ScrollRightHold", tr("Right"));
+        translator->add_entry("TraversoCommands::ScrollLeftHold", tr("Left"));
+        translator->add_entry("TraversoCommands::ScrollUpHold", tr("Up"));
+        translator->add_entry("TraversoCommands::ScrollDownHold", tr("Down"));
+        translator->add_entry("TraversoCommands::Shuttle", tr("Shuttle"));
+        translator->add_entry("TraversoCommands::NormalizeClip", tr("Normalize"));
+        translator->add_entry("TraversoCommands::ArrowKeyBrowser", tr("Arrow Key Browser"));
+
+}
+
 
 Command* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
 {

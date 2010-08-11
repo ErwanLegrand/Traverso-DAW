@@ -31,7 +31,6 @@ class TSend;
 class Track : public ProcessingData
 {
         Q_OBJECT
-        Q_CLASSINFO("solo", tr("Solo"))
 
 public:
         Track (TSession* session=0);

@@ -69,13 +69,6 @@ private:
 class SpectralMeterView : public MeterView
 {
 	Q_OBJECT
-	
-	Q_CLASSINFO("edit_properties", tr("Settings..."))
-        Q_CLASSINFO("set_mode", tr("Toggle average curve"))
-	Q_CLASSINFO("reset", tr("Reset average curve"))
-        Q_CLASSINFO("export_average_curve", tr("Export average curve"))
-	Q_CLASSINFO("screen_capture", tr("Capture Screen"))
-	
 
 public:
         SpectralMeterView(SpectralMeterWidget* widget);

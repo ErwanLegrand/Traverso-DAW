@@ -118,7 +118,8 @@ AudioClip::~AudioClip()
 void AudioClip::init()
 {
 	QObject::tr("AudioClip");
-	m_sheet = 0;
+
+        m_sheet = 0;
 	m_track = 0;
 	m_readSource = 0;
 	m_peak = 0;

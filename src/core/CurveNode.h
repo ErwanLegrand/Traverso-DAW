@@ -31,7 +31,7 @@ class CurveNode : public APILinkedListNode
 {
 
 public:
-	CurveNode(){};
+        CurveNode(){}
 	CurveNode(Curve* curve, double when, double  val)
 		: m_curve(curve)
 	{
@@ -41,7 +41,7 @@ public:
 		this->value = val;
 	}
 
-	~CurveNode(){};
+        ~CurveNode(){}
 	
 	void set_when(double when) {
 		this->when = when;
