@@ -32,15 +32,6 @@ class QPoint;
 class Zoom : public Command
 {
 	Q_OBJECT
-	Q_CLASSINFO("vzoom_in", tr("Zoom Vertical In"));
-	Q_CLASSINFO("vzoom_out", tr("Zoom Vertical Out"));
-        Q_CLASSINFO("hzoom_in", tr("Zoom Horizontal In"));
-        Q_CLASSINFO("hzoom_out", tr("Zoom Horizontal Out"));
-        Q_CLASSINFO("toggle_vertical_horizontal_jog_zoom", tr("Toggle Vertical / Horizontal"));
-        Q_CLASSINFO("toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
-        Q_CLASSINFO("track_vzoom_in", tr("Track Vertical Zoom In"));
-        Q_CLASSINFO("track_vzoom_out", tr("Track Vertical Zoom Out"));
-
 
 public :
         Zoom(SheetView* sv, QVariantList args);

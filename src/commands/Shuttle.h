@@ -30,10 +30,6 @@ class SheetView;
 class Shuttle : public MoveCommand
 {
         Q_OBJECT
-        Q_CLASSINFO("move_up", tr("Move Up"));
-        Q_CLASSINFO("move_down", tr("Move Down"));
-        Q_CLASSINFO("move_left", tr("Move Left"));
-        Q_CLASSINFO("move_right", tr("Move Right"));
 
 public :
         Shuttle(SheetView* sv);

@@ -44,14 +44,6 @@ typedef struct {
 class MoveClip : public MoveCommand
 {
 	Q_OBJECT
-	Q_CLASSINFO("next_snap_pos", tr("To next snap position"));
-	Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
-	Q_CLASSINFO("start_zoom", tr("Jog Zoom"));
-	Q_CLASSINFO("move_up", tr("Move Up"));
-	Q_CLASSINFO("move_down", tr("Move Down"));
-	Q_CLASSINFO("move_left", tr("Move Left"));
-	Q_CLASSINFO("move_right", tr("Move Right"));
-	Q_CLASSINFO("toggle_vertical_only", tr("Toggle Vertical Only"));
 	
 public :
 	MoveClip(ViewItem* view, QVariantList args);

@@ -147,6 +147,56 @@ TMenuTranslator::TMenuTranslator()
         add_entry("ProjectManager::exit", tr("Exit application"));
         add_entry("AudioTrack::toggle_arm", tr("Record: On/Off"));
         add_entry("AudioTrack::silence_others", tr("Silence other tracks"));
+        add_entry("Crop::adjust_left", tr("Adjust Left"));
+        add_entry("Crop::adjust_right", tr("Adjust Right"));
+        add_entry("Gain::increase_gain", tr("Increase"));
+        add_entry("Gain::decrease_gain", tr("Decrease"));
+        add_entry("MoveClip::next_snap_pos", tr("To next snap position"));
+        add_entry("MoveClip::prev_snap_pos", tr("To previous snap position"));
+        add_entry("MoveClip::start_zoom", tr("Jog Zoom"));
+        add_entry("MoveClip::move_up", tr("Move Up"));
+        add_entry("MoveClip::move_down", tr("Move Down"));
+        add_entry("MoveClip::move_left", tr("Move Left"));
+        add_entry("MoveClip::move_right", tr("Move Right"));
+        add_entry("MoveClip::toggle_vertical_only", tr("Toggle Vertical Only"));
+        add_entry("MoveCommand::move_faster", tr("Move Faster"));
+        add_entry("MoveCommand::move_slower", tr("Move Slower"));
+        add_entry("MoveCommand::toggle_snap_on_off", tr("Toggle Snap on/off"));
+        add_entry("MoveCurveNode::move_up", tr("Move Up"));
+        add_entry("MoveCurveNode::move_down", tr("Move Down"));
+        add_entry("MoveCurveNode::move_left", tr("Move Left"));
+        add_entry("MoveCurveNode::move_right", tr("Move Right"));
+        add_entry("MoveMarker::move_left", tr("Move Left"));
+        add_entry("MoveMarker::move_right", tr("Move right"));
+        add_entry("MoveMarker::next_snap_pos", tr("To next snap position"));
+        add_entry("MoveMarker::prev_snap_pos", tr("To previous snap position"));
+        add_entry("MoveTrack::move_up", tr("Move Up"));
+        add_entry("MoveTrack::move_down", tr("Move Down"));
+        add_entry("MoveTrack::to_bottom", tr("To Bottom"));
+        add_entry("MoveTrack::to_top", tr("To Top"));
+        add_entry("PlayHeadMove::move_to_work_cursor", tr("To Play Cursor"));
+        add_entry("Shuttle::move_up", tr("Move Up"));
+        add_entry("Shuttle::move_down", tr("Move Down"));
+        add_entry("Shuttle::move_left", tr("Move Left"));
+        add_entry("Shuttle::move_right", tr("Move Right"));
+        add_entry("TrackPan::pan_left", tr("To Left"));
+        add_entry("TrackPan::pan_right", tr("To Right"));
+        add_entry("WorkCursorMove::move_left", tr("Move Left"));
+        add_entry("WorkCursorMove::move_right", tr("Move Right"));
+        add_entry("WorkCursorMove::next_snap_pos", tr("To next snap position"));
+        add_entry("WorkCursorMove::prev_snap_pos", tr("To previous snap position"));
+        add_entry("WorkCursorMove::move_faster", tr("Move Faster"));
+        add_entry("WorkCursorMove::move_slower", tr("Move Slower"));
+        add_entry("WorkCursorMove::move_to_play_cursor", tr("To Play Cursor"));
+        add_entry("WorkCursorMove::toggle_browse_markers", tr("Toggle Snap to Markers On/Off"));
+        add_entry("Zoom::vzoom_in", tr("Zoom Vertical In"));
+        add_entry("Zoom::vzoom_out", tr("Zoom Vertical Out"));
+        add_entry("Zoom::hzoom_in", tr("Zoom Horizontal In"));
+        add_entry("Zoom::hzoom_out", tr("Zoom Horizontal Out"));
+        add_entry("Zoom::toggle_vertical_horizontal_jog_zoom", tr("Toggle Vertical / Horizontal"));
+        add_entry("Zoom::toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
+        add_entry("Zoom::track_vzoom_in", tr("Track Vertical Zoom In"));
+        add_entry("Zoom::track_vzoom_out", tr("Track Vertical Zoom Out"));
 
 
 
@@ -162,5 +212,8 @@ void TMenuTranslator::add_entry(const QString &signature, const QString &transla
 
 QString TMenuTranslator::get_translation_for(const QString &entry)
 {
+        if (!m_dict.contains(entry)) {
+                return QString("TMenuTranslator: %1 not found!").arg(entry);
+        }
         return m_dict.value(entry);
 }

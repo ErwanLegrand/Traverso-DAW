@@ -30,8 +30,6 @@ class Track;
 class TrackPan : public Command
 {
 	Q_OBJECT
-	Q_CLASSINFO("pan_left", tr("To Left"));
-	Q_CLASSINFO("pan_right", tr("To Right"));
 
 public :
         TrackPan(Track* track, QVariantList args);

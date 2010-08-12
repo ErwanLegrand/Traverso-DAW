@@ -33,14 +33,6 @@ class WorkCursor;
 class WorkCursorMove : public MoveCommand
 {
         Q_OBJECT
-        Q_CLASSINFO("move_left", tr("Move Left"));
-        Q_CLASSINFO("move_right", tr("Move Right"));
-        Q_CLASSINFO("next_snap_pos", tr("To next snap position"));
-        Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
-        Q_CLASSINFO("move_faster", tr("Move Faster"));
-        Q_CLASSINFO("move_slower", tr("Move Slower"));
-        Q_CLASSINFO("move_to_play_cursor", tr("To Play Cursor"))
-        Q_CLASSINFO("toggle_browse_markers", tr("Toggle Snap to Markers On/Off"))
 
 public :
 	WorkCursorMove (WorkCursor* wc, PlayHead* cursor, SheetView* sv);

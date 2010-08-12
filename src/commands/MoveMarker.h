@@ -31,10 +31,6 @@ class MarkerView;
 class MoveMarker : public MoveCommand
 {
         Q_OBJECT
-        Q_CLASSINFO("move_left", tr("Move Left"))
-        Q_CLASSINFO("move_right", tr("Move right"))
-        Q_CLASSINFO("next_snap_pos", tr("To next snap position"));
-        Q_CLASSINFO("prev_snap_pos", tr("To previous snap position"));
 
 public:
         MoveMarker(MarkerView* mview, qint64 scalefactor, const QString& des);

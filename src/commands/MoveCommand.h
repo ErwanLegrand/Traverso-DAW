@@ -28,9 +28,6 @@
 class MoveCommand : public Command
 {
         Q_OBJECT
-        Q_CLASSINFO("move_faster", tr("Move Faster"));
-        Q_CLASSINFO("move_slower", tr("Move Slower"));
-        Q_CLASSINFO("toggle_snap_on_off", tr("Toggle Snap on/off"));
 
 public :
         MoveCommand (const QString& description);

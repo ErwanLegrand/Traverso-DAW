@@ -33,10 +33,6 @@ class Crop : public Command
 {
         Q_OBJECT
 
-        Q_CLASSINFO("adjust_left", tr("Adjust Left"))
-        Q_CLASSINFO("adjust_right", tr("Adjust Right"))
-
-
 public :
         Crop(AudioClipView* cv);
         ~Crop();

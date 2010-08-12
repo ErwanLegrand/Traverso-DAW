@@ -31,8 +31,6 @@ class ContextItem;
 class Gain : public Command
 {
 	Q_OBJECT
-	Q_CLASSINFO("increase_gain", tr("Increase"));
-	Q_CLASSINFO("decrease_gain", tr("Decrease"));
 	
 public :
         Gain(ContextItem* context, QVariantList args);

@@ -65,6 +65,7 @@ int WorkCursorMove::begin_hold()
 
         m_session->get_work_snap()->set_snappable(false);
 	m_sv->start_shuttle(true, true);
+        m_sv->set_cursor_shape(":/cursorHoldLr");
         m_origPos = m_session->get_work_location();
 
 	return 1;
@@ -81,8 +82,7 @@ void WorkCursorMove::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
-        do_keyboard_move(m_session->get_work_location());
+//        do_keyboard_move(m_session->get_work_location());
 }
 
 int WorkCursorMove::jog()

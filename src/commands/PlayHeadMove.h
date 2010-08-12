@@ -31,7 +31,6 @@ class PlayHead;
 class PlayHeadMove : public MoveCommand
 {
         Q_OBJECT;
-        Q_CLASSINFO("move_to_work_cursor", tr("To Play Cursor"))
 
 public :
 	PlayHeadMove(PlayHead* cursor, SheetView* sv);
