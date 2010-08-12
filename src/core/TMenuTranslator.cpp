@@ -35,6 +35,35 @@ TMenuTranslator* TMenuTranslator::instance()
 
 TMenuTranslator::TMenuTranslator()
 {
+        add_entry("AudioClip",tr("Audio Clip"));
+        add_entry("AudioTrack", tr("Audio Track"));
+        add_entry("Curve",tr("Curve"));
+        add_entry("CurveNode",tr("Curve Node"));
+        add_entry("FadeCurve",tr("Fade Curve"));
+        add_entry("Marker",tr("Marker"));
+        add_entry("Sheet",tr("Sheet"));
+        add_entry("TBusTrack",tr("Bus Track"));
+        add_entry("TimeLine",tr("Time Line"));
+        add_entry("TBusTrackPanel", tr("Bus Track"));
+        add_entry("AudioTrackPanel",tr("Audio Track"));
+        add_entry("Plugin",tr("Plugin"));
+        add_entry("CorrelationMeter", tr("Correlation Meter"));
+        add_entry("SpectralMeter", tr("Spectral Analyzer"));
+
+        add_entry("Crop", tr("Remove and Magnetic Snap"));
+        add_entry("Fade", tr("Fade"));
+        add_entry("Gain", tr("Gain"));
+        add_entry("MoveClip", tr("Move Clip"));
+        add_entry("MoveCurveNod", tr("Move Node"));
+        add_entry("MoveEdge", tr("Move Clip Edge"));
+        add_entry("MoveMarker", tr("Move Marker"));
+        add_entry("MoveTrack", tr("Move Track"));
+        add_entry("PlayHeadMove", tr("Move Play Head"));
+        add_entry("Shuttle", tr("Shuttle"));
+        add_entry("TrackPan", tr("Track Pan"));
+        add_entry("WorkCursorMove", tr("Move Work Cursor"));
+        add_entry("Zoom", tr("Zoom"));
+
         add_entry("Track::solo", tr("Solo"));
         add_entry("AudioClip::mute", tr("Mute"));
         add_entry("AudioClip::reset_fade_in", tr("In: Remove"));
@@ -162,6 +191,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("MoveCommand::move_faster", tr("Move Faster"));
         add_entry("MoveCommand::move_slower", tr("Move Slower"));
         add_entry("MoveCommand::toggle_snap_on_off", tr("Toggle Snap on/off"));
+        add_entry("MoveCommand::move_left", tr("Move Left"));
+        add_entry("MoveCommand::move_right", tr("Move Right"));
         add_entry("MoveCurveNode::move_up", tr("Move Up"));
         add_entry("MoveCurveNode::move_down", tr("Move Down"));
         add_entry("MoveCurveNode::move_left", tr("Move Left"));

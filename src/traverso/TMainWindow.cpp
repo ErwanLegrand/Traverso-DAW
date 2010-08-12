@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStandardItemModel>
 
 #include "TMainWindow.h"
+#include "TMenuTranslator.h"
 #include "ProjectManager.h"
 #include "ViewPort.h"
 #include "FadeCurve.h"
@@ -900,21 +901,6 @@ void TMainWindow::create_menus( )
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
 
         set_project_actions_enabled(false);
-
-        m_contextMenuDict.insert("AudioClip",tr("Audio Clip"));
-        m_contextMenuDict.insert("AudioTrack", tr("Audio Track"));
-        m_contextMenuDict.insert("Curve",tr("Curve"));
-        m_contextMenuDict.insert("CurveNode",tr("Curve Node"));
-        m_contextMenuDict.insert("FadeCurve",tr("Fade Curve"));
-        m_contextMenuDict.insert("Marker",tr("Marker"));
-        m_contextMenuDict.insert("Sheet",tr("Sheet"));
-        m_contextMenuDict.insert("TBusTrack",tr("Bus Track"));
-        m_contextMenuDict.insert("TimeLine",tr("Time Line"));
-        m_contextMenuDict.insert("TBusTrackPanel", tr("Bus Track"));
-        m_contextMenuDict.insert("AudioTrackPanel",tr("Audio Track"));
-        m_contextMenuDict.insert("Plugin",tr("Plugin"));
-        m_contextMenuDict.insert("CorrelationMeter", tr("Correlation Meter"));
-        m_contextMenuDict.insert("SpectralMeter", tr("Spectral Analyzer"));
 }
 
 void TMainWindow::set_project_actions_enabled(bool enable)
@@ -1001,7 +987,7 @@ Command * TMainWindow::show_context_menu( )
 				continue;
 			}
 			action = toplevelmenu->insertMenu(action, menu);
-                        QString name = m_contextMenuDict.value(className.remove("View"));
+                        QString name = TMenuTranslator::instance()->get_translation_for(className.remove("View"));
 
                         action->setText(name);
 		}
@@ -1192,10 +1178,9 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 	
 	qSort(list.begin(), list.end(), MenuData::smaller);
 
-	
 	QString name;
 	if (item) {
-                name = m_contextMenuDict.value(QString(item->metaObject()->className()).remove("View"));
+                name = TMenuTranslator::instance()->get_translation_for(QString(item->metaObject()->className()).remove("View"));
 	}
 
 	QMenu* menu = new QMenu(this);

@@ -126,7 +126,6 @@ private:
         QHash<TSession*, TSessionTabWidget* > m_sessionTabWidgets;
         SheetWidget*		m_currentSheetWidget;
 	QHash<QString, QMenu*>	m_contextMenus;
-        QHash<QString, QString> m_contextMenuDict;
 	ExportDialog*		m_exportDialog;
 	CDWritingDialog*	m_cdWritingDialog;
         QUndoView*		m_historyWidget;
