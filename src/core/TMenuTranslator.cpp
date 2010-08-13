@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TMenuTranslator.h"
 
-
 TMenuTranslator* TMenuTranslator::m_instance = 0;
 
 TMenuTranslator* TMenuTranslator::instance()
@@ -31,6 +30,11 @@ TMenuTranslator* TMenuTranslator::instance()
         }
 
         return m_instance;
+}
+
+void TMenuTranslator::add_meta_object(const QMetaObject* mo)
+{
+        m_objects.insertMulti(QString(mo->className()).remove("View"), mo);
 }
 
 TMenuTranslator::TMenuTranslator()
@@ -65,12 +69,15 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Zoom", tr("Zoom"));
 
         add_entry("Track::solo", tr("Solo"));
+        add_entry("Track::mute", tr("Mute"));
         add_entry("AudioClip::mute", tr("Mute"));
         add_entry("AudioClip::reset_fade_in", tr("In: Remove"));
         add_entry("AudioClip::reset_fade_out", tr("Out: Remove"));
         add_entry("AudioClip::reset_fade_both", tr("Both: Remove"));
         add_entry("AudioClip::normalize", tr("Normalize"));
         add_entry("AudioClip::lock", tr("Lock"));
+        add_entry("AudioClip::clip_fade_in", tr("Fade In"));
+        add_entry("AudioClip::clip_fade_out", tr("Fade Out"));
         add_entry("AudioClipManager::select_all_clips", tr("Select all"));
         add_entry("AudioClipManager::invert_clip_selection", tr("Invert"));
         add_entry("FadeCurve::toggle_bypass", tr("Toggle Bypass"));
@@ -100,6 +107,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("AudioClipView::set_audio_file", tr("Reset Audio File"));
         add_entry("AudioClipView::edit_properties", tr("Edit Properties"));
         add_entry("AudioTrackView::insert_silence", tr("Insert Silence"));
+        add_entry("AudioTrackView::show_track_gain_curve", tr("Show Track Gain Curve"));
         add_entry("CurveView::add_node", tr("New node"));
         add_entry("CurveView::remove_node", tr("Remove node"));
         add_entry("CurveView::remove_all_nodes", tr("Remove all Nodes"));

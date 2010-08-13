@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QObject>
 #include <QHash>
+#include <QMap>
 
 class TMenuTranslator : public QObject
 {
@@ -33,11 +34,13 @@ public:
         static TMenuTranslator* instance();
 
         void add_entry(const QString& signature, const QString& translation);
+        void add_meta_object(const QMetaObject* mo);
         QString get_translation_for(const QString& entry);
-
+        QMap<QString, const QMetaObject* > get_objects() const {return m_objects;}
 private:
         QHash<QString, QString> m_dict;
         static TMenuTranslator* m_instance;
+        QMap<QString, const QMetaObject* > m_objects;
 };
 
 #endif // TMENUTRANSLATOR_H

@@ -65,6 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "widgets/TransportConsoleWidget.h"
 #include "widgets/WelcomeWidget.h"
 #include "widgets/TSessionTabWidget.h"
+#include "widgets/TContextHelpWidget.h"
 
 #include "dialogs/settings/SettingsDialog.h"
 #include "dialogs/project/ProjectManagerDialog.h"
@@ -198,6 +199,14 @@ TMainWindow::TMainWindow()
         busMonitor = new BusMonitor(m_busMonitorDW);
         m_busMonitorDW->setWidget(busMonitor);
         addDockWidget(Qt::RightDockWidgetArea, m_busMonitorDW);
+
+        m_contextHelpDW = new QDockWidget(tr("Context Help"));
+        m_contextHelpDW->setObjectName("ContextHelpWidget");
+        TContextHelpWidget* helpWidget = new TContextHelpWidget(m_contextHelpDW);
+        helpWidget->setFocusPolicy(Qt::NoFocus);
+        m_contextHelpDW->setWidget(helpWidget);
+        addDockWidget(Qt::RightDockWidgetArea, m_contextHelpDW);
+
 	
 	m_sysinfo = new SysInfoToolBar(this);
 	m_sysinfo->setObjectName("System Info Toolbar");
@@ -530,6 +539,7 @@ Command* TMainWindow::show_fft_meter_only()
                 m_correlationMeterDW->hide();
                 m_historyDW->hide();
                 m_audioSourcesDW->hide();
+                m_contextHelpDW->hide();
                 m_projectToolBar->hide();
                 m_editToolBar->hide();
                 m_sessionTabsToolbar->hide();
@@ -807,6 +817,7 @@ void TMainWindow::create_menus( )
         menu->addAction(m_historyDW->toggleViewAction());
         menu->addAction(m_busMonitorDW->toggleViewAction());
         menu->addAction(m_audioSourcesDW->toggleViewAction());
+        menu->addAction(m_contextHelpDW->toggleViewAction());
 
         action = menu->addAction(tr("Marker Editor..."));
         m_projectMenuToolbarActions.append(action);
@@ -1053,16 +1064,16 @@ Command * TMainWindow::get_keymap(QString &str)
 	
 	QMap<QString, QList<const QMetaObject*> > objects;
 	
-	QList<const QMetaObject*> sheetlist; sheetlist << &Sheet::staticMetaObject; sheetlist << &SheetView::staticMetaObject;
+        QList<const QMetaObject*> sheetlist; sheetlist << &Sheet::staticMetaObject; sheetlist << &SheetView::staticMetaObject;
         QList<const QMetaObject*> audiotracklist; audiotracklist << &AudioTrack::staticMetaObject; audiotracklist << &AudioTrackView::staticMetaObject;
         QList<const QMetaObject*> bustracklist; bustracklist << &TBusTrack::staticMetaObject; bustracklist << &TBusTrackView::staticMetaObject;
         QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
-	QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
-	QList<const QMetaObject*> timelinelist; timelinelist << &TimeLine::staticMetaObject; timelinelist << &TimeLineView::staticMetaObject;
-	QList<const QMetaObject*> pluginlist; pluginlist << &Plugin::staticMetaObject; pluginlist << &PluginView::staticMetaObject;
-	QList<const QMetaObject*> fadelist; fadelist << &FadeCurve::staticMetaObject; fadelist << &FadeView::staticMetaObject;
+        QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
+        QList<const QMetaObject*> timelinelist; timelinelist << &TimeLine::staticMetaObject; timelinelist << &TimeLineView::staticMetaObject;
+        QList<const QMetaObject*> pluginlist; pluginlist << &Plugin::staticMetaObject; pluginlist << &PluginView::staticMetaObject;
+        QList<const QMetaObject*> fadelist; fadelist << &FadeCurve::staticMetaObject; fadelist << &FadeView::staticMetaObject;
         QList<const QMetaObject*> interfacelist; interfacelist << &TMainWindow::staticMetaObject;
-	QList<const QMetaObject*> pmlist; pmlist << &ProjectManager::staticMetaObject;
+        QList<const QMetaObject*> pmlist; pmlist << &ProjectManager::staticMetaObject;
         QList<const QMetaObject*> gainlist; gainlist << &Gain::staticMetaObject;
         QList<const QMetaObject*> movetracklist; movetracklist << &MoveTrack::staticMetaObject;
         QList<const QMetaObject*> movecliplist; movecliplist << &MoveClip::staticMetaObject;
@@ -1075,15 +1086,15 @@ Command * TMainWindow::get_keymap(QString &str)
         QList<const QMetaObject*> moveplaycursorlist; moveplaycursorlist << &PlayHeadMove::staticMetaObject;
         QList<const QMetaObject*> moveclipedgelist; moveclipedgelist << &MoveEdge::staticMetaObject;
 
-	objects.insert("Sheet", sheetlist);
-        objects.insert("Audio Track", audiotracklist);
-        objects.insert("Bus Track", bustracklist);
+        objects.insert("Sheet", sheetlist);
+        objects.insert("AudioTrack", audiotracklist);
+        objects.insert("TBusTrack", bustracklist);
         objects.insert("AudioClip", cliplist);
-	objects.insert("Curve", curvelist);
-	objects.insert("TimeLine", timelinelist);
-	objects.insert("Plugin", pluginlist);
-	objects.insert("Fade", fadelist);
-	objects.insert("Interface", interfacelist);
+        objects.insert("Curve", curvelist);
+        objects.insert("TimeLine", timelinelist);
+        objects.insert("Plugin", pluginlist);
+        objects.insert("Fade", fadelist);
+        objects.insert("Interface", interfacelist);
         objects.insert("ProjectManager", pmlist);
         objects.insert("Gain", gainlist);
         objects.insert("Move Track", movetracklist);

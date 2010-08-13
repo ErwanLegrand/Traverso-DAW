@@ -107,6 +107,7 @@ public :
         int get_vulevel_update_frequency() const {return m_vuLevelUpdateFrequency;}
 
         QLineEdit* get_track_finder() const {return m_trackFinder;}
+        QMenu* create_context_menu(QObject* item, QList<MenuData >* list = 0);
 
 protected:
         void timerEvent(QTimerEvent *event);
@@ -132,6 +133,7 @@ private:
         QDockWidget* 		m_historyDW;
         QDockWidget*		m_busMonitorDW;
         QDockWidget*		m_audioSourcesDW;
+        QDockWidget*            m_contextHelpDW;
         ResourcesWidget* 	m_audiosourcesview;
         QDockWidget*		m_correlationMeterDW;
         CorrelationMeterWidget*	m_correlationMeter;
@@ -183,7 +185,6 @@ private:
 
         static TMainWindow* m_instance;
 	
-	QMenu* create_context_menu(QObject* item, QList<MenuData >* list = 0);
 	QMenu* create_fade_selector_menu(const QString& fadeTypeName);
 
         void update_vu_levels_peak();

@@ -191,6 +191,7 @@ private:
 	
 	
         AbstractViewPort* m_port;
+        ContextItem*     m_currentContext;
         QList<QObject* > m_contextItemsList;
 	QList<QObject* > m_contextMenuItems;
         QList<ContextItem*> m_activeContextItems;
@@ -210,6 +211,8 @@ private:
 
         void set_keyboard_only_input(bool keyboardOnly);
 
+signals:
+        void contextChanged();
 	
 private slots:
 	void update_jog();

@@ -54,6 +54,7 @@ widgets/TransportConsoleWidget.cpp
 widgets/VUMeter.cpp
 widgets/WelcomeWidget.cpp
 widgets/TSessionTabWidget.cpp
+widgets/TContextHelpWidget.cpp
 )
 
 SET(TRAVERSO_UI_FILES
@@ -120,6 +121,7 @@ widgets/TransportConsoleWidget.h
 widgets/VUMeter.h
 widgets/WelcomeWidget.h
 widgets/TSessionTabWidget.h
+widgets/TContextHelpWidget.h
 )
 
 QT4_ADD_RESOURCES(TRAVERSO_RESOURCES

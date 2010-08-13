@@ -69,6 +69,7 @@ ContextPointer::ContextPointer()
 	m_y = 0;
 	m_jogEvent = false;
         m_port = 0;
+        m_currentContext = 0;
         m_keyboardOnlyInput = false;
 
         m_mouseLeftClickBypassesJog = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
@@ -294,6 +295,16 @@ void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
 
         if (m_port) {
                 m_port->update_holdcursor_shape();
+        }
+
+        if (m_activeContextItems.isEmpty()) {
+                if (m_currentContext) {
+                        m_currentContext = 0;
+                        emit contextChanged();
+                }
+        } else if (m_activeContextItems.first() != m_currentContext) {
+                m_currentContext = m_activeContextItems.first();
+                emit contextChanged();
         }
 }
 
