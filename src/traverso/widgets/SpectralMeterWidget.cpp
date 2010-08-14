@@ -22,11 +22,11 @@
 
 #include "SpectralMeterWidget.h"
 
-#include <Config.h>
+#include "TConfig.h"
 #include <Information.h>
 #include <PluginChain.h>
 #include <SpectralMeter.h>
-#include <Command.h>
+#include "TCommand.h"
 #include <Project.h>
 #include <AudioDevice.h>
 #include <Sheet.h>
@@ -432,7 +432,7 @@ void SpectralMeterView::update_freq_map()
 }
 
 // opens the properties dialog
-Command* SpectralMeterView::edit_properties()
+TCommand* SpectralMeterView::edit_properties()
 {
 	if (!m_meter) {
 		return 0;
@@ -467,20 +467,20 @@ void SpectralMeterView::load_configuration()
 	update_layout();
 }
 
-Command* SpectralMeterView::set_mode()
+TCommand* SpectralMeterView::set_mode()
 {
 	show_average = !show_average;
 	update_layout();
 	return 0;
 }
 
-Command* SpectralMeterView::reset()
+TCommand* SpectralMeterView::reset()
 {
 	sample_weight = 1;
 	return 0;
 }
 
-Command* SpectralMeterView::screen_capture( )
+TCommand* SpectralMeterView::screen_capture( )
 {
         QImage image(m_widget->size(), QImage::Format_RGB32);
         QPainter painter(&image);
@@ -500,7 +500,7 @@ Command* SpectralMeterView::screen_capture( )
         return 0;
 }
 
-Command* SpectralMeterView::export_average_curve()
+TCommand* SpectralMeterView::export_average_curve()
 {
 	// check if all requirements are met
 	if ((!show_average) || (!m_project)) {

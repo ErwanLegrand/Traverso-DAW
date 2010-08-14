@@ -54,8 +54,8 @@ public:
 	virtual int set_state( const QDomNode& node );
 	int process(audio_sample_t** buffer, const TimeRef& startlocation, const TimeRef& endlocation, nframes_t nframes, uint channels, float makeupgain=1.0f);
 	
-	Command* add_node(CurveNode* node, bool historable=true);
-	Command* remove_node(CurveNode* node, bool historable=true);
+	TCommand* add_node(CurveNode* node, bool historable=true);
+	TCommand* remove_node(CurveNode* node, bool historable=true);
 	
 	// Get functions
 	double get_range() const;

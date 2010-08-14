@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AbstractAudioReader.h"
 #include <AudioDevice.h>
 #include <AudioBus.h>
-#include <Client.h>
+#include "TAudioDeviceClient.h"
 #include "ProjectManager.h"
 #include "ContextPointer.h"
 #include "Information.h"
@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Tsar.h"
 #include "SnapList.h"
 #include "TBusTrack.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "Utils.h"
 #include "ContextItem.h"
 #include "TimeLine.h"
@@ -188,7 +188,7 @@ void Sheet::init()
 	
 	m_skipTimer.setSingleShot(true);
 	
-        m_audiodeviceClient = new AudioDeviceClient("sheet_" + QByteArray::number(get_id()));
+        m_audiodeviceClient = new TAudioDeviceClient("sheet_" + QByteArray::number(get_id()));
         m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Sheet::process) );
         m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Sheet::transport_control) );
 }
@@ -626,7 +626,7 @@ void Sheet::set_work_at_for_sheet_as_track_folder(const TimeRef &location)
         set_work_at(location, true);
 }
 
-Command* Sheet::toggle_snap()
+TCommand* Sheet::toggle_snap()
 {
 	set_snapping( ! m_isSnapOn );
 	return 0;
@@ -910,7 +910,7 @@ TimeRef Sheet::get_last_location() const
 	return lastAudio;
 }
 
-Command* Sheet::add_track(Track* track, bool historable)
+TCommand* Sheet::add_track(Track* track, bool historable)
 {
         foreach(AudioTrack* existing, m_audioTracks) {
                 if (existing->is_solo()) {
@@ -923,7 +923,7 @@ Command* Sheet::add_track(Track* track, bool historable)
 }
 
 // Function is only to be called from GUI thread.
-Command * Sheet::set_recordable()
+TCommand * Sheet::set_recordable()
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() == threadId);
@@ -951,7 +951,7 @@ Command * Sheet::set_recordable()
 }
 
 // Function is only to be called from GUI thread.
-Command* Sheet::set_recordable_and_start_transport()
+TCommand* Sheet::set_recordable_and_start_transport()
 {
 	if (!is_recording()) {
 		set_recordable();
@@ -963,7 +963,7 @@ Command* Sheet::set_recordable_and_start_transport()
 }
 
 // Function is only to be called from GUI thread.
-Command* Sheet::start_transport()
+TCommand* Sheet::start_transport()
 {
 #if defined (THREAD_CHECK)
 	Q_ASSERT(QThread::currentThreadId() == threadId);
@@ -1128,7 +1128,7 @@ void Sheet::prepare_recording()
 			}
 		}
 		group->setText(tr("Recording to %n Clip(s)", "", clipcount));
-		Command::process_command(group);
+		TCommand::process_command(group);
 	}
 	
 	m_readyToRecord = true;
@@ -1237,7 +1237,7 @@ AudioTrack * Sheet::get_audio_track_for_index(int index)
 
 // the timer is used to allow 'hopping' to the left from snap position to snap position
 // even during playback.
-Command* Sheet::prev_skip_pos()
+TCommand* Sheet::prev_skip_pos()
 {
         if (m_snaplist->was_dirty()) {
 		update_skip_positions();
@@ -1281,7 +1281,7 @@ Command* Sheet::prev_skip_pos()
 	return ie().succes();
 }
 
-Command* Sheet::next_skip_pos()
+TCommand* Sheet::next_skip_pos()
 {
         if (m_snaplist->was_dirty()) {
 		update_skip_positions();

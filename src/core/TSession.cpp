@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AddRemove.h"
 #include "AudioTrack.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "Peak.h"
 #include "Utils.h"
 #include "TBusTrack.h"
@@ -384,14 +384,14 @@ void TSession::set_scrollbar_y(int y)
 }
 
 
-Command* TSession::set_editing_mode( )
+TCommand* TSession::set_editing_mode( )
 {
         m_mode = EDIT;
         emit modeChanged();
         return 0;
 }
 
-Command* TSession::set_effects_mode( )
+TCommand* TSession::set_effects_mode( )
 {
         m_mode = EFFECTS;
         emit modeChanged();
@@ -404,7 +404,7 @@ void TSession::set_name(const QString& name)
         emit propertyChanged();
 }
 
-Command* TSession::toggle_effects_mode()
+TCommand* TSession::toggle_effects_mode()
 {
         if (m_mode == EDIT) {
                 set_effects_mode();
@@ -414,7 +414,7 @@ Command* TSession::toggle_effects_mode()
         return 0;
 }
 
-Command* TSession::toggle_solo()
+TCommand* TSession::toggle_solo()
 {
         if (m_parentSession) {
                 return m_parentSession->toggle_solo();
@@ -433,10 +433,10 @@ Command* TSession::toggle_solo()
                 track->set_muted_by_solo(false);
         }
 
-        return (Command*) 0;
+        return (TCommand*) 0;
 }
 
-Command* TSession::toggle_mute()
+TCommand* TSession::toggle_mute()
 {
         if (m_parentSession) {
                 return m_parentSession->toggle_mute();
@@ -451,10 +451,10 @@ Command* TSession::toggle_mute()
                 track->set_muted(!hasMute);
         }
 
-        return (Command*) 0;
+        return (TCommand*) 0;
 }
 
-Command* TSession::toggle_arm()
+TCommand* TSession::toggle_arm()
 {
         if (m_parentSession) {
                 return m_parentSession->toggle_arm();
@@ -473,11 +473,11 @@ Command* TSession::toggle_arm()
                 }
         }
 
-        return (Command*) 0;
+        return (TCommand*) 0;
 }
 
 
-Command* TSession::start_transport()
+TCommand* TSession::start_transport()
 {
         if (m_parentSession) {
                 return m_parentSession->start_transport();
@@ -486,7 +486,7 @@ Command* TSession::start_transport()
 }
 
 
-Command* TSession::add_track(Track* track, bool historable)
+TCommand* TSession::add_track(Track* track, bool historable)
 {
         if (m_parentSession && !is_project_session()) {
                 set_track_height(track->get_id(), m_parentSession->get_track_height(track->get_id()));
@@ -501,7 +501,7 @@ Command* TSession::add_track(Track* track, bool historable)
 }
 
 
-Command* TSession::remove_track(Track* track, bool historable)
+TCommand* TSession::remove_track(Track* track, bool historable)
 {
         if (m_parentSession) {
                 private_track_removed(track);

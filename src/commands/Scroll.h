@@ -22,12 +22,12 @@
 #ifndef SCROLL_H
 #define SCROLL_H
 
-#include "Command.h"
+#include "TCommand.h"
 
 class SheetView;
 class QPoint;
 
-class Scroll : public Command
+class Scroll : public TCommand
 {
 public :
 	Scroll(SheetView* sv, QVariantList args);

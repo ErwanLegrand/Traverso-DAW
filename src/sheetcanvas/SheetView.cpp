@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include <QScrollBar>
 #include <QInputDialog>
 
-#include "Config.h"
+#include "TConfig.h"
 #include "Curve.h"
 #include "InputEngine.h"
 #include "Sheet.h"
@@ -154,11 +154,11 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	for (int i=0; i<7; ++i) {
 		AddRemove* cmd = (AddRemove*) m_dragShuttleCurve->add_node(new CurveNode(m_dragShuttleCurve, dragWhens[i], dragValues[i]), false);
 		cmd->set_instantanious(true);
-		Command::process_command(cmd);
+		TCommand::process_command(cmd);
 		
 		cmd = (AddRemove*) m_shuttleCurve->add_node(new CurveNode(m_shuttleCurve, whens[i], values[i]), false);
 		cmd->set_instantanious(true);
-		Command::process_command(cmd);
+		TCommand::process_command(cmd);
 	}
 
         // fill the view with trackviews, add_new_trackview()
@@ -514,7 +514,7 @@ void SheetView::vzoom(qreal factor)
 }
 
 
-Command* SheetView::toggle_expand_all_tracks(int height)
+TCommand* SheetView::toggle_expand_all_tracks(int height)
 {
         if (height < 0) {
                 if (m_meanTrackHeight > m_trackMinimumHeight) {
@@ -591,7 +591,7 @@ void SheetView::update_tracks_bounding_rect()
         }
 }
 
-Command* SheetView::center()
+TCommand* SheetView::center()
 {
 	PENTER2;
 	TimeRef centerX;
@@ -603,7 +603,7 @@ Command* SheetView::center()
 	
 	int x = qRound(centerX / timeref_scalefactor);
 	set_hscrollbar_value(x - m_clipsViewPort->width() / 2);
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 
@@ -750,22 +750,22 @@ void SheetView::update_shuttle()
 }
 
 
-Command* SheetView::goto_begin()
+TCommand* SheetView::goto_begin()
 {
 	stop_follow_play_head();
         m_session->set_work_at(TimeRef());
 	center();
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 
-Command* SheetView::goto_end()
+TCommand* SheetView::goto_end()
 {
 	stop_follow_play_head();
         TimeRef lastlocation = m_session->get_last_location();
         m_session->set_work_at(lastlocation);
 	center();
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 
@@ -784,40 +784,40 @@ TimeLineViewPort* SheetView::get_timeline_viewport() const
         return m_tlvp;
 }
 
-Command * SheetView::touch( )
+TCommand * SheetView::touch( )
 {
         m_session->set_work_at(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
 
 	return 0;
 }
 
-Command * SheetView::touch_play_cursor( )
+TCommand * SheetView::touch_play_cursor( )
 {
         m_session->set_transport_pos(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
 
 	return 0;
 }
 
-Command * SheetView::play_to_begin( )
+TCommand * SheetView::play_to_begin( )
 {
         m_session->set_transport_pos(TimeRef());
 
 	return 0;
 }
 
-Command* SheetView::play_to_end()
+TCommand* SheetView::play_to_end()
 {
         m_session->set_transport_pos(m_session->get_last_location());
 
         return 0;
 }
 
-Command * SheetView::play_cursor_move( )
+TCommand * SheetView::play_cursor_move( )
 {
 	return new PlayHeadMove(m_playCursor, this);
 }
 
-Command * SheetView::work_cursor_move( )
+TCommand * SheetView::work_cursor_move( )
 {
         return new WorkCursorMove(m_workCursor, m_playCursor, this);
 }
@@ -830,36 +830,36 @@ void SheetView::set_snap_range(int start)
                                 timeref_scalefactor);
 }
 
-Command* SheetView::scroll_up( )
+TCommand* SheetView::scroll_up( )
 {
 	PENTER3;
         set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() - int(m_meanTrackHeight * 0.75));
 
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
-Command* SheetView::scroll_down( )
+TCommand* SheetView::scroll_down( )
 {
 	PENTER3;
         set_vscrollbar_value(m_clipsViewPort->verticalScrollBar()->value() + int(m_meanTrackHeight * 0.75));
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
-Command* SheetView::scroll_right()
+TCommand* SheetView::scroll_right()
 {
 	PENTER3;
 	stop_follow_play_head();
 	set_hscrollbar_value(m_clipsViewPort->horizontalScrollBar()->value() + 50);
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 
-Command* SheetView::scroll_left()
+TCommand* SheetView::scroll_left()
 {
 	PENTER3;
 	stop_follow_play_head();
 	set_hscrollbar_value(m_clipsViewPort->horizontalScrollBar()->value() - 50);
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 int SheetView::hscrollbar_value() const
@@ -893,22 +893,22 @@ void SheetView::load_theme_data()
 	layout_tracks();
 }
 
-Command * SheetView::add_marker()
+TCommand * SheetView::add_marker()
 {
 	return m_tlvp->get_timeline_view()->add_marker();
 }
 
-Command * SheetView::add_marker_at_playhead()
+TCommand * SheetView::add_marker_at_playhead()
 {
 	return m_tlvp->get_timeline_view()->add_marker_at_playhead();
 }
 
-Command * SheetView::add_marker_at_work_cursor()
+TCommand * SheetView::add_marker_at_work_cursor()
 {
         return m_tlvp->get_timeline_view()->add_marker_at_work_cursor();
 }
 
-Command * SheetView::playhead_to_workcursor( )
+TCommand * SheetView::playhead_to_workcursor( )
 {
         TimeRef worklocation = m_session->get_work_location();
 
@@ -918,23 +918,23 @@ Command * SheetView::playhead_to_workcursor( )
 		center();
 	}
 
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
-Command* SheetView::workcursor_to_playhead()
+TCommand* SheetView::workcursor_to_playhead()
 {
         m_session->set_work_at(m_session->get_transport_location());
         return 0;
 }
 
-Command * SheetView::center_playhead( )
+TCommand * SheetView::center_playhead( )
 {
         TimeRef centerX = m_session->get_transport_location();
 	set_hscrollbar_value(int(centerX / timeref_scalefactor - m_clipsViewPort->width() / 2));
 	
 	follow_play_head();
 
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 void SheetView::set_hscrollbar_value(int value)
@@ -1059,7 +1059,7 @@ void SheetView::browse_to_curve_node_view(CurveNodeView *nodeView)
 
 }
 
-Command* SheetView::browse_to_time_line()
+TCommand* SheetView::browse_to_time_line()
 {
         QList<ContextItem*> items = cpointer().get_active_context_items();
         items.prepend(m_tlvp->get_timeline_view());
@@ -1100,7 +1100,7 @@ void SheetView::collect_item_browser_data(ItemBrowserData &data)
 
 }
 
-Command* SheetView::to_upper_context_level()
+TCommand* SheetView::to_upper_context_level()
 {
         ItemBrowserData data;
         collect_item_browser_data(data);
@@ -1119,7 +1119,7 @@ Command* SheetView::to_upper_context_level()
         return 0;
 }
 
-Command* SheetView::to_lower_context_level()
+TCommand* SheetView::to_lower_context_level()
 {
         ItemBrowserData data;
         collect_item_browser_data(data);
@@ -1136,7 +1136,7 @@ Command* SheetView::to_lower_context_level()
 }
 
 
-Command* SheetView::browse_to_context_item_below()
+TCommand* SheetView::browse_to_context_item_below()
 {
         ItemBrowserData data;
         collect_item_browser_data(data);
@@ -1188,7 +1188,7 @@ Command* SheetView::browse_to_context_item_below()
         return 0;
 }
 
-Command* SheetView::browse_to_context_item_above()
+TCommand* SheetView::browse_to_context_item_above()
 {
         ItemBrowserData data;
         collect_item_browser_data(data);
@@ -1229,7 +1229,7 @@ Command* SheetView::browse_to_context_item_above()
         return 0;
 }
 
-Command* SheetView::browse_to_next_context_item()
+TCommand* SheetView::browse_to_next_context_item()
 {
         QList<ContextItem*> activeList;
 
@@ -1284,7 +1284,7 @@ Command* SheetView::browse_to_next_context_item()
         return 0;
 }
 
-Command* SheetView::browse_to_previous_context_item()
+TCommand* SheetView::browse_to_previous_context_item()
 {
         QList<ContextItem*> activeList;
 
@@ -1393,7 +1393,7 @@ int SheetView::get_track_height(Track *track) const
         return m_session->get_track_height(track->get_id());
 }
 
-Command* SheetView::edit_properties()
+TCommand* SheetView::edit_properties()
 {
         bool ok;
         QString text = QInputDialog::getText(m_clipsViewPort, tr("Edit Sheet Name"),

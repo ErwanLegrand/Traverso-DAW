@@ -60,8 +60,8 @@ private:
 	
 
 public slots:
-	Command* insert_silence();
-        Command* show_track_gain_curve();
+	TCommand* insert_silence();
+        TCommand* show_track_gain_curve();
 
 private slots:
 	void add_new_audioclipview(AudioClip* clip);

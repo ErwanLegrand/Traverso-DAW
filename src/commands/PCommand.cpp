@@ -50,14 +50,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 PCommand::PCommand(ContextItem* item, const char* slot, const QString& des)
-	: Command(item, des)
+	: TCommand(item, des)
 	, m_contextitem(item)
 	, m_slot(slot)
 {
 }
 
 PCommand::PCommand(ContextItem * item, const char * slot, QVariant doValue, QVariant undoValue, const QString & des)
-	: Command(item, des)
+	: TCommand(item, des)
 	, m_contextitem(item)
 	, m_slot(slot)
 	, m_doValue(doValue)

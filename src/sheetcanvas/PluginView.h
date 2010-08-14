@@ -58,8 +58,8 @@ private:
         PluginPropertiesDialog* m_propertiesDialog;
 
 public slots:
-	Command* edit_properties();
-        Command* remove_plugin();
+	TCommand* edit_properties();
+        TCommand* remove_plugin();
         
 private slots:
 	void repaint();

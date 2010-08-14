@@ -335,18 +335,18 @@ int AudioTrack::process( nframes_t nframes )
 }
 
 
-Command* AudioTrack::toggle_arm()
+TCommand* AudioTrack::toggle_arm()
 {
         if (m_isArmed) {
                 disarm();
         } else {
                 arm();
         }
-        return (Command*) 0;
+        return (TCommand*) 0;
 }
 
 
-Command* AudioTrack::silence_others( )
+TCommand* AudioTrack::silence_others( )
 {
         PCommand* command = new PCommand(this, "solo", tr("Silence Others"));
         command->set_historable(false);
@@ -421,7 +421,7 @@ AudioClip* AudioTrack::get_clip_before(const TimeRef& pos)
 }
 
 
-Command* AudioTrack::remove_clip(AudioClip* clip, bool historable, bool ismove)
+TCommand* AudioTrack::remove_clip(AudioClip* clip, bool historable, bool ismove)
 {
         PENTER;
         if (! ismove) {
@@ -437,7 +437,7 @@ Command* AudioTrack::remove_clip(AudioClip* clip, bool historable, bool ismove)
 }
 
 
-Command* AudioTrack::add_clip(AudioClip* clip, bool historable, bool ismove)
+TCommand* AudioTrack::add_clip(AudioClip* clip, bool historable, bool ismove)
 {
         PENTER;
         clip->set_track(this);

@@ -166,10 +166,10 @@ void NewTrackDialog::create_track()
                 }
         }
 
-        Command* command = session->add_track(track);
+        TCommand* command = session->add_track(track);
         command->setText(tr("Added %1: %2").arg(track->metaObject()->className()).arg(track->get_name()));
 
-        Command::process_command(command);
+        TCommand::process_command(command);
 
         QString styleSheet = "color: darkGreen; background: lightGreen; padding: 5px; border: solid 1px;";
         informationLabel->setStyleSheet(styleSheet);

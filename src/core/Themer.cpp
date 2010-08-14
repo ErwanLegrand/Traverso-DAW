@@ -23,7 +23,7 @@ $Id: Themer.cpp,v 1.14 2009/04/16 19:38:18 n_doebelin Exp $
 #include "Themer.h"
 
 #include <Utils.h>
-#include <Config.h>
+#include "TConfig.h"
 #include <QDir>
 #include <QTextStream>
 #include <QDomDocument>

@@ -186,7 +186,7 @@ void TraversoCommands::create_menu_translations()
 }
 
 
-Command* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
+TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
 {
 	switch (m_dict.value(command)) {
 		case GainCommand:

@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Project.h"
 #include "Utils.h"
 #include "Information.h"
-#include <Config.h>
+#include "TConfig.h"
 #include "PluginChain.h"
 #include "GainEnvelope.h"
 #include "InputEngine.h"
@@ -647,21 +647,21 @@ int AudioClip::init_recording()
 	return 1;
 }
 
-Command* AudioClip::mute()
+TCommand* AudioClip::mute()
 {
 	PCommand* cmd = new PCommand(this, "toggle_mute", tr("Toggle Mute"));
 	cmd->set_historable(false);
 	return cmd;
 }
 
-Command* AudioClip::lock()
+TCommand* AudioClip::lock()
 {
 	PCommand* cmd = new PCommand(this, "toggle_lock", tr("Toggle Lock"));
 	cmd->set_historable(false);
 	return cmd;
 }
 
-Command* AudioClip::reset_fade_in()
+TCommand* AudioClip::reset_fade_in()
 {
 	if (fadeIn) {
 		return new FadeRange(this, fadeIn, 1.0);
@@ -669,7 +669,7 @@ Command* AudioClip::reset_fade_in()
 	return 0;
 }
 
-Command* AudioClip::reset_fade_out()
+TCommand* AudioClip::reset_fade_out()
 {
 	if (fadeOut) {
 		return new FadeRange(this, fadeOut, 1.0);
@@ -677,7 +677,7 @@ Command* AudioClip::reset_fade_out()
 	return 0;
 }
 
-Command* AudioClip::reset_fade_both()
+TCommand* AudioClip::reset_fade_both()
 {
 	if (!fadeOut && !fadeIn) {
 		return 0;
@@ -886,7 +886,7 @@ int AudioClip::recording_state( ) const
 	return m_recordingStatus;
 }
 
-Command * AudioClip::normalize( )
+TCommand * AudioClip::normalize( )
 {
         bool ok;
         float normfactor;

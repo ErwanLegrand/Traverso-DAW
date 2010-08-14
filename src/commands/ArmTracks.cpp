@@ -36,7 +36,7 @@ $Id: ArmTracks.cpp,v 1.4 2008/01/21 16:22:11 r_sijrier Exp $
 
 
 ArmTracks::ArmTracks(SheetView* view)
-	: Command(view->get_sheet(), tr("Arm Tracks"))
+	: TCommand(view->get_sheet(), tr("Arm Tracks"))
 	, m_sv(view)
 {
 }

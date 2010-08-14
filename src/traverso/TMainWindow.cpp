@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ProjectManager.h"
 #include "ViewPort.h"
 #include "FadeCurve.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "Plugin.h"
 #include "Import.h"
 #include "TimeLine.h"
@@ -488,7 +488,7 @@ void TMainWindow::show_session(TSession* session)
         }
 }
 
-Command* TMainWindow::about_traverso()
+TCommand* TMainWindow::about_traverso()
 {
 	PENTER;
 	QString text(tr("Traverso %1 (built with Qt %2)\n\n" 
@@ -500,10 +500,10 @@ Command* TMainWindow::about_traverso()
 			"Traverso is based (Gcc, Qt, Xorg, Linux, and so on)" ).arg(VERSION).arg(QT_VERSION_STR));
 	QMessageBox::about ( this, tr("About Traverso"), text);
 
-	return (Command*) 0;
+        return (TCommand*) 0;
 }
 
-Command* TMainWindow::quick_start()
+TCommand* TMainWindow::quick_start()
 {
 	PENTER;
 	
@@ -514,19 +514,19 @@ Command* TMainWindow::quick_start()
 	}
 	m_quickStart->show();
 	
-	return (Command*) 0;
+        return (TCommand*) 0;
 }
 
-Command* TMainWindow::full_screen()
+TCommand* TMainWindow::full_screen()
 {
 	if (isFullScreen())
 		showNormal();
 	else
 		showFullScreen();
-	return (Command*) 0;
+        return (TCommand*) 0;
 }
 
-Command* TMainWindow::show_fft_meter_only()
+TCommand* TMainWindow::show_fft_meter_only()
 {
         if (m_centerAreaWidget->isHidden()) {
                 m_centerAreaWidget->show();
@@ -635,7 +635,7 @@ void TMainWindow::changeEvent(QEvent *event)
 	QMainWindow::changeEvent(event);
 }
 
-Command * TMainWindow::show_export_widget( )
+TCommand * TMainWindow::show_export_widget( )
 {
 	if (m_cdWritingDialog && !m_cdWritingDialog->isHidden()) {
 		return 0;
@@ -649,10 +649,10 @@ Command * TMainWindow::show_export_widget( )
 		m_exportDialog->show();
 	}
 	
-	return (Command*) 0;
+        return (TCommand*) 0;
 }
 
-Command * TMainWindow::show_cd_writing_dialog( )
+TCommand * TMainWindow::show_cd_writing_dialog( )
 {
 	if (m_exportDialog && !m_exportDialog->isHidden()) {
 		return 0;
@@ -666,7 +666,7 @@ Command * TMainWindow::show_cd_writing_dialog( )
 		m_cdWritingDialog->show();
 	}
 	
-	return (Command*) 0;
+        return (TCommand*) 0;
 }
 
 void TMainWindow::create_menus( )
@@ -930,7 +930,7 @@ void TMainWindow::process_context_menu_action( QAction * action )
 	ie().broadcast_action_from_contextmenu(name);
 }
 
-Command * TMainWindow::show_context_menu( )
+TCommand * TMainWindow::show_context_menu( )
 {
 	QList<QObject* > items;
 	
@@ -938,7 +938,7 @@ Command * TMainWindow::show_context_menu( )
 	// If not, show the menu for the topmost context item, and it's 
 	// siblings as submenus
 	if (ie().is_holding()) {
-		Command* holding = ie().get_holding_command();
+                TCommand* holding = ie().get_holding_command();
 		if (holding) {
 			items.append(holding);
 		}
@@ -1041,7 +1041,7 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
         return modifierkey + " " + keyfact;
 }
 
-Command * TMainWindow::export_keymap()
+TCommand * TMainWindow::export_keymap()
 {
 	QTextStream out;
 	QFile data(QDir::homePath() + "/traversokeymap.html");
@@ -1052,14 +1052,14 @@ Command * TMainWindow::export_keymap()
 	}
 
 	QString str;
-	(Command *) get_keymap(str);
+        (TCommand *) get_keymap(str);
 	out << str;
 
 	data.close();
 	return 0;
 }
 
-Command * TMainWindow::get_keymap(QString &str)
+TCommand * TMainWindow::get_keymap(QString &str)
 {
 	
 	QMap<QString, QList<const QMetaObject*> > objects;
@@ -1488,8 +1488,8 @@ void TMainWindow::import_audio()
 
 		if (import->create_readsource() != -1) {
 			position += import->readsource()->get_length();
-			Command::process_command(import);
-			Command::process_command(tl->add_marker(m, true));
+                        TCommand::process_command(import);
+                        TCommand::process_command(tl->add_marker(m, true));
 		}
 		++n;
 	}
@@ -1499,7 +1499,7 @@ void TMainWindow::import_audio()
 		m->set_when(position);
 	} else {
 		Marker* m = new Marker(tl, position, Marker::ENDMARKER);
-		Command::process_command(tl->add_marker(m, true));
+                TCommand::process_command(tl->add_marker(m, true));
 	}
 
 	delete importClips;
@@ -1528,7 +1528,7 @@ void TMainWindow::closeEvent(QCloseEvent * event)
 	pm().exit();
 }
 
-Command* TMainWindow::show_project_manager_dialog()
+TCommand* TMainWindow::show_project_manager_dialog()
 {
 	if (! m_projectManagerDialog) {
 		m_projectManagerDialog = new ProjectManagerDialog(this);
@@ -1537,7 +1537,7 @@ Command* TMainWindow::show_project_manager_dialog()
 	return 0;
 }
 
-Command* TMainWindow::show_open_project_dialog()
+TCommand* TMainWindow::show_open_project_dialog()
 {
 	if (!m_openProjectDialog) {
 		m_openProjectDialog = new OpenProjectDialog(this);
@@ -1546,7 +1546,7 @@ Command* TMainWindow::show_open_project_dialog()
 	return 0;
 }
 
-Command * TMainWindow::show_newproject_dialog()
+TCommand * TMainWindow::show_newproject_dialog()
 {
 	if (! m_newProjectDialog ) {
 		m_newProjectDialog = new NewProjectDialog(this);
@@ -1559,7 +1559,7 @@ Command * TMainWindow::show_newproject_dialog()
 	return 0;
 }
 
-Command * TMainWindow::show_insertsilence_dialog()
+TCommand * TMainWindow::show_insertsilence_dialog()
 {
 	if (! m_insertSilenceDialog) {
 		m_insertSilenceDialog = new InsertSilenceDialog(this);
@@ -1573,7 +1573,7 @@ Command * TMainWindow::show_insertsilence_dialog()
 }
 
 
-Command * TMainWindow::show_marker_dialog()
+TCommand * TMainWindow::show_marker_dialog()
 {
         MarkerDialog* markerDialog = new MarkerDialog(this);
 
@@ -1583,7 +1583,7 @@ Command * TMainWindow::show_marker_dialog()
 	return 0;
 }
 
-Command* TMainWindow::show_add_child_session_dialog()
+TCommand* TMainWindow::show_add_child_session_dialog()
 {
         if (!m_project) {
                 return 0;
@@ -1621,7 +1621,7 @@ QSize TMainWindow::sizeHint() const
 	return QSize(800, 600);
 }
 
-Command* TMainWindow::show_newsheet_dialog()
+TCommand* TMainWindow::show_newsheet_dialog()
 {
 	if (! m_newSheetDialog) {
 		m_newSheetDialog = new NewSheetDialog(this);
@@ -1632,7 +1632,7 @@ Command* TMainWindow::show_newsheet_dialog()
 	return 0;
 }
 
-Command* TMainWindow::show_newtrack_dialog()
+TCommand* TMainWindow::show_newtrack_dialog()
 {
         if (!m_project) {
                 return 0;
@@ -1680,7 +1680,7 @@ void TMainWindow::project_dir_change_detected()
 	   			QMessageBox::Ok);
 }
 
-Command * TMainWindow::show_restore_project_backup_dialog(QString projectname)
+TCommand * TMainWindow::show_restore_project_backup_dialog(QString projectname)
 {
 	if (! m_restoreProjectBackupDialog) {
 		m_restoreProjectBackupDialog = new RestoreProjectBackupDialog(this);
@@ -1775,7 +1775,7 @@ void TMainWindow::save_config_and_emit_message(const QString & message)
 
 
 
-Command * TMainWindow::start_transport()
+TCommand * TMainWindow::start_transport()
 {
 	Project* project = pm().get_project();
 	if (project) {
@@ -1788,7 +1788,7 @@ Command * TMainWindow::start_transport()
 	return 0;
 }
 
-Command * TMainWindow::set_recordable_and_start_transport()
+TCommand * TMainWindow::set_recordable_and_start_transport()
 {
 	if (m_project) {
                 Sheet* sheet = m_project->get_active_sheet();
@@ -1880,7 +1880,7 @@ void TMainWindow::update_effects_state()
 	}
 }
 
-Command* TMainWindow::show_welcome_page()
+TCommand* TMainWindow::show_welcome_page()
 {
         m_previousCenterAreaWidgetIndex = m_centerAreaWidget->currentIndex();
         m_centerAreaWidget->setCurrentIndex(0);
@@ -1888,14 +1888,14 @@ Command* TMainWindow::show_welcome_page()
         return 0;
 }
 
-Command* TMainWindow::show_current_sheet()
+TCommand* TMainWindow::show_current_sheet()
 {
         m_centerAreaWidget->setCurrentIndex(m_previousCenterAreaWidgetIndex);
         return 0;
 }
 
 
-Command* TMainWindow::show_track_finder()
+TCommand* TMainWindow::show_track_finder()
 {
         if (!m_project) {
                 return 0;
@@ -1977,7 +1977,7 @@ void TMainWindow::track_finder_show_initial_text()
 }
 
 
-Command* TMainWindow::browse_to_first_track_in_active_sheet()
+TCommand* TMainWindow::browse_to_first_track_in_active_sheet()
 {
         if (m_currentSheetWidget) {
                 SheetView* sv = m_currentSheetWidget->get_sheetview();
@@ -1990,7 +1990,7 @@ Command* TMainWindow::browse_to_first_track_in_active_sheet()
         return 0;
 }
 
-Command* TMainWindow::browse_to_last_track_in_active_sheet()
+TCommand* TMainWindow::browse_to_last_track_in_active_sheet()
 {
         if (m_currentSheetWidget) {
                 SheetView* sv = m_currentSheetWidget->get_sheetview();

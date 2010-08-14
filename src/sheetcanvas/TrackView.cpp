@@ -115,7 +115,7 @@ int TrackView::get_height( )
         return m_sv->get_track_height(m_track) - (m_topborderwidth + m_bottomborderwidth + m_clipbottommargin + m_cliptopmargin);
 }
 
-Command* TrackView::edit_properties( )
+TCommand* TrackView::edit_properties( )
 {
         TTrackManagerDialog manager(m_track, TMainWindow::instance());
         manager.exec();
@@ -133,10 +133,10 @@ Command* TrackView::edit_properties( )
                 m_track->set_name(text);
         }
 
-        return (Command*) 0;
+        return (TCommand*) 0;
 }
 
-Command* TrackView::add_new_plugin( )
+TCommand* TrackView::add_new_plugin( )
 {
         PluginSelectorDialog::instance()->set_description(tr("Track %1:  %2")
                         .arg(m_track->get_sort_index()+1).arg(m_track->get_name()));

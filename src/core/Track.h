@@ -98,7 +98,7 @@ private:
         void process_send(TSend* send, nframes_t nframes);
 
 public slots:
-        Command* solo();
+        TCommand* solo();
 
 private slots:
         void private_add_post_send(TSend*);

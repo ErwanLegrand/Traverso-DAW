@@ -68,8 +68,8 @@ public slots:
 	void add_to_selection(AudioClip* clip);
 	void update_last_frame();
 
-	Command* select_all_clips();
-	Command* invert_clip_selection();
+	TCommand* select_all_clips();
+	TCommand* invert_clip_selection();
 };
 
 #endif

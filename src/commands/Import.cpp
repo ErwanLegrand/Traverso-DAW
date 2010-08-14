@@ -32,14 +32,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 Import::Import(const QString& fileName)
-	: Command("")
+	: TCommand("")
 {
 	init(0, fileName);
 }
 
 
 Import::Import(AudioTrack* track, const TimeRef& length, bool silent)
-	: Command(track, "")
+	: TCommand(track, "")
 {
 	init(track, "");
 	m_silent = silent;
@@ -54,13 +54,13 @@ Import::Import(AudioTrack* track, const TimeRef& length, bool silent)
 
 
 Import::Import(AudioTrack* track, const QString& fileName)
-	: Command(track, tr("Import Audio File"))
+	: TCommand(track, tr("Import Audio File"))
 {
 	init(track, fileName);
 }
 
 Import::Import(AudioTrack* track, const QString& fileName, const TimeRef& position)
-	: Command(track, tr("Import Audio File"))
+	: TCommand(track, tr("Import Audio File"))
 {
 	init(track, fileName);
 	m_hasPosition = true;
@@ -183,7 +183,7 @@ int Import::do_action()
 		create_audioclip();
 	}
 	
-	Command::process_command(m_track->add_clip(m_clip, false));
+	TCommand::process_command(m_track->add_clip(m_clip, false));
 	
 	return 1;
 }
@@ -192,7 +192,7 @@ int Import::do_action()
 int Import::undo_action()
 {
 	PENTER;
-	Command::process_command(m_track->remove_clip(m_clip, false));
+	TCommand::process_command(m_track->remove_clip(m_clip, false));
 	return 1;
 }
 

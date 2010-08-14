@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Project.h>
 #include "TMainWindow.h"
 #include "Themer.h"
-#include <Config.h>
+#include "TConfig.h"
 #include <AudioDevice.h>
 #include <ContextPointer.h>
 #include <Information.h>

@@ -22,11 +22,11 @@
 #ifndef PCOMMAND_H
 #define PCOMMAND_H
 
-#include "Command.h"
+#include "TCommand.h"
 
 class ContextItem;
 
-class PCommand : public Command
+class PCommand : public TCommand
 {
 public :
         PCommand(ContextItem* item, const char* slot, const QString& des);

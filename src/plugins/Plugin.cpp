@@ -76,13 +76,13 @@ int Plugin::set_state(const QDomNode & node)
 	return 1;
 }
 
-Command* Plugin::toggle_bypass( )
+TCommand* Plugin::toggle_bypass( )
 {
 	m_bypass = ! m_bypass;
 	
 	emit bypassChanged();
 	
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 PluginControlPort* Plugin::get_control_port_by_index(int index) const
@@ -233,7 +233,7 @@ void PluginControlPort::set_use_automation(bool automation)
 		CurveNode* node = new CurveNode(m_curve, 0.0, 1.0);
 		AddRemove* cmd = (AddRemove*)m_curve->add_node(node, false);
 		cmd->set_instantanious(true);
-		Command::process_command(cmd);
+		TCommand::process_command(cmd);
                 if (m_plugin->get_session()) {
                         m_curve->set_sheet(m_plugin->get_session());
 		}

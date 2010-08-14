@@ -215,7 +215,7 @@ void TimeLineView::remove_marker_view(Marker * marker)
 	}
 }
 
-Command* TimeLineView::add_marker()
+TCommand* TimeLineView::add_marker()
 {
 	QPointF point = mapFromScene(cpointer().scene_pos());
 	
@@ -228,17 +228,17 @@ Command* TimeLineView::add_marker()
 	return add_marker_at(when);
 }
 
-Command* TimeLineView::add_marker_at_playhead()
+TCommand* TimeLineView::add_marker_at_playhead()
 {
 	return add_marker_at(m_sv->get_sheet()->get_transport_location());
 }
 
-Command* TimeLineView::add_marker_at_work_cursor()
+TCommand* TimeLineView::add_marker_at_work_cursor()
 {
         return add_marker_at(m_sv->get_sheet()->get_work_location());
 }
 
-Command* TimeLineView::add_marker_at(const TimeRef when)
+TCommand* TimeLineView::add_marker_at(const TimeRef when)
 {
 	CommandGroup* group = new CommandGroup(m_timeline, "");
 
@@ -267,7 +267,7 @@ Command* TimeLineView::add_marker_at(const TimeRef when)
 	return group;
 }
 
-Command* TimeLineView::playhead_to_marker()
+TCommand* TimeLineView::playhead_to_marker()
 {
         update_softselected_marker(cpointer().on_first_input_event_scene_pos());
 
@@ -279,7 +279,7 @@ Command* TimeLineView::playhead_to_marker()
 	return ie().did_not_implement();
 }
 
-Command* TimeLineView::remove_marker()
+TCommand* TimeLineView::remove_marker()
 {
 	if (m_blinkingMarker) {
 		Marker* marker = m_blinkingMarker->get_marker();
@@ -368,7 +368,7 @@ void TimeLineView::mouse_hover_move_event()
         update_softselected_marker(cpointer().scene_pos());
 }
 
-Command * TimeLineView::drag_marker()
+TCommand * TimeLineView::drag_marker()
 {
         update_softselected_marker(cpointer().on_first_input_event_scene_pos());
 
@@ -379,7 +379,7 @@ Command * TimeLineView::drag_marker()
 	return ie().did_not_implement();
 }
 
-Command * TimeLineView::clear_markers()
+TCommand * TimeLineView::clear_markers()
 {
 	CommandGroup* group = new CommandGroup(m_timeline, tr("Clear Markers"));
 

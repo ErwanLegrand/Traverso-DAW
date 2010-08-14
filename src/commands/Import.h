@@ -23,7 +23,7 @@
 #ifndef IMPORT_H
 #define IMPORT_H
 
-#include "Command.h"
+#include "TCommand.h"
 
 #include "defines.h"
 
@@ -33,7 +33,7 @@ class AudioTrack;
 class ReadSource;
 struct TimeRef;
 
-class Import : public Command
+class Import : public TCommand
 {
         Q_OBJECT
 

@@ -23,13 +23,13 @@
 #ifndef ZOOM_H
 #define ZOOM_H
 
-#include "Command.h"
+#include "TCommand.h"
 
 class SheetView;
 class TrackView;
 class QPoint;
 
-class Zoom : public Command
+class Zoom : public TCommand
 {
 	Q_OBJECT
 

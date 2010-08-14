@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClip.h"
 #include "AudioClipManager.h"
-#include "Command.h"
+#include "TCommand.h"
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
 #include "Sheet.h"
@@ -60,8 +60,8 @@ void AudioClipGroup::move_to(int trackIndex, TimeRef location)
 			if (track) {
                                 // Remove has to be done BEFORE adding, else the APILinkedList logic
                                 // gets messed up for the Tracks AudioClipList, which is an APILinkedList :(
-				Command::process_command(clip->get_track()->remove_clip(clip, false, true));
-				Command::process_command(track->add_clip(clip, false, true));
+				TCommand::process_command(clip->get_track()->remove_clip(clip, false, true));
+				TCommand::process_command(track->add_clip(clip, false, true));
 			}
 		}
 		
@@ -133,14 +133,14 @@ QList<AudioClip*> AudioClipGroup::copy_clips()
 void AudioClipGroup::add_all_clips_to_tracks()
 {
 	foreach(AudioClip* clip, m_clips) {
-		Command::process_command(clip->get_track()->add_clip(clip, false));
+		TCommand::process_command(clip->get_track()->add_clip(clip, false));
 	}
 }
 
 void AudioClipGroup::remove_all_clips_from_tracks()
 {
 	foreach(AudioClip* clip, m_clips) {
-		Command::process_command(clip->get_track()->remove_clip(clip, false));
+		TCommand::process_command(clip->get_track()->remove_clip(clip, false));
 	}
 }
 

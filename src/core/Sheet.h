@@ -36,7 +36,7 @@ class AudioTrack;
 class AudioClip;
 class DiskIO;
 class AudioClipManager;
-class AudioDeviceClient;
+class TAudioDeviceClient;
 class AudioBus;
 class SnapList;
 class TimeLine;
@@ -98,7 +98,7 @@ public:
 
         void solo_track(Track* track);
 	void create(int tracksToCreate);
-        Command* add_track(Track* api, bool historable=true);
+        TCommand* add_track(Track* api, bool historable=true);
 
         bool any_audio_track_armed();
 	bool realtime_path() const {return m_realtimepath;}
@@ -119,7 +119,7 @@ private:
 	QTimer			m_skipTimer;
 	Project*		m_project;
 	WriteSource*		m_exportSource;
-        AudioDeviceClient*	m_audiodeviceClient;
+        TAudioDeviceClient*	m_audiodeviceClient;
         AudioBus*		m_renderBus;
 	AudioBus*		m_clipRenderBus;
 	DiskIO*			m_diskio;
@@ -169,12 +169,12 @@ public slots :
         void set_transport_pos(TimeRef location);
 
 
-	Command* next_skip_pos();
-	Command* prev_skip_pos();
-	Command* start_transport();
-	Command* set_recordable();
-	Command* set_recordable_and_start_transport();
-	Command* toggle_snap();
+	TCommand* next_skip_pos();
+	TCommand* prev_skip_pos();
+	TCommand* start_transport();
+	TCommand* set_recordable();
+	TCommand* set_recordable_and_start_transport();
+	TCommand* toggle_snap();
 
 signals:
 	void seekStart();

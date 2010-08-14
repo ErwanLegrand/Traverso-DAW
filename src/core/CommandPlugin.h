@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define COMMAND_PLUGIN_H
 
 #include <QtPlugin>
-#include <Command.h>
+#include "TCommand.h"
 #include <QStringList>
 #include <QHash>
 #include <QVariant>
@@ -33,7 +33,7 @@ class CommandInterface
 {
 public:
 	virtual ~CommandInterface() {}
-	virtual Command* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
+	virtual TCommand* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
 };
 
 Q_DECLARE_INTERFACE(CommandInterface, "org.traversodaw.Command.CommandInterface/1.0");
@@ -60,7 +60,7 @@ public:
 	 * @param arguments List of arguments which can be parsed by the to be created Command object.
 	 * @return On success a Command object, the caller takes authorship, or 0 on failure.
  */
-	virtual Command* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
+	virtual TCommand* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
         virtual void create_menu_translations() = 0;
 
 	virtual QStringList commands() const {

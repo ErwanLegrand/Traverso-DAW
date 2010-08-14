@@ -25,7 +25,7 @@
 
 #include "MeterWidget.h"
 
-class Command;
+class TCommand;
 class QLinearGradient;
 class QColor;
 
@@ -61,7 +61,7 @@ private slots:
 	void		load_theme_data();
 
 public slots:
-	Command*	set_mode();
+	TCommand*	set_mode();
 
 };
 

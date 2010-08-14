@@ -22,14 +22,14 @@
 #ifndef CROP_H
 #define CROP_H
 
-#include "Command.h"
+#include "TCommand.h"
 
 class AudioClipView;
 class AudioTrack;
 class AudioClip;
 class QGraphicsRectItem;
 
-class Crop : public Command
+class Crop : public TCommand
 {
         Q_OBJECT
 

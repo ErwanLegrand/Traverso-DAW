@@ -23,13 +23,13 @@
 #ifndef JACKDRIVER_H
 #define JACKDRIVER_H
 
-#include "Driver.h"
+#include "TAudioDriver.h"
 #include "defines.h"
 #include <jack/jack.h>
 #include <QObject>
 #include <QVector>
 
-class JackDriver : public Driver
+class JackDriver : public TAudioDriver
 {
 	Q_OBJECT
 public:

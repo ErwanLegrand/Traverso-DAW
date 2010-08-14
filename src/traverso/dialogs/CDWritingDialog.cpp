@@ -24,7 +24,7 @@
 #include <QMessageBox>
 
 #include "Export.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "AudioDevice.h"
 #include "Project.h"
 #include "ProjectManager.h"

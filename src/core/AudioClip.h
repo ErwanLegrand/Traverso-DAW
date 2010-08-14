@@ -168,12 +168,12 @@ public slots:
 	void toggle_lock();
 	void set_gain(float g);
 	
-	Command* mute();
-	Command* reset_fade_in();
-	Command* reset_fade_out();
-	Command* reset_fade_both();
-        Command* normalize();
-	Command* lock();
+	TCommand* mute();
+	TCommand* reset_fade_in();
+	TCommand* reset_fade_out();
+	TCommand* reset_fade_both();
+        TCommand* normalize();
+	TCommand* lock();
 
 private slots:
 	void private_add_fade(FadeCurve* fade);

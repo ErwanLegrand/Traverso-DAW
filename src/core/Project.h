@@ -37,7 +37,7 @@ class Track;
 class ResourcesManager;
 struct ExportSpecification;
 class ExportThread;
-class AudioDeviceClient;
+class TAudioDeviceClient;
 class TBusTrack;
 class TSend;
 class Plugin;
@@ -130,8 +130,8 @@ public :
         int save_from_template_to_project_file(const QString& file, const QString& projectName);
 
 	
-	Command* add_sheet(Sheet* sheet, bool historable=true);
-	Command* remove_sheet(Sheet* sheet, bool historable=true);
+	TCommand* add_sheet(Sheet* sheet, bool historable=true);
+	TCommand* remove_sheet(Sheet* sheet, bool historable=true);
 	
 	bool has_changed();
 	bool is_save_to_close() const;
@@ -159,9 +159,9 @@ public :
 
 public slots:
         void track_property_changed();
-	Command* select();
-        Command* start_transport();
-        Command* remove_child_session();
+	TCommand* select();
+        TCommand* start_transport();
+        TCommand* remove_child_session();
 
 private:
 	Project(const QString& title);
@@ -172,7 +172,7 @@ private:
         APILinkedList           m_RtSheets;
 	ResourcesManager* 	m_resourcesManager;
         ExportThread*           m_exportThread;
-        AudioDeviceClient*	m_audiodeviceClient;
+        TAudioDeviceClient*	m_audiodeviceClient;
         SpectralMeter*          m_spectralMeter;
         CorrelationMeter*       m_correlationMeter;
 

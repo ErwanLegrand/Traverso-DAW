@@ -221,7 +221,7 @@ void CurveView::add_curvenode_view(CurveNode* node)
 	
 	AddRemove* cmd = (AddRemove*) m_guicurve->add_node(nodeview, false);
 	cmd->set_instantanious(true);
-	Command::process_command(cmd);
+	TCommand::process_command(cmd);
 	
 	qSort(m_nodeViews.begin(), m_nodeViews.end(), Curve::smallerNode);
 	
@@ -239,7 +239,7 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 			}
 			AddRemove* cmd = (AddRemove*) m_guicurve->remove_node(nodeview, false);
 			cmd->set_instantanious(true);
-			Command::process_command(cmd);
+			TCommand::process_command(cmd);
 			
 			scene()->removeItem(nodeview);
 			delete nodeview;
@@ -364,7 +364,7 @@ void CurveView::update_blink_color()
 }
 
 
-Command* CurveView::add_node()
+TCommand* CurveView::add_node()
 {
 	PENTER;
 	QPointF point = mapFromScene(cpointer().scene_pos());
@@ -380,7 +380,7 @@ Command* CurveView::add_node()
 }
 
 
-Command* CurveView::remove_node()
+TCommand* CurveView::remove_node()
 {
 	PENTER;
 
@@ -396,7 +396,7 @@ Command* CurveView::remove_node()
 	return ie().did_not_implement();
 }
 
-Command* CurveView::drag_node()
+TCommand* CurveView::drag_node()
 {
 	PENTER;
 
@@ -423,7 +423,7 @@ Command* CurveView::drag_node()
 }
 
 
-Command * CurveView::drag_node_vertical_only()
+TCommand * CurveView::drag_node_vertical_only()
 {
         MoveCurveNode* drag = qobject_cast<MoveCurveNode*>(drag_node());
 	
@@ -513,7 +513,7 @@ float CurveView::get_default_value()
 	return ((CurveNode*)m_guicurve->get_nodes().first())->value;
 }
 
-Command * CurveView::remove_all_nodes()
+TCommand * CurveView::remove_all_nodes()
 {
 	CommandGroup* group = new CommandGroup(m_curve, tr("Clear Nodes"));
 

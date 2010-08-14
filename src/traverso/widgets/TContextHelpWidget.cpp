@@ -5,7 +5,7 @@
 #include "ContextPointer.h"
 #include "ContextItem.h"
 #include "InputEngine.h"
-#include "Command.h"
+#include "TCommand.h"
 #include "TMainWindow.h"
 #include "TMenuTranslator.h"
 #include "Themer.h"
@@ -31,7 +31,7 @@ void TContextHelpWidget::context_changed()
 
 void TContextHelpWidget::jog_started()
 {
-        Command* hold = ie().get_holding_command();
+        TCommand* hold = ie().get_holding_command();
         if (hold) {
                 setHtml(create_html_for_object(hold));
         }
@@ -105,7 +105,7 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
                         if (strings.size() >= 3) {
                                 QString keyfact = strings.at(2);
 
-                                Command* com = dynamic_cast<Command*>(obj);
+                                TCommand* com = dynamic_cast<TCommand*>(obj);
                                 if (com) {
                                         keyfact.replace("<", "");
                                         keyfact.replace(">", "");

@@ -85,7 +85,7 @@ void InsertSilenceDialog::accept()
 
 		TimeRef length = TimeRef(lengthSpinBox->value() * UNIVERSAL_SAMPLE_RATE);
 		Import* cmd = new Import(m_track, length, true);
-		Command::process_command(cmd);
+		TCommand::process_command(cmd);
 	}
 
 	hide();

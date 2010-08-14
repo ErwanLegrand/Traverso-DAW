@@ -66,11 +66,11 @@ private:
 	
 
 public slots:
-	Command* add_node();
-	Command* remove_node();
-	Command* remove_all_nodes();
-	Command* drag_node();
-	Command* drag_node_vertical_only();
+	TCommand* add_node();
+	TCommand* remove_node();
+	TCommand* remove_all_nodes();
+	TCommand* drag_node();
+	TCommand* drag_node_vertical_only();
 	
 private slots:
 	void add_curvenode_view(CurveNode* node);

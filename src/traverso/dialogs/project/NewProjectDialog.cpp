@@ -42,7 +42,7 @@
 #include <QButtonGroup>
 #include <QIcon>
 
-#include <Config.h>
+#include "TConfig.h"
 #include "Export.h"
 #include "Information.h"
 #include "ProjectManager.h"
@@ -346,7 +346,7 @@ void NewProjectDialog::load_file(QString name, int i, QString trackname)
 	import->set_track(track);
         import->set_position(TimeRef());
 	if (import->create_readsource() != -1) {
-		Command::process_command(import);
+		TCommand::process_command(import);
 	}
 }
 

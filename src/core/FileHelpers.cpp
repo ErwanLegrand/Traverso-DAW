@@ -23,7 +23,7 @@ $Id: FileHelpers.cpp,v 1.10 2007/11/05 15:49:30 r_sijrier Exp $
 #include "FileHelpers.h"
 
 #include <sys/stat.h>
-#include "Config.h"
+#include "TConfig.h"
 #include <QDir>
 #include <Utils.h>
 #include <QObject>

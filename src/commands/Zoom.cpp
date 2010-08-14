@@ -35,13 +35,13 @@
 #include "Debugger.h"
 
 Zoom::Zoom(TrackView* view, QVariantList args)
-        : Command("Zoom")
+        : TCommand("Zoom")
 {
         init(view->get_sheetview(), view, args);
 }
 
 Zoom::Zoom(SheetView* sv, QVariantList args)
-	: Command("Zoom")
+	: TCommand("Zoom")
 {
         init(sv, 0, args);
 }

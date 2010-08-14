@@ -35,7 +35,7 @@
 
 
 class ContextItem;
-class Command;
+class TCommand;
 class CommandPlugin;
 
 static const int FKEY = 0;                 // <K>    - press one key fast
@@ -128,7 +128,7 @@ public:
 	bool is_holding();
 
 	QList<MenuData > create_menudata_for(QObject* item);
-	Command* get_holding_command() const;
+	TCommand* get_holding_command() const;
 	void create_menudata_for_metaobject(const QMetaObject* mo, QList<MenuData >& list) const;
 
         int broadcast_action_from_contextmenu(const QString& name);
@@ -141,9 +141,9 @@ public:
         void suspend();
 	void abort_current_hold_actions();
 	
-	Command* succes();
-	Command* failure();
-	Command* did_not_implement();
+	TCommand* succes();
+	TCommand* failure();
+	TCommand* did_not_implement();
 
 
         int init_map(const QString& mapFilename);
@@ -182,7 +182,7 @@ private:
         QHash<int, HoldModifierKey*>  m_holdModifierKeys;
 	QHash<QString, CommandPlugin*> m_commandplugins;
 	QHash<QString, int>	m_modes;
-        Command* 		m_holdingCommand;
+        TCommand* 		m_holdingCommand;
         QString			m_sCollectedNumber;
 	QPoint			m_jogBypassPos;
         QTimer                  m_holdKeyRepeatTimer;

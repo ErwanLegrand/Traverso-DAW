@@ -23,15 +23,15 @@
 #ifndef COMMAND_GROUP_H
 #define COMMAND_GROUP_H
 
-#include "Command.h"
+#include "TCommand.h"
 
 #include <QList>
 
-class CommandGroup : public Command
+class CommandGroup : public TCommand
 {
 public :
         CommandGroup(ContextItem* parent, const QString& des, bool historable=true)
-        	: Command(parent, des) 
+        	: TCommand(parent, des) 
         {
         	m_isHistorable = historable;
         };
@@ -41,14 +41,14 @@ public :
         int do_action();
         int undo_action();
 
-        void add_command(Command* cmd) {
+        void add_command(TCommand* cmd) {
         	Q_ASSERT(cmd);
 		m_commands.append(cmd);
 	}
 ;
 
 private :
-        QList<Command* >	m_commands;
+        QList<TCommand* >	m_commands;
 
 };
 

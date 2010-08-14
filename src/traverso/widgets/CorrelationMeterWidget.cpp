@@ -25,11 +25,11 @@
 
 #include <PluginChain.h>
 #include <CorrelationMeter.h>
-#include <Command.h>
+#include "TCommand.h"
 #include <Sheet.h>
 #include <TBusTrack.h>
 #include <Themer.h>
-#include <Config.h>
+#include "TConfig.h"
 #include <cmath> // used for fabs
 
 // Always put me below _all_ includes, this is needed
@@ -130,7 +130,7 @@ void CorrelationMeterView::update_data()
 	update();
 }
 
-Command* CorrelationMeterView::set_mode()
+TCommand* CorrelationMeterView::set_mode()
 {
 	switch (range) {
 		case 180 : range = 240; break;

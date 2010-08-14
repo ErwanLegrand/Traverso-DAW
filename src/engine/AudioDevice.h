@@ -37,8 +37,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "defines.h"
 
 class AudioDeviceThread;
-class Driver;
-class AudioDeviceClient;
+class TAudioDriver;
+class TAudioDeviceClient;
 class AudioChannel;
 class AudioBus;
 #if defined (JACK_SUPPORT)
@@ -57,12 +57,12 @@ class AudioDevice : public QObject
 public:
         void set_parameters(AudioDeviceSetup ads);
 
-	void add_client(AudioDeviceClient* client);
-	void remove_client(AudioDeviceClient* client);
+        void add_client(TAudioDeviceClient* client);
+        void remove_client(TAudioDeviceClient* client);
 	
-	void transport_start(AudioDeviceClient* client);
-        void transport_stop(AudioDeviceClient* client, TimeRef location);
-	int transport_seek_to(AudioDeviceClient* client, TimeRef location);
+        void transport_start(TAudioDeviceClient* client);
+        void transport_stop(TAudioDeviceClient* client, TimeRef location);
+        int transport_seek_to(TAudioDeviceClient* client, TimeRef location);
 
         AudioDeviceSetup get_device_setup() {return m_setup;}
 
@@ -121,7 +121,7 @@ private:
 
 	friend class AlsaDriver;
 	friend class PADriver;
-	friend class Driver;
+        friend class TAudioDriver;
 	friend class PulseAudioDriver;
 	friend class AudioDeviceThread;
 #if defined (COREAUDIO_SUPPORT)
@@ -131,7 +131,7 @@ private:
         AudioDeviceSetup        m_setup;
         AudioDeviceSetup        m_fallBackSetup;
         AudioBus*               m_masterOutBus;
-        Driver* 		m_driver;
+        TAudioDriver* 		m_driver;
         AudioDeviceThread* 	m_audioThread;
         APILinkedList		m_clients;
         QList<AudioChannel* >   m_channels;
@@ -185,7 +185,7 @@ private:
 		m_cpuTime->write(&runcycleTime, 1);
 	}
 
-        Driver* get_driver() const {return m_driver;}
+        TAudioDriver* get_driver() const {return m_driver;}
 
 	void mili_sleep(int msec);
 	void xrun();
@@ -231,15 +231,15 @@ signals:
 	 *        This signal will be emited after succesfull Client removal from within the GUI Thread!
 	 * @param  The Client \a client which as been removed from the AudioDevice
 	 */
-	void clientRemoved(AudioDeviceClient*);
+        void clientRemoved(TAudioDeviceClient*);
 	
 	void xrunStormDetected();
 	
 	void message(QString, int);
 
 private slots:
-	void private_add_client(AudioDeviceClient* client);
-	void private_remove_client(AudioDeviceClient* client);
+        void private_add_client(TAudioDeviceClient* client);
+        void private_remove_client(TAudioDeviceClient* client);
 	void audiothread_finished();
 	void switch_to_null_driver();
 	void reset_xrun_counter() {m_xrunCount = 0;}

@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef AUDIOCLIP_EXTERNAL_PROCESSING_H
 #define AUDIOCLIP_EXTERNAL_PROCESSING_H
 
-#include <Command.h>
+#include "TCommand.h"
 
 class AudioClip;
 class AudioTrack;
 
-class AudioClipExternalProcessing : public Command
+class AudioClipExternalProcessing : public TCommand
 {
         Q_OBJECT
 

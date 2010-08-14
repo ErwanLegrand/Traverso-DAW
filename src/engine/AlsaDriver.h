@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef ALSADRIVER_H
 #define ALSADRIVER_H
 
-#include "Driver.h"
+#include "TAudioDriver.h"
 
 #include <alsa/asoundlib.h>
 #include <sys/param.h>
@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #endif
 
 
-class AlsaDriver : public Driver
+class AlsaDriver : public TAudioDriver
 {
         Q_OBJECT
 public:

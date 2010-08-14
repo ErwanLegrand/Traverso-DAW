@@ -42,8 +42,8 @@ public:
         ProcessingData (TSession* session=0);
         virtual ~ProcessingData () {}
 	
-        Command* add_plugin(Plugin* plugin);
-        Command* remove_plugin(Plugin* plugin);
+        TCommand* add_plugin(Plugin* plugin);
+        TCommand* remove_plugin(Plugin* plugin);
 
         PluginChain* get_plugin_chain() const {return m_pluginChain;}
         TSession* get_session() const {return m_session;}
@@ -74,7 +74,7 @@ protected:
 public slots:
 	float get_gain() const;
         void set_gain(float gain);
-        Command* mute();
+        TCommand* mute();
 
 
 signals:

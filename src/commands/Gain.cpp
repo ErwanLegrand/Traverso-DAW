@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 Gain::Gain(ContextItem* context, QVariantList args)
-	: Command(context, "")
+	: TCommand(context, "")
 {
         m_gainObject = context;
 

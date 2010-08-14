@@ -98,7 +98,7 @@ int PluginChain::set_state( const QDomNode & node )
 }
 
 
-Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
+TCommand* PluginChain::add_plugin(Plugin * plugin, bool historable)
 {
 	plugin->set_history_stack(get_history_stack());
 	
@@ -109,7 +109,7 @@ Command* PluginChain::add_plugin(Plugin * plugin, bool historable)
 }
 
 
-Command* PluginChain::remove_plugin(Plugin* plugin, bool historable)
+TCommand* PluginChain::remove_plugin(Plugin* plugin, bool historable)
 {
         return new AddRemove( this, plugin, historable, m_session,
 		"private_remove_plugin(Plugin*)", "pluginRemoved(Plugin*)",

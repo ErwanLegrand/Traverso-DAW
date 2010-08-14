@@ -127,7 +127,7 @@ void AudioTrackView::load_theme_data()
 }
 
 
-Command* AudioTrackView::insert_silence()
+TCommand* AudioTrackView::insert_silence()
 {
 	TMainWindow::instance()->show_insertsilence_dialog();
         TMainWindow::instance()->set_insertsilence_track((AudioTrack*)m_track);
@@ -184,7 +184,7 @@ AudioClipView* AudioTrackView::get_nearest_audioclip_view(TimeRef location) cons
         return nearestClipView;
 }
 
-Command* AudioTrackView::show_track_gain_curve()
+TCommand* AudioTrackView::show_track_gain_curve()
 {
         if (m_curveView->isVisible()) {
                 m_curveView->hide();

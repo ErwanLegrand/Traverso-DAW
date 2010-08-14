@@ -26,7 +26,7 @@
 #include "TimeLineViewPort.h"
 #include "SheetView.h"
 #include "Themer.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "Peak.h"
 
 #include <Sheet.h>

@@ -24,8 +24,8 @@ AudioFileCopyConvert.cpp
 AudioFileMerger.cpp
 AudioTrack.cpp
 AudioSource.cpp
-Command.cpp
-Config.cpp
+TCommand.cpp
+TConfig.cpp
 ContextPointer.cpp
 Curve.cpp
 CurveNode.cpp
@@ -65,7 +65,7 @@ AudioFileMerger.h
 AudioFileCopyConvert.h
 AudioTrack.h
 ProcessingData.h
-Config.h
+TConfig.h
 ContextPointer.h
 Curve.h
 DiskIO.h

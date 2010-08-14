@@ -28,7 +28,7 @@
 #include "Debugger.h"
 
 MoveCommand::MoveCommand(const QString &description)
-        : Command(description)
+        : TCommand(description)
         , m_doSnap(false)
 {
         QString collected = ie().get_collected_number();
@@ -40,7 +40,7 @@ MoveCommand::MoveCommand(const QString &description)
 }
 
 MoveCommand::MoveCommand(ContextItem* item, const QString &description)
-        : Command(item, description)
+        : TCommand(item, description)
         , m_doSnap(false)
 {
         QString collected = ie().get_collected_number();

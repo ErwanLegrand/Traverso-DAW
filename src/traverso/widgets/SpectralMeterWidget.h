@@ -31,7 +31,7 @@
 
 class QRect;
 class QPixmap;
-class Command;
+class TCommand;
 class SpectralMeterView;
 
 
@@ -134,11 +134,11 @@ private slots:
 public slots:
 	void		load_configuration();
 
-	Command*	edit_properties();
-	Command*	set_mode();
-	Command*	reset();
-	Command*	export_average_curve();
-	Command*	screen_capture();
+	TCommand*	edit_properties();
+	TCommand*	set_mode();
+	TCommand*	reset();
+	TCommand*	export_average_curve();
+	TCommand*	screen_capture();
 };
 
 #endif

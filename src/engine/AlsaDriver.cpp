@@ -57,7 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 AlsaDriver::AlsaDriver(AudioDevice* dev, int rate, nframes_t bufferSize)
-		: Driver(dev, rate, bufferSize)
+		: TAudioDriver(dev, rate, bufferSize)
 {
 	read = MakeDelegate(this, &AlsaDriver::_read);
 	write = MakeDelegate(this, &AlsaDriver::_write);

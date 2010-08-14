@@ -22,14 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef CLIPSELECTION_H
 #define CLIPSELECTION_H
 
-#include "Command.h"
+#include "TCommand.h"
 #include <QList>
 #include <QRect>
 
 class AudioClip;
 class AudioClipManager;
 
-class ClipSelection : public Command
+class ClipSelection : public TCommand
 {
         Q_OBJECT
 

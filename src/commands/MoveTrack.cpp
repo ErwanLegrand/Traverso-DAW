@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 MoveTrack::MoveTrack(TrackView* view)
-        : Command(view->get_context(), "")
+        : TCommand(view->get_context(), "")
         , m_trackView(view)
 {
         m_sv = m_trackView->get_sheetview();
@@ -190,8 +190,8 @@ void MoveTrack::move_to_sheet()
                 return;
         }
 
-        Command::process_command(orig->remove_track(track));
-        Command::process_command(destination->add_track(track));
+        TCommand::process_command(orig->remove_track(track));
+        TCommand::process_command(destination->add_track(track));
 
         m_sv->browse_to_track(track);
 }

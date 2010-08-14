@@ -67,7 +67,7 @@ int SplitClip::prepare_actions()
 	if (leftClip->get_fade_out()) {
 		FadeRange* cmd = (FadeRange*)leftClip->reset_fade_out();
 		cmd->set_historable(false);
-		Command::process_command(cmd);
+		TCommand::process_command(cmd);
 	}
 	
 	rightClip->set_sheet(m_clip->get_sheet());
@@ -76,7 +76,7 @@ int SplitClip::prepare_actions()
 	if (rightClip->get_fade_in()) {
 		FadeRange* cmd = (FadeRange*)rightClip->reset_fade_in();
 		cmd->set_historable(false);
-		Command::process_command(cmd);
+		TCommand::process_command(cmd);
 	}
 	
 	return 1;
@@ -87,10 +87,10 @@ int SplitClip::do_action()
 {
 	PENTER;
 
-	Command::process_command(m_track->add_clip(leftClip, false));
-	Command::process_command(m_track->add_clip(rightClip, false));
+	TCommand::process_command(m_track->add_clip(leftClip, false));
+	TCommand::process_command(m_track->add_clip(rightClip, false));
 	
-	Command::process_command(m_track->remove_clip(m_clip, false));
+	TCommand::process_command(m_track->remove_clip(m_clip, false));
 	
 	return 1;
 }
@@ -99,10 +99,10 @@ int SplitClip::undo_action()
 {
 	PENTER;
 
-	Command::process_command(m_track->add_clip(m_clip, false));
+	TCommand::process_command(m_track->add_clip(m_clip, false));
 	
-	Command::process_command(m_track->remove_clip(leftClip, false));
-	Command::process_command(m_track->remove_clip(rightClip, false));
+	TCommand::process_command(m_track->remove_clip(leftClip, false));
+	TCommand::process_command(m_track->remove_clip(rightClip, false));
 	
 	return 1;
 }

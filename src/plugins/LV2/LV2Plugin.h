@@ -79,7 +79,7 @@ private:
 	int create_instance();
 
 public slots:
-	Command* toggle_bypass();
+	TCommand* toggle_bypass();
 };
 
 

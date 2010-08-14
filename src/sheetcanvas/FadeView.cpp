@@ -58,7 +58,7 @@ FadeView::FadeView(SheetView* sv, AudioClipView* parent, FadeCurve * fadeCurve )
 				node->get_value());
 		AddRemove* cmd = (AddRemove*) m_guicurve->add_node(guinode, false);
 		cmd->set_instantanious(true);
-		Command::process_command(cmd);
+		TCommand::process_command(cmd);
 	}
 	
 	load_theme_data();
@@ -262,17 +262,17 @@ void FadeView::state_changed( )
 }
 
 
-Command* FadeView::bend()
+TCommand* FadeView::bend()
 {
 	return new FadeBend(this);
 }
 
-Command* FadeView::strength()
+TCommand* FadeView::strength()
 {
 	return new FadeStrength(this);
 }
 
-Command* FadeView::select_fade_shape()
+TCommand* FadeView::select_fade_shape()
 {
 	if (m_fadeCurve->get_fade_type() == FadeCurve::FadeIn) {
 		TMainWindow::instance()->select_fade_in_shape();

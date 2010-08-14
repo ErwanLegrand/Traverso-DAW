@@ -161,7 +161,7 @@ int Track::set_state( const QDomNode & node )
 }
 
 
-Command* Track::solo(  )
+TCommand* Track::solo(  )
 {
         Sheet* sheet = qobject_cast<Sheet*>(m_session);
 
@@ -171,7 +171,7 @@ Command* Track::solo(  )
         }
 
         sheet->solo_track(this);
-        return (Command*) 0;
+        return (TCommand*) 0;
 }
 
 

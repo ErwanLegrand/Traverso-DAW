@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02100-1301  USA.
 #include <QDialogButtonBox>
 
 
-#include <Config.h>
+#include "TConfig.h"
 
 #include "SettingsDialog.h"
 #include "Pages.h"

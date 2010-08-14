@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStringList>
 #include <QThread>
 #include <AddRemove.h>
-#include <Command.h>
+#include "TCommand.h"
 #include <CommandGroup.h>
 #include "Mixer.h"
 #include "Information.h"
@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 using namespace std;
 
 
-class MoveNode : public Command
+class MoveNode : public TCommand
 {
 
 public:
@@ -70,7 +70,7 @@ private :
 
 	
 MoveNode::MoveNode(Curve* curve, CurveNode* node, double when, double val, const QString& des)
-	: Command(curve, des)
+	: TCommand(curve, des)
 {
 	m_node = node;
 	m_origWhen = m_node->get_when();
@@ -692,7 +692,7 @@ void Curve::set_changed( )
  	it can be leaved alone, if it was a direct call, use Command::process_command()
  	to do the actuall work!!
  */
-Command* Curve::add_node(CurveNode* node, bool historable)
+TCommand* Curve::add_node(CurveNode* node, bool historable)
 {
 	PENTER2;
 	
@@ -730,7 +730,7 @@ Command* Curve::add_node(CurveNode* node, bool historable)
  	it can be leaved alone, if it was a direct call, use Command::process_command()
  	to do the actuall work!!
  */
-Command* Curve::remove_node(CurveNode* node, bool historable)
+TCommand* Curve::remove_node(CurveNode* node, bool historable)
 {
 	PENTER2;
 	

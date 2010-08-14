@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "WelcomeWidget.h"
 
-#include "Config.h"
+#include "TConfig.h"
 #include "ProjectManager.h"
 #include "Project.h"
 #include "TMainWindow.h"

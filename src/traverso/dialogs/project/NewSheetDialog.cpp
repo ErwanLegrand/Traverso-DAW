@@ -89,7 +89,7 @@ void NewSheetDialog::accept()
 	}
 	
 	group->setText(tr("Added %n Sheet(s)", "", count));
-	Command::process_command(group);
+	TCommand::process_command(group);
 	
 	if (firstNewSheet) {
 		m_project->set_current_session(firstNewSheet->get_id());

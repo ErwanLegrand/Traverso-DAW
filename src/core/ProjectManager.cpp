@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ResourcesManager.h"
 #include "Information.h"
 #include "InputEngine.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "FileHelpers.h"
 #include <AudioDevice.h>
 #include <Utils.h>
@@ -292,7 +292,7 @@ bool ProjectManager::project_exists(const QString& title)
 	return false;
 }
 
-Command* ProjectManager::save_project()
+TCommand* ProjectManager::save_project()
 {
         if (m_currentProject) {
                 m_currentProject->save();
@@ -300,7 +300,7 @@ Command* ProjectManager::save_project()
 		info().information( tr("No Project to save, open or create a Project first!"));
 	}
 
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 Project * ProjectManager::get_project( )
@@ -324,7 +324,7 @@ QUndoGroup* ProjectManager::get_undogroup() const
 }
 
 
-Command* ProjectManager::exit()
+TCommand* ProjectManager::exit()
 {
 	PENTER;
 	
@@ -347,7 +347,7 @@ Command* ProjectManager::exit()
 	}
 
 
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 void ProjectManager::scheduled_for_deletion( Sheet * sheet )
@@ -368,13 +368,13 @@ void ProjectManager::delete_sheet( Sheet * sheet )
 		
 }
 
-Command* ProjectManager::undo()
+TCommand* ProjectManager::undo()
 {
         m_undogroup.undo();
 	return 0;
 }
 
-Command* ProjectManager::redo()
+TCommand* ProjectManager::redo()
 {
         m_undogroup.redo();
 	return 0;
@@ -634,7 +634,7 @@ int ProjectManager::create_projectfilebackup_dir(const QString& rootDir)
 	return 1;
 }
 
-Command* ProjectManager::close_current_project()
+TCommand* ProjectManager::close_current_project()
 {
         set_current_project(0);
         return 0;

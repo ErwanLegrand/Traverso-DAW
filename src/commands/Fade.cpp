@@ -196,7 +196,7 @@ static float round_float( float f)
 /******************************/
 
 FadeBend::FadeBend(FadeView * fadeview)
-	: Command(fadeview->get_fade())
+	: TCommand(fadeview->get_fade())
 	, m_fade(fadeview->get_fade())
 	, m_fv(fadeview) 
 {
@@ -204,7 +204,7 @@ FadeBend::FadeBend(FadeView * fadeview)
 }
 
 FadeBend::FadeBend(FadeCurve *fade, double val)
-	: Command(fade)
+	: TCommand(fade)
 	, m_fade(fade)
 	, m_fv(0)
 {
@@ -288,7 +288,7 @@ int FadeBend::jog()
 /******************************/
 
 FadeStrength::FadeStrength(FadeView* fadeview)
-	: Command(fadeview->get_fade())
+	: TCommand(fadeview->get_fade())
 	, m_fade(fadeview->get_fade())
 	, m_fv(fadeview)
 {
@@ -296,7 +296,7 @@ FadeStrength::FadeStrength(FadeView* fadeview)
 }
 
 FadeStrength::FadeStrength(FadeCurve *fade, double val)
-	: Command(fade)
+	: TCommand(fade)
 	, m_fade(fade)
 	, m_fv(0)
 {
@@ -383,7 +383,7 @@ int FadeStrength::jog()
 /******************************/
 
 FadeMode::FadeMode(FadeCurve* fade, int oldMode, int newMode)
-	: Command(fade)
+	: TCommand(fade)
 	, m_fade(fade)
 {
 	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: shape") : tr("Fade Out: shape"));

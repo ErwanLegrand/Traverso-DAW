@@ -24,7 +24,7 @@
 #include "ClipsViewPort.h"
 #include "AudioDevice.h"
 #include <Sheet.h>
-#include <Config.h>
+#include "TConfig.h"
 #include <Themer.h>
 
 #include <QPen>

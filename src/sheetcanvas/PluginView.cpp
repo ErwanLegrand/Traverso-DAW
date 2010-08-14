@@ -103,17 +103,17 @@ void PluginView::paint(QPainter* painter, const QStyleOptionGraphicsItem *option
 }
 
 
-Command * PluginView::edit_properties( )
+TCommand * PluginView::edit_properties( )
 {
 	if (! m_propertiesDialog) {
 		m_propertiesDialog = new PluginPropertiesDialog(TMainWindow::instance(), m_plugin);
 		m_propertiesDialog->setWindowTitle(m_name);
 	} 
 	m_propertiesDialog->show();
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
-Command* PluginView::remove_plugin()
+TCommand* PluginView::remove_plugin()
 {
 	return m_pluginchain->remove_plugin(m_plugin);
 }

@@ -46,8 +46,8 @@ public :
         ~AudioTrack();
 
         AudioClip* init_recording();
-        Command* add_clip(AudioClip* clip, bool historable=true, bool ismove=false);
-        Command* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
+        TCommand* add_clip(AudioClip* clip, bool historable=true, bool ismove=false);
+        TCommand* remove_clip(AudioClip* clip, bool historable=true, bool ismove=false);
         AudioClip* get_clip_after(const TimeRef& pos);
         AudioClip* get_clip_before(const TimeRef& pos);
         Sheet* get_sheet() const {return m_sheet;}
@@ -85,8 +85,8 @@ public slots:
         void set_gain(float gain);
         void clip_position_changed(AudioClip* clip);
 
-        Command* toggle_arm();
-        Command* silence_others();
+        TCommand* toggle_arm();
+        TCommand* silence_others();
 
 private slots:
         void private_add_clip(AudioClip* clip);

@@ -7,7 +7,7 @@ AudioBus.h
 AudioChannel.h
 AudioDevice.h
 AudioDeviceThread.h
-Client.h
+TAudioDeviceClient.h
 )
 
 SET(TRAVERSO_ENGINE_SOURCES
@@ -15,8 +15,8 @@ AudioBus.cpp
 AudioChannel.cpp
 AudioDevice.cpp
 AudioDeviceThread.cpp
-Client.cpp
-Driver.cpp
+TAudioDeviceClient.cpp
+TAudioDriver.cpp
 memops.cpp
 )
 

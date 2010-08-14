@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Sheet.h"
 #include "AudioDevice.h"
 #include <QFile>
-#include "Config.h"
+#include "TConfig.h"
 #include <limits.h>
 
 // Always put me below _all_ includes, this is needed

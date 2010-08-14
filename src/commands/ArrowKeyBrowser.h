@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef ARROWKEYBROWSER_H
 #define ARROWKEYBROWSER_H
 
-#include "Command.h"
+#include "TCommand.h"
 #include <QTimer>
 
 class SheetView;
 
-class ArrowKeyBrowser : public Command
+class ArrowKeyBrowser : public TCommand
 {
         Q_OBJECT
 public:

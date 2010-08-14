@@ -72,7 +72,7 @@ int TimeLine::set_state(const QDomNode & node)
 	return 1;
 }
 
-Command * TimeLine::add_marker(Marker* marker, bool historable)
+TCommand * TimeLine::add_marker(Marker* marker, bool historable)
 {
 	connect(marker, SIGNAL(positionChanged()), this, SLOT(marker_position_changed()));
 	
@@ -91,7 +91,7 @@ Command * TimeLine::add_marker(Marker* marker, bool historable)
 	return cmd;
 }
 
-Command* TimeLine::remove_marker(Marker* marker, bool historable)
+TCommand* TimeLine::remove_marker(Marker* marker, bool historable)
 {
 	AddRemove* cmd;
 	cmd = new AddRemove(this, marker, historable, m_sheet,

@@ -22,13 +22,13 @@
 #ifndef REMOVE_CLIP_H
 #define REMOVE_CLIP_HS
 
-#include "Command.h"
+#include "TCommand.h"
 #include "AudioClipGroup.h"
 
 class AudioClip;
 class AudioTrack;
 
-class AddRemoveClip : public Command
+class AddRemoveClip : public TCommand
 {
         Q_OBJECT
 

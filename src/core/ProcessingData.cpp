@@ -75,20 +75,20 @@ void ProcessingData::set_muted( bool muted )
         emit audibleStateChanged();
 }
 
-Command* ProcessingData::mute()
+TCommand* ProcessingData::mute()
 {
         PENTER;
         set_muted(!m_isMuted);
 
-        return (Command*) 0;
+        return (TCommand*) 0;
 }
 
-Command* ProcessingData::add_plugin( Plugin * plugin )
+TCommand* ProcessingData::add_plugin( Plugin * plugin )
 {
         return m_pluginChain->add_plugin(plugin);
 }
 
-Command* ProcessingData::remove_plugin( Plugin * plugin )
+TCommand* ProcessingData::remove_plugin( Plugin * plugin )
 {
         return m_pluginChain->remove_plugin(plugin);
 }

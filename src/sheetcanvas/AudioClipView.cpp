@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Peak.h"
 #include "Information.h"
 #include "Themer.h"
-#include <Config.h>
+#include "TConfig.h"
 #include <FadeCurve.h>
 #include <Curve.h>
 #include "TMainWindow.h"
@@ -747,7 +747,7 @@ void AudioClipView::update_start_pos()
         setPos(qRound(m_clip->get_track_start_location() / m_sv->timeref_scalefactor), m_tv->get_childview_y_offset());
 }
 
-Command * AudioClipView::fade_range()
+TCommand * AudioClipView::fade_range()
 {
         Q_ASSERT(m_sheet);
         int x = (int) (cpointer().on_first_input_event_scene_x() - scenePos().x());
@@ -761,7 +761,7 @@ Command * AudioClipView::fade_range()
         return 0;
 }
 
-Command * AudioClipView::clip_fade_in( )
+TCommand * AudioClipView::clip_fade_in( )
 {
         if (! m_clip->get_fade_in()) {
                 // This implicitely creates the fadecurve
@@ -770,7 +770,7 @@ Command * AudioClipView::clip_fade_in( )
         return new FadeRange(m_clip, m_clip->get_fade_in(), m_sv->timeref_scalefactor);
 }
 
-Command * AudioClipView::clip_fade_out( )
+TCommand * AudioClipView::clip_fade_out( )
 {
         if (! m_clip->get_fade_out()) {
                 m_clip->set_fade_out(1);
@@ -778,7 +778,7 @@ Command * AudioClipView::clip_fade_out( )
         return new FadeRange(m_clip, m_clip->get_fade_out(), m_sv->timeref_scalefactor);
 }
 
-Command * AudioClipView::reset_fade()
+TCommand * AudioClipView::reset_fade()
 {
         Q_ASSERT(m_sheet);
         int x = (int) (cpointer().on_first_input_event_scene_x() - scenePos().x());
@@ -843,14 +843,14 @@ void AudioClipView::active_context_changed()
 }
 
 
-Command * AudioClipView::select_fade_in_shape( )
+TCommand * AudioClipView::select_fade_in_shape( )
 {
         TMainWindow::instance()->select_fade_in_shape();
 
         return 0;
 }
 
-Command * AudioClipView::select_fade_out_shape( )
+TCommand * AudioClipView::select_fade_out_shape( )
 {
         TMainWindow::instance()->select_fade_out_shape();
 
@@ -888,7 +888,7 @@ void AudioClipView::update_recording()
         m_oldRecordingPos = newPos;
 }
 
-Command * AudioClipView::set_audio_file()
+TCommand * AudioClipView::set_audio_file()
 {
         if (m_clip->is_readsource_invalid()) {
                 ReadSource* rs = m_clip->get_readsource();
@@ -926,7 +926,7 @@ Command * AudioClipView::set_audio_file()
         return ie().did_not_implement();
 }
 
-Command * AudioClipView::edit_properties()
+TCommand * AudioClipView::edit_properties()
 {
         AudioClipEditDialog editdialog(m_clip, TMainWindow::instance());
 

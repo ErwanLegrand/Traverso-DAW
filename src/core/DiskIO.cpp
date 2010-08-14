@@ -74,7 +74,7 @@ const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 #include "WriteSource.h"
 #include "AudioDevice.h"
 #include "RingBuffer.h"
-#include "Config.h"
+#include "TConfig.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

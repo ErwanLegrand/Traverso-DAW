@@ -21,14 +21,14 @@
 #ifndef ARM_TRACKS_H
 #define ARM_TRACKS_H
 
-#include "Command.h"
+#include "TCommand.h"
 
 #include <QList>
 
 class SheetView;
 class AudioTrack;
 
-class ArmTracks : public Command
+class ArmTracks : public TCommand
 {
         Q_OBJECT
 

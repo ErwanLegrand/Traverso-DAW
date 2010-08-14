@@ -195,7 +195,7 @@ bool AudioClipManager::is_clip_in_selection(AudioClip* clip)
 /****************************************************************/
 
 
-Command* AudioClipManager::select_all_clips()
+TCommand* AudioClipManager::select_all_clips()
 {
 	PENTER;
 	
@@ -206,7 +206,7 @@ Command* AudioClipManager::select_all_clips()
 	return new ClipSelection(m_clips, this, "add_to_selection", tr("Selection: Add Clip"));
 }
 
-Command* AudioClipManager::invert_clip_selection()
+TCommand* AudioClipManager::invert_clip_selection()
 {
 	PENTER;
 	

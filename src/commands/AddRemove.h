@@ -23,13 +23,13 @@
 #ifndef ADD_ITEM_COMMAND_H
 #define ADD_ITEM_COMMAND_H
 
-#include "Command.h"
+#include "TCommand.h"
 #include <Tsar.h>
 
 class ContextItem;
 class TSession;
 
-class AddRemove : public Command
+class AddRemove : public TCommand
 {
 public :
         AddRemove(ContextItem* parent, ContextItem* item, const QString& des);

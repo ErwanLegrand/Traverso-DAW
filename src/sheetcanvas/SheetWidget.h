@@ -38,7 +38,7 @@ class SheetPanelViewPort;
 
 class Project;
 class TSession;
-class Command;
+class TCommand;
 class SheetView;
 
 class SheetPanelView : public ViewItem

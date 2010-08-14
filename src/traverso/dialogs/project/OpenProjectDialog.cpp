@@ -31,7 +31,7 @@
 #include <QHeaderView>
 
 
-#include <Config.h>
+#include "TConfig.h"
 #include <Information.h>
 #include <ProjectManager.h>
 #include <Project.h>

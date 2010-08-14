@@ -23,7 +23,7 @@
 #include "ui_ExportFormatOptionsWidget.h"
 
 #include "AudioDevice.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "Export.h"
 
 RELAYTOOL_WAVPACK;

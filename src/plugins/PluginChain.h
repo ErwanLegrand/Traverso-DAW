@@ -44,8 +44,8 @@ public:
 	QDomNode get_state(QDomDocument doc);
 	int set_state(const QDomNode & node );
 	
-	Command* add_plugin(Plugin* plugin, bool historable=true);
-	Command* remove_plugin(Plugin* plugin, bool historable=true);
+	TCommand* add_plugin(Plugin* plugin, bool historable=true);
+	TCommand* remove_plugin(Plugin* plugin, bool historable=true);
 	void process_pre_fader(AudioBus* bus, unsigned long nframes);
 	int process_post_fader(AudioBus* bus, unsigned long nframes);
 // 	void process_fader(audio_sample_t* buffer, nframes_t pos, nframes_t nframes) {m_fader->process_gain(buffer, pos, nframes);}

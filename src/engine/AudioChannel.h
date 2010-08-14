@@ -108,7 +108,7 @@ private:
 	friend class AlsaDriver;
 	friend class PADriver;
 	friend class PulseAudioDriver;
-	friend class Driver;
+        friend class TAudioDriver;
 	friend class CoreAudioDriver;
 
         void read_from_hardware_port(audio_sample_t* buf, nframes_t nframes);

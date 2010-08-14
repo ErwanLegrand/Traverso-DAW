@@ -86,7 +86,7 @@ signals:
 	void bypassChanged();
 	
 public slots:
-	Command* toggle_bypass();
+	TCommand* toggle_bypass();
 };
 
 

@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "ContextPointer.h"
 #include "Information.h"
-#include "Command.h"
+#include "TCommand.h"
 #include <CommandPlugin.h>
 #include "Utils.h"
 #include "TMenuTranslator.h"
@@ -294,7 +294,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 
         PMESG("Trying to find IEAction for key sequence %s", action->keySequence.data());
 
-        Command* k = 0;
+        TCommand* k = 0;
 	QObject* item = 0;
 	int useX=0, useY=0;
 
@@ -484,7 +484,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				}
 				
 				if (validobject) {
-					if (QMetaObject::invokeMethod(obj, QS_C(slot),  Qt::DirectConnection, Q_RETURN_ARG(Command*, k))) {
+					if (QMetaObject::invokeMethod(obj, QS_C(slot),  Qt::DirectConnection, Q_RETURN_ARG(TCommand*, k))) {
 						PMESG("HIT, invoking (delegated) %s::%s", QS_C(classname), QS_C(slot));
 					} else {
 						PMESG("Delegated object slot call didn't work out, sorry!");
@@ -494,7 +494,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 					PMESG("Delegated object %s was not found in the context items list!", QS_C(classname));
 				}
 			} else {
-				if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_RETURN_ARG(Command*, k))) {
+				if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_RETURN_ARG(TCommand*, k))) {
 					PMESG("HIT, invoking %s::%s", item->metaObject()->className(), QS_C(slotsignature));
 				} else {
 					PMESG("nope %s wasn't the right one, next ...", item->metaObject()->className());
@@ -565,19 +565,19 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 	return 1;
 }
 
-Command* InputEngine::succes()
+TCommand* InputEngine::succes()
 {
 	m_broadcastResult = SUCCES;
 	return 0;
 }
 
-Command* InputEngine::failure()
+TCommand* InputEngine::failure()
 {
 	m_broadcastResult = FAILURE;
 	return 0;
 }
 
-Command* InputEngine::did_not_implement()
+TCommand* InputEngine::did_not_implement()
 {
 	m_broadcastResult = DIDNOTIMPLEMENT;
 	return 0;
@@ -1898,7 +1898,7 @@ bool InputEngine::is_holding( )
         return m_isHolding;
 }
 
-Command * InputEngine::get_holding_command() const
+TCommand * InputEngine::get_holding_command() const
 {
         return m_holdingCommand;
 }

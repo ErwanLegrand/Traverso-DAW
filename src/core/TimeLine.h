@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class TSession;
 class Marker;
 class Snappable;
-class Command;
+class TCommand;
 struct ExportSpecification;
 
 class TimeLine : public ContextItem
@@ -53,8 +53,8 @@ public:
 	bool get_start_location(TimeRef& location);
 	bool has_end_marker();
 
-	Command* add_marker(Marker* marker, bool historable=true);
-	Command* remove_marker(Marker* marker, bool historable=true);
+	TCommand* add_marker(Marker* marker, bool historable=true);
+	TCommand* remove_marker(Marker* marker, bool historable=true);
 
         QString format_cdtrack_name(Marker *, int);
         QList<Marker *> get_cdtrack_list(ExportSpecification*);

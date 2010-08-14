@@ -23,7 +23,7 @@ $Id: Fade.h,v 1.13 2008/01/21 16:22:11 r_sijrier Exp $
 #ifndef FADE_H
 #define FADE_H
 
-#include "Command.h"
+#include "TCommand.h"
 #include "MoveCommand.h"
 
 class Curve;
@@ -79,7 +79,7 @@ public slots:
 };
 
 
-class FadeStrength : public Command
+class FadeStrength : public TCommand
 {
         Q_OBJECT
 
@@ -110,7 +110,7 @@ private :
 };
 
 
-class FadeBend : public Command
+class FadeBend : public TCommand
 {
         Q_OBJECT
 
@@ -141,7 +141,7 @@ private :
 };
 
 
-class FadeMode : public Command
+class FadeMode : public TCommand
 {
         Q_OBJECT
 

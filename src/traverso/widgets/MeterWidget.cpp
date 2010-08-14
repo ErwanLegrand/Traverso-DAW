@@ -22,7 +22,7 @@
 
 #include "MeterWidget.h"
 
-#include "Command.h"
+#include "TCommand.h"
 #include "ContextPointer.h"
 #include "PluginChain.h"
 #include "ProjectManager.h"

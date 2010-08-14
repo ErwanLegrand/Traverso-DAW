@@ -25,7 +25,7 @@
 #include <QGradient>
 
 #include "AudioChannel.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "Themer.h"
 #include "Mixer.h"
 #include <AudioDevice.h>

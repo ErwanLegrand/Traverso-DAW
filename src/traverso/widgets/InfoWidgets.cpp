@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "InfoWidgets.h"
 
 #include "AudioDevice.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "DiskIO.h"
 #include "TMainWindow.h"
 #include "InputEngine.h"

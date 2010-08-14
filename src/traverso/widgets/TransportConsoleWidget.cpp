@@ -27,7 +27,7 @@
 #include "AudioTrack.h"
 #include "ProjectManager.h"
 #include "Project.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "Information.h"
 
 #include "TimeLineViewPort.h"

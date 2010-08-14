@@ -22,12 +22,12 @@
 #ifndef TRACKPAN_H
 #define TRACKPAN_H
 
-#include "Command.h"
+#include "TCommand.h"
 
 class Sheet;
 class Track;
 
-class TrackPan : public Command
+class TrackPan : public TCommand
 {
 	Q_OBJECT
 

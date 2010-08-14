@@ -26,7 +26,7 @@
 #include "ClipsViewPort.h"
 
 Scroll::Scroll(SheetView* sv, QVariantList args)
-	: Command("Scroll")
+	: TCommand("Scroll")
 {
 	m_sv = sv;
 	m_dx = m_dy = 0;

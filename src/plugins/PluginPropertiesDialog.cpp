@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QPushButton>
 
 #include <PluginSlider.h>
-#include "Command.h"
+#include "TCommand.h"
 
 PluginPropertiesDialog::PluginPropertiesDialog(QWidget* parent, Plugin* plugin)
 	: QDialog(parent)

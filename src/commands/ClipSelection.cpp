@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Debugger.h"
 
 ClipSelection::ClipSelection(AudioClip* clip, QVariantList args)
-	: Command("")
+	: TCommand("")
 {
 	QString slot = args.at(0).toString();
 	
@@ -48,7 +48,7 @@ ClipSelection::ClipSelection(AudioClip* clip, QVariantList args)
 }
 
 ClipSelection::ClipSelection( QList< AudioClip * > clips, AudioClipManager * manager, const char * slot, const QString& des )
-	: Command("")
+	: TCommand("")
 {
 	m_clips = clips;
 	m_slot = slot;

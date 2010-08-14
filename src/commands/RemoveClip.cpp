@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  
 
 AddRemoveClip::AddRemoveClip(AudioClip* clip, int type)
-	: Command(clip, tr("Remove Clip"))
+	: TCommand(clip, tr("Remove Clip"))
 {
 	if (clip->is_selected()) {
 		QList<AudioClip*> selectedClips;

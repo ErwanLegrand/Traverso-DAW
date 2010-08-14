@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClipView.h"
 #include "ContextPointer.h"
-#include "Command.h"
+#include "TCommand.h"
 #include "Fade.h"
 #include "SheetView.h"
 #include "LineView.h"
@@ -51,7 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 Crop::Crop(AudioClipView* view)
-        : Command(view->get_context(), tr("AudioClip: Magnetic Cut"))
+        : TCommand(view->get_context(), tr("AudioClip: Magnetic Cut"))
         , m_cv(view)
 {
         m_clip = view->get_clip();
@@ -82,7 +82,7 @@ int Crop::prepare_actions()
         if (leftClip->get_fade_out()) {
                 FadeRange* cmd = (FadeRange*)leftClip->reset_fade_out();
                 cmd->set_historable(false);
-                Command::process_command(cmd);
+                TCommand::process_command(cmd);
         }
 
         rightClip->set_sheet(m_clip->get_sheet());
@@ -91,7 +91,7 @@ int Crop::prepare_actions()
         if (rightClip->get_fade_in()) {
                 FadeRange* cmd = (FadeRange*)rightClip->reset_fade_in();
                 cmd->set_historable(false);
-                Command::process_command(cmd);
+                TCommand::process_command(cmd);
         }
 
         return 1;
@@ -112,10 +112,10 @@ int Crop::do_action()
 {
         PENTER;
 
-        Command::process_command(m_track->add_clip(leftClip, false));
-        Command::process_command(m_track->add_clip(rightClip, false));
+        TCommand::process_command(m_track->add_clip(leftClip, false));
+        TCommand::process_command(m_track->add_clip(rightClip, false));
 
-        Command::process_command(m_track->remove_clip(m_clip, false));
+        TCommand::process_command(m_track->remove_clip(m_clip, false));
 
         return 1;
 }
@@ -124,10 +124,10 @@ int Crop::undo_action()
 {
         PENTER;
 
-        Command::process_command(m_track->add_clip(m_clip, false));
+        TCommand::process_command(m_track->add_clip(m_clip, false));
 
-        Command::process_command(m_track->remove_clip(leftClip, false));
-        Command::process_command(m_track->remove_clip(rightClip, false));
+        TCommand::process_command(m_track->remove_clip(leftClip, false));
+        TCommand::process_command(m_track->remove_clip(rightClip, false));
 
         return 1;
 }

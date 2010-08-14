@@ -170,7 +170,7 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 		group->add_command(import);
 	}
 
-	Command::process_command(group);
+	TCommand::process_command(group);
 }
 
 void ClipsViewPort::dragMoveEvent( QDragMoveEvent * event )

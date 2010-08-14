@@ -70,8 +70,8 @@ protected:
         friend class TBusTrackPanelView;
 
 public slots:
-        Command* edit_properties();
-        Command* add_new_plugin();
+        TCommand* edit_properties();
+        TCommand* add_new_plugin();
 
 private slots:
         void active_context_changed() {update();}

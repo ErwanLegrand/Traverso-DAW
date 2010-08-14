@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioBus.h"
 #include "AudioChannel.h"
 #include "AudioTrack.h"
-#include "Client.h"
+#include "TAudioDeviceClient.h"
 #include "Project.h"
 #include "Sheet.h"
 #include "ProjectManager.h"
@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ResourcesManager.h"
 #include "Export.h"
 #include "AudioDevice.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "ContextPointer.h"
 #include "Utils.h"
 #include <AddRemove.h>
@@ -91,7 +91,7 @@ Project::Project(const QString& title)
 	m_resourcesManager = new ResourcesManager(this);
 	m_hs = new QUndoStack(pm().get_undogroup());
 
-        m_audiodeviceClient = new AudioDeviceClient("sheet_" + QByteArray::number(get_id()));
+        m_audiodeviceClient = new TAudioDeviceClient("sheet_" + QByteArray::number(get_id()));
         m_audiodeviceClient->set_process_callback( MakeDelegate(this, &Project::process) );
         m_audiodeviceClient->set_transport_control_callback( MakeDelegate(this, &Project::transport_control) );
 
@@ -1069,7 +1069,7 @@ bool Project::has_changed()
 }
 
 
-Command* Project::add_sheet(Sheet* sheet, bool historable)
+TCommand* Project::add_sheet(Sheet* sheet, bool historable)
 {
 	PENTER;
 	
@@ -1083,7 +1083,7 @@ Command* Project::add_sheet(Sheet* sheet, bool historable)
 }
 
 
-Command* Project::remove_sheet(Sheet* sheet, bool historable)
+TCommand* Project::remove_sheet(Sheet* sheet, bool historable)
 {
         AddRemove* cmd;
         cmd = new AddRemove(this, sheet, historable, 0,
@@ -1402,14 +1402,14 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 	return 1;
 }
 
-Command* Project::select()
+TCommand* Project::select()
 {
 	int index = ie().collected_number();
         QList<TSession*> sessions = get_sessions();
         if (index < sessions.size() && index >= 0) {
                 set_current_session(sessions.at(index)->get_id());
 	}
-	return (Command*) 0;
+	return (TCommand*) 0;
 }
 
 int Project::get_rate( ) const
@@ -1790,7 +1790,7 @@ TimeRef Project::get_transport_location() const
         return m_activeSheet->get_transport_location();
 }
 
-Command* Project::start_transport()
+TCommand* Project::start_transport()
 {
         if (!m_activeSheet) {
                 return 0;
@@ -1821,7 +1821,7 @@ QStringList Project::get_input_buses_for(TBusTrack *busTrack)
         return buses;
 }
 
-Command* Project::remove_child_session()
+TCommand* Project::remove_child_session()
 {
         PENTER;
 

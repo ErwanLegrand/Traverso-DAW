@@ -206,7 +206,7 @@ void MarkerView::active_context_changed()
         }
 }
 
-Command* MarkerView::drag_marker()
+TCommand* MarkerView::drag_marker()
 {
         return new MoveMarker(this, m_sv->timeref_scalefactor, tr("Drag Marker"));
 }

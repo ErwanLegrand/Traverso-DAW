@@ -27,7 +27,7 @@ $Id: FadeCurve.cpp,v 1.36 2008/11/07 10:43:08 r_sijrier Exp $
 #include "Sheet.h"
 #include "Fade.h"
 #include "AudioClip.h"
-#include "Command.h"
+#include "TCommand.h"
 #include "CommandGroup.h"
 #include <AddRemove.h>
 #include "AudioDevice.h"
@@ -93,7 +93,7 @@ void FadeCurve::init()
 		CurveNode* node = new CurveNode(this, p.x(), p.y());
 		AddRemove* cmd = (AddRemove*) add_node(node, false);
 		cmd->set_instantanious(true);
-		Command::process_command(cmd);
+		TCommand::process_command(cmd);
 		
 // 		printf("adding node with x=%f, y=%f\n", p.x(), p.y());
 		
@@ -277,7 +277,7 @@ void FadeCurve::set_shape(QString shapeName)
 	group->add_command(new FadeBend(this, fadeElement.attribute( "bendfactor", "0.0" ).toDouble()));
 	group->add_command(new FadeStrength(this, fadeElement.attribute( "strengthfactor", "0.5" ).toDouble()));
 	
-	Command::process_command(group);
+	TCommand::process_command(group);
 	
 	emit stateChanged();
 }
@@ -388,7 +388,7 @@ QList< QPointF > FadeCurve::get_control_points( )
 	return m_controlPoints;
 }
 
-Command* FadeCurve::set_mode( )
+TCommand* FadeCurve::set_mode( )
 {
 	if (m_mode < 2) {
 		return new FadeMode(this, m_mode, m_mode+1);
@@ -404,12 +404,12 @@ void FadeCurve::set_mode(int m)
 	emit modeChanged();
 }
 
-Command* FadeCurve::reset( )
+TCommand* FadeCurve::reset( )
 {
 	return (m_type == FadeIn) ? m_clip->reset_fade_in() : m_clip->reset_fade_out();
 }
 
-Command* FadeCurve::toggle_bypass( )
+TCommand* FadeCurve::toggle_bypass( )
 {
 	m_bypass = !m_bypass;
 	
@@ -417,7 +417,7 @@ Command* FadeCurve::toggle_bypass( )
 	return 0;
 }
 
-Command* FadeCurve::toggle_raster( )
+TCommand* FadeCurve::toggle_raster( )
 {
 	m_raster = ! m_raster;
 	

@@ -38,7 +38,7 @@
 #include "Debugger.h"
 
 JackDriver::JackDriver( AudioDevice * dev , int rate, nframes_t bufferSize)
-                : Driver(dev, rate, bufferSize)
+                : TAudioDriver(dev, rate, bufferSize)
 {
         read = MakeDelegate(this, &JackDriver::_read);
         write = MakeDelegate(this, &JackDriver::_write);

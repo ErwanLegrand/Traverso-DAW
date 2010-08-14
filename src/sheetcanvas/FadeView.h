@@ -54,9 +54,9 @@ private:
 public slots:
 	void state_changed();
 	
-	Command* bend();
-	Command* strength();
-	Command* select_fade_shape();
+	TCommand* bend();
+	TCommand* strength();
+	TCommand* select_fade_shape();
 // 	Command* edit_properties();
 
 signals :

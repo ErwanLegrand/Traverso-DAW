@@ -48,8 +48,8 @@ public:
         void load_theme_data();
 
 public slots:
-	Command* gain_increment();
-	Command* gain_decrement();
+	TCommand* gain_increment();
+	TCommand* gain_decrement();
 	
 private:
         Track* m_track;
@@ -70,8 +70,8 @@ public:
         void load_theme_data();
 
 public slots:
-	Command* pan_left();
-	Command* pan_right();
+	TCommand* pan_left();
+	TCommand* pan_right();
 
 private:
         Track* m_track;
@@ -98,7 +98,7 @@ private:
 public slots:
         void ison_changed(bool isOn);
 	
-	Command* toggle();
+	TCommand* toggle();
 };
 
 class TrackPanelBus : public ViewItem

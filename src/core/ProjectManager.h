@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 class Project;
 class Sheet;
-class Command;
+class TCommand;
 class ResourcesManager;
 class QFileSystemWatcher;
 
@@ -72,11 +72,11 @@ public:
 	void start(const QString& basepath, const QString& projectname);
 
 public slots:
-	Command* save_project();
-        Command* close_current_project();
-        Command* exit();
-	Command* undo();
-	Command* redo();
+	TCommand* save_project();
+        TCommand* close_current_project();
+        TCommand* exit();
+	TCommand* undo();
+	TCommand* redo();
 
 
 private:

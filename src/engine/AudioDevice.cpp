@@ -46,8 +46,8 @@ RELAYTOOL_JACK
 #endif
 
 
-#include "Driver.h"
-#include "Client.h"
+#include "TAudioDriver.h"
+#include "TAudioDeviceClient.h"
 #include "AudioChannel.h"
 #include "AudioBus.h"
 #include "Tsar.h"
@@ -281,7 +281,7 @@ int AudioDevice::run_one_cycle( nframes_t nframes, float  )
 		return -1;
 	}
 
-        apill_foreach(AudioDeviceClient* client, AudioDeviceClient, m_clients) {
+        apill_foreach(TAudioDeviceClient* client, TAudioDeviceClient, m_clients) {
 		client->process(nframes);
 	}
 	
@@ -469,7 +469,7 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 	
 	if (driverType == "Null Driver") {
 		printf("Creating Null Driver...\n");
-                m_driver = new Driver(this, m_rate, m_bufferSize);
+                m_driver = new TAudioDriver(this, m_rate, m_bufferSize);
 		m_driverType = driverType;
 		return 1;
 	}
@@ -739,21 +739,21 @@ void AudioDevice::post_process( )
 {
 	tsar().process_events();
 
-        apill_foreach(AudioDeviceClient* client, AudioDeviceClient, m_clients) {
+        apill_foreach(TAudioDeviceClient* client, TAudioDeviceClient, m_clients) {
                 if (client->wants_to_be_disconnected_from_audiodevice()) {
                         private_remove_client(client);
                 }
         }
 }
 
-void AudioDevice::private_add_client(AudioDeviceClient* client)
+void AudioDevice::private_add_client(TAudioDeviceClient* client)
 {
 	m_clients.prepend(client);
         m_masterOutBus = client->masterOutBus;
         client->set_connected_to_audiodevice(1);
 }
 
-void AudioDevice::private_remove_client(AudioDeviceClient* client)
+void AudioDevice::private_remove_client(TAudioDeviceClient* client)
 {
 	if (!m_clients.remove(client)) {
 		printf("AudioDevice:: Client was not in clients list, failed to remove it!\n");
@@ -768,9 +768,9 @@ void AudioDevice::private_remove_client(AudioDeviceClient* client)
 
  * WARNING: This function assumes the Clients callback function is set to an existing objects function!
  */
-void AudioDevice::add_client( AudioDeviceClient * client )
+void AudioDevice::add_client( TAudioDeviceClient * client )
 {
-        THREAD_SAVE_INVOKE(this, client, private_add_client(AudioDeviceClient*));
+        THREAD_SAVE_INVOKE(this, client, private_add_client(TAudioDeviceClient*));
 }
 
 /**
@@ -779,9 +779,9 @@ void AudioDevice::add_client( AudioDeviceClient * client )
  * The clientRemoved(Client* client); signal will be emited after succesfull removal
  * from within the GUI Thread!
  */
-void AudioDevice::remove_client( AudioDeviceClient * client )
+void AudioDevice::remove_client( TAudioDeviceClient * client )
 {
-        THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, client, private_remove_client(AudioDeviceClient*), clientRemoved(AudioDeviceClient*));
+        THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, client, private_remove_client(TAudioDeviceClient*), clientRemoved(TAudioDeviceClient*));
 }
 
 void AudioDevice::mili_sleep(int msec)
@@ -848,14 +848,14 @@ int AudioDevice::transport_control(transport_state_t state)
 
 	int result = 0;
 	
-        apill_foreach(AudioDeviceClient* client, AudioDeviceClient, m_clients) {
+        apill_foreach(TAudioDeviceClient* client, TAudioDeviceClient, m_clients) {
 		result = client->transport_control(state);
 	}
 	
 	return result;
 }
 
-void AudioDevice::transport_start(AudioDeviceClient * client)
+void AudioDevice::transport_start(TAudioDeviceClient * client)
 {
 #if defined (JACK_SUPPORT)
 	JackDriver* jackdriver = slaved_jack_driver();
@@ -875,7 +875,7 @@ void AudioDevice::transport_start(AudioDeviceClient * client)
 	client->transport_control(state);
 }
 
-void AudioDevice::transport_stop(AudioDeviceClient * client, TimeRef location)
+void AudioDevice::transport_stop(TAudioDeviceClient * client, TimeRef location)
 {
 #if defined (JACK_SUPPORT)
 	JackDriver* jackdriver = slaved_jack_driver();
@@ -896,7 +896,7 @@ void AudioDevice::transport_stop(AudioDeviceClient * client, TimeRef location)
 }
 
 // return 0 if valid request, non-zero otherwise.
-int AudioDevice::transport_seek_to(AudioDeviceClient* client, TimeRef location)
+int AudioDevice::transport_seek_to(TAudioDeviceClient* client, TimeRef location)
 {
 #if defined (JACK_SUPPORT)
 	JackDriver* jackdriver = slaved_jack_driver();

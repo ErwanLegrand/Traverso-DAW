@@ -40,7 +40,7 @@
 
 
 TrackPan::TrackPan(Track* track, QVariantList args)
-	: Command(track, "")
+	: TCommand(track, "")
 	, d(new Data)
 {
         m_track = track;

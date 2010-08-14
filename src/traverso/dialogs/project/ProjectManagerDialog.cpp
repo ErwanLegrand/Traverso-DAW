@@ -218,7 +218,7 @@ void ProjectManagerDialog::on_deleteSheetButton_clicked( )
 	
 	qint64 id = item->data(0, Qt::UserRole).toLongLong();
 	
-	Command::process_command(m_project->remove_sheet(m_project->get_sheet(id)));
+	TCommand::process_command(m_project->remove_sheet(m_project->get_sheet(id)));
 }
 
 void ProjectManagerDialog::on_createSheetButton_clicked( )

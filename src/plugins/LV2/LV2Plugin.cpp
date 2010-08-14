@@ -461,7 +461,7 @@ LV2Plugin * LV2Plugin::create_copy()
 	return plug;
 }
 
-Command * LV2Plugin::toggle_bypass()
+TCommand * LV2Plugin::toggle_bypass()
 {
 	Plugin::toggle_bypass();
 	if (m_slave) {

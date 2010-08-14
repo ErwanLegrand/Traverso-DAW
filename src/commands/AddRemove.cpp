@@ -119,7 +119,7 @@ $Id: AddRemove.cpp,v 1.6 2008/11/24 10:12:19 r_sijrier Exp $
 
 
 AddRemove::AddRemove(ContextItem* parent, ContextItem* item, const QString& des)
-	: Command(parent, des),
+	: TCommand(parent, des),
 	m_sheet(0),
 	m_doActionSlot(""),
 	m_undoActionSlot(""),
@@ -167,7 +167,7 @@ AddRemove::AddRemove(
 	const char * undoActionSlot,
 	const char * undoSignal,
 	const QString& des)
-  	: Command(parent, des),
+  	: TCommand(parent, des),
 	  m_parentItem(parent),
 	  m_arg(arg),
 	  m_sheet(sheet),
@@ -190,7 +190,7 @@ AddRemove::AddRemove(
         const char * undoActionSlot,
         const char * undoSignal,
         const QString& des)
-        : Command(parent, des),
+        : TCommand(parent, des),
           m_parentItem(parent),
           m_arg(item),
           m_sheet(sheet),

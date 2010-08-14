@@ -88,8 +88,8 @@ public:
         void set_name(const QString& name);
         void set_track_height(qint64 trackId, int height) {m_trackHeights.insert(trackId, height);}
 
-        Command* add_track(Track* api, bool historable=true);
-        Command* remove_track(Track* api, bool historable=true);
+        TCommand* add_track(Track* api, bool historable=true);
+        TCommand* remove_track(Track* api, bool historable=true);
 
         void add_child_session(TSession* child);
         void remove_child_session(TSession* child);
@@ -140,13 +140,13 @@ public slots:
         void set_temp_follow_state(bool state);
         virtual void set_transport_pos(TimeRef location);
 
-        Command* set_editing_mode();
-        Command* set_effects_mode();
-        Command* toggle_effects_mode();
-        Command* toggle_solo();
-        Command* toggle_mute();
-        Command* toggle_arm();
-        virtual Command* start_transport();
+        TCommand* set_editing_mode();
+        TCommand* set_effects_mode();
+        TCommand* toggle_effects_mode();
+        TCommand* toggle_solo();
+        TCommand* toggle_mute();
+        TCommand* toggle_arm();
+        virtual TCommand* start_transport();
 
 protected slots:
         void private_add_track(Track* track);

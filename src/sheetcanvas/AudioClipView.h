@@ -123,14 +123,14 @@ public slots:
 	void update_start_pos();
 	void position_changed();
 	
-	Command* fade_range();
-	Command* clip_fade_in();
-	Command* clip_fade_out();
-	Command* select_fade_in_shape();
-	Command* select_fade_out_shape();
-	Command* reset_fade();
-	Command* set_audio_file();
-	Command* edit_properties();
+	TCommand* fade_range();
+	TCommand* clip_fade_in();
+	TCommand* clip_fade_out();
+	TCommand* select_fade_in_shape();
+	TCommand* select_fade_out_shape();
+	TCommand* reset_fade();
+	TCommand* set_audio_file();
+	TCommand* edit_properties();
 	
 private slots:
 	void update_progress_info(int progress);

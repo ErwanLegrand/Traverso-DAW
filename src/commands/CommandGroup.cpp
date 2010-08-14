@@ -35,7 +35,7 @@ $Id: CommandGroup.cpp,v 1.6 2007/04/30 10:09:11 r_sijrier Exp $
 
 CommandGroup::~ CommandGroup()
 {
-	foreach(Command* cmd, m_commands) {
+	foreach(TCommand* cmd, m_commands) {
 		delete cmd;
 	}
 }
@@ -48,7 +48,7 @@ int CommandGroup::prepare_actions()
 	
 	int result = 1;
 	
-	foreach(Command* cmd, m_commands) {
+	foreach(TCommand* cmd, m_commands) {
 		if (cmd->prepare_actions() == -1) {
 			printf("one of the commands in the group failed prepare_actions\n");
 			result = -1;
@@ -60,7 +60,7 @@ int CommandGroup::prepare_actions()
 
 int CommandGroup::do_action()
 {
-	foreach(Command* cmd, m_commands) {
+	foreach(TCommand* cmd, m_commands) {
 		cmd->do_action();
 	}
 	
@@ -69,7 +69,7 @@ int CommandGroup::do_action()
 
 int CommandGroup::undo_action()
 {
-	foreach(Command* cmd, m_commands) {
+	foreach(TCommand* cmd, m_commands) {
 		cmd->undo_action();
 	}
 	

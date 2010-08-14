@@ -89,10 +89,10 @@ private:
 public slots:
 	void solve_node_positions();
 	
-	Command* toggle_bypass();
-	Command* set_mode();
-	Command* reset();
-	Command* toggle_raster();
+	TCommand* toggle_bypass();
+	TCommand* set_mode();
+	TCommand* reset();
+	TCommand* toggle_raster();
 	
 signals:
 	void modeChanged();

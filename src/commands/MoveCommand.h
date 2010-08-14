@@ -22,10 +22,10 @@
 #ifndef MOVE_COMMAND_H
 #define MOVE_COMMAND_H
 
-#include <Command.h>
+#include "TCommand.h"
 #include <defines.h>
 
-class MoveCommand : public Command
+class MoveCommand : public TCommand
 {
         Q_OBJECT
 

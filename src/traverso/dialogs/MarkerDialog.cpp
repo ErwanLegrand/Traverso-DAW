@@ -450,7 +450,7 @@ void MarkerDialog::remove_marker()
         TimeLine* tl = m_session->get_timeline();
 		
 	AddRemove *ar = (AddRemove*) tl->remove_marker(m_marker);
-	Command::process_command(ar);
+	TCommand::process_command(ar);
 	update_marker_treeview();
 }
 

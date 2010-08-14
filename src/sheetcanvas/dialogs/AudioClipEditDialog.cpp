@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ReadSource.h"
 #include "Utils.h"
 #include "Mixer.h"
-#include "Command.h"
+#include "TCommand.h"
 #include "AudioClipExternalProcessing.h"
 #include "InputEngine.h"
 #include "AudioDevice.h"
@@ -100,7 +100,7 @@ AudioClipEditDialog::AudioClipEditDialog(AudioClip* clip, QWidget* parent)
 
 void AudioClipEditDialog::external_processing()
 {
-	Command::process_command(new AudioClipExternalProcessing(m_clip));
+	TCommand::process_command(new AudioClipExternalProcessing(m_clip));
 }
 
 void AudioClipEditDialog::clip_state_changed()

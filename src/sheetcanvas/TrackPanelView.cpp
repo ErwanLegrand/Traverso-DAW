@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioBus.h"
 #include "AudioDevice.h"
-#include "Config.h"
+#include "TConfig.h"
 #include "TrackPanelView.h"
 #include "AudioTrackView.h"
 #include "TBusTrackView.h"
@@ -433,13 +433,13 @@ void TrackPanelGain::load_theme_data()
 
 }
 
-Command* TrackPanelGain::gain_increment()
+TCommand* TrackPanelGain::gain_increment()
 {
         m_track->set_gain(m_track->get_gain() + 0.05);
 	return 0;
 }
 
-Command* TrackPanelGain::gain_decrement()
+TCommand* TrackPanelGain::gain_decrement()
 {
         m_track->set_gain(m_track->get_gain() - 0.05);
 	return 0;
@@ -505,13 +505,13 @@ void TrackPanelPan::load_theme_data()
 }
 
 
-Command* TrackPanelPan::pan_left()
+TCommand* TrackPanelPan::pan_left()
 {
         m_track->set_pan(m_track->get_pan() - 0.05);
 	return 0;
 }
 
-Command* TrackPanelPan::pan_right()
+TCommand* TrackPanelPan::pan_right()
 {
         m_track->set_pan(m_track->get_pan() + 0.05);
 	return 0;
@@ -587,10 +587,10 @@ void TrackPanelLed::ison_changed(bool isOn)
 	update();
 }
 
-Command * TrackPanelLed::toggle()
+TCommand * TrackPanelLed::toggle()
 {
-	Command* com;
-        QMetaObject::invokeMethod(m_track, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(Command*, com));
+	TCommand* com;
+        QMetaObject::invokeMethod(m_track, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(TCommand*, com));
 	return 0;
 }
 

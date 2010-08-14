@@ -23,7 +23,7 @@ $Id: AudioDeviceThread.cpp,v 1.21 2007/10/20 17:38:19 r_sijrier Exp $
 #include "AudioDeviceThread.h"
 
 #include "AudioDevice.h"
-#include "Driver.h"
+#include "TAudioDriver.h"
 
 #if defined (Q_WS_X11)
 #include <dlfcn.h>

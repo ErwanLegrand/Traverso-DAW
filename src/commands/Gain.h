@@ -22,13 +22,13 @@
 #ifndef GAIN_H
 #define GAIN_H
 
-#include "Command.h"
+#include "TCommand.h"
 #include <QPoint>
 
 class ContextItem;
 
 
-class Gain : public Command
+class Gain : public TCommand
 {
 	Q_OBJECT
 	
