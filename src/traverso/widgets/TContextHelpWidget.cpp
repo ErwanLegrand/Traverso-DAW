@@ -69,72 +69,91 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
         }
 
         int j=0;
+        QString submenuhtml;
+        QList<QMenu* > menulist;
+        QList<MenuData > list;
 
         foreach(const QMetaObject* mo, metas) {
                 while (mo) {
-                        QList<MenuData > list;
 
                         ie().create_menudata_for_metaobject(mo, list);
-
-                        QList<QMenu* > menulist;
-                        QMenu* menu = TMainWindow::instance()->create_context_menu(0, &list);
-                        if (menu) {
-                                menulist.append(menu);
-                                foreach(QAction* action, menu->actions()) {
-                                        if (action->menu()) {
-                                                menulist.append(action->menu());
-                                        }
-                                }
-                                for (int i=0; i<menulist.size(); ++i) {
-                                        QMenu* somemenu = menulist.at(i);
-                                        foreach(QAction* action, somemenu->actions()) {
-                                                QStringList strings = action->data().toStringList();
-                                                if (strings.size() >= 3) {
-                                                        QString submenuname = "";
-                                                        if (i > 0) {
-                                                                submenuname = somemenu->menuAction()->text() + "&#160;&#160;&#160;&#160;";
-                                                        }
-
-                                                        QString keyfact = strings.at(2);
-
-                                                        Command* com = dynamic_cast<Command*>(obj);
-                                                        if (com) {
-                                                                keyfact.replace("<", "");
-                                                                keyfact.replace(">", "");
-                                                        }
-
-                                                        keyfact.replace(QString("MouseScrollVerticalUp"), QString("Scroll Wheel"));
-                                                        keyfact.replace(QString("MouseScrollVerticalDown"), QString("Scroll Wheel"));
-                                                        keyfact.replace(QString("MouseButtonRight"), QString("Right. MB"));
-                                                        keyfact.replace(QString("MouseButtonLeft"), QString("Left MB"));
-                                                        keyfact.replace(QString("UARROW"), QString("&uarr; Arrow"));
-                                                        keyfact.replace(QString("DARROW"), QString("&darr; Arrow"));
-                                                        keyfact.replace(QString("LARROW"), QString("&larr; Arrow"));
-                                                        keyfact.replace(QString("RARROW"), QString("&rarr; Arrow"));
-                                                        keyfact.replace(QString("DELETE"), QString("Del"));
-                                                        keyfact.replace(QString("<<"), QString("&laquo;"));
-                                                        keyfact.replace(QString(">>"), QString("&raquo;"));
-                                                        keyfact.replace(QString("<"), QString("&lsaquo;"));
-                                                        keyfact.replace(QString(">"), QString("&rsaquo;"));
-                                                        keyfact.replace(QString(" , "), QString("<br />"));
-
-
-                                                        QString alternatingColor;
-                                                        if ((j % 2) == 1) {
-                                                                alternatingColor = QString("bgcolor=\"%1\"").arg(palette().color(QPalette::AlternateBase).name());
-                                                        } else {
-                                                                alternatingColor = QString("bgcolor=\"%1\"").arg(palette().color(QPalette::Base).name());
-                                                        }
-                                                        j += 1;
-
-                                                        result += QString("<tr %1><td>").arg(alternatingColor) + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
-                                                }
-                                        }
-                                }
-                                delete menu;
-                        }
                         mo = mo->superClass();
                 }
+        }
+
+        QMenu* menu = TMainWindow::instance()->create_context_menu(0, &list);
+        if (menu) {
+                menulist.append(menu);
+                foreach(QAction* action, menu->actions()) {
+                        if (action->menu()) {
+                                menulist.append(action->menu());
+                        }
+                }
+        }
+
+
+        QStringList submenushtml;
+
+        for (int i=0; i<menulist.size(); ++i) {
+                QMenu* somemenu = menulist.at(i);
+                submenuhtml = "";
+                if (i>0) {
+                        submenuhtml = "<tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + somemenu->menuAction()->text() + "</td></tr>\n";
+                }
+                foreach(QAction* action, somemenu->actions()) {
+                        QStringList strings = action->data().toStringList();
+                        if (strings.size() >= 3) {
+                                QString keyfact = strings.at(2);
+
+                                Command* com = dynamic_cast<Command*>(obj);
+                                if (com) {
+                                        keyfact.replace("<", "");
+                                        keyfact.replace(">", "");
+                                }
+
+                                keyfact.replace(QString("MouseScrollVerticalUp"), QString("Scroll Wheel"));
+                                keyfact.replace(QString("MouseScrollVerticalDown"), QString("Scroll Wheel"));
+                                keyfact.replace(QString("MouseButtonRight"), QString("Right. MB"));
+                                keyfact.replace(QString("MouseButtonLeft"), QString("Left MB"));
+                                keyfact.replace(QString("MouseButtonMiddle"), QString("Center MB"));
+                                keyfact.replace(QString("UARROW"), QString("&uarr; Arrow"));
+                                keyfact.replace(QString("DARROW"), QString("&darr; Arrow"));
+                                keyfact.replace(QString("LARROW"), QString("&larr; Arrow"));
+                                keyfact.replace(QString("RARROW"), QString("&rarr; Arrow"));
+                                keyfact.replace(QString("DELETE"), QString("Del"));
+                                keyfact.replace(QString("<<"), QString("&laquo;"));
+                                keyfact.replace(QString(">>"), QString("&raquo;"));
+                                keyfact.replace(QString("<"), QString("&lsaquo;"));
+                                keyfact.replace(QString(">"), QString("&rsaquo;"));
+                                keyfact.replace(QString(" , "), QString("<br />"));
+
+
+                                QString alternatingColor;
+                                if ((j % 2) == 1) {
+                                        alternatingColor = QString("bgcolor=\"%1\"").arg(palette().color(QPalette::AlternateBase).name());
+                                } else {
+                                        alternatingColor = QString("bgcolor=\"%1\"").arg(palette().color(QPalette::Base).name());
+                                }
+                                j += 1;
+
+                                if (i>0) {
+                                        submenuhtml += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
+                                } else {
+                                        result += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
+                                }
+                        }
+                }
+                if (!submenuhtml.isEmpty()) {
+                        submenushtml.append(submenuhtml);
+                }
+        }
+
+        foreach(QString html, submenushtml) {
+                result += html;
+        }
+
+        foreach(QMenu* menu, menulist) {
+                delete menu;
         }
 
 //        result.sort();

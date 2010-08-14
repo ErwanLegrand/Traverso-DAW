@@ -85,7 +85,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("FadeCurve::reset", tr("Remove Fade"));
         add_entry("FadeCurve::toggle_raster", tr("Toggle Raster"));
         add_entry("ProcessingData::mute", tr("Mute"));
-        add_entry("Sheet::start_transport", tr("Play"));
+        add_entry("TSession::start_transport", tr("Play (Start/Stop)"));
         add_entry("Sheet::set_recordable_and_start_transport", tr("Record"));
         add_entry("Sheet::work_next_edge", tr("Workcursor: To next edge"));
         add_entry("Sheet::work_previous_edge", tr("Workcursor: To previous edge"));
