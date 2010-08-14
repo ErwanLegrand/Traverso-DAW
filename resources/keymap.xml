@@ -543,12 +543,12 @@
 		
 		<keyfact type="HKEY2" key1="F" key2="G" >
 			<Objects>
-				<Object objectname="AudioClip" mousehint="LR" slotsignature="clip_fade_in" modes="All" sortorder="11" submenu="Fade In/Out" />
+                                <Object objectname="AudioClipView" mousehint="LR" slotsignature="clip_fade_in" modes="All" sortorder="11" submenu="Fade In/Out" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="G" key2="H" >
 			<Objects>
-				<Object objectname="AudioClip" mousehint="LR" slotsignature="clip_fade_out" modes="All" sortorder="21" submenu="Fade In/Out" />
+                                <Object objectname="AudioClipView" mousehint="LR" slotsignature="clip_fade_out" modes="All" sortorder="21" submenu="Fade In/Out" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="S" key2="G" >
