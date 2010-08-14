@@ -8,6 +8,7 @@
 #include "Command.h"
 #include "TMainWindow.h"
 #include "TMenuTranslator.h"
+#include "Themer.h"
 
 TContextHelpWidget::TContextHelpWidget(QWidget* parent)
         : QTextEdit(parent)
@@ -38,8 +39,6 @@ void TContextHelpWidget::jog_started()
 
 QString TContextHelpWidget::create_html_for_object(QObject *obj)
 {
-        QString html;
-
         const QMetaObject* mo = obj->metaObject();
 
         QString name = TMenuTranslator::instance()->get_translation_for(QString(mo->className()).remove(("View")));
@@ -48,16 +47,17 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
                 return m_help.value(name);
         }
 
-        html = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
+        QColor bgcolor = themer()->get_color("ResourcesBin:alternaterowcolor");
+        QString html = QString("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
               "<style type=\"text/css\">\n"
-              "table {font-size: 12px;}\n"
-              ".object {background-color: #ccc; font-size: 13px; font-weight: bold;}\n"
-              ".description {background-color: #ddd; font-size: 11px; font-weight: bold;}\n"
+              "table {font-size: 11px;}\n"
+              ".object {background-color: %1; font-size: 12px; font-weight: bold;}\n"
+              ".description {background-color: %2; font-size: 11px; font-weight: bold;}\n"
               "</style>\n"
-              "</head>\n<body>\n";
+              "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
 
         html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + name + "</td></tr>\n";
-        html += "<tr><td width=130 class=\"description\">" +tr("Description") + "</td><td width=130 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
+        html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
 
         QStringList result;
 
@@ -134,7 +134,7 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
 
                                 QString alternatingColor;
                                 if ((j % 2) == 1) {
-                                        alternatingColor = QString("bgcolor=\"%1\"").arg(palette().color(QPalette::AlternateBase).name());
+                                        alternatingColor = QString("bgcolor=\"%1\"").arg(themer()->get_color("ResourcesBin:alternaterowcolor").name());
                                 } else {
                                         alternatingColor = QString("bgcolor=\"%1\"").arg(palette().color(QPalette::Base).name());
                                 }

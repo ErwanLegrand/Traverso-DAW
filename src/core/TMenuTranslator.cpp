@@ -166,6 +166,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TimeLineView::drag_marker", tr("Drag Marker"));
         add_entry("TimeLineView::clear_markers", tr("Clear all Markers"));
         add_entry("TimeLineView::playhead_to_marker", tr("Playhead to Marker"));
+        add_entry("TimeLineView::TMainWindow::show_marker_dialog", tr("Edit Markers"));
         add_entry("TrackView::edit_properties", tr("Edit properties"));
         add_entry("TrackView::add_new_plugin", tr("Add new Plugin"));
         add_entry("TrackView::select_bus", tr("Select Bus"));
@@ -204,6 +205,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Gain::decrease_gain", tr("Decrease"));
         add_entry("TrackPanelGain::gain_increment", tr("Increase"));
         add_entry("TrackPanelGain::gain_decrement", tr("Decrease"));
+        add_entry("MarkerView::drag_marker", tr("Move Marker"));
         add_entry("MoveClip::next_snap_pos", tr("To next snap position"));
         add_entry("MoveClip::prev_snap_pos", tr("To previous snap position"));
         add_entry("MoveClip::start_zoom", tr("Jog Zoom"));
