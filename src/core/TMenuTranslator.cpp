@@ -44,6 +44,9 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Curve",tr("Curve"));
         add_entry("CurveNode",tr("Curve Node"));
         add_entry("FadeCurve",tr("Fade Curve"));
+        add_entry("FadeRange", tr("Fade Length"));
+        add_entry("FadeBend", tr("Bend Factor"));
+        add_entry("FadeStrength", tr("Strength Factor"));
         add_entry("Marker",tr("Marker"));
         add_entry("Sheet",tr("Sheet"));
         add_entry("TBusTrack",tr("Bus Track"));
