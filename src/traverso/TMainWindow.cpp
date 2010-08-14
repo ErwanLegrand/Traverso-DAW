@@ -1034,11 +1034,11 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 			modifierkey += seq.toString() + " +";
 		}
 	}
-	if (!modifierkey.isEmpty()) {
-		modifierkey.prepend("(");
-		modifierkey.append(")");
-	}
-	return modifierkey + " " + keyfact;
+        if (!modifierkey.isEmpty()) {
+                modifierkey.prepend("(");
+                modifierkey.append(")");
+        }
+        return modifierkey + " " + keyfact;
 }
 
 Command * TMainWindow::export_keymap()

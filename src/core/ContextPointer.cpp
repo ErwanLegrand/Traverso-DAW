@@ -143,9 +143,6 @@ void ContextPointer::remove_contextitem(QObject* item)
         m_contextItemsList.removeAt(index);
 }
 
-/**
- *        Called _only_ by InputEngine, not to be used anywhere else.
- */
 void ContextPointer::jog_start()
 {
         if (m_port) {
@@ -156,9 +153,6 @@ void ContextPointer::jog_start()
 	m_jogTimer.start(interval);
 }
 
-/**
- *        Called _only_ by InputEngine, not to be used anywhere else.
- */
 void ContextPointer::jog_finished()
 {
         if (m_port) {

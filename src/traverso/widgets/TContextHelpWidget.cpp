@@ -50,15 +50,14 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
 
         html = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
               "<style type=\"text/css\">\n"
-              "H1 {text-align: left; font-size: 20px;}\n"
-              "table {font-size: 12px; border: solid; border-width: 1px; width: 600px;}\n"
-              ".object {background-color: #ccc; font-size: 16px; font-weight: bold;}\n"
-              ".description {background-color: #ddd; width: 300px; margin: 8px; font-size: 12px; font-weight: bold;}\n"
+              "table {font-size: 12px;}\n"
+              ".object {background-color: #ccc; font-size: 13px; font-weight: bold;}\n"
+              ".description {background-color: #ddd; font-size: 11px; font-weight: bold;}\n"
               "</style>\n"
               "</head>\n<body>\n";
 
-        html += "<table><tr class=\"object\">\n<td colspan=\"2\">" + name + "</td></tr>\n";
-        html += "<tr><td class=\"description\">" +tr("Description") + "</td><td class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
+        html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + name + "</td></tr>\n";
+        html += "<tr><td width=130 class=\"description\">" +tr("Description") + "</td><td width=130 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
 
         QStringList result;
 
@@ -68,6 +67,8 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
         if (ci && ci->get_context()) {
                 metas.append(ci->get_context()->metaObject());
         }
+
+        int j=0;
 
         foreach(const QMetaObject* mo, metas) {
                 while (mo) {
@@ -104,8 +105,8 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
 
                                                         keyfact.replace(QString("MouseScrollVerticalUp"), QString("Scroll Wheel"));
                                                         keyfact.replace(QString("MouseScrollVerticalDown"), QString("Scroll Wheel"));
-                                                        keyfact.replace(QString("MouseButtonRight"), QString("R. M. Button"));
-                                                        keyfact.replace(QString("MouseButtonLeft"), QString("L. M. Button"));
+                                                        keyfact.replace(QString("MouseButtonRight"), QString("Right. MB"));
+                                                        keyfact.replace(QString("MouseButtonLeft"), QString("Left MB"));
                                                         keyfact.replace(QString("UARROW"), QString("&uarr; Arrow"));
                                                         keyfact.replace(QString("DARROW"), QString("&darr; Arrow"));
                                                         keyfact.replace(QString("LARROW"), QString("&larr; Arrow"));
@@ -115,11 +116,18 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
                                                         keyfact.replace(QString(">>"), QString("&raquo;"));
                                                         keyfact.replace(QString("<"), QString("&lsaquo;"));
                                                         keyfact.replace(QString(">"), QString("&rsaquo;"));
+                                                        keyfact.replace(QString(" , "), QString("<br />"));
 
 
+                                                        QString alternatingColor;
+                                                        if ((j % 2) == 1) {
+                                                                alternatingColor = QString("bgcolor=\"%1\"").arg(palette().color(QPalette::AlternateBase).name());
+                                                        } else {
+                                                                alternatingColor = QString("bgcolor=\"%1\"").arg(palette().color(QPalette::Base).name());
+                                                        }
+                                                        j += 1;
 
-
-                                                        result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
+                                                        result += QString("<tr %1><td>").arg(alternatingColor) + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
                                                 }
                                         }
                                 }
@@ -129,7 +137,7 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
                 }
         }
 
-        result.sort();
+//        result.sort();
         result.removeDuplicates();
         html += result.join("");
         html += "</table>\n";
