@@ -49,11 +49,18 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TBusTrack",tr("Bus Track"));
         add_entry("TimeLine",tr("Time Line"));
         add_entry("TBusTrackPanel", tr("Bus Track"));
+        add_entry("TrackPanelGain", tr("Gain"));
+        add_entry("TrackPanelPan", tr("Panorama"));
+        add_entry("TrackPanelLed", tr("Track Panel Button"));
+        add_entry("TrackPanelBus", tr("Routing Indicator"));
         add_entry("AudioTrackPanel",tr("Audio Track"));
         add_entry("Plugin",tr("Plugin"));
+        add_entry("PlayHead", tr("Play Head"));
+        add_entry("WorkCursor", tr("Work Cursor"));
         add_entry("CorrelationMeter", tr("Correlation Meter"));
         add_entry("SpectralMeter", tr("Spectral Analyzer"));
 
+        add_entry("ArmTracks", tr("Arm Tracks"));
         add_entry("Crop", tr("Remove and Magnetic Snap"));
         add_entry("Fade", tr("Fade"));
         add_entry("Gain", tr("Gain"));
@@ -147,6 +154,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("SheetView::browse_to_next_context_item", tr("To Next Context Item"));
         add_entry("SheetView::browse_to_context_item_above", tr("To Context Item Above"));
         add_entry("SheetView::browse_to_context_item_below", tr("To Context Item Below"));
+        add_entry("SheetView::edit_properties", tr("Edit Properties"));
+        add_entry("SheetView::browse_to_time_line", tr("To Timeline"));
         add_entry("TimeLineView::add_marker", tr("Add Marker"));
         add_entry("TimeLineView::add_marker_at_playhead", tr("Add Marker at Playhead"));
         add_entry("TimeLineView::add_marker_at_work_cursor", tr("Add Marker at Work Cursor"));
@@ -157,6 +166,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TrackView::edit_properties", tr("Edit properties"));
         add_entry("TrackView::add_new_plugin", tr("Add new Plugin"));
         add_entry("TrackView::select_bus", tr("Select Bus"));
+        add_entry("TrackPanelView::TrackView::edit_properties", tr("Edit properties"));
+        add_entry("TrackPanelLed::toggle", tr("Toggle On/Off"));
         add_entry("TMainWindow::show_export_widget", tr("Show Export Dialog"));
         add_entry("TMainWindow::show_context_menu", tr("Show Context Menu"));
         add_entry("TMainWindow::show_export_widget", tr("Show Export Dialog"));
@@ -188,6 +199,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Crop::adjust_right", tr("Adjust Right"));
         add_entry("Gain::increase_gain", tr("Increase"));
         add_entry("Gain::decrease_gain", tr("Decrease"));
+        add_entry("TrackPanelGain::gain_increment", tr("Increase"));
+        add_entry("TrackPanelGain::gain_decrement", tr("Decrease"));
         add_entry("MoveClip::next_snap_pos", tr("To next snap position"));
         add_entry("MoveClip::prev_snap_pos", tr("To previous snap position"));
         add_entry("MoveClip::start_zoom", tr("Jog Zoom"));
@@ -213,13 +226,17 @@ TMenuTranslator::TMenuTranslator()
         add_entry("MoveTrack::move_down", tr("Move Down"));
         add_entry("MoveTrack::to_bottom", tr("To Bottom"));
         add_entry("MoveTrack::to_top", tr("To Top"));
+        add_entry("MoveEdge::prev_snap_pos", tr("Previous Snap Pos"));
+        add_entry("MoveEdge::next_snap_pos", tr("Next Snap Pos"));
         add_entry("PlayHeadMove::move_to_work_cursor", tr("To Play Cursor"));
+        add_entry("PlayHeadMove::prev_snap_pos", tr("Previous Snap Pos"));
+        add_entry("PlayHeadMove::next_snap_pos", tr("Next Snap Pos"));
         add_entry("Shuttle::move_up", tr("Move Up"));
         add_entry("Shuttle::move_down", tr("Move Down"));
         add_entry("Shuttle::move_left", tr("Move Left"));
         add_entry("Shuttle::move_right", tr("Move Right"));
-        add_entry("TrackPan::pan_left", tr("To Left"));
-        add_entry("TrackPan::pan_right", tr("To Right"));
+        add_entry("TrackPanelPan::pan_left", tr("To Left"));
+        add_entry("TrackPanelPan::pan_right", tr("To Right"));
         add_entry("WorkCursorMove::move_left", tr("Move Left"));
         add_entry("WorkCursorMove::move_right", tr("Move Right"));
         add_entry("WorkCursorMove::next_snap_pos", tr("To next snap position"));

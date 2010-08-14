@@ -317,7 +317,7 @@
                 <keyfact type="FKEY" key1="T" >
                         <Objects>
                                 <Object objectname="TMainWindow" modes="All" sortorder="22" slotsignature="show_newtrack_dialog" modifierkeys="CTRL" />
-                                <Object objectname="SheetView" modes="All" sortorder="23" slotsignature="browse_to_time_line" />
+                                <Object objectname="SheetView" modes="All" sortorder="23" slotsignature="browse_to_time_line"  submenu="Navigate"/>
                         </Objects>
                 </keyfact>
                 <keyfact type="FKEY" key1="K" >
