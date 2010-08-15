@@ -90,8 +90,8 @@ private:
 	
 private slots:
 	void update_latency_combobox();
-	void rate_combobox_index_changed(QString);
-	void driver_combobox_index_changed(QString);
+        void rate_combobox_index_changed(QString);
+        void driver_combobox_index_changed(QString);
 	void restart_driver_button_clicked();
 };
 
@@ -109,7 +109,7 @@ public:
 	
 private:
 	void update_theme_combobox(const QString& path);
-	void create_connections();
+        void create_connections();
 	QString supportedIconSizes;
         ThemeModifierDialog* m_colorModifierDialog;
 

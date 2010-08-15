@@ -74,9 +74,9 @@ AudioDriverConfigPage::AudioDriverConfigPage(QWidget *parent)
 	m_alsadevices->layout()->setMargin(0);
 	m_mainLayout->addWidget(m_alsadevices);
 	
-	connect(driverCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(driver_combobox_index_changed(QString)));
+        connect(driverCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(driver_combobox_index_changed(QString)));
 	connect(restartDriverButton, SIGNAL(clicked()), this, SLOT(restart_driver_button_clicked()));
-	connect(rateComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(rate_combobox_index_changed(QString)));
+        connect(rateComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(rate_combobox_index_changed(QString)));
 	
 	load_config();
 }
@@ -497,7 +497,7 @@ void AppearenceConfigPage::load_config()
 	int langIndex = languageComboBox->findData(interfaceLanguage);
 	if (langIndex >= 0) {
 		languageComboBox->setCurrentIndex(langIndex);
-	}
+        }
 }
 
 void AppearenceConfigPage::reset_default_config()
@@ -538,13 +538,13 @@ AppearenceConfigPage::AppearenceConfigPage(QWidget * parent)
 	}
 	
 	load_config();
-	create_connections();
+        create_connections();
 }
 
 void AppearenceConfigPage::create_connections()
 {
-	connect(styleCombo, SIGNAL(currentIndexChanged(const QString)), this, SLOT(style_index_changed(const QString)));
-	connect(themeSelecterCombo, SIGNAL(currentIndexChanged(const QString)), this, SLOT(theme_index_changed(const QString)));
+        connect(styleCombo, SIGNAL(activated(const QString)), this, SLOT(style_index_changed(const QString)));
+        connect(themeSelecterCombo, SIGNAL(activated(const QString)), this, SLOT(theme_index_changed(const QString)));
 	connect(useStylePalletCheckBox, SIGNAL(toggled(bool)), this, SLOT(use_selected_styles_pallet_checkbox_toggled(bool)));
 	connect(pathSelectButton, SIGNAL(clicked()), this, SLOT(dirselect_button_clicked()));
 	connect(colorAdjustBox, SIGNAL(valueChanged(int)), this, SLOT(color_adjustbox_changed(int)));
@@ -735,7 +735,7 @@ KeyboardConfigPage::KeyboardConfigPage(QWidget * parent)
 	: ConfigPage(parent)
 {
 	setupUi(this);
-	connect(keymapComboBox, SIGNAL(currentIndexChanged(const QString)),
+        connect(keymapComboBox, SIGNAL(activated(const QString)),
 		this, SLOT(keymap_index_changed(const QString)));
 	
 	load_config();
@@ -931,7 +931,7 @@ RecordingConfigPage::RecordingConfigPage(QWidget * parent)
 	wavpackCompressionComboBox->addItem("High", "high");
 	wavpackCompressionComboBox->addItem("Fast", "fast");
 	
-	connect(encodingComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(encoding_index_changed(int)));
+        connect(encodingComboBox, SIGNAL(activated(int)), this, SLOT(encoding_index_changed(int)));
 	connect(useResamplingCheckBox, SIGNAL(stateChanged(int)), 
 		this, SLOT(use_onthefly_resampling_checkbox_changed(int)));
 	
