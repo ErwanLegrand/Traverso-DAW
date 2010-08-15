@@ -109,13 +109,21 @@ public:
 
 	/**
 	 *        Returns the scene x coordinate on first input event.
-	 * @return The scene x coordinate on first input event.
+         * @return The scene x coordinate on first input event, -1 if no Port was set
 	 */
 	inline int on_first_input_event_scene_x() const {
+                if (!m_port) {
+                        // what else to do?
+                        return -1;
+                }
                 return (int) m_port->map_to_scene(m_onFirstInputEventX, m_onFirstInputEventY).x();
 	}
 
         inline QPointF on_first_input_event_scene_pos() const {
+                if (!m_port) {
+                        // what else to do?
+                        return QPointF(-1, -1);
+                }
                 return m_port->map_to_scene(m_onFirstInputEventX, m_onFirstInputEventY);
         }
 	
@@ -124,6 +132,10 @@ public:
 	 * @return The scene y coordinate on first input event.
 	 */
 	inline int on_first_input_event_scene_y() const {
+                if (!m_port) {
+                        // what else to do?
+                        return -1;
+                }
                 return (int) m_port->map_to_scene(m_onFirstInputEventX, m_onFirstInputEventY).y();
 	}
 	

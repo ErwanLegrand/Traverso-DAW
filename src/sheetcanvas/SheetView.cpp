@@ -786,14 +786,32 @@ TimeLineViewPort* SheetView::get_timeline_viewport() const
 
 TCommand * SheetView::touch( )
 {
-        m_session->set_work_at(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
+        if (cpointer().get_viewport() == m_tpvp) {
+                return ie().did_not_implement();
+        }
+        int x;
+        if (!cpointer().get_viewport()) {
+                x = cpointer().on_first_input_event_x();
+        } else {
+                x = cpointer().x();
+        }
+        m_session->set_work_at(TimeRef(qRound(m_clipsViewPort->mapToScene(x, 0).x()) * timeref_scalefactor));
 
 	return 0;
 }
 
 TCommand * SheetView::touch_play_cursor( )
 {
-        m_session->set_transport_pos(TimeRef(cpointer().on_first_input_event_scene_x() * timeref_scalefactor));
+        if (cpointer().get_viewport() == m_tpvp) {
+                return ie().did_not_implement();
+        }
+        int x;
+        if (!cpointer().get_viewport()) {
+                x = cpointer().on_first_input_event_x();
+        } else {
+                x = cpointer().x();
+        }
+        m_session->set_transport_pos(TimeRef(qRound(m_clipsViewPort->mapToScene(x, 0).x()) * timeref_scalefactor));
 
 	return 0;
 }
