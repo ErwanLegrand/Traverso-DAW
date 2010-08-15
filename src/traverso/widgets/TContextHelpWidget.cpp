@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "InputEngine.h"
 #include "TCommand.h"
+#include "PCommand.h"
 #include "TMainWindow.h"
 #include "TMenuTranslator.h"
 #include "Themer.h"
@@ -78,8 +79,8 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
               "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
 
         if (obj->inherits("PCommand")) {
-                TCommand* command = static_cast<TCommand*>(obj);
-                html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + command->text() + "</td></tr>\n";
+                PCommand* pc = static_cast<PCommand*>(obj);
+                html += "<table><tr class=\"object\">\n<td width=220 align=\"center\">" + pc->text() + "</td></tr>\n";
         } else {
                 html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + name + "</td></tr>\n";
                 html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
@@ -136,20 +137,12 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
                                         keyfact.replace(">", "");
                                 }
 
-                                keyfact.replace(QString("MouseScrollVerticalUp"), QString("Scroll Wheel"));
-                                keyfact.replace(QString("MouseScrollVerticalDown"), QString("Scroll Wheel"));
-                                keyfact.replace(QString("MouseButtonRight"), QString("Right. MB"));
-                                keyfact.replace(QString("MouseButtonLeft"), QString("Left MB"));
-                                keyfact.replace(QString("MouseButtonMiddle"), QString("Center MB"));
-                                keyfact.replace(QString("UARROW"), QString("&uarr;"));
-                                keyfact.replace(QString("DARROW"), QString("&darr;"));
-                                keyfact.replace(QString("LARROW"), QString("&larr;"));
-                                keyfact.replace(QString("RARROW"), QString("&rarr;"));
-                                keyfact.replace(QString("DELETE"), QString("Del"));
-                                keyfact.replace(QString("MINUS"), QString("&#45;"));
-                                keyfact.replace(QString("PLUS"), QString("&#43;"));
-                                keyfact.replace(QString("PAGEDOWN"), QString("Page Down"));
-                                keyfact.replace(QString("PAGEUP"), QString("Page Up"));
+                                keyfact.replace(QString("Up Arrow"), QString("&uarr;"));
+                                keyfact.replace(QString("Down Arrow"), QString("&darr;"));
+                                keyfact.replace(QString("Left Arrow"), QString("&larr;"));
+                                keyfact.replace(QString("Right Arrow"), QString("&rarr;"));
+                                keyfact.replace(QString("-"), QString("&#45;"));
+                                keyfact.replace(QString("+"), QString("&#43;"));
                                 keyfact.replace(QString("<<"), QString("&laquo;"));
                                 keyfact.replace(QString(">>"), QString("&raquo;"));
                                 keyfact.replace(QString("<"), QString("&lsaquo;"));

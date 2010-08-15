@@ -882,17 +882,17 @@ void TMainWindow::create_menus( )
 	
         m_resampleQualityMenu = menu->addMenu(tr("&Resample Quality"));
         action = m_resampleQualityMenu->addAction(tr("Best"));
-	action->setData(0);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
+        action->setData(0);
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
         action = m_resampleQualityMenu->addAction(tr("High"));
-	action->setData(1);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_high()));
+        action->setData(1);
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_high()));
         action = m_resampleQualityMenu->addAction(tr("Medium"));
-	action->setData(2);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_medium()));
+        action->setData(2);
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_medium()));
         action = m_resampleQualityMenu->addAction(tr("Fast"));
-	action->setData(3);
-	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_fast()));
+        action->setData(3);
+        connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_fast()));
 
 	// fake a config changed 'signal-slot' action, to set the encoding menu icons
 	config_changed();
@@ -1027,7 +1027,7 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 {
 	QString modifierkey = "";
 	foreach(int key, modifiers) {
-		if (keyfact.contains("+)")) continue;
+                if (keyfact.contains("ALT+") || keyfact.contains("CTRL+") || keyfact.contains("SHIFT+")) continue;
 		if (key == Qt::Key_Alt) {
 			modifierkey += "ALT+";
 		} else if (key == Qt::Key_Control) {
@@ -1039,10 +1039,22 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 			modifierkey += seq.toString() + " +";
 		}
 	}
-        if (!modifierkey.isEmpty()) {
-                modifierkey.prepend("(");
-                modifierkey.append(")");
-        }
+
+        keyfact.replace(QString("MouseScrollVerticalUp"), QString("Scroll Wheel"));
+        keyfact.replace(QString("MouseScrollVerticalDown"), QString("Scroll Wheel"));
+        keyfact.replace(QString("MouseButtonRight"), QString("Right. MB"));
+        keyfact.replace(QString("MouseButtonLeft"), QString("Left MB"));
+        keyfact.replace(QString("MouseButtonMiddle"), QString("Center MB"));
+        keyfact.replace(QString("UARROW"), QString("Up Arrow"));
+        keyfact.replace(QString("DARROW"), QString("Down Arrow"));
+        keyfact.replace(QString("LARROW"), QString("Left Arrow"));
+        keyfact.replace(QString("RARROW"), QString("Right Arrow"));
+        keyfact.replace(QString("DELETE"), QString("Delete"));
+        keyfact.replace(QString("MINUS"), QString("-"));
+        keyfact.replace(QString("PLUS"), QString("+"));
+        keyfact.replace(QString("PAGEDOWN"), QString("Page Down"));
+        keyfact.replace(QString("PAGEUP"), QString("Page Up"));
+
         return modifierkey + " " + keyfact;
 }
 
@@ -1364,12 +1376,6 @@ QMenu* TMainWindow::create_fade_selector_menu(const QString& fadeTypeName)
 
 void TMainWindow::config_changed()
 {
-/*	bool toggled = config().get_property("Interface", "OpenGL", false).toBool();
-
-	foreach(SheetWidget* widget, m_sheetWidgets) {
-		widget->set_use_opengl(toggled);
-	}*/
-	
 	QString encoding = config().get_property("Recording", "FileFormat", "wav").toString();
 	QList<QAction* > actions = m_encodingMenu->actions();
 	
