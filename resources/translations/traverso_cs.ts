@@ -265,7 +265,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="190"/>
         <source>Edit Theme</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit téma</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="202"/>
@@ -309,7 +309,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="250"/>
         <source>Orientate Track VU&apos;s horizontally</source>
-        <translation type="unfinished"></translation>
+        <translation>Nasměrovat VU stopy vodorovně</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/AppearenceConfigPage.ui" line="260"/>
@@ -376,34 +376,34 @@ projeví až po novém spuštění Traversa!</translation>
 <context>
     <name>AudioClip</name>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="652"/>
+        <location filename="../../src/core/AudioClip.cpp" line="651"/>
         <source>Toggle Mute</source>
         <translation>Přepnout ztlumení</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="659"/>
+        <location filename="../../src/core/AudioClip.cpp" line="658"/>
         <source>Toggle Lock</source>
         <translation>Přepnout uzamčení</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="686"/>
+        <location filename="../../src/core/AudioClip.cpp" line="685"/>
         <source>Remove Fades</source>
         <translation>Odstranit prolínání</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="893"/>
+        <location filename="../../src/core/AudioClip.cpp" line="892"/>
         <source>Normalization</source>
         <translation>Normalizace</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="894"/>
+        <location filename="../../src/core/AudioClip.cpp" line="893"/>
         <source>Set Normalization level:</source>
         <translation>Nastavit úroveň normalizace:</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioClip.cpp" line="903"/>
+        <location filename="../../src/core/AudioClip.cpp" line="902"/>
         <source>AudioClip: Normalize</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázka zvuku: Normalizovat</translation>
     </message>
 </context>
 <context>
@@ -464,7 +464,7 @@ projeví až po novém spuštění Traversa!</translation>
     <message>
         <location filename="../../src/sheetcanvas/ui/AudioClipEditDialog.ui" line="46"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Zdroj</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/AudioClipEditDialog.ui" line="171"/>
@@ -821,34 +821,34 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AudioTrack</name>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="133"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="132"/>
         <source>Track: AudioClip with id %1 not found in Resources database!</source>
-        <translation type="unfinished"></translation>
+        <translation>Stopa: Ukázka zvuku s ID %1 nenalezena v databázi zdrojů!</translation>
+    </message>
+    <message>
+        <location filename="../../src/core/AudioTrack.cpp" line="182"/>
+        <source>Unable to Record to AudioTrack</source>
+        <translation>Nepodařilo se nahrát zvukovou stopu</translation>
     </message>
     <message>
         <location filename="../../src/core/AudioTrack.cpp" line="183"/>
-        <source>Unable to Record to AudioTrack</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="184"/>
         <source>AudioDevice doesn&apos;t have this Capture Bus: %1 (Track %2)</source>
-        <translation type="unfinished">Zvukové zařízení nemá tuto zachytávací sběrnici: %1 (Stopa %2)</translation>
+        <translation>Zvukové zařízení nemá tuto zachytávací sběrnici: %1 (Stopa %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="351"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="350"/>
         <source>Silence Others</source>
-        <translation type="unfinished">Ztišit ostatní</translation>
+        <translation>Ztišit ostatní</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="436"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="435"/>
         <source>Remove Clip</source>
-        <translation type="unfinished">Odstranit ukázku</translation>
+        <translation>Odstranit ukázku</translation>
     </message>
     <message>
-        <location filename="../../src/core/AudioTrack.cpp" line="450"/>
+        <location filename="../../src/core/AudioTrack.cpp" line="449"/>
         <source>Add Clip</source>
-        <translation type="unfinished">Přidat ukázku</translation>
+        <translation>Přidat ukázku</translation>
     </message>
 </context>
 <context>
@@ -1080,12 +1080,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/CDWritingDialog.ui" line="265"/>
         <source>Total Length [mm:ss:frames]:</source>
-        <translation type="unfinished"></translation>
+        <translation>Celková délka [mm:ss:snímky]:</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/CDWritingDialog.ui" line="284"/>
         <source>Progress</source>
-        <translation type="unfinished"></translation>
+        <translation>Postup</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/CDWritingDialog.ui" line="331"/>
@@ -1138,7 +1138,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Config.cpp" line="68"/>
         <source>TraversoProjects</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekty Traverso</translation>
     </message>
 </context>
 <context>
@@ -1146,7 +1146,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/commands/Crop.cpp" line="54"/>
         <source>AudioClip: Magnetic Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázka zvuku: Magnetické vyjmutí</translation>
     </message>
 </context>
 <context>
@@ -1173,7 +1173,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/CurveView.cpp" line="420"/>
         <source>Move Curve Node</source>
-        <translation type="unfinished"></translation>
+        <translation>Posunout uzel křivky</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/CurveView.cpp" line="518"/>
@@ -1197,6 +1197,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../../src/traverso/ui/PluginSelector.ui" line="67"/>
         <source>Cancel</source>
         <translation>Zrušit</translation>
+    </message>
+</context>
+<context>
+    <name>DigitalClock</name>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1497"/>
+        <source>Digital Clock</source>
+        <translation>Číslicové hodiny</translation>
     </message>
 </context>
 <context>
@@ -1589,33 +1597,33 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>InputEngine</name>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="272"/>
+        <location filename="../../src/core/InputEngine.cpp" line="271"/>
         <source>Modifier key actions are not supported from Context Menu</source>
         <translation>Akce kláves úprav nejsou podporovány z nabídky souvisejících kroků</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="282"/>
+        <location filename="../../src/core/InputEngine.cpp" line="281"/>
         <source>Hold actions are not supported from Context Menu</source>
         <translation>Akce držení nejsou podporovány z nabídky souvisejících kroků</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="419"/>
+        <location filename="../../src/core/InputEngine.cpp" line="418"/>
         <source>Command Plugin %1 not found!</source>
         <translation>Příkazový přídavný modul %1 nebyl nalezen!</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="422"/>
+        <location filename="../../src/core/InputEngine.cpp" line="421"/>
         <source>Plugin %1 doesn&apos;t implement Command %2</source>
         <translation>Přídavný modul %1 neprovádí příkaz %2</translation>
     </message>
     <message>
-        <location filename="../../src/core/InputEngine.cpp" line="1557"/>
-        <location filename="../../src/core/InputEngine.cpp" line="1630"/>
-        <location filename="../../src/core/InputEngine.cpp" line="1633"/>
-        <location filename="../../src/core/InputEngine.cpp" line="1636"/>
-        <location filename="../../src/core/InputEngine.cpp" line="1639"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1556"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1629"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1632"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1635"/>
+        <location filename="../../src/core/InputEngine.cpp" line="1638"/>
         <source>Input Engine: Loaded keymap has this unrecognized key: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Vstupní stroj: Nahrané rozložení kláves má tuto nerozpoznanou klávesu: %1</translation>
     </message>
 </context>
 <context>
@@ -1700,7 +1708,24 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 220 ms.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;For more information, see chapter 7: Key Actions. of the User Manual&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600;&quot;&gt;Dvojité uskutečnění přerušení:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Největší možný čas v miisekundách mezi dvěma stisky klávesy  &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;pro určení, zda ony dva stisky klávesy jsou&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;dvojité uskutečnění (krok &amp;lt;&amp;lt; K &amp;gt;&amp;gt; nebo &amp;lt;&amp;lt; KK &amp;gt;&amp;gt;)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;nebo za dva samostatné stisky klávesy (&amp;lt; K &amp;gt; a &amp;lt; K &amp;gt;, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;nebo krok &amp;lt; KK &amp;gt; a &amp;lt; KK &amp;gt; například).&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Zkušení uživatelé tuto hodnotu moho nastavit na 150 ms. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Pokud ale ještě nemáte tolik zkušeností, ponechte, prosím, tuto hodnotu na výchozích 220 ms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Více informací najdete v kapitole 7: Činnosti kláves, v uživatelské příručce&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="90"/>
@@ -1722,7 +1747,24 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;if you don&apos;t have much experience yet, please leave the default of 180 ms.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;For more information, see chapter 7: &amp;quot;Key Actions&amp;quot; of the User Manual.&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600;&quot;&gt;Překročení času držení:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Největší doba, pro kterou se uvažuje o stisknuté klávese jako o skutečnosti držení klávesy, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;jako [ K ] nebo [ KK ].&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Čím kratší je tento čas, tím dříve bude stisknutá klávesa &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;určena jako činnost držení. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Zkušení uživatelé tuto hodnotu mohou nastavit na 130 ms, &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;pokud ale ještě moc zkušený nejste, ponechte, prosím, výchozích 180 ms.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt;&quot;&gt;Více informací najdete v kapitole 7: &amp;quot;Key Actions&amp;quot; uživatelské příručky.&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="110"/>
@@ -1732,22 +1774,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="141"/>
         <source>Configure Mouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit myš</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="147"/>
         <source>Mouse takes over keyboard navigation with:</source>
-        <translation type="unfinished"></translation>
+        <translation>Myš převezme ovládání pomocí klávesnice:</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="154"/>
         <source>Left Mouse button click</source>
-        <translation type="unfinished"></translation>
+        <translation>Klepnutí levým tlačítkem myši</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="163"/>
         <source>Mouse movement. Treshold:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pohyb myší. Práh:</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/KeyboardConfigPage.ui" line="194"/>
@@ -1911,7 +1953,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/MarkerView.cpp" line="211"/>
         <source>Drag Marker</source>
-        <translation type="unfinished">Táhnout značku</translation>
+        <translation>Táhnout značku</translation>
     </message>
 </context>
 <context>
@@ -2126,17 +2168,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="170"/>
         <source>Added %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidáno %1: %2</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="176"/>
         <source>Created new Track &apos;%1&apos;&apos; in Sheet &apos;%2&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořena nová stopa &apos;%1&apos;&apos; na listu &apos;%2&apos;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/NewTrackDialog.cpp" line="257"/>
         <source>Fill in Track name, and hit enter to add new Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyplňte název stopy a stiskněte klávesu Enter pro přidání nové stopy</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="14"/>
@@ -2151,77 +2193,77 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="60"/>
         <source>Track is a:</source>
-        <translation type="unfinished"></translation>
+        <translation>Stopa je:</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="67"/>
         <source>Audio</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvuk</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="77"/>
         <source>Bus</source>
-        <translation type="unfinished"></translation>
+        <translation>Sběrnice</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="84"/>
         <source>Bounce</source>
-        <translation type="unfinished"></translation>
+        <translation>Vrátit se</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="115"/>
         <source>Routing Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavení vedení</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="126"/>
         <source>Jack port count:</source>
-        <translation type="unfinished"></translation>
+        <translation>Počet přípojek JACK:</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="146"/>
         <source>Mono</source>
-        <translation type="unfinished"></translation>
+        <translation>Mono</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="156"/>
         <source>Stereo</source>
-        <translation type="unfinished"></translation>
+        <translation>Stereo</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="165"/>
         <source>Create Jack In ports</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit přípojky pro vstup JACK</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="175"/>
         <source>Create Jack Out ports</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit přípojky pro výstup JACK</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="194"/>
         <source>Output (Buses)</source>
-        <translation type="unfinished"></translation>
+        <translation>Výstup (sběrnice)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="210"/>
         <source>Input (HW)</source>
-        <translation type="unfinished"></translation>
+        <translation>Vstup (HW)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="226"/>
         <source>Output (HW)</source>
-        <translation type="unfinished"></translation>
+        <translation>Výstup (HW)</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="248"/>
         <source>Information</source>
-        <translation type="unfinished"></translation>
+        <translation>informace</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/NewTrackDialog.ui" line="254"/>
         <source>No Translation needed</source>
-        <translation type="unfinished"></translation>
+        <translation>Není potřeba žádný překlad</translation>
     </message>
 </context>
 <context>
@@ -2229,12 +2271,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/dialogs/project/OpenProjectDialog.cpp" line="52"/>
         <source>Project Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Název projektu</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/OpenProjectDialog.cpp" line="52"/>
         <source>Sheets</source>
-        <translation type="unfinished">Listy</translation>
+        <translation>Listy</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/OpenProjectDialog.cpp" line="135"/>
@@ -2599,17 +2641,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/ProcessingDataView.h" line="36"/>
         <source>Edit properties</source>
-        <translation type="unfinished">Upravit vlastnosti</translation>
+        <translation>Upravit vlastnosti</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ProcessingDataView.h" line="37"/>
         <source>Add new Plugin</source>
-        <translation type="unfinished">Přidat nový přídavný modul</translation>
+        <translation>Přidat nový přídavný modul</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ProcessingDataView.h" line="38"/>
         <source>Select Bus</source>
-        <translation type="unfinished">Vybrat sběrnici</translation>
+        <translation>Vybrat sběrnici</translation>
     </message>
 </context>
 <context>
@@ -2628,119 +2670,120 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Project</name>
     <message>
-        <location filename="../../src/core/Project.cpp" line="351"/>
+        <location filename="../../src/core/Project.cpp" line="94"/>
+        <location filename="../../src/core/Project.cpp" line="347"/>
         <source>Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzor</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="146"/>
-        <location filename="../../src/core/Project.cpp" line="191"/>
-        <location filename="../../src/core/Project.cpp" line="205"/>
+        <location filename="../../src/core/Project.cpp" line="142"/>
+        <location filename="../../src/core/Project.cpp" line="187"/>
+        <location filename="../../src/core/Project.cpp" line="201"/>
         <source>Cannot create dir %1</source>
         <translation>Nelze vytvořit adresář (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="183"/>
+        <location filename="../../src/core/Project.cpp" line="179"/>
         <source>Created new Project %1</source>
         <translation>Vytvořen nový projekt %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="229"/>
-        <location filename="../../src/core/Project.cpp" line="460"/>
+        <location filename="../../src/core/Project.cpp" line="225"/>
+        <location filename="../../src/core/Project.cpp" line="445"/>
         <source>Project %1: Cannot open project.tpf file! (Reason: %2)</source>
         <translation>Projektt %1: Nelze otevřít soubor project.tpf! (Důvod: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="247"/>
-        <location filename="../../src/core/Project.cpp" line="468"/>
+        <location filename="../../src/core/Project.cpp" line="243"/>
+        <location filename="../../src/core/Project.cpp" line="453"/>
         <source>Project %1: Failed to parse project.tpf file! (Reason: %2)</source>
         <translation>Projektt %1: Selhalo načtení souboru project.tpf! (Důvod: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="257"/>
-        <location filename="../../src/core/Project.cpp" line="478"/>
+        <location filename="../../src/core/Project.cpp" line="253"/>
+        <location filename="../../src/core/Project.cpp" line="463"/>
         <source>Project File Version does not match, unable to load Project!</source>
         <translation>Neodpovídá verze souboru projektu. Nepodařilo se nahrát projekt!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="445"/>
+        <location filename="../../src/core/Project.cpp" line="430"/>
         <source>Project %1 loaded</source>
         <translation>Projekt %1 nahrán</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="489"/>
-        <location filename="../../src/core/Project.cpp" line="511"/>
+        <location filename="../../src/core/Project.cpp" line="474"/>
+        <location filename="../../src/core/Project.cpp" line="496"/>
         <source>Couldn&apos;t open Project properties file for writing! (File %1. Reason: %2)</source>
         <translation>Nepodařilo se otevřít soubor s vlastnostmi projektu pro zápis (Soubor %1. Důvod: %2)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="521"/>
+        <location filename="../../src/core/Project.cpp" line="506"/>
         <source>Project %1 saved </source>
         <translation>Projekt %1 byl uložen</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="986"/>
+        <location filename="../../src/core/Project.cpp" line="960"/>
         <source>Project with title &apos;%1&apos; allready exists, not setting new title!</source>
         <translation>Projekt s názvem &apos;%1&apos; již existuje. Nový název nebyl zapsán!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="995"/>
+        <location filename="../../src/core/Project.cpp" line="969"/>
         <source>Project directory %1 no longer exists, did you rename it? Shame on you! Please undo that, and come back later to rename your Project...</source>
         <translation>Adresář projektu %1 už neexistuje. Přejmenoval jste jej? Vaše škoda! Vraťte, prosím, tento krok zpět, a vraťte se později přejmenovat svůj projekt...</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1009"/>
-        <location filename="../../src/core/Project.cpp" line="1698"/>
+        <location filename="../../src/core/Project.cpp" line="983"/>
+        <location filename="../../src/core/Project.cpp" line="1672"/>
         <source>Traverso - Information</source>
         <translation>Traverso - Informace</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1010"/>
+        <location filename="../../src/core/Project.cpp" line="984"/>
         <source>Project title changed, Project will to be reloaded to ensure proper operation</source>
         <translation>Název projektu byl změněn. Projekt bude nahrán znovu, aby byly zajištěna jeho správná činnost</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1080"/>
+        <location filename="../../src/core/Project.cpp" line="1054"/>
         <source>Sheet %1 added</source>
         <translation>List %1 byl přidán</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1727"/>
+        <location filename="../../src/core/Project.cpp" line="1701"/>
         <source>Sheets behave as Tracks Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Listy se chovají jako složky pro stopy</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1729"/>
+        <location filename="../../src/core/Project.cpp" line="1703"/>
         <source>Sheets NO longer behave as Tracks Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Listy se už NEchovají jako složky pro stopy</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1092"/>
+        <location filename="../../src/core/Project.cpp" line="1066"/>
         <source>Remove Sheet %1</source>
         <translation>Odstranit list %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1180"/>
+        <location filename="../../src/core/Project.cpp" line="1154"/>
         <source>Export already in progress, cannot start it twice!</source>
         <translation>Vyvedení do souboru již probíhá. Nelze je začít dvakrát!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1256"/>
+        <location filename="../../src/core/Project.cpp" line="1230"/>
         <source>Detected clipping in exported audio! (%1)</source>
         <translation>Ve zvuku, který byl vyveden do souboru bylo zjištěno stříhání! (%1)</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1261"/>
+        <location filename="../../src/core/Project.cpp" line="1235"/>
         <source>calculated norm factor: %1</source>
         <translation>Vypočítaný normalizační faktor: %1</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1699"/>
+        <location filename="../../src/core/Project.cpp" line="1673"/>
         <source>You&apos;re still recording, please stop recording first to be able to exit the application!</source>
         <translation>Ještě nahráváte. Nejprve, prosím, zastavte nahrávání, abyste mohl opustit aplikaci!</translation>
     </message>
     <message>
-        <location filename="../../src/core/Project.cpp" line="1187"/>
+        <location filename="../../src/core/Project.cpp" line="1161"/>
         <source>Unable to create export directory! Please check permissions for this directory: %1</source>
         <translation>Pro vyvedení do souboru nelze vytvořit adresář! Zkontrolujte, prosím, oprávnění pro tento adresář: %1</translation>
     </message>
@@ -2765,7 +2808,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/ProjectConverter.cpp" line="262"/>
         <source>Sheet Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzor listu</translation>
     </message>
     <message>
         <location filename="../../src/core/ProjectConverter.cpp" line="268"/>
@@ -2897,7 +2940,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/ProjectManager.cpp" line="116"/>
         <source>Should Project &apos;%1&apos; be safed before closing it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Má se projekt &apos;%1&apos; před zavřením uložit?</translation>
     </message>
     <message>
         <location filename="../../src/core/ProjectManager.cpp" line="157"/>
@@ -2934,7 +2977,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/ProjectManager.cpp" line="487"/>
         <source>Projectfile backup: The project file %1 could not be opened for writing (Reason: %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Záloha projektového souboru. Soubor s projektem %1 se nepodařilo otevřít pro zápis (Důvod: %2)</translation>
     </message>
     <message>
         <location filename="../../src/core/ProjectManager.cpp" line="630"/>
@@ -2990,7 +3033,7 @@ Chcete ji přepsat?</translation>
     <message>
         <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="321"/>
         <source>Choose or create a new Audio Sources Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat nebo vytvořit nový adresář pro zvukové zdroje</translation>
     </message>
     <message>
         <location filename="../../src/traverso/dialogs/project/ProjectManagerDialog.cpp" line="357"/>
@@ -3032,7 +3075,7 @@ Chcete ji přepsat?</translation>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="146"/>
         <source>Sheets behave as Track Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Listy se chovají jako složky pro stopy</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="162"/>
@@ -3103,7 +3146,7 @@ Chcete ji přepsat?</translation>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="403"/>
         <source>CD Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text CD</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="421"/>
@@ -3228,7 +3271,7 @@ Chcete ji přepsat?</translation>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="577"/>
         <source>Pop Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Populární hudba</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/ProjectManagerDialog.ui" line="582"/>
@@ -3438,7 +3481,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/TBusTrack.cpp" line="32"/>
         <source>Bus Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Stopa sběrnice</translation>
     </message>
 </context>
 <context>
@@ -3485,7 +3528,41 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600;&quot;&gt;Traverso: Začínáme&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;Když do programu Traverso nahráváte nebo zavádíte zvukový soubor, ukazuje se jako zvuková ukázka v jedné z vodorovných stop současného listu.  Mnoho vlastností těchto ukázek můžete upravit umístěním ukazovátka myši nad ukázku a stisknutím nebo držením různých kláves na vaší klávesnici a myši.  Rovněž můžete změnit nastavení stopy, list jako celek, a další předměty na listu.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;Abyste viděl seznam dostupných příkazů pro jakýkoli předmět v listu, přesuňte myš nad tento předmět, a klepněte pravým tlačítkem myši (nebo stiskněte Q).  Klávesové zkratky ke každému z příkazů jsou ukázány v nabídce.  Způsob zápisu je ukázán níže.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;   &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&amp;lt; K &amp;gt;  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt; znamená, stiskněte a uvolněte klávesu K. (Jako je tomu u klepnutí.)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&amp;lt;&amp;lt; K &amp;gt;&amp;gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt; znamená, stiskněte klávesu K dvakrát rychle po sobě. (Jako je tomu u dvojitého klepnutí.)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;    &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;[ K ]&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;    znamená, táhněte myší, zatímco držíte stisknutou klávesu K.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&amp;lt; KL &amp;gt; &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt; znamená, stiskněte klávesy K a L ve stejnou dobu.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;   &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;[ KL ]  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt; znamená, táhněte myší, zatímco ve stejnou dobu držíte stisknuty klávesy K a L.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;Zde jsou některé základní příkazy:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;   &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&amp;lt; MEZERNÍK &amp;gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt; je Přehrát/Zastavit.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;   &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&amp;lt; SHIFT &amp;gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;  nastavuje hrací hlavu. (Červená svislá čára označující místo, kde začíná přehrávání.)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;       &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&amp;lt; W &amp;gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;    nastavuje pracovní ukazatel. (Šedá tečkovaná svislá čára.)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;       &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&amp;lt; V &amp;gt;    &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt; přemístí hrací hlavu zpět k pracovnímu ukazateli.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;        &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;[ D ] &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;     přesune předměty okolo (zvuková ukázka, uzly křivek, atd)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;        &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;[ Z ]&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;       přibližuje a oddaluje.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;        &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;[ TAB ]&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;	 projíždí všemi směry (podobně jako u ježdění sem a tam) &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;A některé z příkazů pro zvukovou ukázku:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;   &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;[ E ] &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;  táhne levý nebo pravý okraj ukázky.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;   &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;[ F ]&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;   upraví délku zesílení/zeslabení ukázky.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;   &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;[ G ]   &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;upraví zesílení ukázky (pracuje rovněž u stop, listů)&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&amp;lt; X &amp;gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;  rozdělí ukázku v poloze ukazovátka.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;Abyste se dostal k více informacím, jen klepněte pravým tlačítkem myši na cokoli, nebo otevřete příručku k programu Traverso.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -3750,42 +3827,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="64"/>
-        <source>Restore Defaults</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="104"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="103"/>
         <source>Behavior</source>
         <translation>Chování</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="110"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="109"/>
         <source>Appearance</source>
         <translation>Vzhled</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="117"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="116"/>
         <source>Sound System</source>
         <translation>Zvukový systém</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="124"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="123"/>
         <source>Audio Options</source>
         <translation>Možnosti zvuku</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="131"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="130"/>
         <source>Keyboard</source>
         <translation>Klávesnice</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="138"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="137"/>
         <source>Performance</source>
         <translation>Výkon</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="84"/>
+        <location filename="../../src/traverso/dialogs/settings/SettingsDialog.cpp" line="83"/>
         <source>Preferences - Traverso</source>
         <translation>Traverso - Preference</translation>
     </message>
@@ -3800,13 +3872,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Sheet.cpp" line="86"/>
         <source>Sheet %1</source>
-        <translation type="unfinished"></translation>
+        <translation>List %1</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.cpp" line="179"/>
         <location filename="../../src/core/Sheet.cpp" line="226"/>
         <source>Sheet Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzor listu</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.cpp" line="422"/>
@@ -3826,17 +3898,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/core/Sheet.cpp" line="484"/>
         <source>Rendering Sheet %1 - Track %2 of %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Dělá se list %1 - Stopa %2 z %3</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.cpp" line="487"/>
         <source>Normalising Sheet %1 - Track %2 of %3</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalizuje se list %1 - Stopa %2 z %3</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.cpp" line="875"/>
         <source>Cannot create dir %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Nelze vytvořit adresář %1</translation>
     </message>
     <message>
         <location filename="../../src/core/Sheet.cpp" line="886"/>
@@ -3874,12 +3946,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/sheetcanvas/SheetView.cpp" line="1399"/>
         <source>Edit Sheet Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit název listu</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/SheetView.cpp" line="1400"/>
         <source>Enter new name</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadat nový název</translation>
     </message>
 </context>
 <context>
@@ -4056,42 +4128,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SpectralMeterView</name>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="489"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="508"/>
         <source>Screen Capture file name</source>
         <translation>Název souboru se zachycením obrazovky</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="497"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="516"/>
         <source>FFT: Unable to write captured image to hard disk</source>
         <translation>FFT: Nepodařilo se zapsat zachycený obrázek na pevný disk</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="508"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="527"/>
         <source>FFT: No average curve used, not data to export!</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT: Nepoužívá se žádná průměrná křivka. Žádná data pro vyvedení!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="509"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="528"/>
         <source>FFT: Enable average curve with &lt; M &gt; to generate data</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT: Povolit průměrnou křivku s &lt; M &gt; pro vytvoření dat</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="517"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="536"/>
         <source>FFT: No average data to export!</source>
-        <translation type="unfinished"></translation>
+        <translation>FFT: Žádná průměrná data pro vyvedení!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="530"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="549"/>
         <source>Select output format</source>
         <translation>Vybrat výstupní formát</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="530"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="549"/>
         <source>Output format:</source>
         <translation>Výstupní formát:</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="538"/>
+        <location filename="../../src/traverso/widgets/SpectralMeterWidget.cpp" line="557"/>
         <source>Export average dB curve</source>
         <translation>Vyvést průměrnou křivku dB</translation>
     </message>
@@ -4187,7 +4259,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/widgets/InfoWidgets.cpp" line="177"/>
         <source>Num. Input: </source>
-        <translation type="unfinished"></translation>
+        <translation>Číslo. Vstup: </translation>
     </message>
 </context>
 <context>
@@ -4195,34 +4267,28 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="160"/>
         <source>History</source>
-        <translation type="unfinished">Historie</translation>
+        <translation>Historie</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="168"/>
         <source>Resources Bin</source>
-        <translation type="unfinished">Koš se zdroji</translation>
+        <translation>Koš se zdroji</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="177"/>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="916"/>
         <source>Correlation Meter</source>
-        <translation type="unfinished">Ukazatel míry vzájemných vztahů</translation>
+        <translation>Měřič vzájemných vztahů</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="185"/>
         <source>FFT Spectrum</source>
-        <translation type="unfinished">FFT kmitočtové spektrum</translation>
+        <translation>FFT kmitočtové spektrum</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="194"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="195"/>
         <source>VU Meters</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="212"/>
-        <source>MainToolBar</source>
-        <translation type="unfinished"></translation>
+        <translation>Měřiče VU</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="484"/>
@@ -4236,11 +4302,11 @@ Traverso is brought to you by R. Sijrier and others,
 including all the people from the Free Software world
 who contributed the important technologies on which
 Traverso is based (Gcc, Qt, Xorg, Linux, and so on)</source>
-        <translation type="unfinished">Traverso %1 (sestaveno s Qt %2)
+        <translation>Traverso %1 (sestaveno s Qt %2)
 
 Vícestopý program pro nahrávání a úpravy zvuku.
 
-Pro více informací se podívejte do nápovědy v hlavní nástrojové liště.
+Pro více informací se podívejte do nápovědy v hlavní nabídce.
 
 Traverso Vám přináší R. Sijrier a další,
 v to počítaje všechny lidi ze světa svobodného softwaru,
@@ -4250,335 +4316,325 @@ na nichž je Traverso založeno (Gcc, Qt, Xorg, Linux, atd.)</translation>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="491"/>
         <source>About Traverso</source>
-        <translation type="unfinished">O programu Traverso</translation>
+        <translation>O programu Traverso</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="666"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="644"/>
         <source>&amp;File</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Soubor</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="669"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="647"/>
         <source>&amp;New...</source>
-        <translation type="unfinished">&amp;Nový...</translation>
+        <translation>&amp;Nový...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="674"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="652"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished">&amp;Otevřít...</translation>
+        <translation>&amp;Otevřít...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="681"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="659"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">&amp;Uložit</translation>
+        <translation>&amp;Uložit</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="689"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="667"/>
         <source>&amp;Close Project</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zavřít projekt</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="697"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="675"/>
         <source>&amp;Manage Project...</source>
-        <translation type="unfinished">&amp;Spravovat projekt...</translation>
+        <translation>&amp;Spravovat projekt...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="707"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="685"/>
         <source>&amp;Export...</source>
-        <translation type="unfinished">&amp;Vyvést...</translation>
+        <translation>&amp;Vyvést...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="716"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="694"/>
         <source>&amp;CD Writing...</source>
-        <translation type="unfinished">&amp;Zápis na CD...</translation>
+        <translation>&amp;Zápis na CD...</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="703"/>
+        <source>&amp;Restore Backup...</source>
+        <translation>&amp;Obnovit zálohu...</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="714"/>
+        <source>&amp;Quit</source>
+        <translation>&amp;Ukončit</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="722"/>
+        <source>&amp;Edit</source>
+        <translation>&amp;Úpravy</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="725"/>
-        <source>&amp;Restore Backup...</source>
-        <translation type="unfinished">&amp;Obnovit zálohu...</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="736"/>
-        <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Ukončit</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="744"/>
-        <source>&amp;Edit</source>
-        <translation type="unfinished">&amp;Úpravy</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="747"/>
         <source>Undo</source>
-        <translation type="unfinished">Vrátit zpět</translation>
+        <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="754"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="732"/>
         <source>Redo</source>
-        <translation type="unfinished">Udělat znovu</translation>
+        <translation>Znovu</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="764"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="742"/>
         <source>Import &amp;Audio...</source>
-        <translation type="unfinished">Zavést &amp;zvuk...</translation>
+        <translation>Zavést &amp;zvuk...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="770"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="748"/>
         <source>Insert Si&amp;lence...</source>
-        <translation type="unfinished">Vložit ti&amp;cho...</translation>
+        <translation>Vložit ti&amp;cho...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="779"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="757"/>
         <source>&amp;Snap</source>
-        <translation type="unfinished">&amp;Přichytit</translation>
+        <translation>&amp;Přichytit</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="783"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="761"/>
         <source>Snap items to edges of other items while dragging.</source>
-        <translation type="unfinished">Při přetahování přichytit předměty k okrajům jiných předmětů.</translation>
+        <translation>Při přetahování přichytit předměty k okrajům jiných předmětů.</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="787"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="765"/>
         <source>S&amp;croll Playback</source>
-        <translation type="unfinished">P&amp;rojíždět při přehrávání</translation>
+        <translation>P&amp;rojíždět při přehrávání</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="791"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="769"/>
         <source>Keep play cursor in view while playing or recording.</source>
-        <translation type="unfinished">Při přehrávání nebo nahrávání držet ukazatel přehrávání v pohledu.</translation>
+        <translation>Při přehrávání nebo nahrávání držet ukazatel přehrávání v pohledu.</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="795"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="773"/>
         <source>&amp;Show Effects</source>
-        <translation type="unfinished">&amp;Ukázat efekty</translation>
+        <translation>&amp;Ukázat efekty</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="799"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="777"/>
         <source>Show effect plugins and automation curves on tracks</source>
-        <translation type="unfinished">Ukázat efektové přídavné moduly a křivky automatizace na stopách</translation>
+        <translation>Ukázat efektové přídavné moduly a křivky automatizace na stopách</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="803"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="781"/>
         <source>Vi&amp;ew</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Pohled</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="810"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="788"/>
         <source>Marker Editor...</source>
-        <translation type="unfinished">Editor značek...</translation>
+        <translation>Editor značek...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="814"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="792"/>
         <source>Toggle Full Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Přepnout pohled na celou obrazovku</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="817"/>
-        <source>Toggle FFT Only</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="801"/>
+        <source>ToolBars</source>
+        <translation>Nástrojové pruhy</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="806"/>
+        <source>Transport Console</source>
+        <translation>Přesunovací konzole</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="812"/>
+        <source>Project</source>
+        <translation>Projekt</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="815"/>
+        <source>Edit</source>
+        <translation>Upravit</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="822"/>
+        <source>System Information</source>
+        <translation>Informace o systému</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="826"/>
-        <source>ToolBars</source>
-        <translation type="unfinished"></translation>
+        <source>&amp;Settings</source>
+        <translation>&amp;Nastavení</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="831"/>
-        <source>Transport Console</source>
-        <translation type="unfinished">Transportní konzole</translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="829"/>
+        <source>&amp;Recording File Format</source>
+        <translation>&amp;Formát souboru používaný při nahrávání</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="837"/>
-        <source>Project</source>
-        <translation type="unfinished">Projekt</translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="841"/>
+        <source>&amp;Resample Quality</source>
+        <translation>&amp;Kvalita převzorkování</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="840"/>
-        <source>Edit</source>
-        <translation type="unfinished">Upravit</translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="842"/>
+        <source>Best</source>
+        <translation>Nejlepší</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="847"/>
-        <source>System Information</source>
-        <translation type="unfinished">Informace o systému</translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="845"/>
+        <source>High</source>
+        <translation>Vysoká</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="848"/>
+        <source>Medium</source>
+        <translation>Průměrná</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="851"/>
-        <source>&amp;Settings</source>
-        <translation type="unfinished"></translation>
+        <source>Fast</source>
+        <translation>Rychlá</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="854"/>
-        <source>&amp;Recording File Format</source>
-        <translation type="unfinished">&amp;Formát souboru používaný při nahrávání</translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="860"/>
+        <source>&amp;Preferences...</source>
+        <translation>&amp;Nastavení...</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="866"/>
-        <source>&amp;Resample Quality</source>
-        <translation type="unfinished">&amp;Kvalita převzorkování</translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="864"/>
+        <source>&amp;Help</source>
+        <translation>&amp;Nápověda</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="867"/>
-        <source>Best</source>
-        <translation type="unfinished">Nejlepší</translation>
+        <source>&amp;Getting Started</source>
+        <translation>&amp;Jak začít</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="870"/>
-        <source>High</source>
-        <translation type="unfinished">Vysoká</translation>
+        <source>&amp;User Manual</source>
+        <translation>&amp;Uživatelská příručka</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="873"/>
-        <source>Medium</source>
-        <translation type="unfinished">Průměrná</translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="874"/>
+        <source>&amp;About Traverso</source>
+        <translation>&amp;O programu Traverso</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="876"/>
-        <source>Fast</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="879"/>
+        <source>Audio Clip</source>
+        <translation>Zvuková ukázka</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="880"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="889"/>
+        <source>Audio Track</source>
+        <translation>Zvuková stopa</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="881"/>
+        <source>Curve</source>
+        <translation>Křivka</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="882"/>
+        <source>Curve Node</source>
+        <translation>Uzel křivky</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="883"/>
+        <source>Fade Curve</source>
+        <translation>Křivka prolínání</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="884"/>
+        <source>Marker</source>
+        <translation>Značka</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="885"/>
-        <source>&amp;Preferences...</source>
-        <translation type="unfinished">&amp;Preference...</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="889"/>
-        <source>&amp;Help</source>
-        <translation type="unfinished">&amp;Nápověda</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="892"/>
-        <source>&amp;Getting Started</source>
-        <translation type="unfinished">&amp;Jak začít</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="895"/>
-        <source>&amp;User Manual</source>
-        <translation type="unfinished">&amp;Uživatelská příručka</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="899"/>
-        <source>&amp;About Traverso</source>
-        <translation type="unfinished">&amp;O aplikaci Traverso</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="904"/>
-        <source>Audio Clip</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="905"/>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="914"/>
-        <source>Audio Track</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="906"/>
-        <source>Curve</source>
-        <translation type="unfinished">Křivka</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="907"/>
-        <source>Curve Node</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="908"/>
-        <source>Fade Curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="909"/>
-        <source>Marker</source>
-        <translation type="unfinished">Značka</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="910"/>
         <source>Sheet</source>
-        <translation type="unfinished">List</translation>
+        <translation>List</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="911"/>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="913"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="886"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="888"/>
         <source>Bus Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Sběrnicová stopa</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="912"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="887"/>
         <source>Time Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Časová přímka</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="915"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="890"/>
         <source>Plugin</source>
-        <translation type="unfinished"></translation>
+        <translation>Přídavný modul</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="917"/>
-        <source>Spectral Analyzer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1128"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1101"/>
         <source>Description</source>
-        <translation type="unfinished">Popis</translation>
+        <translation>Popis</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1128"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1101"/>
         <source>Key Sequence</source>
-        <translation type="unfinished"></translation>
+        <translation>Klávesová zkratka</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1445"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1418"/>
         <source>Open Audio Files</source>
-        <translation type="unfinished">Otevřít zvukové soubory</translation>
+        <translation>Otevřít zvukové soubory</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1447"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1420"/>
         <source>Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</source>
-        <translation type="unfinished">Zvukové soubory (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
+        <translation>Zvukové soubory (*.wav *.flac *.ogg *.mp3 *.wv *.w64)</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1491"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1464"/>
         <source>%1: %2</source>
-        <translation type="unfinished">%1: %2</translation>
+        <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1605"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1603"/>
         <source>No Sheet active to add child view to</source>
-        <translation type="unfinished"></translation>
+        <translation>Žádný list není činný pro přidání vedlejšího pohledu</translation>
+    </message>
+    <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1668"/>
+        <source>Opening User Manual in external browser!</source>
+        <translation>Otevře uživatelskou příručku ve vnějším prohlížeči!</translation>
     </message>
     <message>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1674"/>
-        <source>Opening User Manual in external browser!</source>
-        <translation type="unfinished">Otevře uživatelskou příručku ve vnějším prohlížeči!</translation>
-    </message>
-    <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1680"/>
         <source>Traverso - Important</source>
-        <translation type="unfinished">Traverso - Důležité</translation>
+        <translation>Traverso - Důležité</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1681"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1675"/>
         <source>A Project directory changed outside of Traverso. 
 
 This is NOT supported! Please undo this change now!
 
 If you want to rename a Project, use the Project Manager instead!</source>
-        <translation type="unfinished">Adresář projektu se změnil na vně Traversa.
+        <translation>Adresář projektu se změnil na vně Traversa.
 
 To NENÍ podporováno! Prosím, vraťte nyní tuto změnu!
 
 Jestliže si přejete změnit název projektu, použijte místo toho projektový manažer!</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1713"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1707"/>
         <source>Traverso - Project load failed</source>
-        <translation type="unfinished">Traverso - Selhalo nahrání projektu</translation>
+        <translation>Traverso - Selhalo nahrání projektu</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1714"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1708"/>
         <source>The requested Project `%1` 
 could not be loaded for the following reason:
 
@@ -4586,7 +4642,7 @@ could not be loaded for the following reason:
 
 You will now be given a list of available backups (if any) 
 to restore the Project from.</source>
-        <translation type="unfinished">Požadovaný projekt `%1`
+        <translation>Požadovaný projekt `%1`
 nemohl být načten z následujících důvodů:
 
 &apos;%2&apos;
@@ -4595,547 +4651,24 @@ Nyní dostanete seznam dostupných záloh (jestliže nějaké jsou),
 abyste z nich mohl projekt obnovit.</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1734"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1728"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1735"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1741"/>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1747"/>
         <source>Changed encoding for recording to %1</source>
-        <translation type="unfinished">Způsob zakódování při nahrávání změněn na: %1</translation>
+        <translation>Způsob zakódování při nahrávání změněn na: %1</translation>
     </message>
     <message>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1747"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1753"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1759"/>
         <location filename="../../src/traverso/TMainWindow.cpp" line="1765"/>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1771"/>
         <source>Changed resample quality to: %1</source>
-        <translation type="unfinished">Kvalita převzorkování změněna na: %1</translation>
+        <translation>Kvalita převzorkování změněna na: %1</translation>
     </message>
     <message>
-        <location filename="../../src/traverso/TMainWindow.cpp" line="1980"/>
+        <location filename="../../src/traverso/TMainWindow.cpp" line="1974"/>
         <source>Track Finder</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TMenuTranslator</name>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="38"/>
-        <source>Solo</source>
-        <translation type="unfinished">Sólo</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="39"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="51"/>
-        <source>Mute</source>
-        <translation type="unfinished">Ztlumit</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="40"/>
-        <source>In: Remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="41"/>
-        <source>Out: Remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="42"/>
-        <source>Both: Remove</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="43"/>
-        <source>Normalize</source>
-        <translation type="unfinished">Normalizovat</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="44"/>
-        <source>Lock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="45"/>
-        <source>Select all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="46"/>
-        <source>Invert</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="47"/>
-        <source>Toggle Bypass</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="48"/>
-        <source>Cycle Shape</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="49"/>
-        <source>Remove Fade</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="50"/>
-        <source>Toggle Raster</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="52"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="131"/>
-        <source>Play</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="53"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="132"/>
-        <source>Record</source>
-        <translation type="unfinished">Nahrát</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="54"/>
-        <source>Workcursor: To next edge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="55"/>
-        <source>Workcursor: To previous edge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="56"/>
-        <source>Undo</source>
-        <translation type="unfinished">Vrátit zpět</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="57"/>
-        <source>Redo</source>
-        <translation type="unfinished">Udělat znovu</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="58"/>
-        <source>Snap: On/Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="59"/>
-        <source>Toggle Curve Mode: On/Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="60"/>
-        <source>To previous snap position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="61"/>
-        <source>To next snap position</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="62"/>
-        <source>Solo: On/Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="63"/>
-        <source>Mute: On/Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="64"/>
-        <source>Arm: On/Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="65"/>
-        <source>Closest: Adjust Length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="66"/>
-        <source>In: Adjust Length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="67"/>
-        <source>Out: Adjust Length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="68"/>
-        <source>In: Select Preset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="69"/>
-        <source>Out: Select Preset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="70"/>
-        <source>Closest: Delete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="71"/>
-        <source>Reset Audio File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="72"/>
-        <source>Edit Properties</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="73"/>
-        <source>Insert Silence</source>
-        <translation type="unfinished">Vložit ticho</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="74"/>
-        <source>New node</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="75"/>
-        <source>Remove node</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="76"/>
-        <source>Remove all Nodes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="77"/>
-        <source>Move node</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="78"/>
-        <source>Move node (vertical only)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="79"/>
-        <source>Adjust Bend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="80"/>
-        <source>Adjust Strength</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="81"/>
-        <source>Select Preset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="82"/>
-        <source>Edit...</source>
-        <translation type="unfinished">Upravit...</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="83"/>
-        <source>Remove</source>
-        <translation type="unfinished">Odstranit</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="84"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="85"/>
-        <source>Set</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="86"/>
-        <source>Center View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="87"/>
-        <source>Right</source>
-        <translation type="unfinished">Vpravo</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="88"/>
-        <source>Left</source>
-        <translation type="unfinished">Vlevo</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="89"/>
-        <source>Up</source>
-        <translation type="unfinished">Nahoru</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="90"/>
-        <source>Down</source>
-        <translation type="unfinished">Dolů</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="91"/>
-        <source>To start</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="92"/>
-        <source>To end</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="93"/>
-        <source>To Start</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="94"/>
-        <source>To End</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="95"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="96"/>
-        <source>Move</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="97"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="113"/>
-        <source>Add Marker</source>
-        <translation type="unfinished">Přidat značku</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="98"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="114"/>
-        <source>Add Marker at Playhead</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="99"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="115"/>
-        <source>Add Marker at Work Cursor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="100"/>
-        <source>To workcursor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="101"/>
-        <source>To Playhead</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="102"/>
-        <source>Center</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="103"/>
-        <source>Add Track</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="104"/>
-        <source>Expand/Collapse Tracks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="105"/>
-        <source>To Previous Track</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="106"/>
-        <source>To Next Track</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="107"/>
-        <source>One Context Layer Up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="108"/>
-        <source>One Context Layer Down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="109"/>
-        <source>To Previous Context Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="110"/>
-        <source>To Next Context Item</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="111"/>
-        <source>To Context Item Above</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="112"/>
-        <source>To Context Item Below</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="116"/>
-        <source>Remove Marker</source>
-        <translation type="unfinished">Odstranit značku</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="117"/>
-        <source>Drag Marker</source>
-        <translation type="unfinished">Táhnout značku</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="118"/>
-        <source>Clear all Markers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="119"/>
-        <source>Playhead to Marker</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="120"/>
-        <source>Edit properties</source>
-        <translation type="unfinished">Upravit vlastnosti</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="121"/>
-        <source>Add new Plugin</source>
-        <translation type="unfinished">Přidat nový přídavný modul</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="122"/>
-        <source>Select Bus</source>
-        <translation type="unfinished">Vybrat sběrnici</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="123"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="125"/>
-        <source>Show Export Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="124"/>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="126"/>
-        <source>Show Context Menu</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="127"/>
-        <source>About Traverso</source>
-        <translation type="unfinished">O programu Traverso</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="128"/>
-        <source>Show Project Management Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="129"/>
-        <source>Full Screen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="130"/>
-        <source>Export keymap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="133"/>
-        <source>Show Audio I/O dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="134"/>
-        <source>Activate Track Finder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="135"/>
-        <source>Show Audio I/O Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="136"/>
-        <source>Browse to first Track in current View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="137"/>
-        <source>Browse to last Track in current View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="138"/>
-        <source>Toggle display range</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="139"/>
-        <source>Settings...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="140"/>
-        <source>Toggle average curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="141"/>
-        <source>Reset average curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="142"/>
-        <source>Export average curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="143"/>
-        <source>Capture Screen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="144"/>
-        <source>Bypass: On/Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="145"/>
-        <source>Save Project</source>
-        <translation type="unfinished">Uložit projekt</translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="146"/>
-        <source>Close Project</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="147"/>
-        <source>Exit application</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="148"/>
-        <source>Record: On/Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/core/TMenuTranslator.cpp" line="149"/>
-        <source>Silence other tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>Hledač stop</translation>
     </message>
 </context>
 <context>
@@ -5143,12 +4676,12 @@ abyste z nich mohl projekt obnovit.</translation>
     <message>
         <location filename="../../src/core/TSession.cpp" line="500"/>
         <source>Added %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidáno %1: %2</translation>
     </message>
     <message>
         <location filename="../../src/core/TSession.cpp" line="514"/>
         <source>Removed %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstraněno %1: %2</translation>
     </message>
 </context>
 <context>
@@ -5157,37 +4690,37 @@ abyste z nich mohl projekt obnovit.</translation>
         <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="93"/>
         <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="138"/>
         <source>Edit...</source>
-        <translation type="unfinished">Upravit...</translation>
+        <translation>Upravit...</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="98"/>
         <source>New Track...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nová stopa...</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="103"/>
         <source>New Sheet...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nový list...</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="108"/>
         <source>New Work View...</source>
-        <translation type="unfinished"></translation>
+        <translation>Nový pracovní pohled...</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="116"/>
         <source>Close Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Zavřít projekt</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="142"/>
         <source>Close View</source>
-        <translation type="unfinished"></translation>
+        <translation>Zavřít pohled</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/TSessionTabWidget.cpp" line="287"/>
         <source>Mixer</source>
-        <translation type="unfinished"></translation>
+        <translation>Míchačka</translation>
     </message>
 </context>
 <context>
@@ -5195,66 +4728,66 @@ abyste z nich mohl projekt obnovit.</translation>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="14"/>
         <source>Track Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Správce stop</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="28"/>
         <source>Track name</source>
-        <translation type="unfinished">Název stopy</translation>
+        <translation>Název stopy</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="51"/>
         <source>Mute</source>
-        <translation type="unfinished">Ztlumit</translation>
+        <translation>Ztlumit</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="58"/>
         <source>Solo</source>
-        <translation type="unfinished">Sólo</translation>
+        <translation>Sólo</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="65"/>
         <source>Record</source>
-        <translation type="unfinished">Nahrát</translation>
+        <translation>Nahrát</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="72"/>
         <source>Monitor</source>
-        <translation type="unfinished"></translation>
+        <translation>Dozor</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="118"/>
         <source>&amp;1 Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyvážení &amp;1</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="156"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="365"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="858"/>
         <source>0.00</source>
-        <translation type="unfinished">0.00</translation>
+        <translation>0.00</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="186"/>
         <source>&amp;3 Inputs</source>
-        <translation type="unfinished"></translation>
+        <translation>Vstupy &amp;3</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="198"/>
         <source>Add / Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat/Nastavit</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="230"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="399"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="892"/>
         <source>Remove Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstranit vybrané</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="240"/>
         <source>&amp;4 Pre Sends</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvedání před &amp;4</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="252"/>
@@ -5262,73 +4795,73 @@ abyste z nich mohl projekt obnovit.</translation>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="699"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="742"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Přidat</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="286"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="776"/>
         <source>Gain</source>
-        <translation type="unfinished">Zesílení</translation>
+        <translation>Zesílení</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="306"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="555"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="796"/>
         <source>0 dB</source>
-        <translation type="unfinished"></translation>
+        <translation>0 dB</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="345"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="838"/>
         <source>Pan</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyvážení</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="421"/>
         <source>&amp;5 Pre Fader Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Přídavné moduly prolínače před &amp;5</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="467"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="654"/>
         <source>Edit</source>
-        <translation type="unfinished">Upravit</translation>
+        <translation>Upravit</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="531"/>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="718"/>
         <source>Remove</source>
-        <translation type="unfinished">Odstranit</translation>
+        <translation>Odstranit</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="549"/>
         <source>&amp;2 Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>Zesílení &amp;2</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="602"/>
         <source>&amp;6 Post Fader Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation>Přídavné moduly prolínače po &amp;5</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/ui/TTrackManagerDialog.ui" line="730"/>
         <source>&amp;7 Outputs</source>
-        <translation type="unfinished"></translation>
+        <translation>Výstupy &amp;7</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="67"/>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="66"/>
         <source>Audio Track:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zvuková stopa:</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="71"/>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="70"/>
         <source>Bus Track:</source>
-        <translation type="unfinished"></translation>
+        <translation>Sběrnicová stopa:</translation>
     </message>
     <message>
-        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="84"/>
+        <location filename="../../src/sheetcanvas/dialogs/TTrackManagerDialog.cpp" line="83"/>
         <source>Master Bus:</source>
-        <translation type="unfinished"></translation>
+        <translation>Hlavní sběrnice:</translation>
     </message>
 </context>
 <context>
@@ -5336,17 +4869,17 @@ abyste z nich mohl projekt obnovit.</translation>
     <message>
         <location filename="../../src/traverso/ui/TTrackSelector.ui" line="14"/>
         <source>Track Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Volič stop</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/TTrackSelector.ui" line="22"/>
         <source>Name</source>
-        <translation type="unfinished">Název</translation>
+        <translation>Název</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/TTrackSelector.ui" line="36"/>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtr</translation>
     </message>
 </context>
 <context>
@@ -5354,7 +4887,7 @@ abyste z nich mohl projekt obnovit.</translation>
     <message>
         <location filename="../../src/traverso/ui/ThemeModifierDialog.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Dialog</translation>
+        <translation>Dialog</translation>
     </message>
 </context>
 <context>
@@ -5362,7 +4895,7 @@ abyste z nich mohl projekt obnovit.</translation>
     <message>
         <location filename="../../src/core/Themer.cpp" line="628"/>
         <source>&lt;color name=&quot;%1&quot;  red=&quot;%2&quot; green=&quot;%3&quot; blue=&quot;%4&quot;  alpha=&quot;%5&quot; /&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;color název=&quot;%1&quot;  červená=&quot;%2&quot; zelená=&quot;%3&quot; modrá=&quot;%4&quot;  alfa=&quot;%5&quot; /&gt;</translation>
     </message>
 </context>
 <context>
@@ -5411,7 +4944,7 @@ abyste z nich mohl projekt obnovit.</translation>
     <message>
         <location filename="../../src/core/Track.cpp" line="149"/>
         <source>Sheet Master</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzor listu</translation>
     </message>
 </context>
 <context>
@@ -5432,12 +4965,12 @@ abyste z nich mohl projekt obnovit.</translation>
     <message>
         <location filename="../../src/sheetcanvas/TrackView.cpp" line="129"/>
         <source>Edit name</source>
-        <translation type="unfinished"></translation>
+        <translation>Upravit název</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/TrackView.cpp" line="130"/>
         <source>Enter new name</source>
-        <translation type="unfinished"></translation>
+        <translation>Zadat nový název</translation>
     </message>
     <message>
         <location filename="../../src/sheetcanvas/TrackView.cpp" line="141"/>
@@ -5486,219 +5019,219 @@ abyste z nich mohl projekt obnovit.</translation>
 <context>
     <name>TraversoCommands</name>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="148"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="31"/>
         <source>Gain</source>
-        <translation type="unfinished">Zesílení</translation>
+        <translation>Zesílení</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="149"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="32"/>
         <source>Gain: Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Zesílení: Znovu nastavit</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="150"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="33"/>
         <source>Panorama</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyrovnanost (Pan)</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="151"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="34"/>
         <source>Panorama: Reset</source>
-        <translation type="unfinished"></translation>
+        <translation>Vyrovnanost: Znovu nastavit</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="152"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="35"/>
         <source>Import Audio</source>
-        <translation type="unfinished"></translation>
+        <translation>Zavést zvuk</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="153"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="36"/>
         <source>Insert Silence</source>
-        <translation type="unfinished">Vložit ticho</translation>
+        <translation>Vložit ticho</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="154"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="37"/>
         <source>Copy Clip</source>
-        <translation type="unfinished">Kopírovat ukázku</translation>
+        <translation>Kopírovat ukázku</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="155"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="38"/>
         <source>New Track</source>
-        <translation type="unfinished"></translation>
+        <translation>Nová stopa</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="156"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="39"/>
         <source>Remove Clip</source>
-        <translation type="unfinished">Odstranit ukázku</translation>
+        <translation>Odstranit ukázku</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="157"/>
-        <source>Remove</source>
-        <translation type="unfinished">Odstranit</translation>
-    </message>
-    <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="158"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="41"/>
         <source>External Processing</source>
-        <translation type="unfinished">Vnější zpracování</translation>
+        <translation>Vnější zpracování</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="159"/>
-        <source>(De)Select</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="160"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="43"/>
         <source>(De)Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Vybrat vše/Zrušit výběr</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="161"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="42"/>
+        <source>(De)Select</source>
+        <translation>(Zrušit výběr)Vybrat</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="40"/>
+        <source>Remove</source>
+        <translation>Odstranit</translation>
+    </message>
+    <message>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="44"/>
         <source>Move Clip</source>
-        <translation type="unfinished">Přesunout ukázku</translation>
+        <translation>Přesunout ukázku</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="162"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="45"/>
         <source>Move Up/Down</source>
-        <translation type="unfinished"></translation>
+        <translation>Posunout nahoru/dolů</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="163"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="46"/>
         <source>Drag Edge</source>
-        <translation type="unfinished"></translation>
+        <translation>Táhnout okraj</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="164"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="47"/>
         <source>Move Or Resize Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Přesunout nebo změnit velikost ukázky</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="165"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="48"/>
         <source>Split</source>
-        <translation type="unfinished"></translation>
+        <translation>Rozdělit</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="166"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="49"/>
         <source>Magnetic Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Magnetické vyjmutí</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="167"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="50"/>
         <source>Arm Tracks</source>
-        <translation type="unfinished">Aktivovat stopy</translation>
+        <translation>Spustit stopy</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="168"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="51"/>
         <source>Fold Sheet</source>
-        <translation type="unfinished">Složit list</translation>
+        <translation>Složit list</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="169"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="52"/>
         <source>Fold Track</source>
-        <translation type="unfinished">Složit stopu</translation>
+        <translation>Složit stopu</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="170"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="53"/>
         <source>Fold Markers</source>
-        <translation type="unfinished">Složit značky</translation>
+        <translation>Složit značky</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="171"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="54"/>
         <source>Vertical In</source>
-        <translation type="unfinished"></translation>
+        <translation>Svislé dovnitř</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="172"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="55"/>
         <source>Horizontal Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Vodorovné ven</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="173"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="56"/>
         <source>Horizontal In</source>
-        <translation type="unfinished"></translation>
+        <translation>Vodorovné dovnitř</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="174"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="57"/>
         <source>Vertical Out</source>
-        <translation type="unfinished"></translation>
+        <translation>Svislé ven</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="175"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="58"/>
         <source>Omnidirectional</source>
-        <translation type="unfinished"></translation>
+        <translation>Všesměrové</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="176"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="59"/>
         <source>Horizontal</source>
-        <translation type="unfinished"></translation>
+        <translation>Vodorovné</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="177"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="60"/>
         <source>Vertical</source>
-        <translation type="unfinished"></translation>
+        <translation>Svislé</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="178"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="61"/>
         <source>Right</source>
-        <translation type="unfinished">Vpravo</translation>
+        <translation>Vpravo</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="179"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="62"/>
         <source>Left</source>
-        <translation type="unfinished">Vlevo</translation>
+        <translation>Vlevo</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="180"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="63"/>
         <source>Up</source>
-        <translation type="unfinished">Nahoru</translation>
+        <translation>Nahoru</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="181"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="64"/>
         <source>Down</source>
-        <translation type="unfinished">Dolů</translation>
+        <translation>Dolů</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="182"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="65"/>
         <source>Shuttle</source>
-        <translation type="unfinished"></translation>
+        <translation>Jezdit tam a zpět</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="183"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="66"/>
         <source>Normalize</source>
-        <translation type="unfinished">Normalizovat</translation>
+        <translation>Normalizovat</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="184"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.h" line="67"/>
         <source>Arrow Key Browser</source>
-        <translation type="unfinished"></translation>
+        <translation>Prohlížeč s šipkovými klávesami</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="282"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="236"/>
         <source>Removing Track %1, but no active (Work) Sheet ??</source>
-        <translation type="unfinished"></translation>
+        <translation>Odstraňuje se stopa %1, ale není činný žádný (pracovní) list?</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="287"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="241"/>
         <source>It is not possible to remove the Master Out track!</source>
-        <translation type="unfinished"></translation>
+        <translation>Není možné odstraní hlavní výstupní stopu!</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="500"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="454"/>
         <source>Normalization</source>
-        <translation type="unfinished">Normalizace</translation>
+        <translation>Normalizace</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="501"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="455"/>
         <source>Set Normalization level:</source>
-        <translation type="unfinished">Nastavit úroveň normalizace:</translation>
+        <translation>Nastavit úroveň normalizace:</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="512"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="466"/>
         <source>Normalize Selected Clips</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalizovat vybrané ukázky</translation>
     </message>
     <message>
-        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="515"/>
+        <location filename="../../src/commands/plugins/TraversoCommands/TraversoCommands.cpp" line="469"/>
         <source>AudioClip: Normalize</source>
-        <translation type="unfinished"></translation>
+        <translation>Ukázka zvuku: Normalizovat</translation>
     </message>
 </context>
 <context>
@@ -5706,7 +5239,7 @@ abyste z nich mohl projekt obnovit.</translation>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="51"/>
         <source>Welcome dear User</source>
-        <translation type="unfinished"></translation>
+        <translation>Vítejte, drahý uživateli</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="163"/>
@@ -5716,7 +5249,12 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Traverso DAW&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Multitrack Audio Recording and Editing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Traverso DAW&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Vícestopé nahrávání a úpravy zvuku&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="216"/>
@@ -5725,7 +5263,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Welcome&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Vítejte&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="318"/>
@@ -5741,7 +5283,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Quick start:  &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/FirstTime&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;Using Traverso for the first time&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Getting help: &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/forum/&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;User Forum&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;http://traverso-daw.org/UserManual&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;User Manual&lt;/span&gt;&lt;/a&gt; &lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Giving help:   &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/Support&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;Ways to Support Traverso&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;table border=&quot;0&quot; style=&quot;-qt-table-type: root; margin-top:4px; margin-bottom:4px; margin-left:4px; margin-right:4px;&quot;&gt;
+&lt;tr&gt;
+&lt;td style=&quot;border: none;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Prozkoumejte Traverso&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Traverso je velmi ddobře vybaven pro nahrávání vaší skupiny, orchestru, ansámblu, nebo jakéhokoli jiného zdroje zvuku!&lt;br /&gt;Poskytuje velké množství nástrojů od nástrojů pro nahrávání po nástroje pro vypalování CD!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Rychlý začátek:  &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/FirstTime&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;Používáme Traverso poprvé&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Získáváme nápovědu: &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/forum/&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;Uživatelské řečniště&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;http://traverso-daw.org/UserManual&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;Uživatelská příručka&lt;/span&gt;&lt;/a&gt; &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Dáváme nápovědu:   &lt;/span&gt;&lt;a href=&quot;http://traverso-daw.org/Support&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;Cesty, jak podporovat Traverso&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="457"/>
@@ -5750,7 +5303,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Load previous:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Nahrát předchozí:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="559"/>
@@ -5759,7 +5316,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Load existing:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Nahrát stávající:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="655"/>
@@ -5768,12 +5329,16 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Projects Dir:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;;&quot;&gt;Adresář s projektem:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="770"/>
         <source>Create new Project</source>
-        <translation type="unfinished"></translation>
+        <translation>Vytvořit nový projekt</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="404"/>
@@ -5782,58 +5347,64 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Projects&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Projekty&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="712"/>
         <source>Change</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="65"/>
         <source>Resume</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokračovat</translation>
     </message>
     <message>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="514"/>
         <location filename="../../src/traverso/ui/WelcomeWidget.ui" line="616"/>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="69"/>
         <source>Load</source>
-        <translation type="unfinished">Nahrát</translation>
+        <translation>Nahrát</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="64"/>
         <source>Resume loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Pokračovat v nahraném</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="68"/>
         <source>Load previous;</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrát předchozí</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="84"/>
         <source>Project &apos;%1&apos;&apos; is already running 
 
 Do you really wish to reload it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Projekt &apos;%1&apos; již běží
+
+Opravdu jej chcete znovu nahrát?</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="151"/>
         <source>Choose an existing or create a new Project Directory</source>
-        <translation type="unfinished">Vybrat nějaký stávající nebo vytvořit nový adresář pro projekt</translation>
+        <translation>Vybrat nějaký stávající nebo vytvořit nový adresář pro projekt</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="161"/>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="172"/>
         <source>Traverso - Warning</source>
-        <translation type="unfinished">Traverso - Varování</translation>
+        <translation>Traverso - Varování</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="162"/>
         <source>This directory is not writable by you! 
 </source>
-        <translation type="unfinished">Tento adresář není vámi zapisovatelný!
+        <translation>Tento adresář není vámi zapisovatelný!
 </translation>
     </message>
     <message>
@@ -5841,7 +5412,7 @@ Do you really wish to reload it?</source>
         <source>Please check permission for this directory or choose another one:
 
  %1</source>
-        <translation type="unfinished">Zkontrolujte, prosím, oprávnění pro tento adresář nebo vyberte jiný:
+        <translation>Zkontrolujte, prosím, oprávnění pro tento adresář nebo vyberte jiný:
 
 %1</translation>
     </message>
@@ -5849,24 +5420,24 @@ Do you really wish to reload it?</source>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="172"/>
         <source>Unable to create Project directory! 
 </source>
-        <translation type="unfinished">Nepodařilo se vytvořit adresář projektu!
+        <translation>Nepodařilo se vytvořit adresář projektu!
 </translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="173"/>
         <source>Please check permission for this directory: %1</source>
-        <translation type="unfinished">Zkontrolujte, prosím, oprávnění pro tento adresář: %1</translation>
+        <translation>Zkontrolujte, prosím, oprávnění pro tento adresář: %1</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="176"/>
         <source>Traverso - Information</source>
-        <translation type="unfinished">Traverso - Informace</translation>
+        <translation>Traverso - Informace</translation>
     </message>
     <message>
         <location filename="../../src/traverso/widgets/WelcomeWidget.cpp" line="176"/>
         <source>Created new Project directory for you here: %1
 </source>
-        <translation type="unfinished">Nový adresář pro projekt byl pro vás vytvořen zde: %1
+        <translation>Nový adresář pro projekt byl pro vás vytvořen zde: %1
 </translation>
     </message>
 </context>
