@@ -1833,6 +1833,13 @@ void InputEngine::set_double_fact_interval(int time)
         m_doubleFactWaitTime = time;
 }
 
+void InputEngine::create_menu_translations()
+{
+        foreach(CommandPlugin* plug, m_commandplugins) {
+                plug->create_menu_translations();
+        }
+}
+
 
 // Number colector
 bool InputEngine::check_number_collection(int eventcode)

@@ -565,12 +565,6 @@
 				<Object objectname="SheetView" modes="All" sortorder="4" pluginname="TraversoCommands" commandname="Gain" />
 			</Objects>
 		</keyfact>
-                <keyfact type="HKEY2" key1="" key2="" >
-			<Objects>
-				<Object objectname="CurveView" mousehint="UD" slotsignature="drag_node_vertical_only" modes="Effects" sortorder="4" />
-				<Object objectname="AudioClipView" mousehint="UD" modes="All" pluginname="TraversoCommands" commandname="MoveClip" arguments="move;true" />
-			</Objects>
-		</keyfact>
                 <keyfact type="HKEY2" key1="Z" key2="" >
 			<Objects>
 				<Object objectname="SheetView" mousehint="UD" modes="All" sortorder="2" submenu="Zoom" pluginname="TraversoCommands" commandname="VJogZoom" arguments="VJogZoom;1.2;0.2" />

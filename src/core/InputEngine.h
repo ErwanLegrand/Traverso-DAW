@@ -151,6 +151,7 @@ public:
         void set_clear_time(int time);
         void set_hold_sensitiveness(int factor);
         void set_double_fact_interval(int time);
+        void create_menu_translations();
 
 
 private:

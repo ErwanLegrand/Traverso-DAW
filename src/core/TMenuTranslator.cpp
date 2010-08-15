@@ -56,6 +56,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TrackPanelPan", tr("Panorama"));
         add_entry("TrackPanelLed", tr("Track Panel Button"));
         add_entry("TrackPanelBus", tr("Routing Indicator"));
+        add_entry("VUMeterLevel", tr("VU Level"));
+        add_entry("VUMeter", tr("VU Level"));
         add_entry("AudioTrackPanel",tr("Audio Track"));
         add_entry("Plugin",tr("Plugin"));
         add_entry("PlayHead", tr("Play Head"));
