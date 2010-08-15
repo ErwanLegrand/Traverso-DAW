@@ -205,7 +205,7 @@ TMainWindow::TMainWindow()
         TContextHelpWidget* helpWidget = new TContextHelpWidget(m_contextHelpDW);
         helpWidget->setFocusPolicy(Qt::NoFocus);
         m_contextHelpDW->setWidget(helpWidget);
-        addDockWidget(Qt::RightDockWidgetArea, m_contextHelpDW);
+        addDockWidget(Qt::LeftDockWidgetArea, m_contextHelpDW);
 
 	
 	m_sysinfo = new SysInfoToolBar(this);

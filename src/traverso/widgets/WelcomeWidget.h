@@ -39,7 +39,6 @@ public:
 
 private:
         Project* m_project;
-        void update_projects_directory_line_edit();
 
 protected:
         void keyPressEvent ( QKeyEvent * event );
@@ -52,6 +51,7 @@ private slots:
         void update_projects_combo_box();
         void update_previous_project_line_edit();
         void on_changeProjectsDirButton_clicked();
+        void update_projects_directory_line_edit();
 };
 
 #endif // WELCOMEWIDGET_H

@@ -59,6 +59,8 @@ private slots:
 	void load_file(QString, int, QString);
 	void move_up();
 	void move_down();
+        void on_changeProjectsDirButton_clicked();
+        void update_projects_directory_line_edit();
 
 signals:
 	void loadFile(QString, int, QString);

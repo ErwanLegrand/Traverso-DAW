@@ -48,6 +48,7 @@
 #include "ProjectManager.h"
 #include "ResourcesManager.h"
 #include <Project.h>
+#include "ProjectManager.h"
 #include <Sheet.h>
 #include <AudioTrack.h>
 #include <Utils.h>
@@ -70,6 +71,7 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	
 	use_template_checkbox_state_changed(Qt::Unchecked);
 	update_template_combobox();
+        update_projects_directory_line_edit();
 
 	buttonAdd->setIcon(QIcon(":/add"));
 	buttonRemove->setIcon(QIcon(":/remove"));
@@ -96,6 +98,8 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 
 	connect(m_converter, SIGNAL(taskFinished(QString, int, QString)), this, SLOT(load_file(QString, int, QString)));
 	connect(m_buttonGroup, SIGNAL(buttonClicked(int)), stackedWidget, SLOT(setCurrentIndex(int)));
+
+        connect(&pm(), SIGNAL(currentProjectDirChanged()), this, SLOT(update_projects_directory_line_edit()));
 }
 
 NewProjectDialog::~ NewProjectDialog( )
@@ -412,4 +416,48 @@ AudioFileCopyConvert* NewProjectDialog::get_converter()
 {
 	return m_converter;
 }
+
+void NewProjectDialog::on_changeProjectsDirButton_clicked()
+{
+        QString path = pm().get_projects_directory();
+        QString newPath = QFileDialog::getExistingDirectory(this,
+                        tr("Choose an existing or create a new Project Directory"), path);
+
+        if (newPath.isEmpty() || newPath.isNull()) {
+                return;
+        }
+
+        QDir dir;
+
+        QFileInfo fi(newPath);
+        if (dir.exists(newPath) && !fi.isWritable()) {
+                QMessageBox::warning( 0, tr("Traverso - Warning"),
+                                      tr("This directory is not writable by you! \n") +
+                                        tr("Please check permission for this directory or "
+                                        "choose another one:\n\n %1").arg(newPath) );
+                return;
+        }
+
+
+        if (dir.exists(newPath)) {
+// 		QMessageBox::information( interface, tr("Traverso - Information"), tr("Using existing Project directory: %1\n").arg(newPath), "OK", 0 );
+        } else if (!dir.mkpath(newPath)) {
+                QMessageBox::warning( this, tr("Traverso - Warning"), tr("Unable to create Project directory! \n") +
+                                tr("Please check permission for this directory: %1").arg(newPath) );
+                return;
+        } else {
+                QMessageBox::information( this, tr("Traverso - Information"), tr("Created new Project directory for you here: %1\n").arg(newPath), "OK", 0 );
+        }
+
+        pm().set_current_project_dir(newPath);
+
+        update_projects_directory_line_edit();
+}
+
+void NewProjectDialog::update_projects_directory_line_edit()
+{
+        QString path = pm().get_projects_directory();
+        projectsDirLineEdit->setText(path);
+}
+
 //eof

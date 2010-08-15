@@ -65,11 +65,8 @@ void TConfig::reset_settings( )
 	
 	settings.clear();
 
-        QString projectspath = QDir::homePath() + "/" + tr("TraversoProjects");
-        QDir dir;
-        dir.mkpath(projectspath);
-        settings.setValue("Project/directory", projectspath);
-	settings.setValue("ProgramVersion", VERSION);
+        settings.setValue("Project/directory", QDir::homePath());
+        settings.setValue("ProgramVersion", VERSION);
 	settings.setValue("ConfigFileVersion", CONFIG_FILE_VERSION);
 	
 	m_configs.clear();
