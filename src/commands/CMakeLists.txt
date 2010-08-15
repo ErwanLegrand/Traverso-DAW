@@ -59,6 +59,7 @@ Shuttle.h
 MoveTrack.h
 RemoveClip.h
 SplitClip.h
+PCommand.h
 TrackPan.h
 WorkCursorMove.h
 PlayHeadMove.h

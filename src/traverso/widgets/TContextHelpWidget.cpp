@@ -77,8 +77,13 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
               "</style>\n"
               "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
 
-        html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + name + "</td></tr>\n";
-        html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
+        if (obj->inherits("PCommand")) {
+                TCommand* command = static_cast<TCommand*>(obj);
+                html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + command->text() + "</td></tr>\n";
+        } else {
+                html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + name + "</td></tr>\n";
+                html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
+        }
 
         QStringList result;
 
@@ -111,7 +116,6 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
                         }
                 }
         }
-
 
         QStringList submenushtml;
 

@@ -28,6 +28,8 @@ class ContextItem;
 
 class PCommand : public TCommand
 {
+        Q_OBJECT
+
 public :
         PCommand(ContextItem* item, const char* slot, const QString& des);
 	PCommand(ContextItem* item, const char* slot, QVariant doValue, QVariant undoValue, const QString& des);

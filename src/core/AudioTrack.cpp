@@ -348,7 +348,7 @@ TCommand* AudioTrack::toggle_arm()
 
 TCommand* AudioTrack::silence_others( )
 {
-        PCommand* command = new PCommand(this, "solo", tr("Silence Others"));
+        PCommand* command = new PCommand(this, "solo", tr("Silence Other Tracks"));
         command->set_historable(false);
         return command;
 }

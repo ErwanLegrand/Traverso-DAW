@@ -65,7 +65,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("SpectralMeter", tr("Spectral Analyzer"));
 
         add_entry("ArmTracks", tr("Arm Tracks"));
-        add_entry("Crop", tr("Remove and Magnetic Snap"));
+        add_entry("Crop", tr("Cut and Magnetic Snap"));
         add_entry("Fade", tr("Fade"));
         add_entry("Gain", tr("Gain"));
         add_entry("MoveClip", tr("Move Clip"));
@@ -75,6 +75,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("MoveTrack", tr("Move Track"));
         add_entry("PlayHeadMove", tr("Move Play Head"));
         add_entry("Shuttle", tr("Shuttle"));
+        add_entry("SplitClip", tr("Split Clip"));
         add_entry("TrackPan", tr("Track Pan"));
         add_entry("WorkCursorMove", tr("Move Work Cursor"));
         add_entry("Zoom", tr("Zoom"));
