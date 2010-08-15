@@ -234,7 +234,7 @@ void Zoom::set_collected_number(const QString &collected)
         if (collected.isEmpty()) {
                 return;
         }
-        printf("yes %s\n", collected.toAscii().data());
+
         int number = 0;
         bool ok = false;
         QString cleared = collected;

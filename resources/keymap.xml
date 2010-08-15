@@ -334,6 +334,15 @@
                                 <Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" />
                         </Objects>
                 </keyfact>
+                <keyfact>
+                        <Objects>
+                        <Object objectname="MoveCommand" slotsignature="numerical_input" sortorder="100" />
+                        <Object objectname="Gain" slotsignature="numerical_input" sortorder="100" />
+                        <Object objectname="Zoom" slotsignature="numerical_input" sortorder="100" />
+                        </Objects>
+                </keyfact>
+
+
 
 
 		

@@ -1930,6 +1930,9 @@ void InputEngine::create_menudata_for_metaobject(const QMetaObject * mo, QList< 
                         }
 				
 			menudata.keysequence = ieaction->keySequence;
+                        if (iedata->slotsignature == "numerical_input") {
+                                menudata.keysequence =  "< 0, 1, 2 ... 9 >";
+                        }
 			menudata.iedata = ieaction->keySequence;
 			menudata.sortorder = iedata->sortorder;
 			menudata.submenu = iedata->submenu;

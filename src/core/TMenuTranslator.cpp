@@ -59,6 +59,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("AudioTrackPanel",tr("Audio Track"));
         add_entry("Plugin",tr("Plugin"));
         add_entry("PlayHead", tr("Play Head"));
+        add_entry("PositionIndicator", tr("Position Indicator"));
         add_entry("WorkCursor", tr("Work Cursor"));
         add_entry("CorrelationMeter", tr("Correlation Meter"));
         add_entry("SpectralMeter", tr("Spectral Analyzer"));
@@ -68,7 +69,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Fade", tr("Fade"));
         add_entry("Gain", tr("Gain"));
         add_entry("MoveClip", tr("Move Clip"));
-        add_entry("MoveCurveNod", tr("Move Node"));
+        add_entry("MoveCurveNode", tr("Move Node"));
         add_entry("MoveEdge", tr("Move Clip Edge"));
         add_entry("MoveMarker", tr("Move Marker"));
         add_entry("MoveTrack", tr("Move Track"));
@@ -203,6 +204,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Crop::adjust_right", tr("Adjust Right"));
         add_entry("Gain::increase_gain", tr("Increase"));
         add_entry("Gain::decrease_gain", tr("Decrease"));
+        add_entry("Gain::numerical_input", tr("Numerical Input"));
         add_entry("TrackPanelGain::gain_increment", tr("Increase"));
         add_entry("TrackPanelGain::gain_decrement", tr("Decrease"));
         add_entry("MarkerView::drag_marker", tr("Move Marker"));
@@ -219,6 +221,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("MoveCommand::toggle_snap_on_off", tr("Toggle Snap on/off"));
         add_entry("MoveCommand::move_left", tr("Move Left"));
         add_entry("MoveCommand::move_right", tr("Move Right"));
+        add_entry("MoveCommand::numerical_input", tr("Moving Speed"));
         add_entry("MoveCurveNode::move_up", tr("Move Up"));
         add_entry("MoveCurveNode::move_down", tr("Move Down"));
         add_entry("MoveCurveNode::move_left", tr("Move Left"));
@@ -258,11 +261,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Zoom::toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
         add_entry("Zoom::track_vzoom_in", tr("Track Vertical Zoom In"));
         add_entry("Zoom::track_vzoom_out", tr("Track Vertical Zoom Out"));
-
-
-
-
-
+        add_entry("Zoom::numerical_input", tr("Track Height"));
 }
 
 void TMenuTranslator::add_entry(const QString &signature, const QString &translation)

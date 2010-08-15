@@ -296,10 +296,15 @@ TMainWindow::TMainWindow()
 	create_menus();
 	
 	/** Read in the Interface settings and apply them
-	 */
-	resize(config().get_property("Interface", "size", QSize(900, 600)).toSize());
-	move(config().get_property("Interface", "pos", QPoint(200, 200)).toPoint());
-	restoreState(config().get_property("Interface", "windowstate", "").toByteArray());
+         */
+        QSize mainScreenSize = config().get_property("Interface", "size", QSize(0, 0)).toSize();
+        if (mainScreenSize.height()) {
+                resize(mainScreenSize);
+                move(config().get_property("Interface", "pos", QPoint(200, 200)).toPoint());
+                restoreState(config().get_property("Interface", "windowstate", "").toByteArray());
+        } else {
+                showMaximized();
+        }
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
