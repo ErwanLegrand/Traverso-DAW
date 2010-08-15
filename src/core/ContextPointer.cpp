@@ -169,7 +169,9 @@ void ContextPointer::jog_finished()
  */
 void ContextPointer::reset_cursor( )
 {
-        Q_ASSERT(m_port);
+        if (!m_port) {
+                return;
+        }
 
         if (keyboard_only_input()) {
                 m_port->update_holdcursor_shape();
