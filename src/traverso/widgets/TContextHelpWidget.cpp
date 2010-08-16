@@ -48,7 +48,7 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
         mainLayout->addWidget(m_textEdit);
         setLayout(mainLayout);
 
-        m_comboBox->addItem(tr("Show Active Context"));
+        m_comboBox->addItem(tr("Active Context"));
 
         QMap<QString, QString> sorted;
 
