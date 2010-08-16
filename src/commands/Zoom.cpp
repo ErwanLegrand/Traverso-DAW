@@ -231,6 +231,10 @@ void Zoom::track_vzoom_out(bool autorepeat)
 
 void Zoom::set_collected_number(const QString &collected)
 {
+        if (!m_tv) {
+                return;
+        }
+
         if (collected.isEmpty()) {
                 return;
         }

@@ -26,6 +26,7 @@
 #include <QFrame>
 #include <QPushButton>
 #include "ViewItem.h"
+#include "ViewPort.h"
 
 class QGridLayout;
 class QGraphicsScene;
@@ -40,6 +41,9 @@ class Project;
 class TSession;
 class TCommand;
 class SheetView;
+class Sheet;
+class SheetWidget;
+
 
 class SheetPanelView : public ViewItem
 {
@@ -52,6 +56,23 @@ public:
 
 private:
         TSession* m_sheet;
+};
+
+class SheetPanelViewPort : public ViewPort
+{
+        Q_OBJECT
+public:
+        SheetPanelViewPort(QGraphicsScene* scene, SheetWidget* sw);
+        ~SheetPanelViewPort() {}
+
+        void set_sheet_view(SheetView* view) { m_sv = view;}
+
+private:
+        Sheet*          m_sheet;
+        SheetPanelView* m_spv;
+
+private slots:
+        void load_theme();
 };
 
 class TTimeLabel : public QPushButton

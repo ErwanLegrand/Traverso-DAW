@@ -67,7 +67,7 @@ NewProjectDialog::NewProjectDialog( QWidget * parent )
 	: QDialog(parent)
 {
 	setupUi(this);
-	trackCountSpinBox->setValue(config().get_property("Sheet", "trackCreationCount", 4).toInt());
+        trackCountSpinBox->setValue(config().get_property("Sheet", "trackCreationCount", 1).toInt());
 	
 	use_template_checkbox_state_changed(Qt::Unchecked);
 	update_template_combobox();

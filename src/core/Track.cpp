@@ -112,7 +112,7 @@ int Track::set_state( const QDomNode & node )
                 m_id = create_id();
         }
 
-        m_session->set_track_height(m_id, e.attribute( "height", "160" ).toInt());
+        m_session->set_track_height(m_id, e.attribute( "height", "90" ).toInt());
 
         QDomNode m_pluginChainNode = node.firstChildElement("PluginChain");
         if (!m_pluginChainNode.isNull()) {

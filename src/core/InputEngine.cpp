@@ -1870,7 +1870,11 @@ bool InputEngine::check_number_collection(int eventcode)
 void InputEngine::stop_collecting()
 {
 	PENTER3;
-        m_collectedNumber = m_sCollectedNumber.toInt();
+        bool ok;
+        m_collectedNumber = m_sCollectedNumber.toInt(&ok);
+        if (!ok) {
+                m_collectedNumber = -1;
+        }
         set_numerical_input("");
 }
 
@@ -1893,7 +1897,12 @@ bool InputEngine::has_collected_number()
 void InputEngine::set_numerical_input(const QString &number)
 {
         m_sCollectedNumber = number;
-        m_collectedNumber = m_sCollectedNumber.toInt();
+        bool ok;
+        m_collectedNumber = m_sCollectedNumber.toInt(&ok);
+        if (!ok) {
+                m_collectedNumber = -1;
+        }
+
         if (m_holdingCommand) {
                 m_holdingCommand->set_collected_number(m_sCollectedNumber);
         }

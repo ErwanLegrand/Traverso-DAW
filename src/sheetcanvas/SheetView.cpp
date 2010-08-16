@@ -523,7 +523,7 @@ TCommand* SheetView::toggle_expand_all_tracks(int height)
                         }
                 } else {
                         foreach(TrackView* view, get_track_views()) {
-                                m_session->set_track_height(view->get_track()->get_id(), 85);
+                                m_session->set_track_height(view->get_track()->get_id(), Track::INITIAL_HEIGHT);
                         }
                 }
         } else {

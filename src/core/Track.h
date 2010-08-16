@@ -41,7 +41,7 @@ public:
                 BUS = 1
         };
 
-        static const int INITIAL_HEIGHT = 60;
+        static const int INITIAL_HEIGHT = 90;
 
         void get_state(QDomDocument& doc, QDomElement& element, bool istemplate=false);
         int get_sort_index() const;

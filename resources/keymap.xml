@@ -336,9 +336,9 @@
                 </keyfact>
                 <keyfact>
                         <Objects>
-                        <Object objectname="MoveCommand" slotsignature="numerical_input" sortorder="100" />
-                        <Object objectname="Gain" slotsignature="numerical_input" sortorder="100" />
-                        <Object objectname="Zoom" slotsignature="numerical_input" sortorder="100" />
+                        <Object objectname="MoveCommand" slotsignature="numerical_input" sortorder="100" modes="All" />
+                        <Object objectname="Gain" slotsignature="numerical_input" sortorder="100" modes="All" />
+                        <Object objectname="Zoom" slotsignature="numerical_input" sortorder="100" modes="All" />
                         </Objects>
                 </keyfact>
 

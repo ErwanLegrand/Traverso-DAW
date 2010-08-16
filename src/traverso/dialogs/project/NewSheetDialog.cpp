@@ -31,7 +31,7 @@ NewSheetDialog::NewSheetDialog(QWidget * parent)
 {
 	setupUi(this);
 	
-	trackCountSpinBox->setValue(config().get_property("Sheet", "trackCreationCount", 4).toInt());
+        trackCountSpinBox->setValue(config().get_property("Sheet", "trackCreationCount", 1).toInt());
 	
 	set_project(pm().get_project());
 	

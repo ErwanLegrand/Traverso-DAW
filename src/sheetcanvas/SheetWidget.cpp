@@ -56,19 +56,6 @@ void SheetPanelView::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
         painter->fillRect(-3, 0, 3, -TIMELINE_HEIGHT - 1, themer()->get_color("TrackPanel:trackseparation"));
 }
 
-class SheetPanelViewPort : public ViewPort
-{
-public:
-	SheetPanelViewPort(QGraphicsScene* scene, SheetWidget* sw);
-        ~SheetPanelViewPort() {}
-
-        void set_sheet_view(SheetView* view) { m_sv = view;}
-
-private:
-        Sheet*          m_sheet;
-	SheetPanelView* m_spv;
-};
-
 SheetPanelViewPort::SheetPanelViewPort(QGraphicsScene * scene, SheetWidget * sw)
 	: ViewPort(scene, sw)
 {
@@ -79,14 +66,21 @@ SheetPanelViewPort::SheetPanelViewPort(QGraphicsScene * scene, SheetWidget * sw)
 	setMaximumWidth(200);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        setBackgroundBrush(themer()->get_color("Timeline:background"));
 
         m_spv = new SheetPanelView(scene, sw->get_sheet());
+        load_theme();
 
         QHBoxLayout* m_mainLayout = new QHBoxLayout(this);
         m_mainLayout->addWidget(new TTimeLabel(this, sw->get_sheet()));
         setLayout(m_mainLayout);
 
+        connect(themer(), SIGNAL(themeLoaded()), this, SLOT(load_theme()));
+
+}
+
+void SheetPanelViewPort::load_theme()
+{
+        setBackgroundBrush(themer()->get_color("Timeline:background"));
 }
 
 TTimeLabel::TTimeLabel(QWidget* parent, TSession* session)

@@ -30,8 +30,8 @@ TBusTrack::TBusTrack(TSession* session, const QString& name, int channelCount)
         : Track(session)
 {
         QObject::tr("Bus Track");
-        session->set_track_height(m_id, 60);
         m_id = create_id();
+
         m_name = name;
         m_channelCount = channelCount;
         m_fader->set_gain(1.0);
@@ -40,6 +40,8 @@ TBusTrack::TBusTrack(TSession* session, const QString& name, int channelCount)
 
         m_processBus->set_id(m_id);
         m_processBus->set_name(m_name);
+
+        session->set_track_height(m_id, INITIAL_HEIGHT);
 }
 
 TBusTrack::TBusTrack(TSession *session, QDomNode /*node*/)

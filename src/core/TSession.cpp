@@ -121,7 +121,7 @@ int TSession::set_state( const QDomNode & node )
                 Track* track = m_parentSession->get_track(id);
                 if (track) {
                         add_track(track);
-                        set_track_height(track->get_id(), e.attribute("height", "160").toInt());
+                        set_track_height(track->get_id(), e.attribute("height", "90").toInt());
                 }
 
                 trackNode = trackNode.nextSibling();
@@ -159,7 +159,7 @@ QDomNode TSession::get_state(QDomDocument doc)
 
 TBusTrack* TSession::get_master_out() const
 {
-        if (m_isProjectSession) {
+        if (is_project_session()) {
                 return m_masterOut;
         }
 
@@ -488,7 +488,7 @@ TCommand* TSession::start_transport()
 
 TCommand* TSession::add_track(Track* track, bool historable)
 {
-        if (m_parentSession && !is_project_session()) {
+        if (is_child_session()) {
                 set_track_height(track->get_id(), m_parentSession->get_track_height(track->get_id()));
                 private_track_added(track);
                 return 0;
