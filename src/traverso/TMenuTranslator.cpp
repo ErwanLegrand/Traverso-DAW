@@ -115,6 +115,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("CorrelationMeter", tr("Correlation Meter"));
         add_entry("SpectralMeter", tr("Spectral Analyzer"));
 
+        add_entry("ArrowKeyBrowser", tr("Arrow Key Browser"));
         add_entry("ArmTracks", tr("Arm Tracks"));
         add_entry("Crop", tr("Cut and Magnetic Snap"));
         add_entry("Fade", tr("Fade"));
