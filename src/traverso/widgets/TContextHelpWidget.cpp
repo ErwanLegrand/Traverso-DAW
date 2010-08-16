@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TContextHelpWidget.h"
 
 #include <QMenu>
+#include <QLayout>
+#include <QComboBox>
 
 #include "ContextPointer.h"
 #include "ContextItem.h"
@@ -33,11 +35,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Themer.h"
 
 TContextHelpWidget::TContextHelpWidget(QWidget* parent)
-        : QTextEdit(parent)
+        : QWidget(parent)
 {
+        m_comboBox = new QComboBox(parent);
+        m_textEdit = new QTextEdit(parent);
+
+        QHBoxLayout* comboLayout = new QHBoxLayout;
+        QVBoxLayout* mainLayout = new QVBoxLayout;
+        comboLayout->addWidget(m_comboBox);
+
+        mainLayout->addLayout(comboLayout);
+        mainLayout->addWidget(m_textEdit);
+        setLayout(mainLayout);
+
+        m_comboBox->addItem(tr("Show Active Context"));
+
+        QMap<QString, QString> sorted;
+
+        TMenuTranslator* translator = TMenuTranslator::instance();
+        QHash<QString, QList<const QMetaObject*> > objects = translator->get_meta_objects();
+        foreach(QList<const QMetaObject*> value, objects.values()) {
+                if (value.size()) {
+                        sorted.insert(translator->get_translation_for(value.first()->className()), value.first()->className());
+                }
+        }
+        foreach(QString value, sorted.values()) {
+                m_comboBox->addItem(sorted.key(value), value);
+        }
+
         connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
         connect(&ie(), SIGNAL(jogStarted()), this, SLOT(jog_started()));
         connect(&ie(), SIGNAL(jogFinished()), this, SLOT(context_changed()));
+        connect(m_comboBox, SIGNAL(activated(int)), this, SLOT(combobox_activated(int)));
 }
 
 void TContextHelpWidget::context_changed()
@@ -45,17 +74,27 @@ void TContextHelpWidget::context_changed()
         if (parentWidget()->isHidden()) {
                 return;
         }
+
+        if (m_comboBox->currentIndex() != 0) {
+                return;
+        }
+
         QList<ContextItem*> items = cpointer().get_active_context_items();
+
         if (items.size()) {
-                setHtml(create_html_for_object(items.first()));
+                m_textEdit->setHtml(create_html_for_object(items.first()));
         }
 }
 
 void TContextHelpWidget::jog_started()
 {
+        if (m_comboBox->currentIndex() != 0) {
+                return;
+        }
+
         TCommand* hold = ie().get_holding_command();
         if (hold) {
-                setHtml(create_html_for_object(hold));
+                m_textEdit->setHtml(create_html_for_object(hold));
         }
 }
 
@@ -80,4 +119,22 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
         m_help.insert(mo->className(), html);
 
         return html;
+}
+
+void TContextHelpWidget::combobox_activated(int index)
+{
+        QString className = m_comboBox->itemData(index).toString();
+
+        if (m_help.contains(className)) {
+                m_textEdit->setHtml(m_help.value(className));
+                return;
+        }
+
+        QList<const QMetaObject*> metas = TMenuTranslator::instance()->get_metaobjects_for_class(className);
+
+        QString html = TMenuTranslator::instance()->create_html_for_metas(metas);
+
+        m_help.insert(className, html);
+
+        m_textEdit->setHtml(html);
 }

@@ -23,10 +23,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define TCONTEXTHELPWIDGET_H
 
 #include <QTextEdit>
+#include <QWidget>
 
 class ContextItem;
+class QComboBox;
 
-class TContextHelpWidget : public QTextEdit
+class TContextHelpWidget : public QWidget
 {
         Q_OBJECT
 public:
@@ -36,10 +38,13 @@ private:
         QString create_html_for_object(QObject* obj);
 
         QHash<QString, QString> m_help;
+        QTextEdit*              m_textEdit;
+        QComboBox*              m_comboBox;
 
 private slots:
         void context_changed();
         void jog_started();
+        void combobox_activated(int);
 };
 
 #endif // TCONTEXTHELPWIDGET_H

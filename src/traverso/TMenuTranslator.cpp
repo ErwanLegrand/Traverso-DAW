@@ -100,6 +100,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TBusTrackPanel", tr("Bus Track"));
         add_entry("TMainWindow", tr("Main Window"));
         add_entry("Project", tr("Project"));
+        add_entry("ProjectManager", tr("Project Manager"));
         add_entry("TrackPanelGain", tr("Gain"));
         add_entry("TrackPanelPan", tr("Panorama"));
         add_entry("TrackPanelLed", tr("Track Panel Button"));
@@ -239,6 +240,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TMainWindow::audio_io_dialog", tr("Show Audio I/O Dialog"));
         add_entry("TMainWindow::browse_to_first_track_in_active_sheet", tr("Browse to first Track in current View"));
         add_entry("TMainWindow::browse_to_last_track_in_active_sheet", tr("Browse to last Track in current View"));
+        add_entry("TMainWindow::show_newtrack_dialog", tr("New Track Dialog"));
+        add_entry("TMainWindow::quick_start", tr("Quick Start"));
         add_entry("CorrelationMeterView::set_mode", tr("Toggle display range"));
         add_entry("SpectralMeterView::edit_properties", tr("Settings..."));
         add_entry("SpectralMeterView::set_mode", tr("Toggle average curve"));
