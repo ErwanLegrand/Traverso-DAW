@@ -79,11 +79,31 @@ TMenuTranslator::TMenuTranslator()
         add_meta_object(&MoveCurveNode::staticMetaObject);
         add_meta_object(&Zoom::staticMetaObject);
         add_meta_object(&TrackPan::staticMetaObject);
-        add_meta_object(&Crop::staticMetaObject);
         add_meta_object(&MoveMarker::staticMetaObject);
         add_meta_object(&WorkCursorMove::staticMetaObject);
         add_meta_object(&PlayHeadMove::staticMetaObject);
         add_meta_object(&MoveEdge::staticMetaObject);
+        add_meta_object(&Crop::staticMetaObject);
+        add_meta_object(&FadeRange::staticMetaObject);
+        add_meta_object(&Shuttle::staticMetaObject);
+        add_meta_object(&SplitClip::staticMetaObject);
+
+        add_entry("ArrowKeyBrowser", tr("Arrow Key Browser"));
+        add_entry("ArmTracks", tr("Arm Tracks"));
+        add_entry("Crop", tr("Cut and Magnetic Snap"));
+        add_entry("Fade", tr("Fade"));
+        add_entry("Gain", tr("Gain"));
+        add_entry("MoveClip", tr("Move Clip"));
+        add_entry("MoveCurveNode", tr("Move Node"));
+        add_entry("MoveEdge", tr("Move Clip Edge"));
+        add_entry("MoveMarker", tr("Move Marker"));
+        add_entry("MoveTrack", tr("Move Track"));
+        add_entry("PlayHeadMove", tr("Move Play Head"));
+        add_entry("Shuttle", tr("Shuttle"));
+        add_entry("SplitClip", tr("Split Clip"));
+        add_entry("TrackPan", tr("Track Panorama"));
+        add_entry("WorkCursorMove", tr("Move Work Cursor"));
+        add_entry("Zoom", tr("Zoom"));
 
         add_entry("AudioClip",tr("Audio Clip"));
         add_entry("AudioTrack", tr("Audio Track"));
@@ -114,23 +134,6 @@ TMenuTranslator::TMenuTranslator()
         add_entry("WorkCursor", tr("Work Cursor"));
         add_entry("CorrelationMeter", tr("Correlation Meter"));
         add_entry("SpectralMeter", tr("Spectral Analyzer"));
-
-        add_entry("ArrowKeyBrowser", tr("Arrow Key Browser"));
-        add_entry("ArmTracks", tr("Arm Tracks"));
-        add_entry("Crop", tr("Cut and Magnetic Snap"));
-        add_entry("Fade", tr("Fade"));
-        add_entry("Gain", tr("Gain"));
-        add_entry("MoveClip", tr("Move Clip"));
-        add_entry("MoveCurveNode", tr("Move Node"));
-        add_entry("MoveEdge", tr("Move Clip Edge"));
-        add_entry("MoveMarker", tr("Move Marker"));
-        add_entry("MoveTrack", tr("Move Track"));
-        add_entry("PlayHeadMove", tr("Move Play Head"));
-        add_entry("Shuttle", tr("Shuttle"));
-        add_entry("SplitClip", tr("Split Clip"));
-        add_entry("TrackPan", tr("Track Panorama"));
-        add_entry("WorkCursorMove", tr("Move Work Cursor"));
-        add_entry("Zoom", tr("Zoom"));
 
         add_entry("Track::solo", tr("Solo"));
         add_entry("Track::mute", tr("Mute"));
