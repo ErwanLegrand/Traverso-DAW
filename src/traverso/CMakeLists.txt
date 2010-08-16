@@ -24,6 +24,7 @@ SET(TRAVERSO_GUI_SOURCES
 ${CMAKE_SOURCE_DIR}/src/common/fpu.cc
 Main.cpp
 TMainWindow.cpp
+TMenuTranslator.cpp
 Traverso.cpp
 dialogs/settings/Pages.cpp
 dialogs/settings/SettingsDialog.cpp
@@ -92,6 +93,7 @@ ui/TTrackSelector.ui
 SET(TRAVERSO_GUI_MOC_CLASSES
 TMainWindow.h
 Traverso.h
+TMenuTranslator.h
 dialogs/CDWritingDialog.h
 dialogs/ExportDialog.h
 dialogs/InsertSilenceDialog.h

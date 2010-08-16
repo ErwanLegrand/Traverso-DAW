@@ -127,9 +127,8 @@ public:
 	bool is_jogging();
 	bool is_holding();
 
-	QList<MenuData > create_menudata_for(QObject* item);
 	TCommand* get_holding_command() const;
-	void create_menudata_for_metaobject(const QMetaObject* mo, QList<MenuData >& list) const;
+        QList<IEAction*> get_ie_actions() const {return m_ieActions;}
 
         int broadcast_action_from_contextmenu(const QString& name);
 

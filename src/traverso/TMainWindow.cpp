@@ -1078,54 +1078,14 @@ TCommand * TMainWindow::export_keymap()
 
 TCommand * TMainWindow::get_keymap(QString &str)
 {
-	
-	QMap<QString, QList<const QMetaObject*> > objects;
-	
-        QList<const QMetaObject*> sheetlist; sheetlist << &Sheet::staticMetaObject; sheetlist << &SheetView::staticMetaObject;
-        QList<const QMetaObject*> audiotracklist; audiotracklist << &AudioTrack::staticMetaObject; audiotracklist << &AudioTrackView::staticMetaObject;
-        QList<const QMetaObject*> bustracklist; bustracklist << &TBusTrack::staticMetaObject; bustracklist << &TBusTrackView::staticMetaObject;
-        QList<const QMetaObject*> cliplist; cliplist << &AudioClip::staticMetaObject; cliplist << &AudioClipView::staticMetaObject;
-        QList<const QMetaObject*> curvelist; curvelist << &Curve::staticMetaObject; curvelist << &CurveView::staticMetaObject;
-        QList<const QMetaObject*> timelinelist; timelinelist << &TimeLine::staticMetaObject; timelinelist << &TimeLineView::staticMetaObject;
-        QList<const QMetaObject*> pluginlist; pluginlist << &Plugin::staticMetaObject; pluginlist << &PluginView::staticMetaObject;
-        QList<const QMetaObject*> fadelist; fadelist << &FadeCurve::staticMetaObject; fadelist << &FadeView::staticMetaObject;
-        QList<const QMetaObject*> interfacelist; interfacelist << &TMainWindow::staticMetaObject;
-        QList<const QMetaObject*> pmlist; pmlist << &ProjectManager::staticMetaObject;
-        QList<const QMetaObject*> gainlist; gainlist << &Gain::staticMetaObject;
-        QList<const QMetaObject*> movetracklist; movetracklist << &MoveTrack::staticMetaObject;
-        QList<const QMetaObject*> movecliplist; movecliplist << &MoveClip::staticMetaObject;
-        QList<const QMetaObject*> movecurvenodelist; movecurvenodelist << &MoveCurveNode::staticMetaObject;
-        QList<const QMetaObject*> zoomlist; zoomlist << &Zoom::staticMetaObject;
-        QList<const QMetaObject*> trackpanlist; trackpanlist << &TrackPan::staticMetaObject;
-        QList<const QMetaObject*> croplist; croplist << &Crop::staticMetaObject;
-        QList<const QMetaObject*> movemarkerlist; movemarkerlist << &MoveMarker::staticMetaObject;
-        QList<const QMetaObject*> moveworkcursorlist; moveworkcursorlist << &WorkCursorMove::staticMetaObject;
-        QList<const QMetaObject*> moveplaycursorlist; moveplaycursorlist << &PlayHeadMove::staticMetaObject;
-        QList<const QMetaObject*> moveclipedgelist; moveclipedgelist << &MoveEdge::staticMetaObject;
+        TMenuTranslator* translator = TMenuTranslator::instance();
 
-        objects.insert("Sheet", sheetlist);
-        objects.insert("AudioTrack", audiotracklist);
-        objects.insert("TBusTrack", bustracklist);
-        objects.insert("AudioClip", cliplist);
-        objects.insert("Curve", curvelist);
-        objects.insert("TimeLine", timelinelist);
-        objects.insert("Plugin", pluginlist);
-        objects.insert("Fade", fadelist);
-        objects.insert("Interface", interfacelist);
-        objects.insert("ProjectManager", pmlist);
-        objects.insert("Gain", gainlist);
-        objects.insert("Move Track", movetracklist);
-        objects.insert("Move AudioClip", movecliplist);
-        objects.insert("Move Clip Edge", moveclipedgelist);
-        objects.insert("Move Marker", movemarkerlist);
-        objects.insert("Move Curve Node", movecurvenodelist);
-        objects.insert("Move Work Cursor", moveworkcursorlist);
-        objects.insert("Move Play Cursor", moveplaycursorlist);
-        objects.insert("Zoom", zoomlist);
-        objects.insert("Track Pan", trackpanlist);
-        objects.insert("Magnetic Cut", croplist);
+        QHash<QString, QList<const QMetaObject*> > metas = translator->get_meta_objects();
+        QMap<QString, QList<const QMetaObject*> > objects;
+        foreach(QList<const QMetaObject*> value, metas.values()) {
+                objects.insert(metas.key(value), value);
+        }
 
-	
         str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
               "<style type=\"text/css\">\n"
               "H1 {text-align: left; font-size: 20px;}\n"
@@ -1136,54 +1096,9 @@ TCommand * TMainWindow::get_keymap(QString &str)
               "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
 	
 	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
-		QString name = objects.key(objectlist);
-		
-                str += "<table><tr class=\"object\">\n<td colspan=\"2\">" + name + "</td></tr>\n";
-                str += "<tr><td class=\"description\">" +tr("Description") + "</td><td class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
-		
-		QStringList result;
-		
-		foreach(const QMetaObject* mo, objectlist) {
-                        while (mo) {
-                                QList<MenuData > list;
-                                
-                                ie().create_menudata_for_metaobject(mo, list);
-                        
-                                QList<QMenu* > menulist;
-                                QMenu* menu = create_context_menu(0, &list);
-                                if (menu) {
-                                        menulist.append(menu);
-                                        foreach(QAction* action, menu->actions()) {
-                                                if (action->menu()) {
-                                                        menulist.append(action->menu());
-                                                }
-                                        }
-                                        for (int i=0; i<menulist.size(); ++i) {
-                                                QMenu* somemenu = menulist.at(i);
-                                                foreach(QAction* action, somemenu->actions()) {
-                                                        QStringList strings = action->data().toStringList();
-                                                        if (strings.size() >= 3) {
-                                                                QString submenuname = "";
-                                                                if (i > 0) {
-                                                                        submenuname = somemenu->menuAction()->text() + "&#160;&#160;&#160;&#160;";
-                                                                }
-                                                                QString keyfact = strings.at(2);
-                                                                keyfact.replace("<", "&lt;");
-                                                                                
-                                                                result += QString("<tr><td>") + submenuname + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
-                                                        }
-                                                }
-                                        }
-                                        delete menu;
-                                }
-                                mo = mo->superClass();
-                        }
-		}
-		result.sort();
-                result.removeDuplicates();
-		str += result.join("");
-                str += "</table>\n<p></p><p></p>\n";
-	}
+                str += translator->create_html_for_metas(objectlist);
+                str += "<p></p><p></p>\n";
+        }
 	
         str += "</body>\n</html>";
 	
@@ -1194,7 +1109,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 {
 	QList<MenuData > list;
 	if (item) {
-		 list = ie().create_menudata_for( item );
+                list = TMenuTranslator::instance()->create_menudata_for( item );
 	} else {
 		list = *menulist;
 	}

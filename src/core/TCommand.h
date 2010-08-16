@@ -34,6 +34,8 @@ class ContextItem;
 
 class TCommand : public QObject, public QUndoCommand
 {
+        Q_OBJECT
+
 public :
         TCommand(ContextItem* item, const QString& des = "No description set!");
         TCommand(const QString& des = "No description set!");

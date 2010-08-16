@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TCommand.h"
 #include <CommandPlugin.h>
 #include "Utils.h"
-#include "TMenuTranslator.h"
 
 #include <QTime>
 #include <QFile>
@@ -1918,74 +1917,6 @@ TCommand * InputEngine::get_holding_command() const
 {
         return m_holdingCommand;
 }
-
-void InputEngine::create_menudata_for_metaobject(const QMetaObject * mo, QList< MenuData > & list) const
-{
-	const char* classname = mo->className();
-        TMenuTranslator* translator = TMenuTranslator::instance();
-	
-	for (int i=0; i<m_ieActions.size(); i++) {
-		IEAction* ieaction = m_ieActions.at(i);
-					
-		QList<IEAction::Data*> datalist;
-		datalist.append(ieaction->objects.value(classname));
-                datalist.append(ieaction->objectUsingModifierKeys.values(classname));
-			
-		foreach(IEAction::Data* iedata, datalist) {
-					
-			if ( ! iedata ) {
-				continue;
-			}
-				
-			MenuData menudata;
-				
-			if ( ! iedata->pluginname.isEmpty() ) {
-                                menudata.description = translator->get_translation_for(QString("%1::%2").arg(iedata->pluginname).arg(iedata->commandname));
-                        } else {
-                                menudata.description = translator->get_translation_for(QString("%1::%2").arg(classname).arg(iedata->slotsignature));
-                        }
-				
-			menudata.keysequence = ieaction->keySequence;
-                        if (iedata->slotsignature == "numerical_input") {
-                                menudata.keysequence =  "< 0, 1, 2 ... 9 >";
-                        }
-			menudata.iedata = ieaction->keySequence;
-			menudata.sortorder = iedata->sortorder;
-			menudata.submenu = iedata->submenu;
-			menudata.modifierkeys = iedata->modifierkeys;
-			if (menudata.modifierkeys.size()) {
-				menudata.iedata.prepend("++");
-			}
-					
-					
-			list.append(menudata);
-		}
-	}
-}
-
-QList< MenuData > InputEngine::create_menudata_for(QObject* item)
-{
-	QList<MenuData > list;
-	ContextItem* contextitem;
-	
-	do {
-		const QMetaObject* mo = item->metaObject(); 
-		
-                // traverse upwards till no more superclasses are found
-                // this supports inheritance on contextitems.
-                while (mo) {
-                        create_menudata_for_metaobject(mo, list);
-                        mo = mo->superClass();
-                }
-		
-		contextitem = qobject_cast<ContextItem*>(item);
-	} 
-	while (contextitem && (item = contextitem->get_context()) );
-		
-	
-	return list;
-}
-
 
 void IEAction::render_key_sequence(const QString& key1, const QString& key2)
 {
