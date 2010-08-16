@@ -3,7 +3,7 @@
 #include "Cursors.h"
 #include "CurveNodeView.h"
 #include "CurveView.h"
-#include "FadeView.h"
+#include "FadeCurveView.h"
 #include "MarkerView.h"
 #include "PluginView.h"
 #include "PluginChainView.h"

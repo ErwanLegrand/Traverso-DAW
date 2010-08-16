@@ -148,8 +148,8 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 	
 	// Path's need an additional pixel righ/left to be painted correctly.
-	// FadeView get_curve adjusts for this, if changing these 
-	// values, also change the adjustment in FadeView::get_curve() !!!
+	// FadeCurveView get_curve adjusts for this, if changing these 
+	// values, also change the adjustment in FadeCurveView::get_curve() !!!
 	pixelcount += 2;
 	xstart -= 1;
 	if (xstart < 0) {

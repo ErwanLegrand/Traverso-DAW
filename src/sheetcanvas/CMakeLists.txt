@@ -20,7 +20,7 @@ ClipsViewPort.cpp
 Cursors.cpp
 CurveNodeView.cpp
 CurveView.cpp
-FadeView.cpp
+FadeCurveView.cpp
 MarkerView.cpp
 PluginChainView.cpp
 PluginView.cpp
@@ -47,7 +47,7 @@ AudioTrackView.h
 ClipsViewPort.h
 Cursors.h
 CurveNodeView.h
-FadeView.h
+FadeCurveView.h
 MarkerView.h
 PluginChainView.h
 PluginView.h

@@ -29,7 +29,7 @@ $Id: Fade.h,v 1.13 2008/01/21 16:22:11 r_sijrier Exp $
 class Curve;
 class AudioClip;
 class FadeCurve;
-class FadeView;
+class FadeCurveView;
 class SheetView;
 class Sheet;
 
@@ -84,7 +84,7 @@ class FadeStrength : public TCommand
         Q_OBJECT
 
 public :
-	FadeStrength(FadeView* fadeview);
+	FadeStrength(FadeCurveView* FadeCurveView);
 	FadeStrength(FadeCurve* fade, double val);
         ~FadeStrength(){}
 
@@ -105,7 +105,7 @@ private :
 	double	origStrength;
 	double	newStrength;
 	FadeCurve*	m_fade;
-	FadeView*	m_fv;
+	FadeCurveView*	m_fv;
 	QPoint		mousePos;
 };
 
@@ -115,7 +115,7 @@ class FadeBend : public TCommand
         Q_OBJECT
 
 public :
-	FadeBend(FadeView* fadeview);
+	FadeBend(FadeCurveView* FadeCurveView);
 	FadeBend(FadeCurve* fade, double val);
         ~FadeBend(){}
 
@@ -136,7 +136,7 @@ private :
 	double	origBend;
 	double	newBend;
 	FadeCurve*	m_fade;
-	FadeView*	m_fv;
+	FadeCurveView*	m_fv;
 	QPoint		mousePos;
 };
 

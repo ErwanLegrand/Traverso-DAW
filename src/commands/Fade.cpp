@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextPointer.h"
 #include <ViewPort.h>
 #include <FadeCurve.h>
-#include <FadeView.h>
+#include <FadeCurveView.h>
 #include <Peak.h>
 #include <Sheet.h>
 #include "SnapList.h"
@@ -195,10 +195,10 @@ static float round_float( float f)
 /********** FadeBend **********/
 /******************************/
 
-FadeBend::FadeBend(FadeView * fadeview)
-	: TCommand(fadeview->get_fade())
-	, m_fade(fadeview->get_fade())
-	, m_fv(fadeview) 
+FadeBend::FadeBend(FadeCurveView * FadeCurveView)
+	: TCommand(FadeCurveView->get_fade())
+	, m_fade(FadeCurveView->get_fade())
+	, m_fv(FadeCurveView) 
 {
 	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: bend") : tr("Fade Out: bend"));
 }
@@ -287,10 +287,10 @@ int FadeBend::jog()
 /********** FadeStrength **********/
 /******************************/
 
-FadeStrength::FadeStrength(FadeView* fadeview)
-	: TCommand(fadeview->get_fade())
-	, m_fade(fadeview->get_fade())
-	, m_fv(fadeview)
+FadeStrength::FadeStrength(FadeCurveView* FadeCurveView)
+	: TCommand(FadeCurveView->get_fade())
+	, m_fade(FadeCurveView->get_fade())
+	, m_fv(FadeCurveView)
 {
 	setText( (m_fade->get_fade_type() == FadeCurve::FadeIn) ? tr("Fade In: strength") : tr("Fade Out: strength"));
 }

@@ -70,7 +70,7 @@ TMenuTranslator::TMenuTranslator()
         add_meta_object(&Plugin::staticMetaObject);
         add_meta_object(&PluginView::staticMetaObject);
         add_meta_object(&FadeCurve::staticMetaObject);
-        add_meta_object(&FadeView::staticMetaObject);
+        add_meta_object(&FadeCurveView::staticMetaObject);
         add_meta_object(&TMainWindow::staticMetaObject);
         add_meta_object(&ProjectManager::staticMetaObject);
         add_meta_object(&Gain::staticMetaObject);
@@ -175,9 +175,9 @@ TMenuTranslator::TMenuTranslator()
         add_entry("CurveView::remove_all_nodes", tr("Remove all Nodes"));
         add_entry("CurveView::drag_node", tr("Move node"));
         add_entry("CurveView::drag_node_vertical_only", tr("Move node (vertical only)"));
-        add_entry("FadeView::bend", tr("Adjust Bend"));
-        add_entry("FadeView::strength", tr("Adjust Strength"));
-        add_entry("FadeView::select_fade_shape", tr("Select Preset"));
+        add_entry("FadeCurveView::bend", tr("Adjust Bend"));
+        add_entry("FadeCurveView::strength", tr("Adjust Strength"));
+        add_entry("FadeCurveView::select_fade_shape", tr("Select Preset"));
         add_entry("PluginView::edit_properties", tr("Edit..."));
         add_entry("PluginView::remove_plugin", tr("Remove"));
         add_entry("SheetView::touch", tr("Set"));

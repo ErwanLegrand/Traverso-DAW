@@ -35,7 +35,7 @@ class FadeCurve;
 class CurveView;
 class SheetView;
 class AudioTrackView;
-class FadeView;
+class FadeCurveView;
 class Peak;
 
 
@@ -62,7 +62,7 @@ public:
 	
 private:
 	AudioTrackView* 	m_tv;
-	QList<FadeView*> m_fadeViews;
+        QList<FadeCurveView*> m_FadeCurveViews;
 	AudioClip* 	m_clip;
 	Sheet*		m_sheet;
         CurveView* 	m_gainCurveView;
@@ -114,11 +114,11 @@ private:
 	void draw_peaks(QPainter* painter, qreal xstart, int pixelcount);
 	void create_brushes();
 
-	friend class FadeView;
+	friend class FadeCurveView;
 
 public slots:
-	void add_new_fadeview(FadeCurve* fade);
-	void remove_fadeview(FadeCurve* fade);
+	void add_new_FadeCurveView(FadeCurve* fade);
+	void remove_FadeCurveView(FadeCurve* fade);
 	void repaint();
 	void update_start_pos();
 	void position_changed();
