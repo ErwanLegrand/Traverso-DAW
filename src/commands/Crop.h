@@ -29,13 +29,13 @@ class AudioTrack;
 class AudioClip;
 class QGraphicsRectItem;
 
-class Crop : public TCommand
+class CropClip : public TCommand
 {
         Q_OBJECT
 
 public :
-        Crop(AudioClipView* cv);
-        ~Crop();
+        CropClip(AudioClipView* cv);
+        ~CropClip();
 
         int begin_hold();
         int finish_hold();

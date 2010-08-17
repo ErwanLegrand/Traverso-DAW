@@ -119,7 +119,7 @@ TraversoCommands::TraversoCommands()
         m_dict.insert("FoldSheet", MoveClipCommand);
 	m_dict.insert("FoldTrack", MoveClipCommand);
 	m_dict.insert("FoldMarkers", MoveClipCommand);
-	m_dict.insert("DragEdge", DragEdgeCommand);
+        m_dict.insert("MoveEdge", MoveEdgeCommand);
 	m_dict.insert("MoveClipOrEdge", MoveClipOrEdgeCommand);
 	m_dict.insert("CopyClip", MoveClipCommand);
         m_dict.insert("SplitClip", SplitClipCommand);
@@ -139,6 +139,8 @@ TraversoCommands::TraversoCommands()
         m_dict.insert("Shuttle", ShuttleCommand);
         m_dict.insert("NormalizeClip", NormalizeClipCommand);
         m_dict.insert("ArrowKeyBrowser", ArrowKeyBrowserCommand);
+        m_dict.insert("WorkCursorMove", WorkCursorMoveCommand);
+        m_dict.insert("PlayHeadMove", PlayHeadMoveCommand);
 }
 
 void TraversoCommands::create_menu_translations()
@@ -355,12 +357,12 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
                 }
 
 
-                case DragEdgeCommand:
+                case MoveEdgeCommand:
 		{
 			AudioClipView* view = qobject_cast<AudioClipView*>(obj);
 			if (!view) {
 				PERROR("TraversoCommands: Supplied QObject was not an AudioClipView! "
-					"DragEdgeCommand needs an AudioClipView as argument");
+                                        "MoveEdgeCommand needs an AudioClipView as argument");
 				return 0;
 			}
 			
@@ -420,7 +422,7 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
                                         "CropClipCommand needs an AudioClipView as argument");
                                 return 0;
                         }
-                        return new Crop(view);
+                        return new CropClip(view);
                 }
 
                 case ArmTracksCommand:
@@ -450,6 +452,28 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 			}
 			return new Zoom(view, arguments);
 		}
+
+                case WorkCursorMoveCommand:
+                {
+                        SheetView* view = qobject_cast<SheetView*>(obj);
+                        if (!view) {
+                                PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+                                                "WorkCursorMove Command needs an SheetView as argument");
+                                return 0;
+                        }
+                        return new WorkCursorMove(view);
+                }
+
+                case PlayHeadMoveCommand:
+                {
+                        SheetView* view = qobject_cast<SheetView*>(obj);
+                        if (!view) {
+                                PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+                                                "WorkCursorMove Command needs an SheetView as argument");
+                                return 0;
+                        }
+                        return new PlayHeadMove(view);
+                }
 
                 case ScrollCommand:
 		{

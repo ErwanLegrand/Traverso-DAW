@@ -52,9 +52,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "TSession.h"
 
 #include "AddRemove.h"
-#include "Zoom.h"
-#include "PlayHeadMove.h"
-#include "WorkCursorMove.h"
 #include "Shuttle.h"
 #include "ProjectManager.h"
 #include "Project.h"
@@ -828,16 +825,6 @@ TCommand* SheetView::play_to_end()
         m_session->set_transport_pos(m_session->get_last_location());
 
         return 0;
-}
-
-TCommand * SheetView::play_cursor_move( )
-{
-	return new PlayHeadMove(m_playCursor, this);
-}
-
-TCommand * SheetView::work_cursor_move( )
-{
-        return new WorkCursorMove(m_workCursor, m_playCursor, this);
 }
 
 void SheetView::set_snap_range(int start)

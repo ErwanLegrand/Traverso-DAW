@@ -35,7 +35,7 @@ class WorkCursorMove : public MoveCommand
         Q_OBJECT
 
 public :
-	WorkCursorMove (WorkCursor* wc, PlayHead* cursor, SheetView* sv);
+        WorkCursorMove (SheetView* sv);
         ~WorkCursorMove (){}
 
 	int finish_hold();

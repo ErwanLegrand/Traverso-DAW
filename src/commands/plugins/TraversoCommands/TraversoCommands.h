@@ -47,7 +47,6 @@ private:
   		ClipSelectionCommand,
     		MoveClipCommand,
                 MoveTrackCommand,
-    		DragEdgeCommand,
     		MoveClipOrEdgeCommand,
       		SplitClipCommand,
                 CropClipCommand,
@@ -56,8 +55,12 @@ private:
                 ScrollCommand,
                 ShuttleCommand,
                 NormalizeClipCommand,
-                ArrowKeyBrowserCommand
-	};
+                ArrowKeyBrowserCommand,
+                WorkCursorMoveCommand,
+                PlayHeadMoveCommand,
+                MoveEdgeCommand,
+                MoveMarkerCommand
+        };
 };
 
 #endif

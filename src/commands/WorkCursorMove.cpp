@@ -38,14 +38,15 @@
 
 #include <Debugger.h>
 
-WorkCursorMove::WorkCursorMove(WorkCursor* wc, PlayHead* cursor, SheetView* sv)
+WorkCursorMove::WorkCursorMove(SheetView* sv)
         : MoveCommand("Play Cursor Move")
         , m_session(sv->get_sheet())
-	, m_sv(sv)
-	, m_playCursor(cursor)
-        , m_workCursor(wc)
         , m_browseMarkers(false)
 {
+        m_sv = sv;
+        m_workCursor = m_sv->get_work_cursor();
+        m_playCursor = m_sv->get_play_cursor();
+
         m_holdCursorSceneY = cpointer().scene_y();
 }
 

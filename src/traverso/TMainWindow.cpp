@@ -1040,20 +1040,7 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 		}
 	}
 
-        keyfact.replace(QString("MouseScrollVerticalUp"), QString("Scroll Wheel"));
-        keyfact.replace(QString("MouseScrollVerticalDown"), QString("Scroll Wheel"));
-        keyfact.replace(QString("MouseButtonRight"), QString("Right. MB"));
-        keyfact.replace(QString("MouseButtonLeft"), QString("Left MB"));
-        keyfact.replace(QString("MouseButtonMiddle"), QString("Center MB"));
-        keyfact.replace(QString("UARROW"), QString("Up Arrow"));
-        keyfact.replace(QString("DARROW"), QString("Down Arrow"));
-        keyfact.replace(QString("LARROW"), QString("Left Arrow"));
-        keyfact.replace(QString("RARROW"), QString("Right Arrow"));
-        keyfact.replace(QString("DELETE"), QString("Delete"));
-        keyfact.replace(QString("MINUS"), QString("-"));
-        keyfact.replace(QString("PLUS"), QString("+"));
-        keyfact.replace(QString("PAGEDOWN"), QString("Page Down"));
-        keyfact.replace(QString("PAGEUP"), QString("Page Up"));
+        TMenuTranslator::instance()->make_keyfacts_human_readable(keyfact);
 
         return modifierkey + " " + keyfact;
 }

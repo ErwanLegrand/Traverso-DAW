@@ -28,12 +28,13 @@
 
 #include <Debugger.h>
 
-PlayHeadMove::PlayHeadMove(PlayHead* cursor, SheetView* sv)
+PlayHeadMove::PlayHeadMove(SheetView* sv)
         : MoveCommand("Play Cursor Move")
-        , m_playhead(cursor)
         , m_session(sv->get_sheet())
-	, m_sv(sv)
 {
+        m_sv = sv;
+        m_playhead = m_sv->get_play_cursor();
+
 	m_resync = config().get_property("AudioClip", "SyncDuringDrag", false).toBool();
         m_newTransportLocation = m_session->get_transport_location();
 }

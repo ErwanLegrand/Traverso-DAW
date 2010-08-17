@@ -85,6 +85,8 @@ public :
 	TrackPanelViewPort* get_trackpanel_view_port() const;
 	ClipsViewPort* get_clips_viewport() const;
         TimeLineViewPort* get_timeline_viewport() const;
+        PlayHead* get_play_cursor() const {return m_playCursor;}
+        WorkCursor* get_work_cursor() const {return m_workCursor;}
 	
         AudioTrackView* get_audio_trackview_under(QPointF point);
         TrackView* get_trackview_under(QPointF point);
@@ -183,8 +185,6 @@ public slots:
         TCommand* goto_end();
         TCommand* play_to_begin();
         TCommand* play_to_end();
-        TCommand* play_cursor_move();
-	TCommand* work_cursor_move();
 	TCommand* add_marker();
         TCommand* add_marker_at_playhead();
         TCommand* add_marker_at_work_cursor();

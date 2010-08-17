@@ -83,14 +83,14 @@ TMenuTranslator::TMenuTranslator()
         add_meta_object(&WorkCursorMove::staticMetaObject);
         add_meta_object(&PlayHeadMove::staticMetaObject);
         add_meta_object(&MoveEdge::staticMetaObject);
-        add_meta_object(&Crop::staticMetaObject);
+        add_meta_object(&CropClip::staticMetaObject);
         add_meta_object(&FadeRange::staticMetaObject);
         add_meta_object(&Shuttle::staticMetaObject);
         add_meta_object(&SplitClip::staticMetaObject);
 
         add_entry("ArrowKeyBrowser", tr("Arrow Key Browser"));
         add_entry("ArmTracks", tr("Arm Tracks"));
-        add_entry("Crop", tr("Cut and Magnetic Snap"));
+        add_entry("CropClip", tr("Cut Clip (Magnetic)"));
         add_entry("Fade", tr("Fade"));
         add_entry("Gain", tr("Gain"));
         add_entry("MoveClip", tr("Move Clip"));
@@ -258,8 +258,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("ProjectManager::exit", tr("Exit application"));
         add_entry("AudioTrack::toggle_arm", tr("Record: On/Off"));
         add_entry("AudioTrack::silence_others", tr("Silence other tracks"));
-        add_entry("Crop::adjust_left", tr("Adjust Left"));
-        add_entry("Crop::adjust_right", tr("Adjust Right"));
+        add_entry("CropClip::adjust_left", tr("Adjust Left"));
+        add_entry("CropClip::adjust_right", tr("Adjust Right"));
         add_entry("Gain::increase_gain", tr("Increase"));
         add_entry("Gain::decrease_gain", tr("Decrease"));
         add_entry("Gain::numerical_input", tr("Numerical Input"));
@@ -344,13 +344,16 @@ QString TMenuTranslator::create_html_for_metas(QList<const QMetaObject *> metas,
                 return "";
         }
 
+        QString holdKeyFact = keyfacts_for_metaobject(metas.first());
+
+
         QString name = get_translation_for(QString(metas.first()->className()).remove(("View")));
 
         QColor bgcolor = themer()->get_color("ResourcesBin:alternaterowcolor");
         QString html = QString("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
               "<style type=\"text/css\">\n"
               "table {font-size: 11px;}\n"
-              ".object {background-color: %1; font-size: 12px; font-weight: bold;}\n"
+              ".object {background-color: %1; font-size: 12px;}\n"
               ".description {background-color: %2; font-size: 11px; font-weight: bold;}\n"
               "</style>\n"
               "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
@@ -359,7 +362,7 @@ QString TMenuTranslator::create_html_for_metas(QList<const QMetaObject *> metas,
                 PCommand* pc = static_cast<PCommand*>(object);
                 html += "<table><tr class=\"object\">\n<td width=220 align=\"center\">" + pc->text() + "</td></tr>\n";
         } else {
-                html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + name + "</td></tr>\n";
+                html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\"><b>" + name + "</b><font style=\"font-size: 11px;\">&nbsp;&nbsp;&nbsp;" + holdKeyFact + "</font></td></tr>\n";
                 html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
         }
 
@@ -530,4 +533,54 @@ bool TMenuTranslator::metaobject_inherits_class(const QMetaObject *mo, const QSt
                 mo = mo->superClass();
         }
         return false;
+}
+
+QString TMenuTranslator::keyfacts_for_metaobject(const QMetaObject* mo)
+{
+        const char* classname = mo->className();
+
+        QList<IEAction*> ieActions = ie().get_ie_actions();
+        QStringList result;
+
+        for (int i=0; i<ieActions.size(); i++) {
+                IEAction* ieaction = ieActions.at(i);
+
+                if (ieaction->type == HOLDKEY) {
+                        QList<IEAction::Data*> datalist;
+                        foreach(IEAction::Data* data, ieaction->objects) {
+                                datalist.append(data);
+                        }
+                        foreach(IEAction::Data* data, ieaction->objectUsingModifierKeys) {
+                                datalist.append(data);
+                        }
+                        foreach(IEAction::Data* data, datalist) {
+                                if (data->commandname == classname || data->submenu == classname) {
+                                        QString keyfact = ieaction->keySequence;
+                                        make_keyfacts_human_readable(keyfact);
+                                        result.append(keyfact);
+                                }
+                        }
+                }
+        }
+        result.removeDuplicates();
+        QString str = result.join(" , ");
+        return str;
+}
+
+void TMenuTranslator::make_keyfacts_human_readable(QString& keyfact)
+{
+        keyfact.replace(QString("MouseScrollVerticalUp"), QString("Scroll Wheel"));
+        keyfact.replace(QString("MouseScrollVerticalDown"), QString("Scroll Wheel"));
+        keyfact.replace(QString("MouseButtonRight"), QString("Right. MB"));
+        keyfact.replace(QString("MouseButtonLeft"), QString("Left MB"));
+        keyfact.replace(QString("MouseButtonMiddle"), QString("Center MB"));
+        keyfact.replace(QString("UARROW"), QString("Up Arrow"));
+        keyfact.replace(QString("DARROW"), QString("Down Arrow"));
+        keyfact.replace(QString("LARROW"), QString("Left Arrow"));
+        keyfact.replace(QString("RARROW"), QString("Right Arrow"));
+        keyfact.replace(QString("DELETE"), QString("Delete"));
+        keyfact.replace(QString("MINUS"), QString("-"));
+        keyfact.replace(QString("PLUS"), QString("+"));
+        keyfact.replace(QString("PAGEDOWN"), QString("Page Down"));
+        keyfact.replace(QString("PAGEUP"), QString("Page Up"));
 }

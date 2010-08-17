@@ -33,7 +33,7 @@ class PlayHeadMove : public MoveCommand
         Q_OBJECT;
 
 public :
-	PlayHeadMove(PlayHead* cursor, SheetView* sv);
+        PlayHeadMove(SheetView* sv);
         ~PlayHeadMove(){}
 
 	int finish_hold();

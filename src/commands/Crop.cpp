@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
 
-Crop::Crop(AudioClipView* view)
+CropClip::CropClip(AudioClipView* view)
         : TCommand(view->get_context(), tr("AudioClip: Magnetic Cut"))
         , m_cv(view)
 {
@@ -68,10 +68,10 @@ Crop::Crop(AudioClipView* view)
 }
 
 
-Crop::~Crop()
+CropClip::~CropClip()
 {}
 
-int Crop::prepare_actions()
+int CropClip::prepare_actions()
 {
         leftClip = resources_manager()->get_clip(m_clip->get_id());
         rightClip = resources_manager()->get_clip(m_clip->get_id());
@@ -97,18 +97,18 @@ int Crop::prepare_actions()
         return 1;
 }
 
-int Crop::begin_hold()
+int CropClip::begin_hold()
 {
         return 1;
 }
 
-int Crop::finish_hold()
+int CropClip::finish_hold()
 {
         delete m_selection;
         return 1;
 }
 
-int Crop::do_action()
+int CropClip::do_action()
 {
         PENTER;
 
@@ -120,7 +120,7 @@ int Crop::do_action()
         return 1;
 }
 
-int Crop::undo_action()
+int CropClip::undo_action()
 {
         PENTER;
 
@@ -133,13 +133,13 @@ int Crop::undo_action()
 }
 
 
-void Crop::cancel_action()
+void CropClip::cancel_action()
 {
         finish_hold();
 }
 
 
-int Crop::jog()
+int CropClip::jog()
 {
         PENTER;
 
@@ -170,7 +170,7 @@ int Crop::jog()
         return 1;
 }
 
-void Crop::adjust_left(bool autorepeat)
+void CropClip::adjust_left(bool autorepeat)
 {
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 
@@ -190,7 +190,7 @@ void Crop::adjust_left(bool autorepeat)
         m_selection->setPos(x1, 0);
 }
 
-void Crop::adjust_right(bool autorepeat)
+void CropClip::adjust_right(bool autorepeat)
 {
         ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 

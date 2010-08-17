@@ -38,6 +38,8 @@ public:
         void add_meta_object(const QMetaObject* mo);
         QString get_translation_for(const QString& entry);
         QString create_html_for_metas(QList<const QMetaObject*> metas, QObject* obj=0);
+        QString keyfacts_for_metaobject(const QMetaObject* mo);
+        void make_keyfacts_human_readable(QString& keyfact);
         QList<const QMetaObject*> get_metaobjects_for_class(const QString& className);
         QList<MenuData > create_menudata_for(QObject* item);
         QHash<QString, QList<const QMetaObject*> > get_meta_objects() const {return m_objects;}
