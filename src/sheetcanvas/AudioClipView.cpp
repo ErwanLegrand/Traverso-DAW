@@ -78,10 +78,10 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
         m_progress = 0;
 
         if (FadeCurve* curve = m_clip->get_fade_in()) {
-                add_new_FadeCurveView(curve);
+                add_new_fade_curve_view(curve);
         }
         if (FadeCurve* curve = m_clip->get_fade_out()) {
-                add_new_FadeCurveView(curve);
+                add_new_fade_curve_view(curve);
         }
 
         m_gainCurveView = new CurveView(m_sv, this, m_clip->get_plugin_chain()->get_fader()->get_curve());
@@ -96,8 +96,8 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
         connect(m_clip, SIGNAL(stateChanged()), this, SLOT(clip_state_changed()));
         connect(m_clip, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
         connect(m_clip, SIGNAL(lockChanged()), this, SLOT(repaint()));
-        connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_FadeCurveView( FadeCurve*)));
-        connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_FadeCurveView( FadeCurve*)));
+        connect(m_clip, SIGNAL(fadeAdded(FadeCurve*)), this, SLOT(add_new_fade_curve_view( FadeCurve*)));
+        connect(m_clip, SIGNAL(fadeRemoved(FadeCurve*)), this, SLOT(remove_fade_curve_view( FadeCurve*)));
         connect(m_clip, SIGNAL(positionChanged()), this, SLOT(position_changed()));
 
         connect(m_sheet, SIGNAL(modeChanged()), this, SLOT(repaint()));
@@ -687,7 +687,7 @@ void AudioClipView::peak_creation_finished()
         update();
 }
 
-void AudioClipView::add_new_FadeCurveView( FadeCurve * fade )
+void AudioClipView::add_new_fade_curve_view( FadeCurve * fade )
 {
         PENTER;
         FadeCurveView* view = new FadeCurveView(m_sv, this, fade);
@@ -695,7 +695,7 @@ void AudioClipView::add_new_FadeCurveView( FadeCurve * fade )
         connect(view, SIGNAL(fadeModified()), m_sv, SLOT(stop_follow_play_head()));
 }
 
-void AudioClipView::remove_FadeCurveView( FadeCurve * fade )
+void AudioClipView::remove_fade_curve_view( FadeCurve * fade )
 {
         for (int i = 0; i < m_FadeCurveViews.size(); ++i) {
                 FadeCurveView* view = m_FadeCurveViews.at(i);

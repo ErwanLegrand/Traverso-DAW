@@ -117,8 +117,8 @@ private:
 	friend class FadeCurveView;
 
 public slots:
-	void add_new_FadeCurveView(FadeCurve* fade);
-	void remove_FadeCurveView(FadeCurve* fade);
+        void add_new_fade_curve_view(FadeCurve* fade);
+        void remove_fade_curve_view(FadeCurve* fade);
 	void repaint();
 	void update_start_pos();
 	void position_changed();
