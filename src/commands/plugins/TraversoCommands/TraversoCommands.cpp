@@ -162,7 +162,7 @@ void TraversoCommands::create_menu_translations()
         translator->add_entry("TraversoCommands::ClipSelectionSelectAll", tr("(De)Select All"));
         translator->add_entry("TraversoCommands::MoveClip", tr("Move Clip"));
         translator->add_entry("TraversoCommands::MoveTrack", tr("Move Up/Down"));
-        translator->add_entry("TraversoCommands::DragEdge", tr("Drag Edge"));
+        translator->add_entry("TraversoCommands::MoveEdge", tr("Move Edge"));
         translator->add_entry("TraversoCommands::MoveClipOrEdge", tr("Move Or Resize Clip"));
         translator->add_entry("TraversoCommands::SplitClip", tr("Split"));
         translator->add_entry("TraversoCommands::CropClip", tr("Magnetic Cut"));
