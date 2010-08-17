@@ -234,7 +234,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="P" >
 			<Objects>
-				<Object objectname="FadeView" slotsignature="select_fade_shape" modes="All"  sortorder="1"/>
+                                <Object objectname="FadeCurveView" slotsignature="select_fade_shape" modes="All"  sortorder="1"/>
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="M" >
@@ -290,7 +290,7 @@
 				<Object objectname="TrackPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" />
                                 <Object objectname="Zoom" slotsignature="vzoom_out" modes="All" sortorder="7" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
-                                <Object objectname="Crop" slotsignature="adjust_left" modes="All" />
+                                <Object objectname="CropClip" slotsignature="adjust_left" modes="All" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseScrollVerticalDown" >
@@ -302,7 +302,7 @@
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="vzoom_in" modes="All" sortorder="8" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
-                                <Object objectname="Crop" slotsignature="adjust_right" modes="All" />
+                                <Object objectname="CropClip" slotsignature="adjust_right" modes="All" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F" >
@@ -423,7 +423,7 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="E" >
 			<Objects>
-				<Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="DragEdge" arguments="false" />
+                                <Object objectname="AudioClipView" mousehint="LR" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="MoveEdge" arguments="false" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="G" >
@@ -450,8 +450,6 @@
 				<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="Effects" sortorder="3" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
                                 <Object objectname="TrackView" mousehint="UD" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack"/>
-                                <Object objectname="TrackPanelGain" modes="All" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
-				<Object objectname="TrackPanelPan" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 
 		<keyfact type="HKEY" key1="MouseButtonMiddle" >
@@ -462,8 +460,8 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="W" >
 			<Objects>
-				<Object objectname="SheetView" mousehint="LR" slotsignature="work_cursor_move" modes="All" sortorder="14" submenu="Work Cursor" />
-			</Objects>
+                                <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="14" submenu="Work Cursor" pluginname="TraversoCommands" commandname="WorkCursorMove" />
+                        </Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="C" >
 			<Objects>
@@ -484,12 +482,12 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="B" >
 			<Objects>
-				<Object objectname="FadeView" mousehint="UD" slotsignature="bend" modes="All" sortorder="3" />
+                                <Object objectname="FadeCurveView" mousehint="UD" slotsignature="bend" modes="All" sortorder="3" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="S" >
 			<Objects>
-				<Object objectname="FadeView" mousehint="LR" slotsignature="strength" modes="All" sortorder="4" />
+                                <Object objectname="FadeCurveView" mousehint="LR" slotsignature="strength" modes="All" sortorder="4" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="TAB" >
@@ -499,8 +497,8 @@
 		</keyfact>
                 <keyfact type="HKEY" key1="V" >
 			<Objects>
-				<Object objectname="SheetView" mousehint="LR" slotsignature="play_cursor_move" modes="All" sortorder="8" submenu="Playhead" />
-				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
+                                <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="14" submenu="Playhead" pluginname="TraversoCommands" commandname="PlayHeadMove" />
+                                <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="F" >
