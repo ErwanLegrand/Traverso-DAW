@@ -72,6 +72,7 @@ TMenuTranslator::TMenuTranslator()
         add_meta_object(&FadeCurve::staticMetaObject);
         add_meta_object(&FadeCurveView::staticMetaObject);
         add_meta_object(&TMainWindow::staticMetaObject);
+        add_meta_object(&Project::staticMetaObject);
         add_meta_object(&ProjectManager::staticMetaObject);
         add_meta_object(&Gain::staticMetaObject);
         add_meta_object(&MoveTrack::staticMetaObject);
@@ -185,6 +186,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("FadeCurveView::select_fade_shape", tr("Select Preset"));
         add_entry("PluginView::edit_properties", tr("Edit..."));
         add_entry("PluginView::remove_plugin", tr("Remove"));
+        add_entry("Project::select", tr("Type Number then:\nSelect View"));
         add_entry("SheetView::touch", tr("Set"));
         add_entry("SheetView::touch_play_cursor", tr("Set"));
         add_entry("SheetView::center", tr("Center View"));
@@ -322,6 +324,16 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Zoom::track_vzoom_in", tr("Track Vertical Zoom In"));
         add_entry("Zoom::track_vzoom_out", tr("Track Vertical Zoom Out"));
         add_entry("Zoom::numerical_input", tr("Track Height"));
+
+        // Sub Menu entries
+        add_entry("Fade", tr("Fade In/Out", "Child Menu title in context menu"));
+        add_entry("Zoom", tr("Zoom", "Child Menu title in context menu"));
+        add_entry("Navigate", tr("Navigate", "Child Menu title in context menu"));
+        add_entry("Playhead", tr("Play Head", "Child Menu title in context menu"));
+        add_entry("Scroll", tr("Scroll", "Child Menu title in context menu"));
+        add_entry("Selection", tr("Selection", "Child Menu title in context menu"));
+        add_entry("WorkCursor", tr("Work Cursor", "Child Menu title in context menu"));
+
 }
 
 void TMenuTranslator::add_entry(const QString &signature, const QString &translation)
@@ -344,7 +356,7 @@ QString TMenuTranslator::create_html_for_metas(QList<const QMetaObject *> metas,
                 return "";
         }
 
-        QString holdKeyFact = keyfacts_for_metaobject(metas.first());
+        QString holdKeyFact = ie().keyfacts_for_hold_command(metas.first()->className()).join(" , ");
 
 
         QString name = get_translation_for(QString(metas.first()->className()).remove(("View")));
@@ -395,7 +407,8 @@ QString TMenuTranslator::create_html_for_metas(QList<const QMetaObject *> metas,
                 QMenu* somemenu = menulist.at(i);
                 submenuhtml = "";
                 if (i>0) {
-                        submenuhtml = "<tr class=\"object\">\n<td colspan=\"2\" align=\"center\">" + somemenu->menuAction()->text() + "</td></tr>\n";
+                        submenuhtml = "<tr class=\"object\">\n<td colspan=\"2\" align=\"center\">"
+                                      "<font style=\"font-size: 11px;\"><b>" + somemenu->menuAction()->text() + "</b></font></td></tr>\n";
                 }
                 foreach(QAction* action, somemenu->actions()) {
                         QStringList strings = action->data().toStringList();
@@ -533,54 +546,4 @@ bool TMenuTranslator::metaobject_inherits_class(const QMetaObject *mo, const QSt
                 mo = mo->superClass();
         }
         return false;
-}
-
-QString TMenuTranslator::keyfacts_for_metaobject(const QMetaObject* mo)
-{
-        const char* classname = mo->className();
-
-        QList<IEAction*> ieActions = ie().get_ie_actions();
-        QStringList result;
-
-        for (int i=0; i<ieActions.size(); i++) {
-                IEAction* ieaction = ieActions.at(i);
-
-                if (ieaction->type == HOLDKEY) {
-                        QList<IEAction::Data*> datalist;
-                        foreach(IEAction::Data* data, ieaction->objects) {
-                                datalist.append(data);
-                        }
-                        foreach(IEAction::Data* data, ieaction->objectUsingModifierKeys) {
-                                datalist.append(data);
-                        }
-                        foreach(IEAction::Data* data, datalist) {
-                                if (data->commandname == classname || data->submenu == classname) {
-                                        QString keyfact = ieaction->keySequence;
-                                        make_keyfacts_human_readable(keyfact);
-                                        result.append(keyfact);
-                                }
-                        }
-                }
-        }
-        result.removeDuplicates();
-        QString str = result.join(" , ");
-        return str;
-}
-
-void TMenuTranslator::make_keyfacts_human_readable(QString& keyfact)
-{
-        keyfact.replace(QString("MouseScrollVerticalUp"), QString("Scroll Wheel"));
-        keyfact.replace(QString("MouseScrollVerticalDown"), QString("Scroll Wheel"));
-        keyfact.replace(QString("MouseButtonRight"), QString("Right. MB"));
-        keyfact.replace(QString("MouseButtonLeft"), QString("Left MB"));
-        keyfact.replace(QString("MouseButtonMiddle"), QString("Center MB"));
-        keyfact.replace(QString("UARROW"), QString("Up Arrow"));
-        keyfact.replace(QString("DARROW"), QString("Down Arrow"));
-        keyfact.replace(QString("LARROW"), QString("Left Arrow"));
-        keyfact.replace(QString("RARROW"), QString("Right Arrow"));
-        keyfact.replace(QString("DELETE"), QString("Delete"));
-        keyfact.replace(QString("MINUS"), QString("-"));
-        keyfact.replace(QString("PLUS"), QString("+"));
-        keyfact.replace(QString("PAGEDOWN"), QString("Page Down"));
-        keyfact.replace(QString("PAGEUP"), QString("Page Up"));
 }

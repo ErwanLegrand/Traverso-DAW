@@ -129,6 +129,8 @@ public:
 
 	TCommand* get_holding_command() const;
         QList<IEAction*> get_ie_actions() const {return m_ieActions;}
+        QStringList keyfacts_for_hold_command(const QString& className);
+        void make_keyfacts_human_readable(QString& keyfact);
 
         int broadcast_action_from_contextmenu(const QString& name);
 

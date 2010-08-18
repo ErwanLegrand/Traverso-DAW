@@ -40,6 +40,7 @@ private:
         QHash<QString, QString> m_help;
         QTextEdit*              m_textEdit;
         QComboBox*              m_comboBox;
+        QString                 m_helpIntroduction;
 
 private slots:
         void context_changed();

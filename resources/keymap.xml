@@ -128,21 +128,21 @@
 		</keyfact>
                 <keyfact type="FKEY" key1="W" >
                         <Objects>
-                                <Object objectname="SheetView" slotsignature="workcursor_to_playhead" modifierkeys="SHIFT" modes="All" sortorder="3" submenu="Work Cursor" />
-                                <Object objectname="SheetView" slotsignature="touch" modifierkeys="CTRL" modes="All" sortorder="2" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="workcursor_to_playhead" modifierkeys="SHIFT" modes="All" sortorder="3" submenu="WorkCursor" />
+                                <Object objectname="SheetView" slotsignature="touch" modifierkeys="CTRL" modes="All" sortorder="2" submenu="WorkCursor" />
                                 <Object objectname="PlayHeadMove" slotsignature="move_to_work_cursor" modes="All" sortorder="10" isholdmodifier="1" />
                         </Objects>
                 </keyfact>
                 <keyfact type="FKEY" key1="HOME" >
 			<Objects>
-                                <Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="CTRL" modes="All" sortorder="5" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="CTRL" modes="All" sortorder="5" submenu="WorkCursor" />
                                 <Object objectname="SheetView" slotsignature="play_to_begin" modes="All" sortorder="30" submenu="Playhead" />
                                 <Object objectname="MoveTrack" slotsignature="to_top" modes="All" sortorder="3" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="END" >
 			<Objects>
-                                <Object objectname="SheetView" slotsignature="goto_end" modifierkeys="CTRL" modes="All" sortorder="6" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="goto_end" modifierkeys="CTRL" modes="All" sortorder="6" submenu="WorkCursor" />
                                 <Object objectname="SheetView" slotsignature="play_to_end" modes="All" sortorder="31" submenu="Playhead" />
                                 <Object objectname="MoveTrack" slotsignature="to_bottom" modes="All" sortorder="4" />
                         </Objects>
@@ -271,7 +271,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="MouseButtonMiddle" >
 			<Objects>
-                                <Object objectname="SheetView" slotsignature="touch" modes="All" sortorder="8" submenu="Work Cursor" />
+                                <Object objectname="SheetView" slotsignature="touch" modes="All" sortorder="8" submenu="WorkCursor" />
 				<Object objectname="TimeLineView" slotsignature="playhead_to_marker" modes="All" sortorder="2" />
 			</Objects>
 		</keyfact>
@@ -369,12 +369,12 @@
 		</keyfact>
 		<keyfact type="FKEY2" key1="F" key2="G" >
 			<Objects>
-				<Object objectname="AudioClipView" slotsignature="select_fade_in_shape" modes="All" sortorder="14" submenu="Fade In/Out" />
+                                <Object objectname="AudioClipView" slotsignature="select_fade_in_shape" modes="All" sortorder="14" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="G" key2="H" >
 			<Objects>
-				<Object objectname="AudioClipView" slotsignature="select_fade_out_shape" modes="All" sortorder="24" submenu="Fade In/Out" />
+                                <Object objectname="AudioClipView" slotsignature="select_fade_out_shape" modes="All" sortorder="24" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY2" key1="S" key2="C" >
@@ -417,8 +417,8 @@
 		
 		<keyfact type="HKEY" key1="Z" sortorder="35" >
 			<Objects>
-                        <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="HJogZoom" arguments="HJogZoom;1.2;0.2" />
-                        <Object objectname="TrackView" mousehint="LR" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="HJogZoom" arguments="HJogZoom;1.2;0.2" />
+                        <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="Zoom" arguments="HJogZoom;1.2;0.2" />
+                        <Object objectname="TrackView" mousehint="LR" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="Zoom" arguments="HJogZoom;1.2;0.2" />
                         </Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="E" >
@@ -460,7 +460,7 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="W" >
 			<Objects>
-                                <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="14" submenu="Work Cursor" pluginname="TraversoCommands" commandname="WorkCursorMove" />
+                                <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="14" submenu="WorkCursor" pluginname="TraversoCommands" commandname="WorkCursorMove" />
                         </Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="C" >
@@ -503,7 +503,7 @@
 		</keyfact>
 		<keyfact type="HKEY" key1="F" >
 			<Objects>
-				<Object objectname="AudioClipView" mousehint="LR" slotsignature="fade_range" modes="All" sortorder="30" submenu="Fade In/Out" />
+                                <Object objectname="AudioClipView" mousehint="LR" slotsignature="fade_range" modes="All" sortorder="30" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="A" >
@@ -550,22 +550,17 @@
 		
 		<keyfact type="HKEY2" key1="F" key2="G" >
 			<Objects>
-                                <Object objectname="AudioClipView" mousehint="LR" slotsignature="clip_fade_in" modes="All" sortorder="11" submenu="Fade In/Out" />
+                                <Object objectname="AudioClipView" mousehint="LR" slotsignature="clip_fade_in" modes="All" sortorder="11" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="G" key2="H" >
 			<Objects>
-                                <Object objectname="AudioClipView" mousehint="LR" slotsignature="clip_fade_out" modes="All" sortorder="21" submenu="Fade In/Out" />
+                                <Object objectname="AudioClipView" mousehint="LR" slotsignature="clip_fade_out" modes="All" sortorder="21" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY2" key1="S" key2="G" >
 			<Objects>
 				<Object objectname="SheetView" modes="All" sortorder="4" pluginname="TraversoCommands" commandname="Gain" />
-			</Objects>
-		</keyfact>
-                <keyfact type="HKEY2" key1="Z" key2="" >
-			<Objects>
-				<Object objectname="SheetView" mousehint="UD" modes="All" sortorder="2" submenu="Zoom" pluginname="TraversoCommands" commandname="VJogZoom" arguments="VJogZoom;1.2;0.2" />
 			</Objects>
 		</keyfact>
                 <keyfact type="HKEY2" key1="G" key2="T" >
@@ -642,7 +637,7 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="F" >
 			<Objects>
-				<Object objectname="AudioClipView" slotsignature="reset_fade" modes="All" sortorder="37" submenu="Fade In/Out" />
+                                <Object objectname="AudioClipView" slotsignature="reset_fade" modes="All" sortorder="37" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="S">
@@ -655,17 +650,17 @@
 		
 		<keyfact type="D_FKEY2" key1="F" key2="G" >
 			<Objects>
-				<Object objectname="AudioClip" slotsignature="reset_fade_in" modes="All" sortorder="18" submenu="Fade In/Out" />
+                                <Object objectname="AudioClip" slotsignature="reset_fade_in" modes="All" sortorder="18" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY2" key1="G" key2="H" >
 			<Objects>
-				<Object objectname="AudioClip" slotsignature="reset_fade_out" modes="All" sortorder="28" submenu="Fade In/Out" />
+                                <Object objectname="AudioClip" slotsignature="reset_fade_out" modes="All" sortorder="28" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY2" key1="F" key2="H" >
 			<Objects>
-				<Object objectname="AudioClip" slotsignature="reset_fade_both" modes="All" sortorder="38" submenu="Fade In/Out" />
+                                <Object objectname="AudioClip" slotsignature="reset_fade_both" modes="All" sortorder="38" submenu="Fade" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY2" key1="C" key2="X" >

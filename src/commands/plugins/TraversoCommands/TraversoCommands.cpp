@@ -129,8 +129,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("VZoomOut", ZoomCommand);
 	m_dict.insert("HZoomIn", ZoomCommand);
 	m_dict.insert("HZoomOut", ZoomCommand);
-	m_dict.insert("HJogZoom", ZoomCommand);
-	m_dict.insert("VJogZoom", ZoomCommand);
+        m_dict.insert("Zoom", ZoomCommand);
 	m_dict.insert("JogZoom", ZoomCommand);
 	m_dict.insert("ScrollRightHold", ScrollCommand);
 	m_dict.insert("ScrollLeftHold", ScrollCommand);
@@ -174,9 +173,7 @@ void TraversoCommands::create_menu_translations()
         translator->add_entry("TraversoCommands::HZoomOut", tr("Horizontal Out"));
         translator->add_entry("TraversoCommands::HZoomIn", tr("Horizontal In"));
         translator->add_entry("TraversoCommands::VZoomOut", tr("Vertical Out"));
-        translator->add_entry("TraversoCommands::Zoom", tr("Omnidirectional"));
-        translator->add_entry("TraversoCommands::HJogZoom", tr("Horizontal"));
-        translator->add_entry("TraversoCommands::VJogZoom", tr("Vertical"));
+        translator->add_entry("TraversoCommands::Zoom", tr("Zoom"));
         translator->add_entry("TraversoCommands::ScrollRightHold", tr("Right"));
         translator->add_entry("TraversoCommands::ScrollLeftHold", tr("Left"));
         translator->add_entry("TraversoCommands::ScrollUpHold", tr("Up"));

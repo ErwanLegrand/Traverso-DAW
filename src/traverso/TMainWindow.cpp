@@ -1040,7 +1040,7 @@ QString create_keyfact_string(QString& keyfact, QList<int> modifiers)
 		}
 	}
 
-        TMenuTranslator::instance()->make_keyfacts_human_readable(keyfact);
+        ie().make_keyfacts_human_readable(keyfact);
 
         return modifierkey + " " + keyfact;
 }
@@ -1179,7 +1179,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
                 subMenu->menuAction()->setFont(font);
 		
                 QAction* action = menu->insertMenu(0, subMenu);
-                action->setText(key);
+                action->setText(TMenuTranslator::instance()->get_translation_for(key));
 		foreach(MenuData data, *list) {
                         QAction* action = new QAction(subMenu);
 			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);

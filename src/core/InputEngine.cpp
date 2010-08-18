@@ -1665,7 +1665,7 @@ int InputEngine::init_map(const QString& keymap)
 			data->modes = e.attribute("modes", "").split(";");
 			data->pluginname = e.attribute( "pluginname", "");
 			data->commandname = e.attribute( "commandname", "");
-			data->submenu = e.attribute("submenu", "");
+                        data->submenu = e.attribute("submenu", "");
 			data->sortorder = e.attribute( "sortorder", "0").toInt();
                         data->autorepeatInterval = e.attribute("autorepeatinterval", "40").toInt();
                         data->autorepeatStartDelay = e.attribute("autorepeatstartdelay", "100").toInt();
@@ -1816,6 +1816,52 @@ int InputEngine::init_map(const QString& keymap)
 	return 1;
 }
 
+QStringList InputEngine::keyfacts_for_hold_command(const QString& className)
+{
+        QStringList result;
+
+        for (int i=0; i<m_ieActions.size(); i++) {
+                IEAction* ieaction = m_ieActions.at(i);
+
+                if (ieaction->type == HOLDKEY) {
+                        QList<IEAction::Data*> datalist;
+                        foreach(IEAction::Data* data, ieaction->objects) {
+                                datalist.append(data);
+                        }
+                        foreach(IEAction::Data* data, ieaction->objectUsingModifierKeys) {
+                                datalist.append(data);
+                        }
+                        foreach(IEAction::Data* data, datalist) {
+                                if (data->commandname == className) {
+                                        QString keyfact = ieaction->keySequence;
+                                        make_keyfacts_human_readable(keyfact);
+                                        result.append(keyfact);
+                                }
+                        }
+                }
+        }
+        result.removeDuplicates();
+
+        return result;
+}
+
+void InputEngine::make_keyfacts_human_readable(QString& keyfact)
+{
+        keyfact.replace(QString("MouseScrollVerticalUp"), tr("Scroll Wheel"));
+        keyfact.replace(QString("MouseScrollVerticalDown"), tr("Scroll Wheel"));
+        keyfact.replace(QString("MouseButtonRight"), tr("Right MB"));
+        keyfact.replace(QString("MouseButtonLeft"), tr("Left MB"));
+        keyfact.replace(QString("MouseButtonMiddle"), tr("Center MB"));
+        keyfact.replace(QString("UARROW"), tr("Up Arrow"));
+        keyfact.replace(QString("DARROW"), tr("Down Arrow"));
+        keyfact.replace(QString("LARROW"), tr("Left Arrow"));
+        keyfact.replace(QString("RARROW"), tr("Right Arrow"));
+        keyfact.replace(QString("DELETE"), tr("Delete"));
+        keyfact.replace(QString("MINUS"), QString("-"));
+        keyfact.replace(QString("PLUS"), QString("+"));
+        keyfact.replace(QString("PAGEDOWN"), tr("Page Down"));
+        keyfact.replace(QString("PAGEUP"), tr("Page Up"));
+}
 
 void InputEngine::set_clear_time(int time)
 {
