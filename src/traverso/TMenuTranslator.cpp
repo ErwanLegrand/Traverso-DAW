@@ -296,7 +296,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("MoveTrack::to_top", tr("To Top"));
         add_entry("MoveEdge::prev_snap_pos", tr("Previous Snap Pos"));
         add_entry("MoveEdge::next_snap_pos", tr("Next Snap Pos"));
-        add_entry("PlayHeadMove::move_to_work_cursor", tr("To Play Cursor"));
+        add_entry("PlayHeadMove::move_to_work_cursor", tr("To Work Cursor"));
         add_entry("PlayHeadMove::prev_snap_pos", tr("Previous Snap Pos"));
         add_entry("PlayHeadMove::next_snap_pos", tr("Next Snap Pos"));
         add_entry("Shuttle::move_up", tr("Move Up"));
