@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QLayout>
 #include <QComboBox>
 
+#include "TConfig.h"
 #include "ContextPointer.h"
 #include "ContextItem.h"
 #include "InputEngine.h"
@@ -103,10 +104,18 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
                 m_comboBox->addItem(sorted.key(value), value);
         }
 
+        int index = config().get_property("Help", "DropDownIndex", 0).toInt();
+        m_comboBox->setCurrentIndex(index);
+
         connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
         connect(&ie(), SIGNAL(jogStarted()), this, SLOT(jog_started()));
         connect(&ie(), SIGNAL(jogFinished()), this, SLOT(context_changed()));
         connect(m_comboBox, SIGNAL(activated(int)), this, SLOT(combobox_activated(int)));
+}
+
+TContextHelpWidget::~TContextHelpWidget()
+{
+        config().set_property("Help", "DropDownIndex", m_comboBox->currentIndex());
 }
 
 void TContextHelpWidget::context_changed()

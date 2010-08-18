@@ -33,6 +33,7 @@ class TContextHelpWidget : public QWidget
         Q_OBJECT
 public:
         TContextHelpWidget(QWidget* parent=0);
+        ~TContextHelpWidget();
 
 private:
         QString create_html_for_object(QObject* obj);
