@@ -90,6 +90,7 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
         m_helpIntroduction.replace(QString("K >>"), QString("K &raquo;"));
         m_helpIntroduction.replace(QString("< K"), QString("&lsaquo; K"));
         m_helpIntroduction.replace(QString("K >"), QString("K &rsaquo;"));
+        m_helpIntroduction.replace(QString("KL >"), QString("KL &rsaquo;"));
 
         combobox_activated(0);
 
