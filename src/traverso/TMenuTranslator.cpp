@@ -287,7 +287,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("MoveCurveNode::move_left", tr("Move Left"));
         add_entry("MoveCurveNode::move_right", tr("Move Right"));
         add_entry("MoveMarker::move_left", tr("Move Left"));
-        add_entry("MoveMarker::move_right", tr("Move right"));
+        add_entry("MoveMarker::move_right", tr("Move Right"));
         add_entry("MoveMarker::next_snap_pos", tr("To next snap position"));
         add_entry("MoveMarker::prev_snap_pos", tr("To previous snap position"));
         add_entry("MoveTrack::move_up", tr("Move Up"));

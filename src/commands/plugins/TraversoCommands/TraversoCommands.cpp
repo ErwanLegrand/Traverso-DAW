@@ -181,7 +181,8 @@ void TraversoCommands::create_menu_translations()
         translator->add_entry("TraversoCommands::Shuttle", tr("Shuttle"));
         translator->add_entry("TraversoCommands::NormalizeClip", tr("Normalize"));
         translator->add_entry("TraversoCommands::ArrowKeyBrowser", tr("Arrow Key Browser"));
-
+        translator->add_entry("TraversoCommands::WorkCursorMove", tr("Move Work Cursor"));
+        translator->add_entry("TraversoCommands::PlayHeadMove", tr("Set Play Position"));
 }
 
 
