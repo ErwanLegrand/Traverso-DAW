@@ -116,6 +116,11 @@ int main( int argc, char **argv )
 	}
 	PENTER;
 
+
+        // Since Qt 4.2 the event loop by default runs on the glib event loop
+        // sadly, this introduces a rather high cpu load when using timers that
+        // fire quite often (<= 20 ms).
+        // T doesn't need the glib event loop so turn it of:
 #if defined(Q_OS_UNIX)
         setenv("QT_NO_GLIB", "1", true);
 #endif

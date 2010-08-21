@@ -73,8 +73,6 @@ int PADriver::_read(nframes_t nframes)
 
 int PADriver::_write(nframes_t nframes)
 {
-        printf("nframes is %d\n", nframes);
-
 	// TODO use the found maxchannel count instead of assuming 2 !! ( == playbackChannels.size() )
 	// Properly iterate over all channel buffers to mixdown the audio
 	// in an interleaved way (since our channel buffers represent just that,
