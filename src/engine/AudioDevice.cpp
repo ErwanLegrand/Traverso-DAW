@@ -425,11 +425,11 @@ int AudioDevice::create_driver(QString driverType, bool capture, bool playback, 
 
 #if defined (PORTAUDIO_SUPPORT)
 	if (driverType == "PortAudio") {
-		driver = new PADriver(this, m_rate, m_bufferSize);
-		if (driver->setup(capture, playback, cardDevice) < 0) {
+                m_driver = new PADriver(this, m_rate, m_bufferSize);
+                if (m_driver->setup(capture, playback, cardDevice) < 0) {
 			message(tr("Audiodevice: Failed to create the PortAudio Driver"), WARNING);
-			delete driver;
-			driver = 0;
+                        delete m_driver;
+                        m_driver = 0;
 			return -1;
 		}
 		m_driverType = driverType;

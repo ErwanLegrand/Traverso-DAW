@@ -22,10 +22,10 @@
 #ifndef PORTAUDIO_DRIVER_H
 #define PORTAUDIO_DRIVER_H
 
-#include "Driver.h"
+#include "TAudioDriver.h"
 #include "portaudio.h"
 
-class PADriver : public Driver
+class PADriver : public TAudioDriver
 {
         Q_OBJECT
 
