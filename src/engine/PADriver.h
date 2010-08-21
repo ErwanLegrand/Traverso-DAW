@@ -49,8 +49,8 @@ public:
 
 private:
 	PaStream* m_paStream;
-	const void* paInputBuffer;
- 	void* paOutputBuffer;
+        void* m_paInputBuffer;
+        void* m_paOutputBuffer;
  
  	static int _xrun_callback(void *arg);
 	static void _on_pa_shutdown_callback(void* arg);

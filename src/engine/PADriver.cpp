@@ -51,55 +51,43 @@ PADriver::~PADriver( )
 
 int PADriver::_read(nframes_t nframes)
 {
-	float* in = (float*) paInputBuffer;
+        float* in = (float*) m_paInputBuffer;
 	
         if (!m_captureChannels.size()) {
 		return 0;
 	}
-	
-        float* datachan0 = m_captureChannels.at(0)->get_buffer(nframes);
-        float* datachan1 = m_captureChannels.at(1)->get_buffer(nframes);
-	
-	int j=0;
-	
-	for (uint i=0; i<nframes*2; i++) {
-		datachan0[j] = in[i++];
-		datachan1[j] = in[i];
-		j++;
-	}
-	
+
+        int index = 0;
+        for(int i=0; i<nframes; i++) {
+                for (int chan=0; chan<m_captureChannels.size(); chan++) {
+                        AudioChannel* channel = m_captureChannels.at(chan);
+                        audio_sample_t* buf = channel->get_buffer(nframes);
+                        buf[i] = in[index++];
+                }
+        }
+
 	return 1;
 }
 
 int PADriver::_write(nframes_t nframes)
 {
-	// TODO use the found maxchannel count instead of assuming 2 !! ( == playbackChannels.size() )
-	// Properly iterate over all channel buffers to mixdown the audio
-	// in an interleaved way (since our channel buffers represent just that,
-	// one channel, no interleaved data there)
-	
-	// CRITICAL : When messing with this routine, be sure to do it right, at the
-	// least, turn the volume of your speakers down, if you want them and your ears
-	// to last a little longer :D
-	
         if (!m_playbackChannels.size()) {
 		return 0;
 	}
 	
-	float* out = (float*) paOutputBuffer;
-        float* datachan0 = m_playbackChannels.at(0)->get_buffer(nframes);
-        float* datachan1 = m_playbackChannels.at(1)->get_buffer(nframes);
+        float* out = (float*) m_paOutputBuffer;
+
+
+        int index = 0;
+        for(int i=0; i<nframes; i++) {
+                for (int chan=0; chan<m_playbackChannels.size(); chan++) {
+                        out[index++] = m_playbackChannels.at(chan)->get_buffer(nframes)[i];
+                }
+        }
 	
-	int j=0;
-	
-	for (uint i=0; i<nframes*2; i++) {
-		out[i++] = datachan0[j];
-		out[i] = datachan1[j];
-		j++;
-	}
-	
-        m_playbackChannels.at(0)->silence_buffer(nframes);
-        m_playbackChannels.at(1)->silence_buffer(nframes);
+        for (int chan=0; chan<m_playbackChannels.size(); chan++) {
+                m_playbackChannels.at(chan)->silence_buffer(nframes);
+        }
 	
 	return 1;
 }
@@ -162,7 +150,7 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 			break;
 		}
 
-                if (hostapi == "asio" && inf->type == paAsio ) {
+                if (hostapi == "asio" && inf->type == paASIO ) {
                         printf("PADriver:: Found asio host api, using device %d\n", i);
                         deviceindex = i;
                         break;
@@ -184,27 +172,32 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	deviceindex = 0;
 //	device->message(tr("PADriver:: using device %1").arg(deviceindex), AudioDevice::INFO);
 		
+        int inChannelMax = 0;
+        int outChannelsMax = 0;
+
 	// Configure output parameters.
-	// TODO get the max channel count, and use that instead, of assuming 2
-	PaDeviceIndex result = Pa_GetDefaultOutputDevice();
+        PaDeviceIndex result = Pa_GetDefaultOutputDevice();
 	if( result != paNoDevice) {
-		outputParameters.device = result;
-		outputParameters.channelCount = 2;
+                outChannelsMax = Pa_GetDeviceInfo(result)->maxOutputChannels;
+                outputParameters.device = result;
+                outputParameters.channelCount = outChannelsMax;
 		outputParameters.sampleFormat = paFloat32; /* 32 bit floating point output */
 		outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
 		outputParameters.hostApiSpecificStreamInfo = NULL;
 	}
 	
-	result = Pa_GetDefaultInputDevice();
+        result = Pa_GetDefaultInputDevice();
 	if( result != paNoDevice) {
+                inChannelMax = Pa_GetDeviceInfo(result)->maxInputChannels;
 		inputParameters.device = result;
-		inputParameters.channelCount = 2;
+                inputParameters.channelCount = inChannelMax;
 		inputParameters.sampleFormat = paFloat32; /* 32 bit floating point output */
-		inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
+                inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
 		inputParameters.hostApiSpecificStreamInfo = NULL;
 	}
 	
-	/* Open an audio I/O stream. */
+
+        /* Open an audio I/O stream. */
 	err = Pa_OpenStream(
 			&m_paStream,
 			&inputParameters,	// The input parameter
@@ -223,29 +216,28 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 		printf("PADriver:: Succesfully opened portaudio stream\n");
 	}
 	
-	AudioChannel* audiochannel;
-	int port_flags;
-	char buf[32];
-	
-	// TODO use the found maxchannel count for the playback stream, instead of assuming 2 !!
-	for (int chn = 0; chn < 2; chn++) {
+        AudioChannel* audiochannel;
+        char buf[32];
 
-		snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
+        // TODO use the found maxchannel count for the playback stream, instead of assuming 2 !!
+        for (int chn = 0; chn < outChannelsMax; chn++) {
+
+                snprintf (buf, sizeof(buf) - 1, "playback_%d", chn+1);
 
                 audiochannel = add_playback_channel(buf);
                 audiochannel->set_latency(frames_per_cycle + capture_frame_latency);
-	}
+        }
 
-	// TODO use the found maxchannel count for the capture stream, instead of assuming 0 !!
-	for (int chn = 0; chn < 2; chn++) {
+        // TODO use the found maxchannel count for the capture stream, instead of assuming 0 !!
+        for (int chn = 0; chn < inChannelMax; chn++) {
 
-		snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
+                snprintf (buf, sizeof(buf) - 1, "capture_%d", chn+1);
 
                 audiochannel = add_capture_channel(buf);
                 audiochannel->set_latency(frames_per_cycle + capture_frame_latency);
-	}
-	
-	return 1;
+        }
+
+        return 1;
 }
 
 int PADriver::attach()
@@ -331,8 +323,8 @@ int PADriver::_process_callback(
 	
 	PADriver* driver  = static_cast<PADriver *> (arg);
 	
-	driver->paInputBuffer = inputBuffer;
-	driver->paOutputBuffer = outputBuffer;
+        driver->m_paInputBuffer = (void*)inputBuffer;
+        driver->m_paOutputBuffer = outputBuffer;
 	
 	driver->process_callback (framesPerBuffer);
 	
