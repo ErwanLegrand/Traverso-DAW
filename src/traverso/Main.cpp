@@ -116,8 +116,8 @@ int main( int argc, char **argv )
 	}
 	PENTER;
 
-#if defined(Q_OS_LINUX)
-        putenv((char*)("QT_NO_GLIB=1"));
+#if defined(Q_OS_UNIX)
+        setenv("QT_NO_GLIB", "1", true);
 #endif
 
 	traverso = new Traverso(argc, argv);

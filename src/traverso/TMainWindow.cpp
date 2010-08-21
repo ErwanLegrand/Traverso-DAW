@@ -1932,7 +1932,6 @@ void TMainWindow::update_vu_levels_peak()
                 return;
         }
 
-        return;
 
         for(int i=0; i<m_vuLevels.size(); i++) {
                 m_vuLevels.at(i)->update_peak();
