@@ -73,7 +73,6 @@ private:
 	SystemValueBar*	m_readBufferStatus;
 	SystemValueBar*	m_writeBufferStatus;
         SystemValueBar*	m_cpuUsage;
-        SystemValueBar*	m_diskIOCPUUsage;
         QPushButton*	m_icon;
         QLabel*         m_collectedNumber;
 

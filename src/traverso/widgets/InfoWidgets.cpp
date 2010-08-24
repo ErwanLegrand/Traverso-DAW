@@ -77,7 +77,6 @@ SystemResources::SystemResources(QWidget * parent)
 	m_readBufferStatus->setToolTip(tr("Read Buffer Status"));
 	m_writeBufferStatus->setToolTip(tr("Write Buffer Status"));
 	m_cpuUsage = new SystemValueBar(this);
-        m_diskIOCPUUsage = new SystemValueBar(this);
 	m_icon = new QPushButton();
 	m_icon->setIcon(find_pixmap(":/memorysmall"));
 	m_icon->setFlat(true);
@@ -107,24 +106,15 @@ SystemResources::SystemResources(QWidget * parent)
 	m_cpuUsage->add_range_color(60, 75, QColor(255, 255, 0));
 	m_cpuUsage->add_range_color(75, 100, QColor(255, 0, 0));
 	
-        m_diskIOCPUUsage->set_range(0, 120);
-        m_diskIOCPUUsage->set_int_rounding(false);
-        m_diskIOCPUUsage->setMinimumWidth(110);
-        m_diskIOCPUUsage->add_range_color(0, 60, QColor(227, 254, 227));
-        m_diskIOCPUUsage->add_range_color(60, 75, QColor(255, 255, 0));
-        m_diskIOCPUUsage->add_range_color(75, 120, QColor(255, 0, 0));
-
         m_readBufferStatus->set_text("R");
 	m_writeBufferStatus->set_text("W");
         m_cpuUsage->set_text("DSP");
-        m_diskIOCPUUsage->set_text("R/W CPU");
 	
         QHBoxLayout* lay = new QHBoxLayout(this);
 	lay->addSpacing(6);
 	lay->addWidget(m_readBufferStatus);
 	lay->addWidget(m_icon);
 	lay->addWidget(m_writeBufferStatus);
-        lay->addWidget(m_diskIOCPUUsage);
 	lay->addWidget(m_cpuUsage);
         lay->addWidget(TMainWindow::instance()->get_track_finder());
         lay->addWidget(m_collectedNumber);
@@ -160,7 +150,6 @@ void SystemResources::update_status( )
 	
 	m_readBufferStatus->set_value(bufReadStatus);
 	m_writeBufferStatus->set_value(bufWriteStatus);
-        m_diskIOCPUUsage->set_value(ioCPUTime);
 	m_cpuUsage->set_value(time);
 }
 
