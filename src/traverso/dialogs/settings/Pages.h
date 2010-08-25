@@ -63,7 +63,7 @@ class ConfigPage : public QWidget
 {
 	Q_OBJECT
 public:
-	ConfigPage(QWidget* parent) : QWidget(parent) {};
+        ConfigPage(QWidget* parent) : QWidget(parent) {}
 	virtual void save_config() = 0;
 	virtual void load_config() = 0;
 	virtual void reset_default_config() = 0;
@@ -92,7 +92,9 @@ private slots:
 	void update_latency_combobox();
         void rate_combobox_index_changed(QString);
         void driver_combobox_index_changed(QString);
+#if defined (PORTAUDIO_SUPPORT)
         void portaudio_host_api_combobox_index_changed(int);
+#endif
 	void restart_driver_button_clicked();
 };
 

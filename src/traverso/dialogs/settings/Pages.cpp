@@ -81,8 +81,9 @@ AudioDriverConfigPage::AudioDriverConfigPage(QWidget *parent)
 	connect(restartDriverButton, SIGNAL(clicked()), this, SLOT(restart_driver_button_clicked()));
         connect(rateComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(rate_combobox_index_changed(QString)));
 
+#if defined (PORTAUDIO_SUPPORT)
         connect(m_portaudiodrivers->driverCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(portaudio_host_api_combobox_index_changed(int)));
-	
+#endif
 	load_config();
 }
 
@@ -360,6 +361,7 @@ void AudioDriverConfigPage::driver_combobox_index_changed(QString driver)
 	}
 }
 
+#if defined (PORTAUDIO_SUPPORT)
 void AudioDriverConfigPage::portaudio_host_api_combobox_index_changed(int index)
 {
         if (m_portaudiodrivers->isHidden()) {
@@ -374,7 +376,7 @@ void AudioDriverConfigPage::portaudio_host_api_combobox_index_changed(int index)
                 m_portaudiodrivers->devicesCombo->addItem(string);
         }
 }
-
+#endif
 
 void AudioDriverConfigPage::update_latency_combobox( )
 {
