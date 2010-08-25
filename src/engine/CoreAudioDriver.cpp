@@ -344,10 +344,8 @@ OSStatus CoreAudioDriver::render(AudioUnitRenderActionFlags 	*ioActionFlags,
 		audio_sample_t* buf;
                 for (int i=0; i<m_playbackChannels.size(); ++i) {
                         AudioChannel* channel = m_playbackChannels.at(i);
-			if (!channel->has_data()) {
-				continue;
-			}
-			buf = channel->get_data();
+
+                        buf = channel->get_buffer(inNumberFrames);
 			
 			memcpy((float*)ioData->mBuffers[i].mData, buf, sizeof(float) * inNumberFrames);
 
