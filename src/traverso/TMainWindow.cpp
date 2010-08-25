@@ -246,7 +246,7 @@ TMainWindow::TMainWindow()
         m_transportConsole = new TransportConsoleWidget(this);
         m_transportConsole->setObjectName("Transport Console");
 #if defined (Q_WS_MAC)
-	addToolBar(Qt::BottomToolBarArea, transportConsole);
+        addToolBar(Qt::BottomToolBarArea, m_transportConsole);
 #else
         addToolBar(Qt::TopToolBarArea, m_transportConsole);
 #endif
@@ -318,7 +318,7 @@ TMainWindow::TMainWindow()
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
 	update_follow_state();
 
-	setUnifiedTitleAndToolBarOnMac(true);
+//	setUnifiedTitleAndToolBarOnMac(true);
 
         m_vuLevelUpdateTimer.start(m_vuLevelUpdateFrequency, this);
         m_vuLevelPeakholdTimer.start(1000, this);
