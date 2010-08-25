@@ -224,29 +224,55 @@ TMainWindow::TMainWindow()
         m_mainMenuToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
         m_mainMenuToolBar->setMovable(false);
 
+#if defined (Q_WS_MAC)  // OS X is a lot pickier about menu bars. If we don't use
+                        // QMainWindow::menuBar(), the menus won't be shown at all.
+                        // If possible, I would recommend using the same solution
+                        // on other platforms as well, to reduce platform-specific
+                        // code. (ND)
+        m_mainMenuBar = menuBar();
+#else
         m_mainMenuBar = new QMenuBar(m_mainMenuToolBar);
+        m_mainMenuToolBar->addWidget(m_mainMenuBar);
+#endif
         QLabel* webAddressLabel = new QLabel(m_mainMenuToolBar);
         webAddressLabel->setText("<a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
         webAddressLabel->setOpenExternalLinks(true);
 
-        m_mainMenuToolBar->addWidget(m_mainMenuBar);
         m_mainMenuToolBar->addWidget(webAddressLabel);
         addToolBar(Qt::TopToolBarArea, m_mainMenuToolBar);
-        addToolBarBreak();
 
+#if !defined (Q_WS_MAC)
+		// why do that? Anyway, it just doesn't look good on OS X. (ND)
+        addToolBarBreak();
+#endif
 
 	m_projectToolBar = new QToolBar(this);
 	m_projectToolBar->setObjectName("Project Toolbar");
+	m_projectToolBar->toggleViewAction()->setText(tr("Project Tool Bar"));
         addToolBar(Qt::TopToolBarArea, m_projectToolBar);
 	
 	m_editToolBar = new QToolBar(this);
 	m_editToolBar->setObjectName("Edit Toolbar");
+	m_editToolBar->toggleViewAction()->setText(tr("Edit Tool Bar"));
         addToolBar(Qt::TopToolBarArea, m_editToolBar);
 
         m_transportConsole = new TransportConsoleWidget(this);
         m_transportConsole->setObjectName("Transport Console");
+
 #if defined (Q_WS_MAC)
-	addToolBar(Qt::BottomToolBarArea, transportConsole);
+        // this is important only when setUnifiedTitleAndToolBarOnMac() is true,
+        // because in that case the toolbars in the TopToolBarArea can't be moved
+        // and buttons outside the window area are not accessible at all.
+        // And if set to true, it will mess up the session tab toolbar, too! (ND)
+		
+        bool unifiedTaTB = false;
+        setUnifiedTitleAndToolBarOnMac(unifiedTaTB);
+        if (unifiedTaTB) {
+                addToolBar(Qt::BottomToolBarArea, m_transportConsole);
+        } else {
+                addToolBar(Qt::TopToolBarArea, m_transportConsole);
+        }
+        addToolBar(Qt::BottomToolBarArea, m_transportConsole);
 #else
         addToolBar(Qt::TopToolBarArea, m_transportConsole);
 #endif
@@ -318,7 +344,7 @@ TMainWindow::TMainWindow()
 	connect(&config(), SIGNAL(configChanged()), this, SLOT(update_follow_state()));
 	update_follow_state();
 
-	setUnifiedTitleAndToolBarOnMac(true);
+//	setUnifiedTitleAndToolBarOnMac(true);
 
         m_vuLevelUpdateTimer.start(m_vuLevelUpdateFrequency, this);
         m_vuLevelPeakholdTimer.start(1000, this);
