@@ -44,7 +44,8 @@ enum PortDirection {
 enum PortType {
 	CONTROL,
 	AUDIO,
-	EVENT
+        EVENT,
+        UNKNOWN
 };
 
 
@@ -311,7 +312,9 @@ LV2ControlPort* LV2Plugin::create_port(int portIndex, float defaultValue)
 		port->type = EVENT;
 	}*/
 
-	
+
+        type = UNKNOWN;
+
 	/* Create the port based on it's direction and type */
 	switch (type) {
 		case CONTROL:
