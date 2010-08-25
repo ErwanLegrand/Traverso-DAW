@@ -72,9 +72,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 CoreAudioDriver::CoreAudioDriver(AudioDevice * dev, int rate, nframes_t bufferSize)
-	: Driver(dev, rate, bufferSize)
+        : TAudioDriver(dev, rate, bufferSize)
 {
 	PENTERCONS;
+
+        display_device_names();
 }
 
 CoreAudioDriver::~ CoreAudioDriver()
@@ -318,13 +320,13 @@ OSStatus CoreAudioDriver::render(AudioUnitRenderActionFlags 	*ioActionFlags,
 {
 	int res, i;
 	
-	AudioUnitRender(au_hal, ioActionFlags, inTimeStamp, 1, inNumberFrames, input_list);
+        AudioUnitRender(m_au_hal, ioActionFlags, inTimeStamp, 1, inNumberFrames, m_input_list);
 	
-	if (xrun_detected > 0) { /* XRun was detected */
+        if (m_xrun_detected > 0) { /* XRun was detected */
 		trav_time_t current_time = get_microseconds ();
 		device->delay(current_time - (last_wait_ust + period_usecs));
 		last_wait_ust = current_time;
-		xrun_detected = 0;
+                m_xrun_detected = 0;
 		return 0;
 	} else {
 		last_wait_ust = get_microseconds();
@@ -332,16 +334,16 @@ OSStatus CoreAudioDriver::render(AudioUnitRenderActionFlags 	*ioActionFlags,
 		res = device->run_cycle(inNumberFrames, 0);
 	}
 	
-	if (null_cycle_occured) {
-		null_cycle_occured = 0;
-		for (i = 0; i < playback_nchannels; i++) {
+        if (m_null_cycle_occured) {
+                m_null_cycle_occured = 0;
+                for (i = 0; i < m_playback_nchannels; i++) {
 			memset((float*)ioData->mBuffers[i].mData, 0, sizeof(float) * inNumberFrames);
 		}
 	} else {
-		// TODO find out if ioData->mBuffers[i] correspond with the playbackChannels indices
+                // TODO find out if ioData->mBuffers[i] correspond with the m_playbackChannels indices
 		audio_sample_t* buf;
-		for (int i=0; i<playbackChannels.size(); ++i) {
-			AudioChannel* channel = playbackChannels.at(i);
+                for (int i=0; i<m_playbackChannels.size(); ++i) {
+                        AudioChannel* channel = m_playbackChannels.at(i);
 			if (!channel->has_data()) {
 				continue;
 			}
@@ -363,12 +365,12 @@ OSStatus CoreAudioDriver::render_input(  AudioUnitRenderActionFlags 	*ioActionFl
 			UInt32 				inNumberFrames,
 			AudioBufferList 		*ioData)
 {
-	AudioUnitRender(au_hal, ioActionFlags, inTimeStamp, 1, inNumberFrames, input_list);
-	if (xrun_detected > 0) { /* XRun was detected */
+        AudioUnitRender(m_au_hal, ioActionFlags, inTimeStamp, 1, inNumberFrames, m_input_list);
+        if (m_xrun_detected > 0) { /* XRun was detected */
 		trav_time_t current_time = get_microseconds();
 		device->delay(current_time - (last_wait_ust + period_usecs));
 		last_wait_ust = current_time;
-		xrun_detected = 0;
+                m_xrun_detected = 0;
 		return 0;
     } else {
 		last_wait_ust = get_microseconds();
@@ -404,7 +406,7 @@ OSStatus CoreAudioDriver::notification(AudioDeviceID inDevice,
 	switch (inPropertyID) {
 		
 		case kAudioDeviceProcessorOverload:
-			xrun_detected = 1;
+                        m_xrun_detected = 1;
 			break;
 			
 		case kAudioDevicePropertyNominalSampleRate: {
@@ -423,23 +425,23 @@ OSStatus CoreAudioDriver::notification(AudioDeviceID inDevice,
 			outSize = sizeof(AudioStreamBasicDescription);
 			
 			// Update SR for input
-			err = AudioUnitGetProperty(au_hal, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &srcFormat, &outSize);
+                        err = AudioUnitGetProperty(m_au_hal, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &srcFormat, &outSize);
 			if (err != noErr) {
 				PERROR("Error calling AudioUnitSetProperty - kAudioUnitProperty_StreamFormat kAudioUnitScope_Input");
 			}
 			srcFormat.mSampleRate = sampleRate;
-			err = AudioUnitSetProperty(au_hal, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &srcFormat, outSize);
+                        err = AudioUnitSetProperty(m_au_hal, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &srcFormat, outSize);
 			if (err != noErr) {
 				PERROR("Error calling AudioUnitSetProperty - kAudioUnitProperty_StreamFormat kAudioUnitScope_Input");
 			}
 		
 			// Update SR for output
-			err = AudioUnitGetProperty(au_hal, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &dstFormat, &outSize);
+                        err = AudioUnitGetProperty(m_au_hal, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &dstFormat, &outSize);
 			if (err != noErr) {
 				PERROR("Error calling AudioUnitSetProperty - kAudioUnitProperty_StreamFormat kAudioUnitScope_Output");
 			}
 			dstFormat.mSampleRate = sampleRate;
-			err = AudioUnitSetProperty(au_hal, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &dstFormat, outSize);
+                        err = AudioUnitSetProperty(m_au_hal, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 1, &dstFormat, outSize);
 			if (err != noErr) {
 				PERROR("Error calling AudioUnitSetProperty - kAudioUnitProperty_StreamFormat kAudioUnitScope_Output");
 			}
@@ -468,27 +470,26 @@ int CoreAudioDriver::attach()
 
 	port_flags = PortIsOutput|PortIsPhysical|PortIsTerminal;
 	
-	for (chn = 0; chn < capture_nchannels; chn++) {
-		err = AudioDeviceGetPropertyInfo(device_id, chn + 1, true, kAudioDevicePropertyChannelName, &size, &isWritable);
+        for (chn = 0; chn < m_capture_nchannels; chn++) {
+                err = AudioDeviceGetPropertyInfo(m_device_id, chn + 1, true, kAudioDevicePropertyChannelName, &size, &isWritable);
 		if (err == noErr && size > 0)  {
-			err = AudioDeviceGetProperty(device_id, chn + 1, true, kAudioDevicePropertyChannelName, &size, channel_name);	
+                        err = AudioDeviceGetProperty(m_device_id, chn + 1, true, kAudioDevicePropertyChannelName, &size, channel_name);
 			if (err != noErr) 
 				JCALog("AudioDeviceGetProperty kAudioDevicePropertyChannelName error \n");
-			snprintf(buf, sizeof(buf) - 1, "%s:out_%s%lu", capture_driver_name, channel_name, chn + 1);
+                        snprintf(buf, sizeof(buf) - 1, "%s:out_%s%lu", m_capture_driver_name, channel_name, chn + 1);
 		} else {
-			snprintf(buf, sizeof(buf) - 1, "%s:out%lu", capture_driver_name, chn + 1);
+                        snprintf(buf, sizeof(buf) - 1, "%s:out%lu", m_capture_driver_name, chn + 1);
 		}
 	
-		chan = device->register_capture_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
+                chan = add_capture_channel(buf);
 		chan->set_latency( frames_per_cycle + capture_frame_latency );
-		captureChannels.append(chan);
 		
 		size = sizeof(UInt32);
 		value1 = value2 = 0;
-		err = AudioDeviceGetProperty(device_id, 0, true, kAudioDevicePropertyLatency, &size, &value1);	
+                err = AudioDeviceGetProperty(m_device_id, 0, true, kAudioDevicePropertyLatency, &size, &value1);
 		if (err != noErr) 
 			JCALog("AudioDeviceGetProperty kAudioDevicePropertyLatency error \n");
-		err = AudioDeviceGetProperty(device_id, 0, true, kAudioDevicePropertySafetyOffset, &size, &value2);	
+                err = AudioDeviceGetProperty(m_device_id, 0, true, kAudioDevicePropertySafetyOffset, &size, &value2);
 		if (err != noErr) 
 			JCALog("AudioDeviceGetProperty kAudioDevicePropertySafetyOffset error \n");
 		
@@ -496,35 +497,34 @@ int CoreAudioDriver::attach()
 	
 	port_flags = PortIsInput|PortIsPhysical|PortIsTerminal;
 
-	for (chn = 0; chn < playback_nchannels; chn++) {
-		err = AudioDeviceGetPropertyInfo(device_id, chn + 1, false, kAudioDevicePropertyChannelName, &size, &isWritable);
+        for (chn = 0; chn < m_playback_nchannels; chn++) {
+                err = AudioDeviceGetPropertyInfo(m_device_id, chn + 1, false, kAudioDevicePropertyChannelName, &size, &isWritable);
 		if (err == noErr && size > 0)  {
-			err = AudioDeviceGetProperty(device_id, chn + 1, false, kAudioDevicePropertyChannelName, &size, channel_name);	
+                        err = AudioDeviceGetProperty(m_device_id, chn + 1, false, kAudioDevicePropertyChannelName, &size, channel_name);
 			if (err != noErr) 
 				JCALog("AudioDeviceGetProperty kAudioDevicePropertyChannelName error \n");
-			snprintf(buf, sizeof(buf) - 1, "%s:in_%s%lu", playback_driver_name, channel_name, chn + 1);
+                        snprintf(buf, sizeof(buf) - 1, "%s:in_%s%lu", m_playback_driver_name, channel_name, chn + 1);
 		} else {
-			snprintf(buf, sizeof(buf) - 1, "%s:in%lu", playback_driver_name, chn + 1);
+                        snprintf(buf, sizeof(buf) - 1, "%s:in%lu", m_playback_driver_name, chn + 1);
 		}
 
-		chan = device->register_playback_channel(buf, "32 bit float audio", port_flags, frames_per_cycle, chn);
-		chan->set_latency( frames_per_cycle + capture_frame_latency );
-		playbackChannels.append(chan);
+                chan = add_playback_channel(buf);
+                chan->set_latency( frames_per_cycle + capture_frame_latency );
 
 		size = sizeof(UInt32);
 		value1 = value2 = 0;
-		err = AudioDeviceGetProperty(device_id, 0, false, kAudioDevicePropertyLatency, &size, &value1);	
+                err = AudioDeviceGetProperty(m_device_id, 0, false, kAudioDevicePropertyLatency, &size, &value1);
 		if (err != noErr) 
 			JCALog("AudioDeviceGetProperty kAudioDevicePropertyLatency error \n");
-		err = AudioDeviceGetProperty(device_id, 0, false, kAudioDevicePropertySafetyOffset, &size, &value2);	
+                err = AudioDeviceGetProperty(m_device_id, 0, false, kAudioDevicePropertySafetyOffset, &size, &value2);
 		if (err != noErr) 
 			JCALog("AudioDeviceGetProperty kAudioDevicePropertySafetyOffset error \n");
 	}
 	
 
 	// Input buffers do no change : prepare them only once
-	for (chn = 0; chn < capture_nchannels; chn++) {
-		input_list->mBuffers[chn].mData = (audio_sample_t*)(captureChannels.at(chn)->get_buffer(frames_per_cycle));
+        for (chn = 0; chn < m_capture_nchannels; chn++) {
+                m_input_list->mBuffers[chn].mData = (audio_sample_t*)(m_captureChannels.at(chn)->get_buffer(frames_per_cycle));
 	}
 	
 	return 1;

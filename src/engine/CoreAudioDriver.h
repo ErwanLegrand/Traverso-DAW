@@ -33,7 +33,7 @@ Johnny Petrantoni, johnny@lato-b.com - Italy, Rome.
 #ifndef CORE_AUDIO_DRIVER_H
 #define CORE_AUDIO_DRIVER_H
 
-#include "Driver.h"
+#include "TAudioDriver.h"
 
 #include <CoreAudio/CoreAudio.h>
 #include <AudioToolbox/AudioConverter.h>
@@ -42,7 +42,7 @@ Johnny Petrantoni, johnny@lato-b.com - Italy, Rome.
 #include "defines.h"
 
 
-class CoreAudioDriver : public Driver
+class CoreAudioDriver : public TAudioDriver
 {
 public:
 	CoreAudioDriver(AudioDevice* dev, int rate, nframes_t bufferSize);
@@ -61,19 +61,19 @@ public:
 	int setup(bool capture=true, bool playback=true, const QString& cardDevice="none");
 
 
-	AudioUnit au_hal;
-	AudioBufferList* input_list;
-	AudioDeviceID device_id;
+        AudioUnit m_au_hal;
+        AudioBufferList* m_input_list;
+        AudioDeviceID m_device_id;
 	int state;
 	
-	channel_t playback_nchannels;
-	channel_t capture_nchannels;
+        channel_t m_playback_nchannels;
+        channel_t m_capture_nchannels;
 
-	char capture_driver_name[256];
-	char playback_driver_name[256];
+        char m_capture_driver_name[256];
+        char m_playback_driver_name[256];
 
-	int xrun_detected;
-	int null_cycle_occured;
+        int m_xrun_detected;
+        int m_null_cycle_occured;
 
 	
 	void JCALog(char *fmt, ...);
