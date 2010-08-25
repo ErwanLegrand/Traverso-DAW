@@ -44,6 +44,8 @@ public:
 
 	QString get_device_name();
 	QString get_device_longname();
+        static QStringList device_names(const QString& hostApi);
+        static int device_index_for_host_api(const QString& hostapi);
 
 	float get_cpu_load();
 
@@ -51,7 +53,8 @@ private:
 	PaStream* m_paStream;
         void* m_paInputBuffer;
         void* m_paOutputBuffer;
- 
+
+
  	static int _xrun_callback(void *arg);
 	static void _on_pa_shutdown_callback(void* arg);
 	static int _process_callback( const void *inputBuffer, void *outputBuffer,

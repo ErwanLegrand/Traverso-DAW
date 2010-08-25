@@ -32,6 +32,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #if defined (ALSA_SUPPORT)
 #include <AlsaDriver.h>
 #endif
+
+#include "PADriver.h"
+
 #include "TConfig.h"
 #include <Utils.h>
 #include <Themer.h>
@@ -77,6 +80,8 @@ AudioDriverConfigPage::AudioDriverConfigPage(QWidget *parent)
         connect(driverCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(driver_combobox_index_changed(QString)));
 	connect(restartDriverButton, SIGNAL(clicked()), this, SLOT(restart_driver_button_clicked()));
         connect(rateComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(rate_combobox_index_changed(QString)));
+
+        connect(m_portaudiodrivers->driverCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(portaudio_host_api_combobox_index_changed(int)));
 	
 	load_config();
 }
@@ -353,6 +358,21 @@ void AudioDriverConfigPage::driver_combobox_index_changed(QString driver)
 		jackGroupBox->hide();
 		m_mainLayout->removeWidget(jackGroupBox);
 	}
+}
+
+void AudioDriverConfigPage::portaudio_host_api_combobox_index_changed(int index)
+{
+        if (m_portaudiodrivers->isHidden()) {
+                return;
+        }
+
+        QStringList list = PADriver::device_names(m_portaudiodrivers->driverCombo->itemData(index).toString());
+
+        m_portaudiodrivers->devicesCombo->clear();
+
+        foreach(QString string, list) {
+                m_portaudiodrivers->devicesCombo->addItem(string);
+        }
 }
 
 

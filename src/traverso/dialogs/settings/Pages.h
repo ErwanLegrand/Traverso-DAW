@@ -92,6 +92,7 @@ private slots:
 	void update_latency_combobox();
         void rate_combobox_index_changed(QString);
         void driver_combobox_index_changed(QString);
+        void portaudio_host_api_combobox_index_changed(int);
 	void restart_driver_button_clicked();
 };
 
