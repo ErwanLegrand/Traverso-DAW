@@ -33,7 +33,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AlsaDriver.h>
 #endif
 
+#if defined (PORTAUDIO_SUPPORT)
 #include "PADriver.h"
+#endif
 
 #include "TConfig.h"
 #include <Utils.h>
