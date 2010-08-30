@@ -60,6 +60,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 		
 #include <Debugger.h>
 
+QHash<QString, QString> SheetView::m_cursorsDict;
 
 static bool smallerTrackView(const TrackView* left, const TrackView* right )
 {
@@ -134,6 +135,8 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	connect(m_hScrollBar, SIGNAL(actionTriggered(int)), this, SLOT(hscrollbar_action(int)));
 	connect(m_hScrollBar, SIGNAL(valueChanged(int)), this, SLOT(hscrollbar_value_changed(int)));
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)), m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
+
+        connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
 	
 	m_shuttleCurve = new Curve(0);
         m_shuttleCurve->set_sheet(m_session);
@@ -1001,6 +1004,10 @@ void SheetView::browse_to_track(Track *track)
 
 void SheetView::browse_to_audio_clip_view(AudioClipView* acv)
 {
+        if (m_session->get_mode() == TSession::EFFECTS) {
+                m_session->set_editing_mode();
+        }
+
         QList<ContextItem*> activeList;
 
         activeList.append(acv);
@@ -1014,6 +1021,10 @@ void SheetView::browse_to_audio_clip_view(AudioClipView* acv)
 
 void SheetView::browse_to_curve_view(CurveView *curveView)
 {
+        if (m_session->get_mode() == TSession::EDIT) {
+                m_session->set_effects_mode();
+        }
+
         QList<ContextItem*> activeList;
         AudioClipView* acv = static_cast<AudioClipView*>(curveView->parentItem());
         activeList.append(curveView);
@@ -1414,5 +1425,37 @@ TCommand* SheetView::edit_properties()
 void SheetView::set_cursor_shape(const QString& shape)
 {
         m_editCursor->set_cursor_shape(shape);
-        move_edit_point_to(m_session->get_work_location(), m_session->get_edit_point_location().sceneY);
+}
+
+void SheetView::context_changed()
+{
+        if (!cpointer().keyboard_only_input()) {
+                m_editCursor->hide();
+                return;
+        } else {
+                if (!m_editCursor->isVisible()) {
+                        m_editCursor->setVisible(true);
+                }
+        }
+
+        ItemBrowserData data;
+        collect_item_browser_data(data);
+
+        QString shape = cursor_dict()->value(data.currentContext, ":/cursorFloat");
+        set_cursor_shape(shape);
+}
+
+void SheetView::jog_finished()
+{
+
+}
+
+void SheetView::calculate_cursor_dict()
+{
+        m_cursorsDict.insert("AudioClipView", ":/cursorFloatOverClip");
+        m_cursorsDict.insert("AudioTrackView", ":/cursorFloatOverTrack");
+        m_cursorsDict.insert("TBusTrackView", ":/cursorFloatOverTrack");
+        m_cursorsDict.insert("PluginView", ":/cursorFloatOverPlugin");
+        m_cursorsDict.insert("FadeCurveView", ":/cursorFloatOverFade");
+        m_cursorsDict.insert("CurveView", ":/cursorDragNode");
 }

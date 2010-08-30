@@ -290,7 +290,7 @@ void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
         }
 
         if (m_port) {
-                m_port->update_holdcursor_shape();
+//                m_port->update_holdcursor_shape();
         }
 
         if (m_activeContextItems.isEmpty()) {

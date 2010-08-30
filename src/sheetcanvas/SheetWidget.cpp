@@ -60,11 +60,8 @@ SheetPanelViewPort::SheetPanelViewPort(QGraphicsScene * scene, SheetWidget * sw)
 	: ViewPort(scene, sw)
 {
         setSceneRect(-200, -TIMELINE_HEIGHT, 200, 0);
-	setMaximumHeight(TIMELINE_HEIGHT);
-	setMinimumHeight(TIMELINE_HEIGHT);
-	setMinimumWidth(200);
-	setMaximumWidth(200);
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        setFixedSize(200, TIMELINE_HEIGHT);
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
         m_spv = new SheetPanelView(scene, sw->get_sheet());

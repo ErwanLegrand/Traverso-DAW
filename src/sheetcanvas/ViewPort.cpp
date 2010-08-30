@@ -215,12 +215,12 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
                 item->mouse_hover_move_event();
         }
 
-        EditPointLocation editPoint;
-        editPoint.sceneY = mapToScene(event->pos()).y();
-        if (m_sv) {
-                editPoint.location = m_sv->get_sheet()->get_work_location();
-                m_sv->get_sheet()->set_edit_point_location(editPoint);
-        }
+//        EditPointLocation editPoint;
+//        editPoint.sceneY = mapToScene(event->pos()).y();
+//        if (m_sv) {
+//                editPoint.location = m_sv->get_sheet()->get_work_location();
+//                m_sv->get_sheet()->set_edit_point_location(editPoint);
+//        }
 	event->accept();
 }
 

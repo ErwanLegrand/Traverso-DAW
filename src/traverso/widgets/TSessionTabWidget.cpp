@@ -235,11 +235,9 @@ void TSessionTabWidget::calculate_size()
 {
         if (!m_session->is_child_session()) {
                 if (m_toolBar->orientation() == Qt::Vertical) {
-                        setMinimumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + 4 + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
-                        setMaximumSize(TAB_WIDTH, VER_BUTTON_HEIGHT + 4 + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
+                        setFixedSize(TAB_WIDTH, VER_BUTTON_HEIGHT + 4 + m_session->get_child_sessions().count() * VER_BUTTON_HEIGHT);
                 } else {
-                        setMinimumSize(TAB_WIDTH + 4 + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
-                        setMaximumSize(TAB_WIDTH + 4 + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
+                        setFixedSize(TAB_WIDTH + 4 + m_session->get_child_sessions().count() * (TAB_WIDTH + 4), HOR_BUTTON_HEIGHT);
                 }
                 foreach(TSessionTabWidget* tabWidget, m_childTabWidgets) {
                         if (m_toolBar->orientation() == Qt::Vertical) {

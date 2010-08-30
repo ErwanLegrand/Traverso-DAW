@@ -92,6 +92,7 @@ public :
         TrackView* get_trackview_under(QPointF point);
         QList<TrackView*> get_track_views() const;
         int get_track_height(Track* track) const;
+        static QHash<QString, QString>* cursor_dict();
 	
 	void load_theme_data();
 	void start_shuttle(bool start, bool drag=false);
@@ -147,6 +148,7 @@ private:
 	QScrollBar*		m_hScrollBar;
 	bool			m_actOnPlayHead;
 	bool			m_viewportReady;
+        static QHash<QString, QString> m_cursorsDict;
 	
 	// Themeing data
 	int	m_trackSeperatingHeight;
@@ -157,6 +159,7 @@ private:
 	void layout_tracks();
         void update_tracks_bounding_rect();
         void collect_item_browser_data(ItemBrowserData& data);
+        static void calculate_cursor_dict();
 
 
 public slots:
@@ -204,7 +207,17 @@ private slots:
 	void hscrollbar_action(int);
         void session_vertical_scrollbar_position_changed();
         void session_horizontal_scrollbar_position_changed();
+        void context_changed();
+        void jog_finished();
 };
 
+
+inline QHash<QString, QString>* SheetView::cursor_dict()
+{
+        if (m_cursorsDict.isEmpty()) {
+                calculate_cursor_dict();
+        }
+        return &m_cursorsDict;
+}
 
 #endif

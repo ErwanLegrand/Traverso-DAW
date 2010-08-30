@@ -32,8 +32,7 @@
 TimeLineViewPort::TimeLineViewPort(QGraphicsScene* scene, SheetWidget* sw)
 	: ViewPort(scene, sw)
 {
-	setMaximumHeight(TIMELINE_HEIGHT);
-	setMinimumHeight(TIMELINE_HEIGHT);
+        setFixedHeight(TIMELINE_HEIGHT);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	

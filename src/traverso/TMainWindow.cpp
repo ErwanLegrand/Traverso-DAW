@@ -502,12 +502,6 @@ void TMainWindow::show_session(TSession* session)
                 sheetWidget->get_sheetview()->set_hscrollbar_value(m_currentSheetWidget->get_sheetview()->hscrollbar_value());
         }
 
-        if (m_currentSheetWidget && cpointer().keyboard_only_input()) {
-                ClipsViewPort* currentClipViewPort = m_currentSheetWidget->get_sheetview()->get_clips_viewport();
-                ClipsViewPort* nextClipViewPort = sheetWidget->get_sheetview()->get_clips_viewport();
-                nextClipViewPort->set_edit_point_position(currentClipViewPort->get_hold_cursor_pos());
-        }
-
         m_currentSheetWidget = sheetWidget;
         m_currentSheetWidget->setFocus(Qt::MouseFocusReason);
 

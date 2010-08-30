@@ -33,8 +33,7 @@
 TrackPanelViewPort::TrackPanelViewPort(QGraphicsScene* scene, SheetWidget* sw)
 	: ViewPort(scene, sw)
 {
-	setMinimumWidth(200);
-	setMaximumWidth(200);
+        setFixedWidth(200);
 
 	m_sw = sw;
         m_sv = sw->get_sheetview();
