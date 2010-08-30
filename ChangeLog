@@ -1,3 +1,84 @@
+xx-xx-2010 Remon Sijrier <remon at traverso-daw dot org>
+        * Released Traverso 0.xx.0
+
+        * Audio Driver settings are stored in the project file now
+        * JackDriver: no longer creates ports by default, but in/out ports are created
+          on a per track basis, using the tracks channel count configuration.
+        * PortAudio driver: correctly detect available number of in/out channels.
+        * Track splitted into three: Audio Track, Bus Track and Track.
+        * Tracks can be moved up/down and individually be vertically resized
+        * Track Manager dialog implemented: used for input/output (pre/post send) configuration
+          as well as plugin management, renaming the Track, solo, mute etc...
+        * New Track dialog takes driver in use into account. if Jack is the driver, it'll create
+          the jack in/out ports, if the driver is a hardware driver, it shows the available
+          capture/playback channels to choose from.
+        * Track Finder added: used for quickly locating tracks.
+        * VU meters added to Track headers. they monitor output by default, and input if the track
+          is armed they can be aligned horizontally or vertically (see preferences dialog)
+        * Basic routing infrastructure: input/output (pre/post send) routing to external
+          ports/channels or internal from Audio Tracks to Bus Tracks.
+        * Welcome screen added, moved open project dialog functionality into it
+          as well as adding basic information to get/give help
+        * Implemented layered browsing: browse with arrow keys to any object in the canvas, and
+          start dispatching commands to it. This is complementary to using Traverso with the mouse
+          as the pointing device, the difference is that the 'cursor' is now moved with the arrow
+          keys.
+        * Moving speed for actions that move things, like [ D ], [ W ] and [ V ] by using the arrow
+          keys can be set by using numerical input just before the action or during the action.
+
+        * Keybinding changes/additions:
+          - Move Playhead: [ V ] (both by mouse or arrow keys)
+          - Move Work Cursor: [ W ] (both by mouse or arrow keys)
+          - Playhead to Work cursor: [ V ] + W
+          - Work cursor to Playhead: [ W ] + V
+          - [ Z ] + arrow keys
+          - [ Z ] + E : toggle expand tracks.
+          - Add marker at work cursor: ALT+ < M >
+          - toggle snap on /off: [ key fact that moves an object ] + S,
+            example: move a clip would be [ D ] + S, moving the playhead would be [ V ] + S
+          -
+
+        * New theme 'Parchment' by Alex!
+        * New theme 'Cherry Blossom' by Zen!
+        * Simple theme editor added to edit a theme at runtime. The edited theme will be stored in:
+          /your/home/path/.traverso/themes/editedtheme.xml
+
+        * Keymap export improved: layout improved, hold type of actions are also added now
+        * Help Widget added: it shows the key bindings for the pointed object, or a short introductory
+          to the key bindings concept of T, or show the keybindings for a certain object.
+
+        * The start of a 'mixer' sheet, which basically is the Project itself showing it's Bus Tracks.
+          It can be used as a mixer for all sheets in the Project, global Buses so to speak
+        * Each Sheet/Project can have any number of 'work views'. Work views can be used to
+          display certain tracks from it's parent sheet/project so it'll be easier to compare
+          only a few tracks in one view, instead of having to deal with all tracks in one view only!
+        * Added a 'Sheet Tab' toolbar, with which it is easy to add new Sheets to your project,
+          work views to the Sheets, adding tracks to sheets/work views. the toolbar can be placed
+          virtually anywhere, either horizontally/vertically.
+
+
+        Fixed bugs:
+        * Fixes bug: #22305 focus problem?
+        * Properly check for ARCH_X86_64 and enable sse support for it
+        * Honor on project close properties 'save', 'ask', or 'don't save'
+        * Correctly apply fades.
+        * Likely a whole bunch more, and new ones added :)
+
+        * Many more changes were made, most of them small ones, only the most important
+          ones were added to this list.
+
+
+
+10-08-2010 Remon Sijrier <remon at traverso-daw dot org>
+        * released Traverso 0.49.2
+
+        * Cherry picked fixes from git:
+        * Make Traverso work with Qt version >= 4.6.2
+        * Correctly apply Fade In and Out curves.
+        * compatibility with cmake 2.6.4
+
+        * Spanish translation added, thanks to JC!
+
 28-03-2009 Remon Sijrier <remon at traverso-daw dot org>
         * Released Traverso 0.49.1
 
