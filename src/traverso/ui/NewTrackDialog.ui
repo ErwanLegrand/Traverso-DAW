@@ -123,7 +123,7 @@
               <item>
                <widget class="QLabel" name="informationLabel_2">
                 <property name="text">
-                 <string>Jack port count:</string>
+                 <string>Channel count:</string>
                 </property>
                </widget>
               </item>
@@ -141,19 +141,12 @@
                </spacer>
               </item>
               <item>
-               <widget class="QRadioButton" name="monoRadioButton">
-                <property name="text">
-                 <string>Mono</string>
+               <widget class="QSpinBox" name="channelCountSpinBox">
+                <property name="minimum">
+                 <number>1</number>
                 </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="stereoRadioButton">
-                <property name="text">
-                 <string>Stereo</string>
+                <property name="maximum">
+                 <number>2</number>
                 </property>
                </widget>
               </item>

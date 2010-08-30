@@ -98,18 +98,11 @@ void NewTrackDialog::create_track()
         QString driver = audiodevice().get_driver_type();
         if (driver == "Jack") {
                 for (int i=0; i<2; i++) {
-                        // busTracks don't have input ports, so skip those.
-                        if (isBusTrack->isChecked() && i == 1) {
-                                continue;
-                        }
-
                         QStringList channelnames;
                         BusConfig busconfig;
 
-                        if (monoRadioButton->isChecked()) {
-                                channelnames << title;
-                        } else {
-                                channelnames << title + "_0" << title + "_1";
+                        for (int chan=0; chan<channelCountSpinBox->value(); ++chan) {
+                                channelnames << title + QString("_%1").arg(chan);
                         }
 
                         foreach(const QString& channelname, channelnames) {
@@ -119,7 +112,7 @@ void NewTrackDialog::create_track()
                                 busconfig.channelNames << channelconfig.name;
                         }
 
-                        busconfig.channelcount = channelnames.size();
+                        busconfig.channelcount = channelCountSpinBox->value();
                         busconfig.name = title;
                         busconfig.type =  i == 0 ? "output" : "input";
 
@@ -133,11 +126,7 @@ void NewTrackDialog::create_track()
         }
 
         if (isBusTrack->isChecked()) {
-                if (driver == "Jack") {
-                        track = new TBusTrack(session, title + "-busTrack", 2);
-                } else {
-                        track = new TBusTrack(session, title, 2);
-                }
+                track = new TBusTrack(session, title, 2);
 
         } else {
                 track = new AudioTrack(sheet, title, AudioTrack::INITIAL_HEIGHT);
