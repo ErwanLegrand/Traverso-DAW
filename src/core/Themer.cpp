@@ -383,13 +383,8 @@ QColor Themer::get_color(const QString& name) const
 // returned.
 QBrush Themer::get_brush(const QString& name, QPoint start, QPoint stop) const
 {
-	// check if there is a solid colour with the requested name.
-	if (m_colors.contains(name))
-	{
-		return QBrush(m_colors.value(name));
-	}
 
-	// no solid colour? Maybe it's a gradient.
+        // check if there is a gradient with that name
 	if (m_gradients.contains(name))
 	{
 		QLinearGradient gradient = m_gradients.value(name);
@@ -407,7 +402,13 @@ QBrush Themer::get_brush(const QString& name, QPoint start, QPoint stop) const
 		return QBrush(gradient);
 	}
 	
-	// not a gradient either? return a fallback colour.
+        // if there is no gradient, check if there is a solid colour with that name
+        if (m_colors.contains(name))
+        {
+                return QBrush(m_colors.value(name));
+        }
+
+        // not a colour either? return a fallback colour.
 	printf("Brush %s was requested, but no such element was found in the theme file\n", QS_C(name));
 	return QBrush(themer()->get_default_color(name));
 }
