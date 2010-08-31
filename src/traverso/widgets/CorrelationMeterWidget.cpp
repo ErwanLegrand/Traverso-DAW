@@ -63,7 +63,9 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
 	PENTER3;
 
-	float r = 90.0f / range;
+        QFontMetrics fm(themer()->get_font("CorrelationMeter:fontscale:label"));
+
+        float r = 90.0f / range;
 
 	painter->fillRect(0, 0, m_widget->width(), m_widget->height(), m_bgBrush);
 
@@ -77,15 +79,43 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	int cpos = m_widget->width()/2;
 	int rpos = int((0.50 + r) * m_widget->width());
 
+        float vtop = float(fm.height() + 1);
+        float vmid = float(fm.height() + 1 + (m_widget->height() - fm.height() + 1)/2);
+        float vbot = float(m_widget->height());
+
 	gradPhase.setStart(QPointF(float(lend + centerOffset), 0.0));
 	gradPhase.setFinalStop(QPointF(float(rend + centerOffset), 0.0));
-	painter->fillRect(lend + centerOffset, 0, wdt, m_widget->height(), gradPhase);
+
+        QPen pen(themer()->get_color("CorrelationMeter:centerline"));
+        painter->setBrush(QBrush(gradPhase));
+        painter->setPen(pen);
+
+        // using cubic splines to draw curved lines is resource hungry. For now I implemented two solutions,
+        // one using splines, the other using straight lines, which performs better. Use this bool to switch
+        // between the two types for now. (ND)
+        bool useCubicSpline = true;
+
+        QPainterPath poly;
+        if (useCubicSpline) {
+            poly.moveTo(QPointF(lend + centerOffset, vmid));
+            poly.cubicTo(QPointF(cpos + centerOffset - wdt/2, vmid), QPointF(cpos + centerOffset,(vmid + vtop)/2), QPointF(cpos + centerOffset, vtop));
+            poly.cubicTo(QPointF(cpos + centerOffset,(vmid + vtop)/2), QPointF(cpos + centerOffset + wdt/2, vmid), QPointF(rend + centerOffset, vmid));
+            poly.cubicTo(QPointF(cpos + centerOffset + wdt/2, vmid), QPointF(cpos + centerOffset,(vmid + vbot)/2), QPointF(cpos + centerOffset, vbot));
+            poly.cubicTo(QPointF(cpos + centerOffset,(vmid + vbot)/2), QPointF(cpos + centerOffset - wdt/2, vmid), QPointF(lend + centerOffset, vmid));
+        } else {
+            poly.moveTo(QPointF(lend + centerOffset, vmid));
+            poly.lineTo(QPointF(cpos + centerOffset, vtop));
+            poly.lineTo(QPointF(rend + centerOffset, vmid));
+            poly.lineTo(QPointF(cpos + centerOffset, vbot));
+            poly.lineTo(QPointF(lend + centerOffset, vmid));
+        }
+
+        painter->drawPath(poly);
 
 	// center line
-	QPen pen(themer()->get_color("CorrelationMeter:centerline"));
 	pen.setWidth(3);
 	painter->setPen(pen);
-	painter->drawLine(m_widget->width()/2 + centerOffset, 0, m_widget->width()/2 + centerOffset, m_widget->height());
+        painter->drawLine(cpos + centerOffset, 0, cpos + centerOffset, m_widget->height());
 
 	painter->setPen(themer()->get_color("CorrelationMeter:grid"));
 	painter->drawLine(cpos, 0, cpos, m_widget->height());
@@ -95,7 +125,6 @@ void CorrelationMeterView::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	}
 
 	painter->setFont(themer()->get_font("CorrelationMeter:fontscale:label"));
-	QFontMetrics fm(themer()->get_font("CorrelationMeter:fontscale:label"));
 	
 	if (m_widget->height() < 2*fm.height()) {
 		return;
