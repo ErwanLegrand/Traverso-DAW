@@ -289,7 +289,7 @@ LV2ControlPort* LV2Plugin::create_port(int portIndex, float defaultValue)
 	SLV2Port slv2_port = slv2_plugin_get_port_by_index(m_plugin, portIndex);
 	
 	PortDirection direction;
-	PortType type;
+        PortType type = UNKNOWN;
 
 	if (slv2_port_is_a(m_plugin, slv2_port, m_input_class)) {
 		direction = INPUT;
@@ -302,7 +302,6 @@ LV2ControlPort* LV2Plugin::create_port(int portIndex, float defaultValue)
 		return ctrlport;
 	}
 
-
 	/* Set control values */
 	if (slv2_port_is_a(m_plugin, slv2_port, m_control_class)) {
 		type = CONTROL;
@@ -312,8 +311,6 @@ LV2ControlPort* LV2Plugin::create_port(int portIndex, float defaultValue)
 		port->type = EVENT;
 	}*/
 
-
-        type = UNKNOWN;
 
 	/* Create the port based on it's direction and type */
 	switch (type) {
