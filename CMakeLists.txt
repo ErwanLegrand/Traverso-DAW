@@ -10,10 +10,12 @@ SET(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 SET(CMAKE_SKIP_RULE_DEPENDENCY TRUE)
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
+
 IF(COMMAND CMAKE_POLICY)
-	CMAKE_POLICY(SET CMP0005 NEW)
-	CMAKE_POLICY(SET CMP0003 NEW)
+        CMAKE_POLICY(SET CMP0005 NEW)
+        CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND CMAKE_POLICY)
+
 
 
 #PROJECT SETUP
@@ -60,6 +62,8 @@ ENDIF (WANT_VERSIONING AND NOT CACHED_VERSIONING)
 
 IF(WIN32)
 SET(WANT_LV2 OFF)
+SET(WANT_ALSA OFF)
+SET(WANT_PORTAUDIO ON)
 ENDIF(WIN32)
 
 # Static build is perfectly fine now, targets are properly relinked when needed!
@@ -89,9 +93,9 @@ SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
 # Add Mac build paths for DarwinPorts / MacPorts
 # These need to be defined up here, above the include checks
 IF(APPLE)
-	INCLUDE_DIRECTORIES("/opt/local/include")
-	SET (CMAKE_REQUIRED_INCLUDES "/opt/local/include")
-	LINK_DIRECTORIES("/opt/local/lib")
+        INCLUDE_DIRECTORIES("/opt/local/include")
+        SET (CMAKE_REQUIRED_INCLUDES "/opt/local/include")
+        LINK_DIRECTORIES("/opt/local/lib")
 ENDIF(APPLE)
 
 
@@ -113,9 +117,9 @@ SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fPIC ${CXX_FLAGS}")
 
 # Detect the flags to be used for large file support
 execute_process(
-	COMMAND getconf LFS_CFLAGS
-	OUTPUT_VARIABLE getconf_invoke_result
-	RESULT_VARIABLE getconf_failed
+        COMMAND getconf LFS_CFLAGS
+        OUTPUT_VARIABLE getconf_invoke_result
+        RESULT_VARIABLE getconf_failed
 )
 
 # remove linebrakes, white spaces (getconf_invoke_result)
@@ -131,7 +135,7 @@ TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
 
 
 # Check for PKG-CONFIG
-FIND_PACKAGE(PkgConfig REQUIRED)
+FIND_PACKAGE(PkgConfig)
 
 #FIND DEPENDENCIES
 SET (QT_MIN_VERSION "4.3.1")
@@ -145,166 +149,156 @@ INCLUDE (ConfigureChecks.cmake)
 
 
 IF(WANT_PORTAUDIO)
-	CHECK_INCLUDE_FILE("portaudio.h" HAVE_PORTAUDIO_H)
-	IF(NOT HAVE_PORTAUDIO_H)
-		MESSAGE(FATAL_ERROR "PortAudio support requested, but PortAudio development headers could not be found!\nPlease install the PortAudio development package, remove CMakeCache.txt and run cmake again")
-	ENDIF(NOT HAVE_PORTAUDIO_H)
-	PKG_CHECK_MODULES(PORTAUDIO portaudio-2.0>=${MINIMAL_PORTAUDIO_VERSION})
-	IF(PORTAUDIO_FOUND)
-		LIST(APPEND TRAVERSO_DEFINES -DPORTAUDIO_SUPPORT)
-		MESSAGE("-- PortAudio Library Found OK")
-		SET(HAVE_PORTAUDIO TRUE)
-	ENDIF(PORTAUDIO_FOUND)
+        CHECK_INCLUDE_FILE("portaudio.h" HAVE_PORTAUDIO_H)
+        IF(NOT HAVE_PORTAUDIO_H)
+                MESSAGE(FATAL_ERROR "PortAudio support requested, but PortAudio development headers could not be found!\nPlease install the PortAudio development package, remove CMakeCache.txt and run cmake again")
+        ENDIF(NOT HAVE_PORTAUDIO_H)
+        IF(PKG_CONFIG_FOUND)
+            PKG_CHECK_MODULES(PORTAUDIO portaudio-2.0>=${MINIMAL_PORTAUDIO_VERSION})
+            IF(PORTAUDIO_FOUND)
+                    LIST(APPEND TRAVERSO_DEFINES -DPORTAUDIO_SUPPORT)
+                    MESSAGE("-- PortAudio Library Found OK")
+                    SET(HAVE_PORTAUDIO TRUE)
+            ENDIF(PORTAUDIO_FOUND)
+        ENDIF(PKG_CONFIG_FOUND)
 ELSE(WANT_PORTAUDIO)
-		SET(HAVE_PORTAUDIO FALSE)
+                SET(HAVE_PORTAUDIO FALSE)
 ENDIF(WANT_PORTAUDIO)
 
 
 IF(WANT_PULSEAUDIO)
-	CHECK_INCLUDE_FILE("pulse/pulseaudio.h" HAVE_PULSEAUDIO_H)
-	IF(NOT HAVE_PULSEAUDIO_H)
-		MESSAGE(SEND_ERROR "PulseAudio support requested, but PulseAudio development headers could not be found!\nPlease install the PortAudio development package, remove CMakeCache.txt and run cmake again")
-	ELSE(NOT HAVE_PULSEAUDIO_H)
-		LIST(APPEND TRAVERSO_DEFINES -DPULSEAUDIO_SUPPORT)
-		MESSAGE("-- PULSEAUDIO Library Found OK")
-		SET(HAVE_PULSEAUDIO TRUE)
-	ENDIF(NOT HAVE_PULSEAUDIO_H)
+        CHECK_INCLUDE_FILE("pulse/pulseaudio.h" HAVE_PULSEAUDIO_H)
+        IF(NOT HAVE_PULSEAUDIO_H)
+                MESSAGE(SEND_ERROR "PulseAudio support requested, but PulseAudio development headers could not be found!\nPlease install the PortAudio development package, remove CMakeCache.txt and run cmake again")
+        ELSE(NOT HAVE_PULSEAUDIO_H)
+                LIST(APPEND TRAVERSO_DEFINES -DPULSEAUDIO_SUPPORT)
+                MESSAGE("-- PULSEAUDIO Library Found OK")
+                SET(HAVE_PULSEAUDIO TRUE)
+        ENDIF(NOT HAVE_PULSEAUDIO_H)
 ELSE(WANT_PULSEAUDIO)
-	SET(HAVE_PULSEAUDIO FALSE)
+        SET(HAVE_PULSEAUDIO FALSE)
 ENDIF(WANT_PULSEAUDIO)
 
 
 
 IF(WANT_LV2)
-	IF(USE_SYSTEM_SLV2_LIBRARY)
+        IF(USE_SYSTEM_SLV2_LIBRARY)
 # 		CHECK_INCLUDE_FILE("slv2/slv2.h" HAVE_SLV2_H)
 # 		IF(NOT HAVE_SLV2_H)
 # 			MESSAGE(FATAL_ERROR "lv2 support requested, but slv2 development headers could not be found!\nPlease install the slv2 development package (Usually called libslv2-dev), remove CMakeCache.txt and run cmake again")
 # 		ENDIF(NOT HAVE_SLV2_H)
-		
-		PKG_CHECK_MODULES(SLV2  libslv2>=${MINIMAL_SLV2_VERSION})
-		IF (SLV2_FOUND)
-			MESSAGE("-- slv2 Library Found OK")
-			SET(HAVE_SYSTEM_SLV2 TRUE)
-		ENDIF(SLV2_FOUND)
-	ELSE(USE_SYSTEM_SLV2_LIBRARY)
-		PKG_CHECK_MODULES(REDLAND  redland>=${MINIMAL_REDLAND_VERSION})
-		IF (REDLAND_FOUND)
-			MESSAGE("-- REDLAND Library Found OK")
-			INCLUDE_DIRECTORIES(/usr/include/redland /usr/include/rasqal)
-		ELSE(REDLAND_FOUND)
-			MESSAGE("-- REDLAND Library not found with pkg-config, looking for headers now")
-			INCLUDE_DIRECTORIES(/usr/include/redland /usr/include/rasqal)
-			CHECK_INCLUDE_FILE("librdf.h" HAVE_LIBRDF_H)
-			IF(NOT HAVE_LIBRDF_H)
-				CHECK_INCLUDE_FILE("redland/librdf.h" HAVE_REDLAND_LIBRDF_H)
-				IF(NOT HAVE_REDLAND_LIBRDF_H)
-					MESSAGE(FATAL_ERROR "lv2 support requested using internal slv2 lib, but the needed rdf development headers could not be found!\nPlease install the rdf development package (Usually called librdf-dev), remove CMakeCache.txt and run cmake again")
-				ENDIF(NOT HAVE_REDLAND_LIBRDF_H)
-			ENDIF(NOT HAVE_LIBRDF_H)
-			MESSAGE("-- REDLAND Library Found OK")
-		ENDIF(REDLAND_FOUND)
-		SET(USE_INTERNAL_SLV2_LIB TRUE)
-	ENDIF(USE_SYSTEM_SLV2_LIBRARY)
-	
-	LIST(APPEND TRAVERSO_DEFINES -DLV2_SUPPORT) 
-	SET(HAVE_SLV2 TRUE)
+                IF(PKG_CONFIG_FOUND)
+                    PKG_CHECK_MODULES(SLV2  libslv2>=${MINIMAL_SLV2_VERSION})
+                    IF (SLV2_FOUND)
+                            MESSAGE("-- slv2 Library Found OK")
+                            SET(HAVE_SYSTEM_SLV2 TRUE)
+                    ENDIF(SLV2_FOUND)
+                ENDIF(PKG_CONFIG_FOUND)
+        ELSE(USE_SYSTEM_SLV2_LIBRARY)
+            IF(PKG_CONFIG_FOUND)
+                PKG_CHECK_MODULES(REDLAND  redland>=${MINIMAL_REDLAND_VERSION})
+                IF (REDLAND_FOUND)
+                        MESSAGE("-- REDLAND Library Found OK")
+                        INCLUDE_DIRECTORIES(/usr/include/redland /usr/include/rasqal)
+                ELSE(REDLAND_FOUND)
+                        MESSAGE("-- REDLAND Library not found with pkg-config, looking for headers now")
+                        INCLUDE_DIRECTORIES(/usr/include/redland /usr/include/rasqal)
+                        CHECK_INCLUDE_FILE("librdf.h" HAVE_LIBRDF_H)
+                        IF(NOT HAVE_LIBRDF_H)
+                                CHECK_INCLUDE_FILE("redland/librdf.h" HAVE_REDLAND_LIBRDF_H)
+                                IF(NOT HAVE_REDLAND_LIBRDF_H)
+                                        MESSAGE(FATAL_ERROR "lv2 support requested using internal slv2 lib, but the needed rdf development headers could not be found!\nPlease install the rdf development package (Usually called librdf-dev), remove CMakeCache.txt and run cmake again")
+                                ENDIF(NOT HAVE_REDLAND_LIBRDF_H)
+                        ENDIF(NOT HAVE_LIBRDF_H)
+                        MESSAGE("-- REDLAND Library Found OK")
+                ENDIF(REDLAND_FOUND)
+                SET(USE_INTERNAL_SLV2_LIB TRUE)
+            ENDIF(PKG_CONFIG_FOUND)
+        ENDIF(USE_SYSTEM_SLV2_LIBRARY)
+
+        LIST(APPEND TRAVERSO_DEFINES -DLV2_SUPPORT)
+        SET(HAVE_SLV2 TRUE)
 ELSE(WANT_LV2)
-	SET(HAVE_SLV2 FALSE)
+        SET(HAVE_SLV2 FALSE)
 ENDIF(WANT_LV2)
 
 
 CHECK_INCLUDE_FILE("wavpack/wavpack.h" HAVE_WAVPACK_H)
 IF(NOT HAVE_WAVPACK_H)
-	MESSAGE(FATAL_ERROR "WavPack development headers could not be found!\nPlease install the WavPack development package, remove CMakeCache.txt and run cmake again")
+        MESSAGE(FATAL_ERROR "WavPack development headers could not be found!\nPlease install the WavPack development package, remove CMakeCache.txt and run cmake again")
 ENDIF(NOT HAVE_WAVPACK_H)
-PKG_CHECK_MODULES(WAVPACK  wavpack>=${MINIMAL_WAVPACK_VERSION})
-IF (WAVPACK_FOUND)
-  MESSAGE("-- WavPack Library Found OK")
-ELSE(WAVPACK_FOUND)
-  MESSAGE(SEND_ERROR "No WavPack found (WavPack >= ${MINIMAL_WAVPACK_VERSION} needs to be installed!)")
-ENDIF(WAVPACK_FOUND)
-
+IF (PKG_CONFIG_FOUND)
+    PKG_CHECK_MODULES(WAVPACK  wavpack>=${MINIMAL_WAVPACK_VERSION})
+    IF (WAVPACK_FOUND)
+      MESSAGE("-- WavPack Library Found OK")
+    ELSE(WAVPACK_FOUND)
+      MESSAGE(SEND_ERROR "No WavPack found (WavPack >= ${MINIMAL_WAVPACK_VERSION} needs to be installed!)")
+    ENDIF(WAVPACK_FOUND)
+ENDIF(PKG_CONFIG_FOUND)
 
 CHECK_INCLUDE_FILE("vorbis/vorbisfile.h" HAVE_VORBISFILE_H)
 IF(NOT HAVE_VORBISFILE_H)
-	MESSAGE(FATAL_ERROR "Ogg Vorbis development headers could not be found!\nPlease install the Ogg Vorbis development package, remove CMakeCache.txt and run cmake again")
+        MESSAGE(FATAL_ERROR "Ogg Vorbis development headers could not be found!\nPlease install the Ogg Vorbis development package, remove CMakeCache.txt and run cmake again")
 ENDIF(NOT HAVE_VORBISFILE_H)
-PKG_CHECK_MODULES(VORBIS  vorbis>=${MINIMAL_OGG_VORBIS_VERSION})
-IF (VORBIS_FOUND)
-  MESSAGE("-- Ogg Vorbis Library Found OK")
-ELSE(VORBIS_FOUND)
-  MESSAGE(SEND_ERROR "No Ogg Vorbis found (Ogg Vorbis >= ${MINIMAL_OGG_VORBIS_VERSION} needs to be installed!)")
-ENDIF(VORBIS_FOUND)
 
 
 CHECK_INCLUDE_FILE("FLAC/export.h" HAVE_FLAC_H)
 IF(HAVE_FLAC_H)
-	MESSAGE("-- FLAC Library Found OK")
+        MESSAGE("-- FLAC Library Found OK")
 ELSE(HAVE_FLAC_H)
-	PKG_CHECK_MODULES(FLAC  flac>=${MINIMAL_FLAC_VERSION})
-	IF (FLAC_FOUND)
-		MESSAGE("-- FLAC Library Found OK")
-	ELSE(FLAC_FOUND)
-		MESSAGE(FATAL_ERROR "No FLAC found (FLAC >= ${MINIMAL_FLAC_VERSION} needs to be installed!)")
-	ENDIF(FLAC_FOUND)
 ENDIF(HAVE_FLAC_H)
 
 
 IF(WANT_MP3_DECODE)
-	CHECK_INCLUDE_FILE("mad.h" HAVE_MAD_H)
-	IF(HAVE_MAD_H)
-		SET(HAVE_MP3_DECODING TRUE)
-		LIST(APPEND TRAVERSO_DEFINES -DMP3_DECODE_SUPPORT)
-	ELSE(HAVE_MAD_H)
-		PKG_CHECK_MODULES(MAD mad>=${MINIMAL_MAD_VERSION})
-		IF(MAD_FOUND)
-			SET(HAVE_MP3_DECODING TRUE)
-			LIST(APPEND TRAVERSO_DEFINES -DMP3_DECODE_SUPPORT)
-			MESSAGE("-- MP3 Decoding Library Found OK")
-		ELSE(MAD_FOUND)
-			MESSAGE(FATAL_ERROR "MP3 decoding support requested, but mp3 development headers (mad.h) could not be found!\nPlease install the mp3 development package (Usually called libmad0-dev), remove CMakeCache.txt and run cmake again")
-		ENDIF(MAD_FOUND)
-	ENDIF(HAVE_MAD_H)
+        CHECK_INCLUDE_FILE("mad.h" HAVE_MAD_H)
+        IF(HAVE_MAD_H)
+                SET(HAVE_MP3_DECODING TRUE)
+                LIST(APPEND TRAVERSO_DEFINES -DMP3_DECODE_SUPPORT)
+        ELSE(HAVE_MAD_H)
+            IF(PKG_CONFIG_FOUND)
+                PKG_CHECK_MODULES(MAD mad>=${MINIMAL_MAD_VERSION})
+                IF(MAD_FOUND)
+                        SET(HAVE_MP3_DECODING TRUE)
+                        LIST(APPEND TRAVERSO_DEFINES -DMP3_DECODE_SUPPORT)
+                        MESSAGE("-- MP3 Decoding Library Found OK")
+                ELSE(MAD_FOUND)
+                        MESSAGE(FATAL_ERROR "MP3 decoding support requested, but mp3 development headers (mad.h) could not be found!\nPlease install the mp3 development package (Usually called libmad0-dev), remove CMakeCache.txt and run cmake again")
+                ENDIF(MAD_FOUND)
+            ENDIF(PKG_CONFIG_FOUND)
+        ENDIF(HAVE_MAD_H)
 ELSE(WANT_MP3_DECODE)
-	SET(HAVE_MP3_DECODING FALSE)
+        SET(HAVE_MP3_DECODING FALSE)
 ENDIF(WANT_MP3_DECODE)
 
 
 IF(WANT_MP3_ENCODE)
-	CHECK_INCLUDE_FILE("lame/lame.h" HAVE_LAME_H)
-	IF(HAVE_LAME_H)
-		LIST(APPEND TRAVERSO_DEFINES -DMP3_ENCODE_SUPPORT)
-		MESSAGE("-- Building with mp3 encoding support enabled")
-		SET(HAVE_MP3_ENCODING TRUE)
-	ELSE(HAVE_LAME_H)
-		MESSAGE(FATAL_ERROR "MP3 encoding support requested, but mp3 development headers (lame.h) could not be found!\nPlease install the lame development package (Usually called liblame-dev), remove CMakeCache.txt and run cmake again")
-	ENDIF(HAVE_LAME_H)
+        CHECK_INCLUDE_FILE("lame/lame.h" HAVE_LAME_H)
+        IF(HAVE_LAME_H)
+                LIST(APPEND TRAVERSO_DEFINES -DMP3_ENCODE_SUPPORT)
+                MESSAGE("-- Building with mp3 encoding support enabled")
+                SET(HAVE_MP3_ENCODING TRUE)
+        ELSE(HAVE_LAME_H)
+                MESSAGE(FATAL_ERROR "MP3 encoding support requested, but mp3 development headers (lame.h) could not be found!\nPlease install the lame development package (Usually called liblame-dev), remove CMakeCache.txt and run cmake again")
+        ENDIF(HAVE_LAME_H)
 ELSE(WANT_MP3_ENCODE)
-	SET(HAVE_MP3_ENCODING FALSE)
+        SET(HAVE_MP3_ENCODING FALSE)
 ENDIF(WANT_MP3_ENCODE)
 
 
 CHECK_INCLUDE_FILE("fftw3.h" HAVE_FFTW3_H)
 IF(NOT HAVE_FFTW3_H)
-	MESSAGE(FATAL_ERROR "FFTW3 development headers could not be found!\nPlease install the FFTW3 development package (fftw3-dev), remove CMakeCache.txt and run cmake again")
+        MESSAGE(FATAL_ERROR "FFTW3 development headers could not be found!\nPlease install the FFTW3 development package (fftw3-dev), remove CMakeCache.txt and run cmake again")
 ENDIF(NOT HAVE_FFTW3_H)
-PKG_CHECK_MODULES(FFTW3  fftw3>=${MINIMAL_FFTW_VERSION})
-IF (FFTW3_FOUND)
-  MESSAGE("-- FFTW3 Library Found OK")
-ELSE(FFTW3_FOUND)
-  MESSAGE(SEND_ERROR "No FFTW3 found (FFTW3 >= ${MINIMAL_FFTW_VERSION} needs to be installed!)")
-ENDIF(FFTW3_FOUND)
 
 
 CHECK_INCLUDE_FILE("sys/vfs.h" HAVE_SYS_VFS_H)
 IF(HAVE_SYS_VFS_H)
-	LIST(APPEND TRAVERSO_DEFINES -DHAVE_SYS_VFS_H)
+        LIST(APPEND TRAVERSO_DEFINES -DHAVE_SYS_VFS_H)
 ENDIF(HAVE_SYS_VFS_H)
 
 CHECK_INCLUDE_FILE("sys/stat.h" HAVE_SYS_STAT_H)
 IF(HAVE_SYS_STAT_H)
-	LIST(APPEND TRAVERSO_DEFINES -DHAVE_SYS_STAT_H)
+        LIST(APPEND TRAVERSO_DEFINES -DHAVE_SYS_STAT_H)
 ENDIF(HAVE_SYS_STAT_H)
 
 
@@ -337,180 +331,185 @@ ${QT_QT_LIBRARY}
 
 CHECK_FUNCTION_EXISTS(posix_memalign HAVE_POSIX_MEMALIGN)
 IF(NOT HAVE_POSIX_MEMALIGN)
-	LIST(APPEND TRAVERSO_DEFINES -DNO_POSIX_MEMALIGN)
-	MESSAGE("Did not find posix_memalign(), using malloc")
+        LIST(APPEND TRAVERSO_DEFINES -DNO_POSIX_MEMALIGN)
+        MESSAGE("Did not find posix_memalign(), using malloc")
 ENDIF(NOT HAVE_POSIX_MEMALIGN)
 
 
 CHECK_FUNCTION_EXISTS(mlock HAVE_MLOCK)
 IF(HAVE_MLOCK)
-	LIST(APPEND TRAVERSO_DEFINES -DUSE_MLOCK)
+        LIST(APPEND TRAVERSO_DEFINES -DUSE_MLOCK)
 ENDIF(HAVE_MLOCK)
 
 
 
 IF(UNIX)
-	
+
 #BEGIN Mac OS X section
-	IF(APPLE)
-		# Detect if we want native Mac OS X support (CoreAudio)
-		# and if we can build with it.
-		IF(WANT_COREAUDIO)
-			SET(HAVE_COREAUDIO TRUE)
-			LIST(APPEND TRAVERSO_DEFINES -DCOREAUDIO_SUPPORT)
-		ELSE(WANT_COREAUDIO)
-			SET(HAVE_COREAUDIO FALSE)
-		ENDIF(WANT_COREAUDIO)
+        IF(APPLE)
+                # Detect if we want native Mac OS X support (CoreAudio)
+                # and if we can build with it.
+                IF(WANT_COREAUDIO)
+                        SET(HAVE_COREAUDIO TRUE)
+                        LIST(APPEND TRAVERSO_DEFINES -DCOREAUDIO_SUPPORT)
+                ELSE(WANT_COREAUDIO)
+                        SET(HAVE_COREAUDIO FALSE)
+                ENDIF(WANT_COREAUDIO)
 
 # @ MAC OS X builders, I've NO IDEA what this should be, please have a look at it
 # It should be possible to create a working bundle with CPack using stuff
 # defined here ....???
-		SET( ENV{MACOSX_DEPLOYMENT_TARGET} 10.3 ) 
-		SET( ENV{LD_PREBIND} 1 )
-		SET( ENV{LD_PREBIND_ALLOW_OVERLAP} 1 )
+                SET( ENV{MACOSX_DEPLOYMENT_TARGET} 10.3 )
+                SET( ENV{LD_PREBIND} 1 )
+                SET( ENV{LD_PREBIND_ALLOW_OVERLAP} 1 )
 
 #		Bundle setup
-		SET(BUILD_MAC_BUNDLE 1)
-		set(MACOSX_BUNDLE_ICON_FILE ${PROJECT_SOURCE_DIR}/resources/images/traverso_mac.icns)
-		
-		
-		IF(WANT_VECLIB_OPTIMIZATIONS)
-			LIST(APPEND TRAVERSO_DEFINES -DBUILD_VECLIB_OPTIMIZATIONS)
-			LINK_LIBRARIES( "-framework Accelerate" ) 
-		ENDIF(WANT_VECLIB_OPTIMIZATIONS)
-		
+                SET(BUILD_MAC_BUNDLE 1)
+                set(MACOSX_BUNDLE_ICON_FILE ${PROJECT_SOURCE_DIR}/resources/images/traverso_mac.icns)
+
+
+                IF(WANT_VECLIB_OPTIMIZATIONS)
+                        LIST(APPEND TRAVERSO_DEFINES -DBUILD_VECLIB_OPTIMIZATIONS)
+                        LINK_LIBRARIES( "-framework Accelerate" )
+                ENDIF(WANT_VECLIB_OPTIMIZATIONS)
+
 # This was copy pasted from another project, please remove if it's not needed!!
-		LINK_LIBRARIES( "-undefined dynamic_lookup" ) 
-		LINK_LIBRARIES( "-framework CoreFoundation" ) 
-	ENDIF(APPLE)
+                LINK_LIBRARIES( "-undefined dynamic_lookup" )
+                LINK_LIBRARIES( "-framework CoreFoundation" )
+        ENDIF(APPLE)
 # END Mac OS X section
 
 
 #BEGIN LINUX section
-	IF(WANT_ALSA)
-		CHECK_INCLUDE_FILE("alsa/asoundlib.h" HAVE_ASOUNDLIB_H)
-		IF(NOT HAVE_ASOUNDLIB_H)
-			MESSAGE(FATAL_ERROR "alsa support requested, but alsa development headers could not be found!\nPlease install the alsa development package (Usually called libasound-dev), remove CMakeCache.txt and run cmake again")
-		ENDIF(NOT HAVE_ASOUNDLIB_H)
-		
-		PKG_CHECK_MODULES(ALSA  alsa>=${MINIMAL_ALSA_VERSION})
-		IF (ALSA_FOUND)
-			MESSAGE("-- ALSA Library Found OK")
-			LIST(APPEND TRAVERSO_DEFINES -DALSA_SUPPORT)
-			SET(HAVE_ALSA TRUE)
-		ENDIF(ALSA_FOUND)
-	ELSE(WANT_ALSA)
-		MESSAGE("-- ALSA support: Disabled")
-		SET(HAVE_ALSA FALSE)
-	ENDIF(WANT_ALSA)
+        IF(WANT_ALSA)
+                CHECK_INCLUDE_FILE("alsa/asoundlib.h" HAVE_ASOUNDLIB_H)
+                IF(NOT HAVE_ASOUNDLIB_H)
+                        MESSAGE(FATAL_ERROR "alsa support requested, but alsa development headers could not be found!\nPlease install the alsa development package (Usually called libasound-dev), remove CMakeCache.txt and run cmake again")
+                ENDIF(NOT HAVE_ASOUNDLIB_H)
+
+                IF(PKG_CONFIG_FOUND)
+                    PKG_CHECK_MODULES(ALSA  alsa>=${MINIMAL_ALSA_VERSION})
+                    IF (ALSA_FOUND)
+                            MESSAGE("-- ALSA Library Found OK")
+                            LIST(APPEND TRAVERSO_DEFINES -DALSA_SUPPORT)
+                            SET(HAVE_ALSA TRUE)
+                    ENDIF(ALSA_FOUND)
+                ENDIF(PKG_CONFIG_FOUND)
+        ELSE(WANT_ALSA)
+                MESSAGE("-- ALSA support: Disabled")
+                SET(HAVE_ALSA FALSE)
+        ENDIF(WANT_ALSA)
 
 # END LINUX section
 
 
-	IF(WANT_JACK)
-		CHECK_INCLUDE_FILE("jack/jack.h" HAVE_JACK_H)
-		IF(NOT HAVE_JACK_H)
-			MESSAGE(FATAL_ERROR "jack support requested, but jack development headers could not be found!\nPlease install the jack development package, remove CMakeCache.txt and run cmake again")
-		ENDIF(NOT HAVE_JACK_H)
-		
-		PKG_CHECK_MODULES(JACK jack>=${MINIMAL_JACK_VERSION})
-		IF(JACK_FOUND)
-			LIST (APPEND TRAVERSO_DEFINES -DJACK_SUPPORT)
-			MESSAGE("-- Jack Library Found OK")
-			SET(HAVE_JACK TRUE)
-			SET(JACK_LIBS ${JACK_LIBRARIES})
-			LIST(APPEND JACK_LIB_DIR ${JACK_LIBDIR} ${JACK_LIBRARY_DIRS})
-			LIST(APPEND JACK_INC_DIR ${JACK_INCLUDEDIR} ${JACK_INCLUDE_DIRS})
+        IF(WANT_JACK)
+                CHECK_INCLUDE_FILE("jack/jack.h" HAVE_JACK_H)
+                IF(NOT HAVE_JACK_H)
+                        MESSAGE(FATAL_ERROR "jack support requested, but jack development headers could not be found!\nPlease install the jack development package, remove CMakeCache.txt and run cmake again")
+                ENDIF(NOT HAVE_JACK_H)
 
-                        CHECK_INCLUDE_FILE("jack/session.h" HAVE_JACK_SESSION_H)
-                        IF(HAVE_JACK_SESSION_H)
-                                MESSAGE("-- Jack session support found OK")
-                        ENDIF(HAVE_JACK_SESSION_H)
+                IF(PKG_CONFIG_FOUND)
+                    PKG_CHECK_MODULES(JACK jack>=${MINIMAL_JACK_VERSION})
+                    IF(JACK_FOUND)
+                            LIST (APPEND TRAVERSO_DEFINES -DJACK_SUPPORT)
+                            MESSAGE("-- Jack Library Found OK")
+                            SET(HAVE_JACK TRUE)
+                            SET(JACK_LIBS ${JACK_LIBRARIES})
+                            LIST(APPEND JACK_LIB_DIR ${JACK_LIBDIR} ${JACK_LIBRARY_DIRS})
+                            LIST(APPEND JACK_INC_DIR ${JACK_INCLUDEDIR} ${JACK_INCLUDE_DIRS})
 
-                        IF(JACK_SESSION_FOUND)
-                                LIST(APPEND TRAVERSO_DEFINES -DJACK_SESSION_SUPPORT)
-                        ENDIF(JACK_SESSION_FOUND)
+                            CHECK_INCLUDE_FILE("jack/session.h" HAVE_JACK_SESSION_H)
+                            IF(HAVE_JACK_SESSION_H)
+                                    MESSAGE("-- Jack session support found OK")
+                            ENDIF(HAVE_JACK_SESSION_H)
 
-		ELSE(JACK_FOUND)
-			MESSAGE(FATAL_ERROR "jack support requested, but jack libraries could not be found!\nPlease install the jack runtime libraries, remove CMakeCache.txt and run cmake again")
-		ENDIF(JACK_FOUND)
-	ELSE(WANT_JACK)
-		MESSAGE("-- Jack support: Disabled")
-		SET(HAVE_JACK FALSE)
-	ENDIF(WANT_JACK)
+                            IF(JACK_SESSION_FOUND)
+                                    LIST(APPEND TRAVERSO_DEFINES -DJACK_SESSION_SUPPORT)
+                            ENDIF(JACK_SESSION_FOUND)
 
-	
+                    ELSE(JACK_FOUND)
+                            MESSAGE(FATAL_ERROR "jack support requested, but jack libraries could not be found!\nPlease install the jack runtime libraries, remove CMakeCache.txt and run cmake again")
+                    ENDIF(JACK_FOUND)
+                ENDIF(PKG_CONFIG_FOUND)
+        ELSE(WANT_JACK)
+                MESSAGE("-- Jack support: Disabled")
+                SET(HAVE_JACK FALSE)
+        ENDIF(WANT_JACK)
+
+
         IF(NOT WANT_DEBUG AND DETECT_HOST_CPU_FEATURES)
 #		Detect the architecture we are compiling on
                 MESSAGE("\nDetecting host cpu features")
                 execute_process(
-			COMMAND uname -m
-			OUTPUT_VARIABLE uname_invoke_result
-			RESULT_VARIABLE uname_failed
-		)
+                        COMMAND uname -m
+                        OUTPUT_VARIABLE uname_invoke_result
+                        RESULT_VARIABLE uname_failed
+                )
 # 		Get the cpu flags to add the most optimal optimization flags to the compiler
-		execute_process(
-			COMMAND cat /proc/cpuinfo
-			COMMAND grep ^flags
-			OUTPUT_VARIABLE cat_invoke_result
-			RESULT_VARIABLE cat_failed
-		)
-		
-		SET(HOST_SUPPORTS_SSE FALSE)
-		
-		IF(cat_invoke_result MATCHES sse)
+                execute_process(
+                        COMMAND cat /proc/cpuinfo
+                        COMMAND grep ^flags
+                        OUTPUT_VARIABLE cat_invoke_result
+                        RESULT_VARIABLE cat_failed
+                )
+
+                SET(HOST_SUPPORTS_SSE FALSE)
+
+                IF(cat_invoke_result MATCHES sse)
                         MESSAGE("Host cpu is sse capable")
                         SET(HOST_SUPPORTS_SSE TRUE)
-			LIST(APPEND TRAVERSO_DEFINES -DSSE_OPTIMIZATIONS)
-		ENDIF(cat_invoke_result MATCHES sse)
-		
-		IF(cat_invoke_result MATCHES 3dnow)
-			SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -m3dnow")
-		ENDIF(cat_invoke_result MATCHES 3dnow)
-				
-		IF(uname_invoke_result MATCHES i586)
+                        LIST(APPEND TRAVERSO_DEFINES -DSSE_OPTIMIZATIONS)
+                ENDIF(cat_invoke_result MATCHES sse)
+
+                IF(cat_invoke_result MATCHES 3dnow)
+                        SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -m3dnow")
+                ENDIF(cat_invoke_result MATCHES 3dnow)
+
+                IF(uname_invoke_result MATCHES i586)
                         MESSAGE("Host cpu is i586")
                         SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -march=i586")
-		ENDIF(uname_invoke_result MATCHES i586)
-				
-		IF(uname_invoke_result MATCHES i686)
+                ENDIF(uname_invoke_result MATCHES i586)
+
+                IF(uname_invoke_result MATCHES i686)
                         MESSAGE("Host cpu is i686")
                         SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -march=i686")
-			IF(HOST_SUPPORTS_SSE)
-				SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
-				LIST(APPEND TRAVERSO_DEFINES -DUSE_XMMINTRIN)
-			ENDIF(HOST_SUPPORTS_SSE)
-		ENDIF(uname_invoke_result MATCHES i686)
-				
-		IF(uname_invoke_result MATCHES x86_64)
+                        IF(HOST_SUPPORTS_SSE)
+                                SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
+                                LIST(APPEND TRAVERSO_DEFINES -DUSE_XMMINTRIN)
+                        ENDIF(HOST_SUPPORTS_SSE)
+                ENDIF(uname_invoke_result MATCHES i686)
+
+                IF(uname_invoke_result MATCHES x86_64)
                         MESSAGE("Host cpu is x86_64")
                         LIST(APPEND TRAVERSO_DEFINES -DARCH_X86)
                         IF(HOST_SUPPORTS_SSE)
-				SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
+                                SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -msse -mfpmath=sse")
                                 LIST(APPEND TRAVERSO_DEFINES -DUSE_XMMINTRIN -DUSE_X86_64_ASM)
-				SET(IS_ARCH_X86_64 TRUE)
-			ENDIF(HOST_SUPPORTS_SSE)
-		ENDIF(uname_invoke_result MATCHES x86_64)
-		
-		IF(uname_invoke_result MATCHES i[456]86)
-			LIST(APPEND TRAVERSO_DEFINES -DARCH_X86)
-			SET(IS_ARCH_X86 TRUE)
-		ENDIF(uname_invoke_result MATCHES i[456]86)
+                                SET(IS_ARCH_X86_64 TRUE)
+                        ENDIF(HOST_SUPPORTS_SSE)
+                ENDIF(uname_invoke_result MATCHES x86_64)
+
+                IF(uname_invoke_result MATCHES i[456]86)
+                        LIST(APPEND TRAVERSO_DEFINES -DARCH_X86)
+                        SET(IS_ARCH_X86 TRUE)
+                ENDIF(uname_invoke_result MATCHES i[456]86)
         ENDIF(NOT WANT_DEBUG AND DETECT_HOST_CPU_FEATURES)
 
-
 ELSE(UNIX)
-	
+
 # Windows section
-	IF(WIN32)
-		LINK_LIBRARIES(
-		${QT_QTMAIN_LIBRARY}
-		)
-		LIST (APPEND TRAVERSO_DEFINES -DQT_DLL -DWIN_BUILD -DPORTAUDIO_SUPPORT)
-		SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fno-strict-aliasing ${CXX_FLAGS}")
-		CHECK_INCLUDE_FILE(windows.h HAVE_WINDOWS_H)
-		SET(HAVE_PORTAUDIO TRUE)
-	ENDIF(WIN32)
+        IF(WIN32)
+                LINK_LIBRARIES(
+                    ${QT_LIBRARIES}
+                    ${QT_QTXML_LIBRARY}
+                    winmm
+                )
+                LIST (APPEND TRAVERSO_DEFINES -DQT_DLL -DWIN_BUILD -DPORTAUDIO_SUPPORT)
+                SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fno-strict-aliasing ${CXX_FLAGS}")
+                CHECK_INCLUDE_FILE(windows.h HAVE_WINDOWS_H)
+                SET(HAVE_PORTAUDIO TRUE)
+        ENDIF(WIN32)
 
 
 ENDIF(UNIX)
@@ -519,7 +518,7 @@ ENDIF(UNIX)
 
 
 IF(WANT_THREAD_CHECK)
-	LIST(APPEND TRAVERSO_DEFINES -DTHREAD_CHECK)
+        LIST(APPEND TRAVERSO_DEFINES -DTHREAD_CHECK)
 ENDIF(WANT_THREAD_CHECK)
 
 
@@ -529,14 +528,14 @@ SET(USE_PCH FALSE)
 IF(WANT_PCH)
 FIND_PACKAGE(PCHSupport)
 IF(PCHSupport_FOUND)
-	SET(USE_PCH TRUE)
-	SET(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
-	SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
-	MESSAGE(STATUS "Enabling precompiled headers for GCC ${gcc_compiler_version}") 
+        SET(USE_PCH TRUE)
+        SET(CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
+        SET(CMAKE_CXX_FLAGS_RELEASE  "${CMAKE_CXX_FLAGS_RELEASE} -include ${CMAKE_SOURCE_DIR}/src/precompile.h -Winvalid-pch")
+        MESSAGE(STATUS "Enabling precompiled headers for GCC ${gcc_compiler_version}")
 ENDIF(PCHSupport_FOUND)
 ELSE(WANT_PCH)
-	#QT_DEFENITIONS are added by pch, so when no pch support add them now!
-	ADD_DEFINITIONS(${QT_DEFINITIONS})
+        #QT_DEFENITIONS are added by pch, so when no pch support add them now!
+        ADD_DEFINITIONS(${QT_DEFINITIONS})
 ENDIF(WANT_PCH)
 
 ADD_DEFINITIONS(${TRAVERSO_DEFINES})
@@ -552,7 +551,7 @@ ADD_SUBDIRECTORY(src)
 # INSTALL(FILES
 # AUTHORS
 # README
-# 
+#
 #   DESTINATION ${CMAKE_SOURCE_DIR}/src/
 # )
 
@@ -571,40 +570,40 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
   SET(CPACK_SOURCE_PACKAGE_FILE_NAME "traverso-${VERSION}")
   SET(CPACK_SOURCE_GENERATOR TGZ)
 ## I'll make this prettier later - ignore any tarballs in the root
-  SET(CPACK_SOURCE_IGNORE_FILES 
-	CMakeCache.txt
-	"~$"
-	"Makefile$"
-	"\\\\.cvsignore$" 
-	"^${PROJECT_SOURCE_DIR}.*/*tar.*"
-	"^${PROJECT_SOURCE_DIR}.*/precompile.h.gch"
-	"^${PROJECT_SOURCE_DIR}.*/cmake_install.cmake"
-	"^${PROJECT_SOURCE_DIR}/CPackConfig.cmake"
-	"^${PROJECT_SOURCE_DIR}/CPackSourceConfig.cmake"
-	"^${PROJECT_SOURCE_DIR}/make-autopackage.sh"
-	"^${PROJECT_SOURCE_DIR}/_CPack_Packages/"
-	"^${PROJECT_SOURCE_DIR}.*/CMakeFiles/"
-	"^${PROJECT_SOURCE_DIR}.*/CVS/"
-	"^${PROJECT_SOURCE_DIR}.*/bin/"
-	"^${PROJECT_SOURCE_DIR}.*/build/"
-	"^${PROJECT_SOURCE_DIR}.*/buildfiles/"
-	"^${PROJECT_SOURCE_DIR}.*/lib/"
-	"^${PROJECT_SOURCE_DIR}/debian/"
-	"^${PROJECT_SOURCE_DIR}/autopackage/"
-	"^${PROJECT_SOURCE_DIR}.*/CVSROOT/"
-	"^${PROJECT_SOURCE_DIR}/doc/")
+  SET(CPACK_SOURCE_IGNORE_FILES
+        CMakeCache.txt
+        "~$"
+        "Makefile$"
+        "\\\\.cvsignore$"
+        "^${PROJECT_SOURCE_DIR}.*/*tar.*"
+        "^${PROJECT_SOURCE_DIR}.*/precompile.h.gch"
+        "^${PROJECT_SOURCE_DIR}.*/cmake_install.cmake"
+        "^${PROJECT_SOURCE_DIR}/CPackConfig.cmake"
+        "^${PROJECT_SOURCE_DIR}/CPackSourceConfig.cmake"
+        "^${PROJECT_SOURCE_DIR}/make-autopackage.sh"
+        "^${PROJECT_SOURCE_DIR}/_CPack_Packages/"
+        "^${PROJECT_SOURCE_DIR}.*/CMakeFiles/"
+        "^${PROJECT_SOURCE_DIR}.*/CVS/"
+        "^${PROJECT_SOURCE_DIR}.*/bin/"
+        "^${PROJECT_SOURCE_DIR}.*/build/"
+        "^${PROJECT_SOURCE_DIR}.*/buildfiles/"
+        "^${PROJECT_SOURCE_DIR}.*/lib/"
+        "^${PROJECT_SOURCE_DIR}/debian/"
+        "^${PROJECT_SOURCE_DIR}/autopackage/"
+        "^${PROJECT_SOURCE_DIR}.*/CVSROOT/"
+        "^${PROJECT_SOURCE_DIR}/doc/")
   INCLUDE(CPack)
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
 
 IF(USE_INTERNAL_SLV2_LIB)
-	SET(SLV2OPTIONS "${HAVE_SLV2} (Using internal library)")
+        SET(SLV2OPTIONS "${HAVE_SLV2} (Using internal library)")
 ENDIF(USE_INTERNAL_SLV2_LIB)
 IF(USE_SYSTEM_SLV2_LIBRARY)
-	SET(SLV2OPTIONS "${HAVE_SLV2} (Using system library)")
+        SET(SLV2OPTIONS "${HAVE_SLV2} (Using system library)")
 ENDIF(USE_SYSTEM_SLV2_LIBRARY)
 IF(NOT HAVE_SLV2)
-	SET(SLV2OPTIONS "${HAVE_SLV2}")
+        SET(SLV2OPTIONS "${HAVE_SLV2}")
 ENDIF(NOT HAVE_SLV2)
 
 
