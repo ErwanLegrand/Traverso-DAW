@@ -725,7 +725,11 @@ int Project::disconnect_from_audio_device()
         int count = 0;
         while(m_audiodeviceClient->is_connected()) {
                 printf("Project: Waiting to be disconnected from Audio Device\n");
+#if defined (Q_WS_WIN)
+                Sleep(20);
+#else
                 usleep(20 * 1000);
+#endif
                 count++;
                 if (count > 100) {
                         printf("Project::disconnect_from_audio_device: can't seem to disconnect from audiodevice, giving up!\n");
