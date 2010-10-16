@@ -248,12 +248,12 @@ int ReadSource::init( )
 	m_channelCount = m_audioReader->get_num_channels();
 	
 	// @Ben: I thought we support any channel count now ??
-	if (m_channelCount > 2) {
-		PERROR("ReadAudioSource: file contains %d channels; only 2 channels are supported", m_channelCount);
-		delete m_audioReader;
-		m_audioReader = 0;
-		return (m_error = INVALID_CHANNEL_COUNT);
-	}
+//        if (m_channelCount > 2) {
+//                PERROR("ReadAudioSource: file contains %d channels; only 2 channels are supported", m_channelCount);
+//                delete m_audioReader;
+//                m_audioReader = 0;
+//                return (m_error = INVALID_CHANNEL_COUNT);
+//        }
 
 	// Never reached, it's allready checked in AbstractAudioReader::is_valid() which was allready called!
 	if (m_channelCount == 0) {
