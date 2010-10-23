@@ -183,8 +183,8 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
         }
 	
 	PaStreamParameters outputParameters, inputParameters;
-        bzero( &inputParameters, sizeof( inputParameters ) );
-        bzero( &outputParameters, sizeof( outputParameters ) );
+        memset(&inputParameters, 0, sizeof(inputParameters));
+        memset(&outputParameters, 0, sizeof(outputParameters));
 
         PaHostApiIndex hostIndex = host_index_for_host_api(hostapi);
 
