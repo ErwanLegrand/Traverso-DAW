@@ -250,7 +250,6 @@ TARGET_LINK_LIBRARIES(traverso
         tcp_traversocommands
         traversocommands
         samplerate
-        sndfile
         wavpack
         ${OGG_LIB}
         ${VORBIS_LIB}
@@ -262,11 +261,13 @@ TARGET_LINK_LIBRARIES(traverso
 
 IF(WIN32)
     TARGET_LINK_LIBRARIES(traverso
-            fftw3-3
+        sndfile-1
+        fftw3-3
     )
 ELSE(WIN32)
     TARGET_LINK_LIBRARIES(traverso
-            fftw3
+        sndfile
+        fftw3
     )
 ENDIF(WIN32)
 
