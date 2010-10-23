@@ -183,6 +183,8 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
         }
 	
 	PaStreamParameters outputParameters, inputParameters;
+        bzero( &inputParameters, sizeof( inputParameters ) );
+        bzero( &outputParameters, sizeof( outputParameters ) );
 
         PaHostApiIndex hostIndex = host_index_for_host_api(hostapi);
 
@@ -205,9 +207,9 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 
 	// Configure output parameters.
         PaDeviceIndex result = Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, 0);
-        if (result < 0) {
-                result = Pa_GetDefaultOutputDevice();
-        }
+//        if (result < 0) {
+//                result = Pa_GetDefaultOutputDevice();
+//        }
         if( result != paNoDevice) {
                 outChannelsMax = Pa_GetDeviceInfo(result)->maxOutputChannels;
                 outputParameters.device = result;
@@ -218,9 +220,9 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	}
 	
         result = Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, 0);
-        if (result < 0) {
-                result = Pa_GetDefaultInputDevice();
-        }
+//        if (result < 0) {
+//                result = Pa_GetDefaultInputDevice();
+//        }
         if( result != paNoDevice) {
                 inChannelMax = Pa_GetDeviceInfo(result)->maxInputChannels;
                 inputParameters.device = result;
