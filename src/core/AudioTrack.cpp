@@ -242,7 +242,9 @@ void AudioTrack::add_input_bus(AudioBus *bus)
         }
 //        if (m_isArmed) {
                 for (int i=0; i<bus->get_channel_count(); i++) {
-                        bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
+                        if (bus->get_channel_count() < i) {
+                                bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
+                        }
                 }
 //        }
         Track::add_input_bus(bus);
