@@ -17,6 +17,7 @@ lupdate -verbose -noobsolete \
 		resources/translations/traverso_bg.ts \
                 resources/translations/traverso_cs.ts \
                 resources/translations/traverso_es.ts \
+                resources/translations/traverso_it.ts \
                 resources/translations/traverso_ru.ts
 
 lrelease  -verbose \
@@ -27,5 +28,6 @@ lrelease  -verbose \
 		resources/translations/traverso_bg.ts \
                 resources/translations/traverso_cs.ts \
                 resources/translations/traverso_es.ts \
+                resources/translations/traverso_it.ts \
                 resources/translations/traverso_ru.ts
 

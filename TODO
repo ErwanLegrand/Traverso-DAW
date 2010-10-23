@@ -1,4 +1,30 @@
-TOBEDONE FOR 0.4x.x
+TOBEDONE FOR 0.50.x
+
+Update website where to download the new 0.49.2 debian/ubuntu package.
+
+* Better feedback for alsa driver when using incompatible setup, this: printf("ALSA: use %d periods for %s\n", *nperiodsp, stream_name);
+  doesn't read like: you should do that! what about a popup that explains driver failures in more detail?
+* solo track B then Solo track A unsolo Track B, then solo track B again and unsolo track A: clips next to playhead no longer play!
+* idle dsp usage on alsa driver is 'much' higher then with 0.49.x due constant monitoring of capture buffers for one!
+* vertical zoom keyfact is wrong
+* check if cpointer().get_viewport() returns an object or 0 !!
+* new sheet/track names: force unique names
+* add switch to turn monitoring on/off
+* Project::process() must be suspended when starting an export!
+* child views: make them use their own snap list.
+* NOT REPRODUCABLE ATM: qwerty navigate to track, delete track, close project -> crash
+* Curve.cpp: printf("filling last %d samples %f\n", subveclen, firstnode->value);
+* Notify users that if they open an old project that they won't be able to properly restore that
+  project in pre 0.50.x releases !
+* routing from multiple buses to buses/hardware buses
+* Create Special Bounce Track, via new Track Dialog which then only accepts internal subgroup buses.
+  processed twice: first process: playback, if armed, processed after project master.
+  if this bounce track is armed, ask: real time or faster then real time (using the export thread instead of the hardware driver thread)
+* new track dialog: create jack ports bus, or use existing bus, or create new bus, choosing one of the available hardware channels
+* jack in/out buses: when removed from a track, remove them from the jackdriver too, but still be able to re-add them with the set input / add output
+  buttons in track manager dialog.
+* add Traverso to wikipedia
+* create several project templates to ship by default with traverso
 
 ### NEEDS TESTING ###
 - Fold Sheet/Track with Markers 
@@ -6,10 +32,30 @@ TOBEDONE FOR 0.4x.x
 - Copy/move (including un/redo) selected clips
 
 ### BUGS / WISHES ###
+* custom track colors
+* clips with a source start offset: qwerty navigation still broken for curve nodes!!
+* fade out + snap ([ F ] + < S > ) doens't work yet.
+* free disk space vs recording status
+* don't use setStackSize() at all anywhere ? Hard to figure out stack overflow bugs!!
+* jack transport callbacks need to be managed more robust, they cause random segfaults
+* [ W ] + M release move Marker with arrow key, release W: arrow keys no longer navigate.
+* on zoom level change: inform clips first, let them generate new peak data (multithreaded!) only
+  then signal zoom level change (speeding up painting, if it's possible ?)
+* had to add a         if (m_seeking) {return 0;} in Sheet::process() to avoid a weird crash when saving the project
+  after recording clips with JACK as the driver. start_seek() however stops transport, so why is sheet::process still being
+  competely run? Is it, it seems to do so at least for alex with jack 0.119.0 using jack transport....
+* Clips with length < read buffer size don't play!!! FIX THAT
+* MoveEdge: do not jump to Mouse Cursor!
+* CD Burning: abort button clicked crashed for me once, try to reproduce ?
+* class name collision: wrap everything in a namespace? RFC
+* restart driver doesn't take num periods into account
+* importing multiple files from file browser in resources bin places all clips on same position!!!
+* node aligned vertically (so below eachother) do not paint the curve line!
+* Traverso close sometimes gives crash: probably due cleanup routines for subgroups/new audio io stuff not existing?
+  maybe releated: AudioDevice::shutdown() and the added 'remove channels logic' there?
+* sync to fpu.cc to ardours latest version!
 * moving a clip left which also at the same time changes the length of the Sheet causes a huge cpu load!!
-* setting different input buses on an AudioTrack and finishing recording on both buses comes into endless loop when saving project.
-* changing subgroup name should be reflected in menus
-* creating project from template crashes!
+* Text clips, for use as PostIt's, shares audioclips's features, except it doens't have a source :)
 * Transport console: to_start end to_end don't center the playhead!
 * Curve top-left node is hardly visible
 * CD Burning doesn't work when traverso was started from clicking on the binary (sometimes, when no empty disk was inserted)
@@ -19,8 +65,6 @@ TOBEDONE FOR 0.4x.x
 * PPC build : no jack, crashes on PPC 10.5.1 (both portaudio with jack/coreaudio), which portaudio was used?
 * http://forums.frugalware.org/index.php?t=msg&goto=7949&rid=0&S=fc3e4bbb15813272bc2658068081e9d7#msg_7949
 * accessability: LAC discussion:  e.g. from 25.12.07, thread "Studio reverb (impulse)"
-* Track (Vynil) plugin also applied to other tracks ??
-* jack in/output ports numbers are calculated in reversed order! so inputcount ports is output count and vise versa
 * Unable to lock memory, Traverso runs unstable due that. Detect (parse limits.conf file) first before trying to memlock ?
 * xvidcap -> for creating video demos
 * new Song::get_last_location() semantics might not work well e.g. in MoveClip, TimeLineView.
@@ -62,3 +106,25 @@ Less important:
 
 * Painting last curve nodes has artifacts, 'fixed' by populating polygon with as many points as there are
   pixels. This should get a real fix!!
+
+
+Future:
+
+* mute bounce track unmutes input buses and vice versa: special key for that ?
+
+* make theme look awesome
+* clip joining
+* Add toggle: Sheet -> Mixer view and vice versa
+* Sheets are Track Folder: create Project Mixer (Sheet): toggle Mixer View on/off works here too.
+* Scratchpad Sheet: be able to show a track/subgroup onto this special type of Sheet.
+* Mixer View == a Track (pan, gain, VU, plugins etc)
+* Mixer Sheet: contains a grid (configurable amount of rows/columns) with Mixer Views, be able to browse
+        and move and edit them like tracks.
+  Be able to detach it, and move it to another workspace.
+* Mixer Strip VU: needs to look really sexy!
+* Panning is balance in T, real panning explained here: http://www.harmonycentral.com/docs/DOC-1106
+* Sheets are track folders: manage solo/mute on the Project level, so solo in a sheet A mutes all non-soloed tracks in all sheets.
+* Project owns a subgroup buses sheet to manage it's buses to use in a mixer sheet view to be able to route tracks from any sheet to
+  global (owned by project) subgroup buses.
+* Sheets are track folders toggle: one time only action to be sure you don't messup your routing, cause it might go over the project level.
+* select region/multiple clips -> create new Sheet from region/clips.
