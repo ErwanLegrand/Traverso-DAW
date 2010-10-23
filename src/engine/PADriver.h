@@ -45,7 +45,7 @@ public:
 	QString get_device_name();
 	QString get_device_longname();
         static QStringList device_names(const QString& hostApi);
-        static int device_index_for_host_api(const QString& hostapi);
+        static int host_index_for_host_api(const QString& hostapi);
 
 	float get_cpu_load();
 

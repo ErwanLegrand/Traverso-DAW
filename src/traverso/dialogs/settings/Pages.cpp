@@ -257,8 +257,9 @@ void AudioDriverConfigPage::load_config( )
 #if defined (Q_WS_WIN)
 	m_portaudiodrivers->driverCombo->addItem("MME", "wmme");
 	m_portaudiodrivers->driverCombo->addItem("Direct Sound", "directsound");
-	m_portaudiodrivers->driverCombo->addItem("ASIO", "asio");
-	defaulthostapi = "wmme";
+        m_portaudiodrivers->driverCombo->addItem("WASAPI", "wasapi");
+        m_portaudiodrivers->driverCombo->addItem("ASIO", "asio");
+        defaulthostapi = "wmme";
 #endif
 	
 	QString hostapi = config().get_property("Hardware", "pahostapi", defaulthostapi).toString();

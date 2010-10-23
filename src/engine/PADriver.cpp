@@ -40,7 +40,7 @@ PADriver::PADriver( AudioDevice * dev , int rate, nframes_t bufferSize)
 {
 	read = MakeDelegate(this, &PADriver::_read);
 	write = MakeDelegate(this, &PADriver::_write);
-	run_cycle = RunCycleCallback(this, &PADriver::_run_cycle);
+        run_cycle = RunCycleCallback(this, &PADriver::_run_cycle);
 }
 
 PADriver::~PADriver( )
@@ -101,14 +101,14 @@ QStringList PADriver::device_names(const QString& hostApi)
                 return list;
         }
 
-        PaDeviceIndex deviceIndex = device_index_for_host_api(hostApi);
+        PaDeviceIndex hostIndex = host_index_for_host_api(hostApi);
 
-        if (deviceIndex == -1) {
+        if (hostIndex == paHostApiNotFound) {
                 Pa_Terminate();
                 return list;
         }
 
-        const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(deviceIndex);
+        const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(hostIndex);
 
         for (int i=0; i<hostApiInfo->deviceCount; ++i) {
                 list.append(Pa_GetDeviceInfo(i)->name);
@@ -119,53 +119,43 @@ QStringList PADriver::device_names(const QString& hostApi)
         return list;
 }
 
-int PADriver::device_index_for_host_api(const QString& hostapi)
+int PADriver::host_index_for_host_api(const QString& hostapi)
 {
-        PaDeviceIndex deviceindex = -1;
+        int hostIndex = paHostApiNotFound;
 
-        for (int i=0; i<Pa_GetHostApiCount(); ++i) {
-                const PaHostApiInfo* inf = Pa_GetHostApiInfo(i);
-
-                printf("hostapi name is %s, deviceCount is %d\n", inf->name, inf->deviceCount);
-
-                if (hostapi == "alsa" && inf->type == paALSA) {
-                        printf("PADriver:: Found alsa host api\n");
-                        deviceindex = i;
-                        break;
-                }
-
-                if (hostapi == "jack" && inf->type == paJACK) {
-                        printf("PADriver:: Found jack host api\n");
-                        deviceindex = i;
-                        break;
-                }
-
-                if (hostapi == "wmme" && inf->type == paMME) {
-                        printf("PADriver:: Found wmme host api\n");
-                        deviceindex = i;
-                        break;
-                }
-
-                if (hostapi == "directsound" && inf->type == paDirectSound ) {
-                        printf("PADriver:: Found directsound host api\n");
-                        deviceindex = i;
-                        break;
-                }
-
-                if (hostapi == "asio" && inf->type == paASIO ) {
-                        printf("PADriver:: Found asio host api\n");
-                        deviceindex = i;
-                        break;
-                }
-
-                if (hostapi == "coreaudio" && inf->type == paCoreAudio ) {
-                        printf("PADriver:: Found directsound host api\n");
-                        deviceindex = i;
-                        break;
-                }
+        if (hostapi == "alsa") {
+                hostIndex = Pa_HostApiTypeIdToHostApiIndex(paALSA);
         }
 
-        return deviceindex;
+        if (hostapi == "jack") {
+                hostIndex = Pa_HostApiTypeIdToHostApiIndex(paJACK);
+        }
+
+        if (hostapi == "wmme") {
+                hostIndex = Pa_HostApiTypeIdToHostApiIndex(paMME);
+        }
+
+        if (hostapi == "directsound") {
+                hostIndex = Pa_HostApiTypeIdToHostApiIndex(paDirectSound);
+        }
+
+        if (hostapi == "wasapi") {
+                hostIndex = Pa_HostApiTypeIdToHostApiIndex(paWASAPI);
+        }
+
+        if (hostapi == "asio") {
+                hostIndex = Pa_HostApiTypeIdToHostApiIndex(paASIO);
+        }
+
+        if (hostapi == "coreaudio") {
+                hostIndex = Pa_HostApiTypeIdToHostApiIndex(paCoreAudio);
+        }
+
+        if (hostIndex >= 0) {
+                printf("PADriver:: Found %s host api\n", QS_C(hostapi));
+        }
+
+        return hostIndex;
 }
 
 int PADriver::setup(bool capture, bool playback, const QString& hostapi)
@@ -181,7 +171,8 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 	// TODO In case of hostapi == "alsa", the callback thread prio needs to be set to realtime.
 	// 	there has been some discussion on this on the pa mailinglist, digg it up!
 	
-        printf("PADriver:: capture, playback, hostapi: %d, %d, %s\n", capture, playback, QS_C(hostapi));
+        printf("PADriver:: Setting up Port Audio driver, using PortAudio library: %s\n", Pa_GetVersionText());
+        printf("PADriver:: capture=%d, playback=%d, hostapi=%s\n", capture, playback, QS_C(hostapi));
 	
 	PaError err = Pa_Initialize();
 	
@@ -189,29 +180,34 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 		device->message(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )), AudioDevice::WARNING);
 		Pa_Terminate();
 		return -1;
-        } else {
-                printf("PADriver:: Succesfully initialized portaudio\n");
         }
-
 	
 	PaStreamParameters outputParameters, inputParameters;
 
-        PaDeviceIndex deviceindex = device_index_for_host_api(hostapi);
+        PaHostApiIndex hostIndex = host_index_for_host_api(hostapi);
 
-        if (deviceindex == -1) {
+        if (hostIndex == paHostApiNotFound) {
                 device->message(tr("PADriver:: hostapi %1 was not found by Portaudio!").arg(hostapi), AudioDevice::WARNING);
                 Pa_Terminate();
                 return -1;
 	}
 	
-        deviceindex = 0;
+        const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(hostIndex);
+
+        for (int i=0; i<hostApiInfo->deviceCount; ++i) {
+                printf("device index %d, device name %s\n", i, Pa_GetDeviceInfo(i)->name);
+        }
+
 //	device->message(tr("PADriver:: using device %1").arg(deviceindex), AudioDevice::INFO);
 		
         int inChannelMax = 0;
         int outChannelsMax = 0;
 
 	// Configure output parameters.
-        PaDeviceIndex result = Pa_GetDefaultOutputDevice();
+        PaDeviceIndex result = Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, 0);
+        if (result < 0) {
+                result = Pa_GetDefaultOutputDevice();
+        }
         if( result != paNoDevice) {
                 outChannelsMax = Pa_GetDeviceInfo(result)->maxOutputChannels;
                 outputParameters.device = result;
@@ -221,7 +217,10 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
 		outputParameters.hostApiSpecificStreamInfo = NULL;
 	}
 	
-        result = Pa_GetDefaultInputDevice();
+        result = Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, 0);
+        if (result < 0) {
+                result = Pa_GetDefaultInputDevice();
+        }
         if( result != paNoDevice) {
                 inChannelMax = Pa_GetDeviceInfo(result)->maxInputChannels;
                 inputParameters.device = result;
