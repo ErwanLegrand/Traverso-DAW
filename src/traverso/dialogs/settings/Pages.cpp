@@ -258,6 +258,7 @@ void AudioDriverConfigPage::load_config( )
 	m_portaudiodrivers->driverCombo->addItem("MME", "wmme");
 	m_portaudiodrivers->driverCombo->addItem("Direct Sound", "directsound");
         m_portaudiodrivers->driverCombo->addItem("WASAPI", "wasapi");
+        m_portaudiodrivers->driverCombo->addItem("WDMKS", "wdmks");
         m_portaudiodrivers->driverCombo->addItem("ASIO", "asio");
         defaulthostapi = "wmme";
 #endif
@@ -373,10 +374,15 @@ void AudioDriverConfigPage::portaudio_host_api_combobox_index_changed(int index)
 
         QStringList list = PADriver::device_names(m_portaudiodrivers->driverCombo->itemData(index).toString());
 
-        m_portaudiodrivers->devicesCombo->clear();
+        m_portaudiodrivers->inputDevicesCombo->clear();
+        m_portaudiodrivers->outputDevicesCombo->clear();
 
         foreach(QString string, list) {
-                m_portaudiodrivers->devicesCombo->addItem(string);
+                m_portaudiodrivers->inputDevicesCombo->addItem(string);
+        }
+
+        foreach(QString string, list) {
+                m_portaudiodrivers->outputDevicesCombo->addItem(string);
         }
 }
 #endif

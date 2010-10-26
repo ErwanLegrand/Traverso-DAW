@@ -111,7 +111,7 @@ QStringList PADriver::device_names(const QString& hostApi)
         const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(hostIndex);
 
         for (int i=0; i<hostApiInfo->deviceCount; ++i) {
-                list.append(Pa_GetDeviceInfo(i)->name);
+                list.append(Pa_GetDeviceInfo(Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, i))->name);
         }
 
         Pa_Terminate();
@@ -141,6 +141,10 @@ int PADriver::host_index_for_host_api(const QString& hostapi)
 
         if (hostapi == "wasapi") {
                 hostIndex = Pa_HostApiTypeIdToHostApiIndex(paWASAPI);
+        }
+
+        if (hostapi == "wdmks") {
+                hostIndex = Pa_HostApiTypeIdToHostApiIndex(paWDMKS);
         }
 
         if (hostapi == "asio") {
@@ -206,26 +210,25 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
         int outChannelsMax = 0;
 
 	// Configure output parameters.
-        PaDeviceIndex result = Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, 0);
-//        if (result < 0) {
-//                result = Pa_GetDefaultOutputDevice();
-//        }
-        if( result != paNoDevice) {
-                outChannelsMax = Pa_GetDeviceInfo(result)->maxOutputChannels;
-                outputParameters.device = result;
+        PaDeviceIndex outputDevice = hostApiInfo->defaultOutputDevice;// Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, 1);
+        if (outputDevice == paNoDevice) {
+                //outputDevice = Pa_GetDefaultOutputDevice();
+        }
+        if( outputDevice != paNoDevice) {
+                outChannelsMax = Pa_GetDeviceInfo(outputDevice)->maxOutputChannels;
+                printf("max out channels for %s = %d\n", Pa_GetDeviceInfo(outputDevice)->name, outChannelsMax);
+                outputParameters.device = outputDevice;
                 outputParameters.channelCount = outChannelsMax;
-		outputParameters.sampleFormat = paFloat32; /* 32 bit floating point output */
-		outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
-		outputParameters.hostApiSpecificStreamInfo = NULL;
-	}
-	
-        result = Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, 0);
-//        if (result < 0) {
-//                result = Pa_GetDefaultInputDevice();
-//        }
-        if( result != paNoDevice) {
-                inChannelMax = Pa_GetDeviceInfo(result)->maxInputChannels;
-                inputParameters.device = result;
+                outputParameters.sampleFormat = paFloat32; /* 32 bit floating point output */
+                outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
+                outputParameters.hostApiSpecificStreamInfo = NULL;
+        }
+
+        PaDeviceIndex inputDevice = hostApiInfo->defaultInputDevice;//Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, 0);
+        if (inputDevice != paNoDevice) {
+                inChannelMax = Pa_GetDeviceInfo(inputDevice)->maxInputChannels;
+                printf("max in channels for %s = %d\n", Pa_GetDeviceInfo(inputDevice)->name, inChannelMax);
+                inputParameters.device = inputDevice;
                 inputParameters.channelCount = inChannelMax;
 		inputParameters.sampleFormat = paFloat32; /* 32 bit floating point output */
                 inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
@@ -236,8 +239,8 @@ int PADriver::setup(bool capture, bool playback, const QString& hostapi)
         /* Open an audio I/O stream. */
 	err = Pa_OpenStream(
 			&m_paStream,
-			&inputParameters,	// The input parameter
-			&outputParameters,	// The outputparameter
+                        &inputParameters,	// The input parameter
+                        &outputParameters,	// The outputparameter
 			frame_rate,		// Set in the constructor
 			frames_per_cycle,	// Set in the constructor
 			paNoFlag,		// Don't use any flags
