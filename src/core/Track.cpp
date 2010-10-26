@@ -42,6 +42,7 @@ Track::Track(TSession* session)
         m_sortIndex = -1;
         m_isSolo = m_mutedBySolo = m_isMuted = false;
         m_inputBus = 0;
+        m_channelCount = 0;
 
         for (int i=0; i<2; ++i) {
                 m_vumonitors.append(new VUMonitor());
@@ -458,4 +459,67 @@ TSend* Track::get_send(qint64 sendId)
         }
 
         return 0;
+}
+
+bool Track::connect_to_jack(bool inports, bool outports)
+{
+
+        QString driver = audiodevice().get_driver_type();
+        if (driver != "Jack") {
+                PERROR("Can't connect this Track (%s) to jack if jack isn't used as driver", QS_C(m_name));
+                return false;
+        }
+
+        if (m_channelCount == 0) {
+                PERROR("Channel count == 0");
+        }
+
+        Project* project = pm().get_project();
+        AudioBus* bus = 0;
+
+        QStringList channelnames;
+        BusConfig busconfig;
+        busconfig.channelcount = m_channelCount;
+        busconfig.name = m_name;
+
+        ChannelConfig channelconfig;
+
+        if (outports) {
+                for (int chan=0; chan<m_channelCount; ++chan) {
+                        channelconfig.name = m_name + "/out " + QString("%1").arg(chan);
+                        channelconfig.type = "output";
+                        busconfig.channelNames << channelconfig.name;
+                }
+
+                busconfig.type = "output";
+
+                bus = project->create_software_audio_bus(busconfig);
+                add_post_send(bus->get_id());
+        }
+
+        if (inports) {
+                for (int chan=0; chan<m_channelCount; ++chan) {
+                        channelconfig.name = m_name + "/in " + QString("%1").arg(chan);
+                        channelconfig.type = "input";
+                        busconfig.channelNames << channelconfig.name;
+                }
+
+                busconfig.type = "input";
+
+                bus = project->create_software_audio_bus(busconfig);
+                add_input_bus(bus);
+        }
+
+
+        return true;
+}
+
+bool Track::disconnect_from_jack(bool inports, bool outports)
+{
+        return true;
+}
+
+void Track::set_channel_count(int count)
+{
+        m_channelCount = count;
 }

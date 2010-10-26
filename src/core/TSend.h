@@ -46,7 +46,8 @@ public:
 
         enum {
                 POSTSEND = 1,
-                PRESEND = 2
+                PRESEND = 2,
+                INPUT = 3
         };
 
         AudioBus* get_bus() const {return m_bus;}

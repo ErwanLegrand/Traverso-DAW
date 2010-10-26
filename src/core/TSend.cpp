@@ -64,8 +64,10 @@ QDomNode TSend::get_state( QDomDocument doc)
         }
         if (m_type == POSTSEND) {
                 node.setAttribute("type", QString("post"));
-        } else {
+        } else if (m_type == PRESEND) {
                 node.setAttribute("type", QString("pre"));
+        } else if (m_type == INPUT) {
+                node.setAttribute("type", QString("input"));
         }
 
         return node;
@@ -89,7 +91,7 @@ int TSend::set_state( const QDomNode & node )
         set_gain(e.attribute("gain", "1.0").toFloat());
         set_pan(e.attribute("pan", "0.00").toFloat());
 
-        if (type == "post" || type.isEmpty() || type.isNull()) {
+        if (type == "post") {
                 m_type = POSTSEND;
         } else if (type == "pre") {
                 m_type = PRESEND;

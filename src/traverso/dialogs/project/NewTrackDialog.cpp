@@ -89,41 +89,9 @@ void NewTrackDialog::create_track()
 		title = "Untitled";
 	}
 	
-        Project* project = pm().get_project();
+        QString driver = audiodevice().get_driver_type();
         Sheet* sheet = qobject_cast<Sheet*>(session);
         Track* track;
-        AudioBus* inputBus = 0;
-        AudioBus* outputBus = 0;
-
-        QString driver = audiodevice().get_driver_type();
-        if (driver == "Jack") {
-                for (int i=0; i<2; i++) {
-                        QStringList channelnames;
-                        BusConfig busconfig;
-
-                        for (int chan=0; chan<channelCountSpinBox->value(); ++chan) {
-                                channelnames << title + QString("_%1").arg(chan);
-                        }
-
-                        foreach(const QString& channelname, channelnames) {
-                                ChannelConfig channelconfig;
-                                channelconfig.name = i == 0 ? channelname + "_out" : channelname + "_in";
-                                channelconfig.type = i == 0 ? "output" : "input";
-                                busconfig.channelNames << channelconfig.name;
-                        }
-
-                        busconfig.channelcount = channelCountSpinBox->value();
-                        busconfig.name = title;
-                        busconfig.type =  i == 0 ? "output" : "input";
-
-                        if (i==0) {
-                                outputBus = project->create_software_audio_bus(busconfig);
-                        }
-                        if (i==1) {
-                                inputBus = project->create_software_audio_bus(busconfig);
-                        }
-                }
-        }
 
         if (isBusTrack->isChecked()) {
                 track = new TBusTrack(session, title, 2);
@@ -132,12 +100,10 @@ void NewTrackDialog::create_track()
                 track = new AudioTrack(sheet, title, AudioTrack::INITIAL_HEIGHT);
         }
 
+        track->set_channel_count(channelCountSpinBox->value());
+
         if (driver == "Jack") {
-                // only AudioTracks have external inputs
-                if (track->get_type() == Track::AUDIOTRACK) {
-                        track->add_input_bus(title);
-                }
-                track->add_post_send(outputBus->get_id());
+                track->connect_to_jack(true, true);
         } else {
                 // only AudioTracks have external inputs
                 if (track->get_type() == Track::AUDIOTRACK) {

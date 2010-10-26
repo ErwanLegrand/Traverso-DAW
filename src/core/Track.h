@@ -52,6 +52,8 @@ public:
         void set_sort_index(int index);
         int set_state( const QDomNode& node );
         virtual void set_name(const QString& name);
+        void set_channel_count(int count);
+        int get_channel_count() const {return m_channelCount;}
         int get_type() const {return m_type;}
 
         bool is_muted_by_solo();
@@ -65,7 +67,8 @@ public:
         void remove_pre_sends(QList<qint64> sendIds);
         void add_input_bus(qint64 busId);
 
-
+        bool connect_to_jack(bool inports, bool outports);
+        bool disconnect_from_jack(bool inports, bool outports);
 
         AudioBus* get_process_bus() const {return m_processBus;}
         AudioBus* get_input_bus() const {return m_inputBus;}
@@ -79,10 +82,11 @@ public:
 
 protected:
         VUMonitors      m_vumonitors;
-        int     m_sortIndex;
-        int     m_type;
-        bool    m_mutedBySolo;
-        bool    m_isSolo;
+        int             m_sortIndex;
+        int             m_type;
+        int             m_channelCount;
+        bool            m_mutedBySolo;
+        bool            m_isSolo;
 
         APILinkedList   m_postSends;
         APILinkedList   m_preSends;
