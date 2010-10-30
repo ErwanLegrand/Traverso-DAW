@@ -378,11 +378,12 @@ void AudioDriverConfigPage::portaudio_host_api_combobox_index_changed(int index)
         m_portaudiodrivers->outputDevicesCombo->clear();
 
         foreach(QString string, list) {
-                m_portaudiodrivers->inputDevicesCombo->addItem(string);
-        }
-
-        foreach(QString string, list) {
-                m_portaudiodrivers->outputDevicesCombo->addItem(string);
+                QStringList deviceInfo = string.split("::");
+                if (deviceInfo.at(1) == "input") {
+                        m_portaudiodrivers->inputDevicesCombo->addItem(deviceInfo.at(0));
+                } else {
+                    m_portaudiodrivers->outputDevicesCombo->addItem(deviceInfo.at(0));
+                }
         }
 }
 #endif
