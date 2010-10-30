@@ -37,14 +37,14 @@ public:
 	int _read(nframes_t nframes);
 	int _write(nframes_t nframes);
 	int _run_cycle() {return 1;}
-	int setup(bool capture=true, bool playback=true, const QString& hostapi="alsa");
+        int setup(bool capture=true, bool playback=true, const QString& deviceInfo="alsa::default::default");
 	int attach();
 	int start();
 	int stop();
 
 	QString get_device_name();
 	QString get_device_longname();
-        static QStringList device_names(const QString& hostApi);
+        static QStringList devices_info(const QString& hostApi);
         static int host_index_for_host_api(const QString& hostapi);
 
 	float get_cpu_load();

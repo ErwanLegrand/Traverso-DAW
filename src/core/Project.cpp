@@ -700,13 +700,15 @@ void Project::prepare_audio_device(QDomDocument doc)
 
 #if defined (PORTAUDIO_SUPPORT)
         if (ads.driverType == "PortAudio") {
+                if (ads.cardDevice.isEmpty()) {
 #if defined (Q_WS_X11)
-                ads.cardDevice = config().get_property("Hardware", "pahostapi", "alsa").toString();
+                        ads.cardDevice = config().get_property("Hardware", "pahostapi", "alsa").toString();
 #elif defined (Q_WS_MAC)
-                ads.cardDevice = config().get_property("Hardware", "pahostapi", "coreaudio").toString();
+                        ads.cardDevice = config().get_property("Hardware", "pahostapi", "coreaudio").toString();
 #elif defined (Q_WS_WIN)
-                ads.cardDevice = config().get_property("Hardware", "pahostapi", "wmme").toString();
+                        ads.cardDevice = config().get_property("Hardware", "pahostapi", "wmme").toString();
 #endif
+                }
         }
 #endif // end PORTAUDIO_SUPPORT
 

@@ -319,7 +319,9 @@ void AudioDriverConfigPage::restart_driver_button_clicked()
 	if (driver == "PortAudio") {
 		int index = m_portaudiodrivers->driverCombo->currentIndex();
                 ads.cardDevice = m_portaudiodrivers->driverCombo->itemData(index).toString();
-	}
+                ads.cardDevice += "::" + m_portaudiodrivers->inputDevicesCombo->currentText();
+                ads.cardDevice += "::" + m_portaudiodrivers->outputDevicesCombo->currentText();
+        }
 #endif
 			
         ads.driverType = driver;
@@ -372,7 +374,7 @@ void AudioDriverConfigPage::portaudio_host_api_combobox_index_changed(int index)
                 return;
         }
 
-        QStringList list = PADriver::device_names(m_portaudiodrivers->driverCombo->itemData(index).toString());
+        QStringList list = PADriver::devices_info(m_portaudiodrivers->driverCombo->itemData(index).toString());
 
         m_portaudiodrivers->inputDevicesCombo->clear();
         m_portaudiodrivers->outputDevicesCombo->clear();
