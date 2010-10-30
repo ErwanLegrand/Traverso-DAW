@@ -110,8 +110,22 @@ QStringList PADriver::device_names(const QString& hostApi)
 
         const PaHostApiInfo* hostApiInfo = Pa_GetHostApiInfo(hostIndex);
 
+        QString device;
+
         for (int i=0; i<hostApiInfo->deviceCount; ++i) {
-                list.append(Pa_GetDeviceInfo(Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, i))->name);
+                PaDeviceIndex paDeviceIndex= Pa_HostApiDeviceIndexToDeviceIndex(hostIndex, i);
+                device = Pa_GetDeviceInfo(paDeviceIndex)->name;
+                int inputChannels = Pa_GetDeviceInfo(paDeviceIndex)->maxInputChannels;
+                int outputChannels = Pa_GetDeviceInfo(paDeviceIndex)->maxOutputChannels;
+                if (inputChannels > 0) {
+                    device += "::" + QString("input::%1").arg(inputChannels);
+                } else if (outputChannels) {
+                    device += "::" + QString("output::%1").arg(outputChannels);
+                } else {
+                    device += "::" + QString("invalid");
+                }
+
+                list.append(device);
         }
 
         Pa_Terminate();
