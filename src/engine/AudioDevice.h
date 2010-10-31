@@ -19,8 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#ifndef AUDIODEVICE_H
-#define AUDIODEVICE_H
+#ifndef TAUDIODEVICE_H
+#define TAUDIODEVICE_H
 
 #include <QObject>
 #include <QList>
@@ -86,6 +86,7 @@ public:
 	QString get_device_name() const;
 	QString get_device_longname() const;
 	QString get_driver_type() const;
+        QString get_driver_information() const;
 
 	QStringList get_available_drivers() const;
 

@@ -700,6 +700,16 @@ QString AudioDevice::get_driver_type( ) const
 	return m_driverType;
 }
 
+QString AudioDevice::get_driver_information() const
+{
+        if (m_driverType == "PortAudio") {
+                QStringList list = m_setup.cardDevice.split("::");
+                return "PA: " + list.at(0);
+        }
+        return m_driverType;
+}
+
+
 /**
  * 
  * @return The cpu load, call this at least 1 time per second to keep data consistent 

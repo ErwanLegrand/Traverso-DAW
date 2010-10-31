@@ -208,7 +208,7 @@ void DriverInfo::draw_information( )
 		xruns = QByteArray::number(xrunCount).prepend(" xruns ");
 	}
 	
-	text = audiodevice().get_driver_type() + "   " +
+        text = audiodevice().get_driver_information() + "   " +
 			QString::number(audiodevice().get_sample_rate()) + 
 			"/" + 
 			QString::number(audiodevice().get_bit_depth()) +

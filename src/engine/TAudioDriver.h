@@ -20,8 +20,8 @@
     $Id: Driver.h,v 1.5 2007/03/19 11:18:57 r_sijrier Exp $
 */
 
-#ifndef DRIVER_H
-#define DRIVER_H
+#ifndef T_AUDIO_DRIVER_H
+#define T_AUDIO_DRIVER_H
 
 #include "defines.h"
 #include <memops.h>

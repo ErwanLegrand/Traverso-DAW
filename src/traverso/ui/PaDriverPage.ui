@@ -23,7 +23,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Portaudio drivers</string>
+      <string>PortAudio Options</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
