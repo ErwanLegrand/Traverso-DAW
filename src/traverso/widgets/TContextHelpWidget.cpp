@@ -40,6 +40,7 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 {
         m_comboBox = new QComboBox(parent);
         m_textEdit = new QTextEdit(parent);
+        m_textEdit->setTextInteractionFlags(Qt::NoTextInteraction);
 
         QHBoxLayout* comboLayout = new QHBoxLayout;
         QVBoxLayout* mainLayout = new QVBoxLayout;
