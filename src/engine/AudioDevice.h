@@ -55,6 +55,16 @@ class AudioDevice : public QObject
 	Q_OBJECT
 
 public:
+        enum {
+                INFO,
+                WARNING,
+                CRITICAL,
+                DRIVER_SETUP_INFO,
+                DRIVER_SETUP_SUCCESS,
+                DRIVER_SETUP_FAILURE,
+                DRIVER_SETUP_WARNING
+        };
+
         void set_parameters(AudioDeviceSetup ads);
 
         void add_client(TAudioDeviceClient* client);
@@ -193,12 +203,6 @@ private:
 	
 	size_t run_audio_thread() const;
 	
-	enum {
-		INFO = 0,
-		WARNING = 1,
-  		CRITICAL = 2
-	};
-	
 	QVariant get_driver_property(const QString& property, QVariant defaultValue);
 
 signals:
@@ -237,6 +241,7 @@ signals:
 	void xrunStormDetected();
 	
 	void message(QString, int);
+        void driverSetupMessage(QString, int);
 
 private slots:
         void private_add_client(TAudioDeviceClient* client);

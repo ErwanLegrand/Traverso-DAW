@@ -101,12 +101,9 @@ int JackDriver::setup(QList<AudioChannel* > channels)
         printf("Connecting to the Jack server...\n");
 
         if ( (m_jack_client = jack_client_open(client_name, JackNoStartServer, NULL)) == NULL) {
-		device->message(tr("Jack Driver: Couldn't connect to the jack server, is jack running?"), AudioDevice::WARNING);
+                device->driverSetupMessage(tr("Couldn't connect to the jack server, is jack running?"), AudioDevice::DRIVER_SETUP_FAILURE);
                 return -1;
         }
-
-        printf("Succesfully connected to jack server!\n");
-
 
         foreach(AudioChannel* channel, channels) {
                 add_channel(channel);
@@ -194,7 +191,7 @@ int JackDriver::start( )
 		return -1;
 	}
 	
-        device->message(tr("Jack Driver: Connected successfully to the jack server!"), AudioDevice::INFO);
+        device->driverSetupMessage(tr("Succesfully connected to jack server!"), AudioDevice::DRIVER_SETUP_SUCCESS);
 
         m_running = 1;
 	return 1;

@@ -87,6 +87,7 @@ private:
 	AlsaDevicesPage* m_alsadevices;
 	PaDriverPage* m_portaudiodrivers;
 	QList<int>	periodBufferSizesList;
+        QStringList     m_driverSetupMessages;
 	
 private slots:
 	void update_latency_combobox();
@@ -96,6 +97,7 @@ private slots:
         void portaudio_host_api_combobox_index_changed(int);
 #endif
 	void restart_driver_button_clicked();
+        void driver_setup_message(QString message, int severity);
 };
 
 

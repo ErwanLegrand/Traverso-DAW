@@ -63,13 +63,13 @@ void Information::critical( const QString & mes )
 void Information::audiodevice_message(QString message, int severity)
 {
 	switch(severity) {
-		case 0: information(message);
+        case AudioDevice::INFO: information(message);
 		break;
-		case 1: warning(message);
+        case AudioDevice::WARNING: warning(message);
 		break;
-		case 2: critical(message);
+        case AudioDevice::CRITICAL: critical(message);
 		break;
-		default: information(message);
+        default: ;// do nothing;
 	}
 }
 

@@ -189,15 +189,16 @@ int PADriver::setup(bool capture, bool playback, const QString& deviceInfo)
                 outputDeviceName = deviceInfos.at(2);
         }
 
-        printf("PADriver:: Setting up Port Audio driver, using PortAudio library: %s\n", Pa_GetVersionText());
-        printf("PADriver:: capture=%d, playback=%d, hostapi=%s, inputdevice=%s, outputdevice=%s\n",
-                capture, playback, QS_C(hostapi), QS_C(inputDeviceName), QS_C(outputDeviceName));
+        device->driverSetupMessage(tr("Setting up PortAudio using %1").arg(Pa_GetVersionText()), AudioDevice::DRIVER_SETUP_INFO);
+        device->driverSetupMessage(tr("Driver: %1, capture: %2, playback: %3 <br />Input Device: %4 <br />Output Device: %5").
+                        arg(hostapi).arg(capture ? tr("yes") : tr("no")).arg(playback ? tr("yes") : tr("no")).
+                        arg(inputDeviceName).arg(outputDeviceName), AudioDevice::DRIVER_SETUP_INFO);
 	
 	PaError err = Pa_Initialize();
 	
 	if( err != paNoError ) {
-		device->message(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )), AudioDevice::WARNING);
-		Pa_Terminate();
+                device->driverSetupMessage((tr("Failed to initialize PortAudio: %1").arg(Pa_GetErrorText( err ))), AudioDevice::DRIVER_SETUP_FAILURE);
+                Pa_Terminate();
 		return -1;
         }
 	
@@ -208,7 +209,7 @@ int PADriver::setup(bool capture, bool playback, const QString& deviceInfo)
         PaHostApiIndex hostIndex = host_index_for_host_api(hostapi);
 
         if (hostIndex == paHostApiNotFound) {
-                device->message(tr("PADriver:: hostapi %1 was not found by Portaudio!").arg(hostapi), AudioDevice::WARNING);
+                device->driverSetupMessage(tr("PADriver:: hostapi %1 was not found by Portaudio!").arg(hostapi), AudioDevice::DRIVER_SETUP_FAILURE);
                 Pa_Terminate();
                 return -1;
 	}
@@ -225,11 +226,8 @@ int PADriver::setup(bool capture, bool playback, const QString& deviceInfo)
                 if (Pa_GetDeviceInfo(i)->name == outputDeviceName) {
                         outputDeviceIndex = i;
                 }
-//                printf("device index %d, device name %s\n", i, Pa_GetDeviceInfo(i)->name);
         }
 
-//	device->message(tr("PADriver:: using device %1").arg(deviceindex), AudioDevice::INFO);
-		
         int inChannelMax = 0;
         int outChannelsMax = 0;
 
@@ -264,12 +262,10 @@ int PADriver::setup(bool capture, bool playback, const QString& deviceInfo)
 			this );
 	
 	if( err != paNoError ) {
-		device->message(tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err )), AudioDevice::WARNING);
-		Pa_Terminate();
+                device->driverSetupMessage((tr("Failed to open PortAudio stream: %1").arg(Pa_GetErrorText( err ))), AudioDevice::DRIVER_SETUP_FAILURE);
+                Pa_Terminate();
 		return -1;
-	} else {
-		printf("PADriver:: Succesfully opened portaudio stream\n");
-	}
+        }
 	
         AudioChannel* audiochannel;
         char buf[32];
@@ -309,11 +305,11 @@ int PADriver::start( )
 	PaError err = Pa_StartStream( m_paStream );
 	
 	if( err != paNoError ) {
-		device->message((tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err ))), AudioDevice::WARNING);
-		Pa_Terminate();
+                device->driverSetupMessage((tr("Failed to start PortAudio stream: %1").arg(Pa_GetErrorText( err ))), AudioDevice::DRIVER_SETUP_FAILURE);
+                Pa_Terminate();
 		return -1;
 	} else {
-		printf("PADriver:: Succesfully started portaudio stream\n");
+                device->driverSetupMessage(tr("Succesfully started PortAudio stream!"), AudioDevice::DRIVER_SETUP_SUCCESS);
 	}
 	
 	return 1;
@@ -325,7 +321,7 @@ int PADriver::stop( )
 	PaError err = Pa_CloseStream( m_paStream );
 	
 	if( err != paNoError ) {
-		device->message((tr("PADriver:: PortAudio error: %1").arg(Pa_GetErrorText( err ))), AudioDevice::WARNING);
+                device->message((tr("PADriver:: Failed to close PortAudio stream: %1").arg(Pa_GetErrorText( err ))), AudioDevice::WARNING);
 		Pa_Terminate();
 	} else {
 		printf("PADriver:: Succesfully closed portaudio stream\n\n");
