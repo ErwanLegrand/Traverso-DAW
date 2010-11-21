@@ -41,7 +41,7 @@ QString timeref_to_cd_including_hours(const TimeRef& ref);
 TimeRef msms_to_timeref(QString str);
 TimeRef cd_to_timeref(QString str);
 TimeRef cd_to_timeref_including_hours(QString str);
-QString coefficient_to_dbstring(float coeff);
+QString coefficient_to_dbstring(float coeff, int decimals=1);
 QDateTime extract_date_time(qint64 id);
 
 qint64 create_id();
