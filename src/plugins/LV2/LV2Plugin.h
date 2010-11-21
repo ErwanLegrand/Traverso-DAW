@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <cstdlib>
 #include <slv2/slv2.h>
+#include <redland.h>
 #include <QList>
 #include <QString>
 #include <QObject>
