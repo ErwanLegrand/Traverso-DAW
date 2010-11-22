@@ -75,7 +75,11 @@ QString coefficient_to_dbstring ( float coeff, int decimals)
 
 	QString gainIndB;
 
-	if ( db < -99 )
+        if (fabs(db) < (1/::pow(10, decimals))) {
+                db = 0.0f;
+        }
+
+        if ( db < -99 )
 		gainIndB = "- INF";
 	else if ( db < 0 )
                 gainIndB = "- " + QByteArray::number ( ( -1 * db ), 'f', decimals ) + " dB";
