@@ -149,8 +149,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="Z" >
 			<Objects>
-                                <Object objectname="SheetView" modes="All" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomIn" arguments="HZoom;0.5" />
-				<Object objectname="MoveClip" slotsignature="start_zoom" modes="All" sortorder="11"/>
+                                <Object objectname="MoveClip" slotsignature="start_zoom" modes="All" sortorder="11" isholdmodifier="1"/>
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="S" >
@@ -357,16 +356,6 @@
 				<Object objectname="Sheet" slotsignature="toggle_snap" modes="All" sortorder="36" />
 			</Objects>
 		</keyfact>
-                <keyfact type="FKEY2" key1="Z" key2="" >
-			<Objects>
-				<Object objectname="SheetView" modes="All" sortorder="45" submenu="Zoom" pluginname="TraversoCommands" commandname="VZoomOut" arguments="VZoom;1;0.2" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="Z" key2="A" >
-			<Objects>
-				<Object objectname="SheetView" modes="All" sortorder="5" submenu="Zoom" pluginname="TraversoCommands" commandname="VZoomIn" arguments="VZoom;1;-0.2" />
-			</Objects>
-		</keyfact>
 		<keyfact type="FKEY2" key1="F" key2="G" >
 			<Objects>
                                 <Object objectname="AudioClipView" slotsignature="select_fade_in_shape" modes="All" sortorder="14" submenu="Fade" />
@@ -390,11 +379,6 @@
 		<keyfact type="FKEY2" key1="E" key2="P" >
 			<Objects>
 				<Object objectname="AudioClip" modes="All" sortorder="18" pluginname="TraversoCommands" commandname="AudioClipExternalProcessing" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY2" key1="Z" key2="X" >
-			<Objects>
-				<Object objectname="SheetView" modes="All" sortorder="3" submenu="Zoom" pluginname="TraversoCommands" commandname="HZoomOut" arguments="HZoom;2" />
 			</Objects>
 		</keyfact>
                 <keyfact type="FKEY2" key1="I" key2="O" >
