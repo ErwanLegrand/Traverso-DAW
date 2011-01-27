@@ -69,18 +69,25 @@ TimeRef cd_to_timeref_including_hours(QString str)
 	return out;
 }
 
-QString coefficient_to_dbstring ( float coeff )
+QString coefficient_to_dbstring ( float coeff, int decimals)
 {
 	float db = coefficient_to_dB ( coeff );
 
 	QString gainIndB;
 
-	if ( db < -99 )
+        if (fabs(db) < (1/::pow(10, decimals))) {
+                db = 0.0f;
+        }
+
+        if ( db < -99 )
 		gainIndB = "- INF";
 	else if ( db < 0 )
-		gainIndB = "- " + QByteArray::number ( ( -1 * db ), 'f', 1 ) + " dB";
-	else
-		gainIndB = "+ " + QByteArray::number ( db, 'f', 1 ) + " dB";
+                gainIndB = "- " + QByteArray::number ( ( -1 * db ), 'f', decimals ) + " dB";
+        else if ( db > 0 )
+                gainIndB = "+ " + QByteArray::number ( db, 'f', decimals ) + " dB";
+        else {
+                gainIndB = "  " + QByteArray::number ( db, 'f', decimals ) + " dB";
+        }
 
 	return gainIndB;
 }

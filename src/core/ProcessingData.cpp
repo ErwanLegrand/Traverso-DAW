@@ -26,6 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClipManager.h"
 #include "PluginChain.h"
 #include "TSession.h"
+#include "limits"
+#include "Mixer.h"
+
 
 #include "Debugger.h"
 
@@ -56,13 +59,20 @@ void ProcessingData::set_name( const QString & name )
 
 void ProcessingData::set_pan(float pan)
 {
-        if ( pan < -1.0 )
+        if ( pan < -1.0 ) {
                 m_pan=-1.0;
-        else
-                if ( pan > 1.0 )
+        } else {
+                if ( pan > 1.0 ) {
                         m_pan=1.0;
-                else
+                } else {
                         m_pan=pan;
+                }
+        }
+
+        if (fabs(pan) < std::numeric_limits<float>::epsilon()) {
+                m_pan = 0.0f;
+        }
+
         emit panChanged();
 }
 

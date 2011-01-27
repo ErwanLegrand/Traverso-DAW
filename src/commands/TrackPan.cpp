@@ -25,7 +25,7 @@
 
 #include "ContextPointer.h"
 #include "Track.h"
-
+#include "Mixer.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -130,10 +130,14 @@ int TrackPan::jog()
 	if (m_newPan > 1.0) 
                 m_newPan = 1.0f;
 	
-	m_track->set_pan(m_newPan);
+        if (fabs(m_newPan) < 0.01f) {
+                m_newPan = 0.0f;
+        }
+
+        m_track->set_pan(m_newPan);
 	
 	QCursor::setPos(d->mousePos);
-	
+
 	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
 	
 	return 1;

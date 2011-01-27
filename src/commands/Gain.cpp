@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Track.h>
 #include "Sheet.h"
 #include "TBusTrack.h"
+#include "Utils.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -207,7 +208,7 @@ void Gain::increase_gain( bool autorepeat )
         get_gain_from_object(m_newGain);
 
         // Update the vieport's hold cursor with the _actuall_ gain value!
-        cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+        cpointer().get_viewport()->set_holdcursor_text(coefficient_to_dbstring(m_newGain));
 }
 
 void Gain::decrease_gain(bool autorepeat)
@@ -225,7 +226,7 @@ void Gain::decrease_gain(bool autorepeat)
         get_gain_from_object(m_newGain);
 
         // Update the vieport's hold cursor with the _actuall_ gain value!
-        cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+        cpointer().get_viewport()->set_holdcursor_text(coefficient_to_dbstring(m_newGain));
 }
 
 
@@ -259,7 +260,7 @@ int Gain::jog()
         int result = get_gain_from_object(m_newGain);
 	
 	// Update the vieport's hold cursor!
-        cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+        cpointer().get_viewport()->set_holdcursor_text(coefficient_to_dbstring(m_newGain));
         cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
 
         QCursor::setPos(m_mousePos);
