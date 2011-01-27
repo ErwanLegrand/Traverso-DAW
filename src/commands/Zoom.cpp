@@ -138,18 +138,13 @@ int Zoom::jog()
                 int x = cpointer().x();
                 int dx = x - m_horizontalJogZoomLastX;
 		
-		// TODO
-		// values between /* */ are for use when using non power of 2 zoom levels!
-		
 		if (abs(dx) > 10  /*1*/) {
                         m_horizontalJogZoomLastX = x;
-                        TSession* session = m_sv->get_sheet();
 			if (dx > 0) {
-                                session->set_hzoom(session->get_hzoom() / 2 /*(m_xScalefactor + dx/18)*/);
+                                hzoom_in(false);
 			} else {
-                                session->set_hzoom(session->get_hzoom() * 2 /*(m_xScalefactor + abs(dx)/18)*/);
+                                hzoom_out(false);
 			}
-			m_sv->center();
 		}
 	}
 
@@ -255,7 +250,7 @@ void Zoom::set_collected_number(const QString &collected)
 int Zoom::collected_number_to_track_height(const QString& collected) const
 {
         int number = 0;
-        int trackHeight;
+        int trackHeight = Track::INITIAL_HEIGHT;
         bool ok = false;
         QString cleared = collected;
         cleared = cleared.remove(".").remove("-").remove(",");
