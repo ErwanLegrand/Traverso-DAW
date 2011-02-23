@@ -380,6 +380,7 @@ void TMainWindow::set_project(Project* project)
 
         if ( m_project ) {
                 connect(m_project, SIGNAL(projectLoadFinished()), this, SLOT(project_load_finished()));
+                connect(m_project, SIGNAL(projectLoadStarted()), this, SLOT(project_load_started()));
 
 		setWindowTitle(project->get_title() + " - Traverso");
                 set_project_actions_enabled(true);
@@ -390,6 +391,11 @@ void TMainWindow::set_project(Project* project)
                 set_project_actions_enabled(false);
                 show_welcome_page();
 	}
+}
+
+void TMainWindow::project_load_started()
+{
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
 
 void TMainWindow::project_load_finished()
@@ -416,6 +422,8 @@ void TMainWindow::project_load_finished()
         }
 
         show_session(m_project->get_current_session());
+
+        QApplication::restoreOverrideCursor();
 }
 
 void TMainWindow::remove_sheetwidget(Sheet* sheet)

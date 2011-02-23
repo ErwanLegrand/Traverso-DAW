@@ -245,6 +245,7 @@ private slots:
         void project_dir_change_detected();
 	void project_load_failed(QString project, QString reason);
         void project_load_finished();
+        void project_load_started();
 	void project_file_mismatch(QString rootdir, QString projectname);
 	void snap_state_changed(bool state);
 	void update_snap_state();
