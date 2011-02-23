@@ -209,6 +209,7 @@ int Project::create_peakfiles_dir()
 	return 1;
 }
 
+
 int Project::load(QString projectfile)
 {
 	PENTER;
@@ -249,6 +250,8 @@ int Project::load(QString projectfile)
 		return SETTING_XML_CONTENT_FAILED;
 	}
 	
+        emit projectLoadStarted();
+
 	QDomElement docElem = doc.documentElement();
 	QDomNode propertiesNode = docElem.firstChildElement("Properties");
 	QDomElement e = propertiesNode.toElement();
@@ -283,27 +286,27 @@ int Project::load(QString projectfile)
         QDomNode channelsConfigNode = docElem.firstChildElement("AudioChannels");
         QDomNode channelNode = channelsConfigNode.firstChild();
 
-        while (!channelNode.isNull()) {
-                QDomElement e = channelNode.toElement();
-                QString name = e.attribute("name", "");
-                QString typeString = e.attribute("type", "");
-                uint number = e.attribute("number", "0").toInt();
-                qint64 id = e.attribute("id", "0").toLongLong();
+//        while (!channelNode.isNull()) {
+//                QDomElement e = channelNode.toElement();
+//                QString name = e.attribute("name", "");
+//                QString typeString = e.attribute("type", "");
+//                uint number = e.attribute("number", "0").toInt();
+//                qint64 id = e.attribute("id", "0").toLongLong();
 
-                int type = -1;
-                if (typeString == "input") {
-                        type = ChannelIsInput;
-                }
-                if (typeString == "output") {
-                        type = ChannelIsOutput;
-                }
+//                int type = -1;
+//                if (typeString == "input") {
+//                        type = ChannelIsInput;
+//                }
+//                if (typeString == "output") {
+//                        type = ChannelIsOutput;
+//                }
 
-                AudioChannel* chan = new AudioChannel(name, number, type, id);
+//                AudioChannel* chan = new AudioChannel(name, number, type, id);
 
-                m_softwareAudioChannels.insert(chan->get_id(), chan);
+//                m_softwareAudioChannels.insert(chan->get_id(), chan);
 
-                channelNode = channelNode.nextSibling();
-        }
+//                channelNode = channelNode.nextSibling();
+//        }
 
 
         QDomNode busesConfigNode = docElem.firstChildElement("AudioBuses");
@@ -864,6 +867,14 @@ AudioBus* Project::create_software_audio_bus(const BusConfig& conf)
         return bus;
 }
 
+void Project::remove_software_audio_bus(AudioBus *bus)
+{
+        for(int i=0; i<bus->get_channel_count(); ++i) {
+                AudioChannel* chan = bus->get_channel(i);
+                audiodevice().remove_jack_channel(chan);
+        }
+}
+
 qint64 Project::get_bus_id_for(const QString &busName)
 {
         // if busName == Sheet Master, Master or Master Out,
@@ -964,21 +975,19 @@ QStringList Project::get_playback_buses_names( ) const
 
 QList<AudioBus*> Project::get_hardware_buses() const
 {
-        QMap<QString, AudioBus*> monos, steroes;
+        QList<AudioBus*> list;
         foreach(AudioBus* bus, m_hardwareAudioBuses) {
                 if (bus->get_channel_names().count() == 1) {
-                        monos.insert(bus->get_name(), bus);
+                        list.append(bus);
                 }
+        }
+        foreach(AudioBus* bus, m_hardwareAudioBuses) {
                 if (bus->get_channel_names().count() == 2) {
-                        steroes.insert(bus->get_name(), bus);
+                        list.append(bus);
                 }
         }
 
-        QList<AudioBus*> sorted;
-        sorted.append(monos.values());
-        sorted.append(steroes.values());
-
-        return sorted;
+        return list;
 }
 
 void Project::set_title(const QString& title)

@@ -60,6 +60,7 @@ public :
 
         AudioBus* get_audio_bus(qint64 id);
         AudioBus* create_software_audio_bus(const BusConfig& config);
+        void remove_software_audio_bus(AudioBus* bus);
         qint64 get_bus_id_for(const QString& busName);
         QList<TSend*> get_inputs_for_bus_track(TBusTrack* busTrack) const;
         void setup_default_hardware_buses();
@@ -238,6 +239,7 @@ signals:
 	void exportFinished();
 	void exportStartedForSheet(Sheet* );
 	void projectLoadFinished();
+        void projectLoadStarted();
         void exportMessage(QString);
         void trackPropertyChanged();
 };
