@@ -295,7 +295,8 @@ IF(HAVE_SLV2)
                         rdf
                         rasqal
                         raptor
-                )
+			${CMAKE_DL_LIBS}
+		)
         ENDIF(USE_SYSTEM_SLV2_LIBRARY)
 ENDIF(HAVE_SLV2)
 
