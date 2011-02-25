@@ -595,6 +595,21 @@ int AudioDevice::add_jack_channel(AudioChannel *channel)
         return -1;
 }
 
+void AudioDevice::remove_jack_channel(AudioChannel *channel)
+{
+#if defined (JACK_SUPPORT)
+        if (libjack_is_present) {
+                JackDriver* jackdriver = qobject_cast<JackDriver*>(m_driver);
+                if (!jackdriver) {
+                        return;
+                }
+
+                printf("removing channel from jackdriver\n");
+                jackdriver->remove_channel(channel);
+        }
+#endif
+}
+
 void AudioDevice::set_master_out_bus(AudioBus *bus)
 {
         m_masterOutBus = bus;

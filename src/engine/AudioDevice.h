@@ -92,6 +92,7 @@ public:
         QList<AudioChannel*> get_playback_channels() const;
         QList<AudioChannel*> get_capture_channels() const;
         int add_jack_channel(AudioChannel* channel);
+        void remove_jack_channel(AudioChannel* channel);
 	
 	QString get_device_name() const;
 	QString get_device_longname() const;

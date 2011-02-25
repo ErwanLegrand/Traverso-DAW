@@ -163,6 +163,14 @@ void JackDriver::remove_channel(AudioChannel* channel)
                         return;
                 }
         }
+
+        foreach(PortChannelPair* pcpair, m_inputs) {
+
+                if (pcpair->channel == channel) {
+                        pcpair->unregister = true;
+                        return;
+                }
+        }
 }
 
 
@@ -315,6 +323,7 @@ void JackDriver::update_config()
 
 void JackDriver::cleanup_removed_port_channel_pair(PortChannelPair* pcpair)
 {
+        PENTER;
         jack_port_unregister(m_jack_client, pcpair->jackport);
 
         device->delete_channel(pcpair->channel);
