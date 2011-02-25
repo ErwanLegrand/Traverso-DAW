@@ -176,12 +176,13 @@ TMenuTranslator::TMenuTranslator()
         add_entry("AudioClipView::edit_properties", tr("Edit Properties"));
         add_entry("AudioTrackView::insert_silence", tr("Insert Silence"));
         add_entry("AudioTrackView::show_track_gain_curve", tr("Show Track Gain Curve"));
-        add_entry("CurveView::add_node", tr("New node"));
-        add_entry("CurveView::remove_node", tr("Remove node"));
+	add_entry("CurveView::add_node", tr("New Node"));
+	add_entry("CurveView::remove_node", tr("Remove Node(s)"));
         add_entry("CurveView::remove_all_nodes", tr("Remove all Nodes"));
-        add_entry("CurveView::drag_node", tr("Move node"));
-        add_entry("CurveView::drag_node_vertical_only", tr("Move node (vertical only)"));
-        add_entry("FadeCurveView::bend", tr("Adjust Bend"));
+	add_entry("CurveView::drag_node", tr("Move Node"));
+	add_entry("CurveView::select_lazy_selected_node", tr("Select Node"));
+	add_entry("CurveView::toggle_select_all_nodes", tr("Select All Nodes"));
+	add_entry("FadeCurveView::bend", tr("Adjust Bend"));
         add_entry("FadeCurveView::strength", tr("Adjust Strength"));
         add_entry("FadeCurveView::select_fade_shape", tr("Select Preset"));
         add_entry("PluginView::edit_properties", tr("Edit..."));
@@ -286,7 +287,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("MoveCurveNode::move_down", tr("Move Down"));
         add_entry("MoveCurveNode::move_left", tr("Move Left"));
         add_entry("MoveCurveNode::move_right", tr("Move Right"));
-        add_entry("MoveMarker::move_left", tr("Move Left"));
+	add_entry("MoveCurveNode::toggle_vertical_only", tr("Toggle Vertical Only"));
+	add_entry("MoveMarker::move_left", tr("Move Left"));
         add_entry("MoveMarker::move_right", tr("Move Right"));
         add_entry("MoveMarker::next_snap_pos", tr("To next snap position"));
         add_entry("MoveMarker::prev_snap_pos", tr("To previous snap position"));
