@@ -89,7 +89,7 @@ TTimeLabel::TTimeLabel(QWidget* parent, TSession* session)
         setMaximumWidth(120);
         setMinimumHeight(22);
         setFocusPolicy(Qt::NoFocus);
-        setStyleSheet(  "color: lime;"
+	setStyleSheet(  "color: darkorange;"
                         "background-color: black;"
                         "font: 17px;"
                         "border-radius: 5px;");
@@ -181,7 +181,7 @@ SheetWidget::SheetWidget(TSession* sheet, QWidget* parent)
 	m_mainLayout->setSpacing(0);
 
 	setLayout(m_mainLayout);
-	
+
 	m_sv = new SheetView(this, m_clipsViewPort, m_trackPanel, m_timeLine, sheet);
         m_clipsViewPort->set_sheetview(m_sv);
         m_trackPanel->set_sheetview(m_sv);
