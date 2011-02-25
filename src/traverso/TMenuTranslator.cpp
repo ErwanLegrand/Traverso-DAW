@@ -137,8 +137,9 @@ TMenuTranslator::TMenuTranslator()
         add_entry("SpectralMeter", tr("Spectral Analyzer"));
 
         add_entry("Track::solo", tr("Solo"));
-        add_entry("Track::mute", tr("Mute"));
-        add_entry("AudioClip::mute", tr("Mute"));
+	add_entry("Track::mute", tr("Mute"));
+	add_entry("Track::toggle_show_track_volume_automation", tr("Show/Hide Volume Automation"));
+	add_entry("AudioClip::mute", tr("Mute"));
         add_entry("AudioClip::reset_fade_in", tr("In: Remove"));
         add_entry("AudioClip::reset_fade_out", tr("Out: Remove"));
         add_entry("AudioClip::reset_fade_both", tr("Both: Remove"));
@@ -261,7 +262,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("ProjectManager::exit", tr("Exit application"));
         add_entry("AudioTrack::toggle_arm", tr("Record: On/Off"));
         add_entry("AudioTrack::silence_others", tr("Silence other tracks"));
-        add_entry("CropClip::adjust_left", tr("Adjust Left"));
+	add_entry("AudioTrack::toggle_show_clip_volume_automation", tr("Show/Hide Clip Volume Automation"));
+	add_entry("CropClip::adjust_left", tr("Adjust Left"));
         add_entry("CropClip::adjust_right", tr("Adjust Right"));
         add_entry("Gain::increase_gain", tr("Increase"));
         add_entry("Gain::decrease_gain", tr("Decrease"));
