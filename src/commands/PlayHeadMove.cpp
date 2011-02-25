@@ -183,7 +183,15 @@ void PlayHeadMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
 
                 int x = m_sv->get_clips_viewport()->mapFromScene(m_playhead->scenePos()).x();
 
-                if (x < 0 || x > m_sv->get_clips_viewport()->width()) {
+
+                int canvasWidth = m_sv->get_clips_viewport()->width();
+                int nearBorderMargin = 50;
+                if (nearBorderMargin > (canvasWidth / 4))
+                {
+                        nearBorderMargin = 0;
+                }
+
+                if (x < (0 + nearBorderMargin) || x > (canvasWidth - nearBorderMargin)) {
                         m_sv->center_in_view(m_playhead, Qt::AlignHCenter);
                 }
         }
