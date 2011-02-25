@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClipView.h"
 #include "SheetView.h"
 #include "AudioTrackView.h"
+#include "TTrackLaneView.h"
 #include "FadeCurveView.h"
 #include "CurveView.h"
 
@@ -58,7 +59,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* clip )
-        : ViewItem(parent, clip)
+	: ViewItem(parent->get_primary_lane_view(), clip)
         , m_tv(parent)
         , m_clip(clip)
 {
@@ -89,7 +90,6 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
         // So to be sure the CurveNodeViews start offset get updated as well,
         // we call curveviews calculate_bounding_rect() function!
         m_gainCurveView->set_start_offset(m_clip->get_source_start_location());
-        m_gainCurveView->calculate_bounding_rect();
         connect(m_gainCurveView, SIGNAL(curveModified()), m_sv, SLOT(stop_follow_play_head()));
 
         connect(m_clip, SIGNAL(muteChanged()), this, SLOT(repaint()));
@@ -175,7 +175,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
                 }
         }
 
-        int channels = m_clip->get_channels();
+        int channels = m_clip->get_channel_count();
 
         if (channels > 0) {
                 if (m_waitingForPeaks) {
@@ -247,41 +247,65 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 
         bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
         TimeRef clipstartoffset = m_clip->get_source_start_location();
-        int channels = m_clip->get_channels();
+        int channels = m_clip->get_channel_count();
         int peakdatacount = microView ? pixelcount : pixelcount * 2;
         float* pixeldata[channels];
         float curveDefaultValue = 1.0;
-        int mixcurvedata = 0;
-        mixcurvedata |= m_gainCurveView->has_nodes();
-        int offset = (int)(m_clip->get_source_start_location() / m_sv->timeref_scalefactor);
+	int mixCurveData = 0;
+	int mixAudioClipCurveData = 0;
+	int mixTrackAutomationData = 0;
+	CurveView* trackAutomationView = m_tv->get_gain_curve_view();
+	mixAudioClipCurveData |= m_gainCurveView->has_nodes();
+	mixTrackAutomationData |= trackAutomationView->has_nodes();
 
-        if (!mixcurvedata) {
+	int offset = (int)(clipstartoffset / m_sv->timeref_scalefactor);
+
+	if (!mixAudioClipCurveData && !mixTrackAutomationData) {
                 curveDefaultValue = m_gainCurveView->get_default_value();
+		curveDefaultValue *= trackAutomationView->get_default_value();
         }
 
         float curvemixdown[peakdatacount];
-        if (mixcurvedata) {
-                mixcurvedata |= m_gainCurveView->get_vector(qRound(xstart) + offset, peakdatacount, curvemixdown);
-        }
+
+	if (mixAudioClipCurveData) {
+		mixAudioClipCurveData |= m_gainCurveView->get_vector(qRound(xstart) + offset, peakdatacount, curvemixdown);
+		mixCurveData |= mixAudioClipCurveData;
+	}
+
+	if (mixTrackAutomationData) {
+		if (mixAudioClipCurveData) {
+			float trackmixdown[peakdatacount];
+			int trackCurveMix = trackAutomationView->get_vector(qRound(xstart) + pos().x(), peakdatacount, trackmixdown);
+			if (trackCurveMix) {
+				for (int j=0; j<peakdatacount; ++j) {
+					curvemixdown[j] *= trackmixdown[j];
+				}
+				mixCurveData |= trackCurveMix;
+			}
+		} else {
+			mixTrackAutomationData |= trackAutomationView->get_vector(qRound(xstart) + pos().x(), peakdatacount, curvemixdown);
+			mixCurveData |= mixTrackAutomationData;
+		}
+	}
 
         for (int i = 0; i < m_FadeCurveViews.size(); ++i) {
                 FadeCurveView* view = m_FadeCurveViews.at(i);
                 float fademixdown[peakdatacount];
                 int fademix = 0;
 
-                if (mixcurvedata) {
+		if (mixCurveData) {
                         fademix = view->get_vector(qRound(xstart), peakdatacount, fademixdown);
                 } else {
                         fademix = view->get_vector(qRound(xstart), peakdatacount, curvemixdown);
                 }
 
-                if (mixcurvedata && fademix) {
+		if (mixCurveData && fademix) {
                         for (int j=0; j<peakdatacount; ++j) {
                                 curvemixdown[j] *= fademixdown[j];
                         }
                 }
 
-                mixcurvedata |= fademix;
+		mixCurveData |= fademix;
         }
 
         // Load peak data, mix curvedata and start painting it
@@ -336,7 +360,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
                         }
                 }
 
-                if (mixcurvedata) {
+		if (mixCurveData) {
                         int curvemixdownpos = 0;
                         if (m_classicView) {
                                 for (int i = 0; i < (pixelcount*2); ++i) {
@@ -528,7 +552,7 @@ void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
                 if (xstart < (7 + m_clipInfo.width())) {
                         p->drawPixmap(7, 1, m_clipInfo);
                 }
-        }
+	}
 }
 
 
@@ -537,7 +561,7 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
         p->save();
 
         int height;
-        int channels = m_clip->get_channels();
+        int channels = m_clip->get_channel_count();
         bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
         int linestartpos = xstart;
         if (xstart < m_lineOffset) linestartpos = m_lineOffset;
@@ -616,7 +640,7 @@ void AudioClipView::create_brushes()
         /** TODO: The following part is identical to calculations in draw_db_lines(). Move to a central place. **/
         bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
         int height;
-        int channels = m_clip->get_channels();
+        int channels = m_clip->get_channel_count();
 
         if ((m_mergedView) || (channels == 0)) {
                 channels = 1;
@@ -670,7 +694,7 @@ void AudioClipView::create_clipinfo_string()
         m_clipInfo = QPixmap(clipInfoWidth, m_infoAreaHeight);
         m_clipInfo.fill(Qt::transparent);
 
-        QPainter painter(&m_clipInfo);
+	QPainter painter(&m_clipInfo);
         painter.setFont(font);
         painter.drawText(m_clipInfo.rect(), clipinfoString);
 }
@@ -713,7 +737,7 @@ void AudioClipView::calculate_bounding_rect()
         PENTER4;
         prepareGeometryChange();
 // 	printf("AudioClipView::calculate_bounding_rect()\n");
-        set_height(m_tv->get_height());
+	m_height = m_parentViewItem->get_height();
         m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
         update_start_pos();
         ViewItem::calculate_bounding_rect();
@@ -744,7 +768,7 @@ int AudioClipView::get_childview_y_offset() const
 void AudioClipView::update_start_pos()
 {
 // 	printf("AudioClipView::update_start_pos()\n");
-        setPos(qRound(m_clip->get_track_start_location() / m_sv->timeref_scalefactor), m_tv->get_childview_y_offset());
+	setPos(qRound(m_clip->get_track_start_location() / m_sv->timeref_scalefactor), 0);
 }
 
 TCommand * AudioClipView::fade_range()
@@ -801,7 +825,6 @@ void AudioClipView::position_changed()
         // the start offset for those manually!
         m_gainCurveView->set_start_offset(m_clip->get_source_start_location());
         calculate_bounding_rect();
-        update();
 }
 
 void AudioClipView::load_theme_data()
