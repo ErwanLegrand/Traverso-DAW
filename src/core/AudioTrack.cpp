@@ -52,6 +52,7 @@ AudioTrack::AudioTrack(Sheet* sheet, const QString& name, int height )
         m_name = name;
         sheet->set_track_height(m_id, height);
         m_pan = m_numtakes = 0;
+	m_showClipVolumeAutomation = false;
 
         m_busInName = "Capture 1-2";
 
@@ -89,7 +90,8 @@ QDomNode AudioTrack::get_state( QDomDocument doc, bool istemplate)
         Track::get_state(doc, node, istemplate);
 
         node.setAttribute("numtakes", m_numtakes);
-        node.setAttribute("InputBus", m_busInName);
+	node.setAttribute("showclipvolumeautomation", m_showClipVolumeAutomation);
+	node.setAttribute("InputBus", m_busInName);
 
 
         if (! istemplate ) {
@@ -120,6 +122,7 @@ int AudioTrack::set_state( const QDomNode & node )
         Track::set_state(node);
 
         m_numtakes = e.attribute( "numtakes", "").toInt();
+	m_showClipVolumeAutomation = e.attribute("showclipvolumeautomation", 0).toInt();
 
         QDomElement ClipsNode = node.firstChildElement("Clips");
         if (!ClipsNode.isNull()) {
@@ -235,18 +238,18 @@ void AudioTrack::set_armed( bool armed )
 
 void AudioTrack::add_input_bus(AudioBus *bus)
 {
-        if (m_inputBus/* && m_isArmed*/) {
-                for (int i=0; i<m_inputBus->get_channel_count(); i++) {
-                        m_inputBus->get_channel(i)->remove_monitor(m_vumonitors.at(i));
-                }
-        }
-//        if (m_isArmed) {
-                for (int i=0; i<bus->get_channel_count(); i++) {
-                        if (bus->get_channel_count() < i) {
-                                bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
-                        }
-                }
+//        if (m_inputBus/* && m_isArmed*/) {
+//                for (int i=0; i<m_inputBus->get_channel_count(); i++) {
+//                        m_inputBus->get_channel(i)->remove_monitor(m_vumonitors.at(i));
+//                }
 //        }
+////        if (m_isArmed) {
+//                for (int i=0; i<bus->get_channel_count(); i++) {
+//                        if (bus->get_channel_count() < i) {
+//                                bus->get_channel(i)->add_monitor(m_vumonitors.at(i));
+//                        }
+//                }
+////        }
         Track::add_input_bus(bus);
 }
 
@@ -467,3 +470,10 @@ int AudioTrack::get_total_clips()
         return m_clips.size();
 }
 
+TCommand* AudioTrack::toggle_show_clip_volume_automation()
+{
+	m_showClipVolumeAutomation = !m_showClipVolumeAutomation;
+	emit automationVisibilityChanged();
+
+	return (TCommand*) 0;
+}

@@ -55,6 +55,7 @@ public :
         QList<AudioClip*> get_cliplist() const;
         void get_render_range(TimeRef& startlocation, TimeRef& endlocation);
         int get_total_clips();
+	bool show_clip_volume_automation() const {return m_showClipVolumeAutomation;}
 
         int set_state( const QDomNode& node );
 
@@ -71,6 +72,7 @@ private :
         APILinkedList 	m_clips;
         int             m_numtakes;
         bool            m_isArmed;
+	bool		m_showClipVolumeAutomation;
 
         void set_armed(bool armed);
         void init();
@@ -87,6 +89,7 @@ public slots:
 
         TCommand* toggle_arm();
         TCommand* silence_others();
+	TCommand* toggle_show_clip_volume_automation();
 
 private slots:
         void private_add_clip(AudioClip* clip);
