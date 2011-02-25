@@ -534,7 +534,8 @@ void CurveView::node_moved( )
 	if (next) xright = (int) next->x();
 	
 	
-	update(xleft, 0, xright - xleft + 3, m_boundingRect.height());
+//	update(xleft, 0, xright - xleft + 3, m_boundingRect.height());
+	update();
 }
 
 void CurveView::load_theme_data()
