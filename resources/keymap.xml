@@ -26,12 +26,12 @@
 		</keyfact>
                 <keyfact type="FKEY" key1="F2" >
                         <Objects>
-                                <Object objectname="Sheet" slotsignature="toggle_effects_mode" modes="All" sortorder="53" />
-                        </Objects>
+			<Object objectname="Track" slotsignature="toggle_show_clip_volume_automation" modes="All" sortorder="53" />
+			</Objects>
                 </keyfact>
                 <keyfact type="FKEY" key1="F3" >
                         <Objects>
-                                <Object objectname="AudioTrackView" slotsignature="show_track_gain_curve" modes="All" sortorder="53" />
+				<Object objectname="Track" slotsignature="toggle_show_track_volume_automation" modes="All" sortorder="53" />
                         </Objects>
                 </keyfact>
                 <keyfact type="FKEY" key1="F11" >
@@ -122,8 +122,9 @@
                                 <Object objectname="SheetView" slotsignature="center_playhead" modes="All" sortorder="15" modifierkeys="ALT" submenu="Playhead" />
                                 <Object objectname="TimeLineView" slotsignature="playhead_to_marker" modifierkeys="SHIFT" modes="All" sortorder="2" />
                                 <Object objectname="Zoom" slotsignature="toggle_vertical_horizontal_jog_zoom" modes="All" sortorder="9" isholdmodifier="1" />
-                                <Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" isholdmodifier="1" />
-                                <Object objectname="WorkCursorMove" slotsignature="move_to_play_cursor" modes="All" sortorder="10" isholdmodifier="1" />
+				<Object objectname="MoveClip" slotsignature="toggle_vertical_only" modes="All" sortorder="10" isholdmodifier="1" />
+				<Object objectname="MoveCurveNode" slotsignature="toggle_vertical_only" modes="All" sortorder="10" isholdmodifier="1" />
+				<Object objectname="WorkCursorMove" slotsignature="move_to_play_cursor" modes="All" sortorder="10" isholdmodifier="1" />
                         </Objects>
 		</keyfact>
                 <keyfact type="FKEY" key1="W" >
@@ -158,6 +159,7 @@
 				<Object objectname="Project" slotsignature="select" modes="All" />
                                 <Object objectname="ProjectManager" slotsignature="save_project" modifierkeys="CTRL" modes="All" />
                                 <Object objectname="MoveCommand" slotsignature="toggle_snap_on_off" modes="All" sortorder="6" />
+				<Object objectname="CurveView" slotsignature="select_lazy_selected_node" modes="All" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="SPACE" >
@@ -169,12 +171,12 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="A" >
 			<Objects>
-                                <Object objectname="AudioTrack" slotsignature="toggle_arm" modes="All" sortorder="4" />
                                 <Object objectname="WorkCursorMove" slotsignature="prev_snap_pos" modes="All" sortorder="1" />
                                 <Object objectname="MoveClip" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="5" />
                                 <Object objectname="MoveEdge" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="5" />
                                 <Object objectname="MoveMarker" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" modes="All" sortorder="1" />
                                 <Object objectname="PlayHeadMove" slotsignature="prev_snap_pos" autorepeatinterval="100" autorepeatstartdelay="200" modes="All" sortorder="1" />
+				<Object objectname="CurveView" slotsignature="toggle_select_all_nodes" modes="All" modifierkeys="CTRL" sortorder="37" />
                         </Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="O" >
@@ -185,11 +187,6 @@
 		<keyfact type="FKEY" key1="U" >
 			<Objects>
                                 <Object objectname="ProcessingData" slotsignature="mute" modes="All" sortorder="4" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY" key1="X" >
-			<Objects>
-				<Object objectname="AudioClipView" modes="All" sortorder="15" pluginname="TraversoCommands" commandname="SplitClip" />
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="F4" >
@@ -257,6 +254,7 @@
 		</keyfact>
 		<keyfact type="FKEY" key1="R" >
 			<Objects>
+				<Object objectname="AudioTrack" slotsignature="toggle_arm" modes="All" sortorder="4" />
 				<Object objectname="FadeCurve" slotsignature="toggle_raster" modes="All" sortorder="11" />
 			</Objects>
 		</keyfact>
@@ -431,7 +429,7 @@
 			<Objects>
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="9" modifierkeys="CTRL" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
 				<Object objectname="AudioClipView" mousehint="LRUD" modes="All" pluginname="TraversoCommands" commandname="MoveClip" arguments="move" />
-				<Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="Effects" sortorder="3" />
+				<Object objectname="CurveView" mousehint="LRUD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="MoveCurveNodes" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
                                 <Object objectname="TrackView" mousehint="UD" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack"/>
 			</Objects>
@@ -456,7 +454,7 @@
 			<Objects>
                                 <Object objectname="AudioClipView" mousehint="LRUD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="MoveClip"  arguments="move" />
                                 <Object objectname="TrackView" mousehint="UD" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack"/>
-                                <Object objectname="CurveView" mousehint="LRUD" slotsignature="drag_node" modes="All" sortorder="3" />
+				<Object objectname="CurveView" mousehint="LRUD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="MoveCurveNodes" />
                                 <Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
                                 <Object objectname="MarkerView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
                                 <Object objectname="SheetView" mousehint="LR" modes="All" sortorder="20" pluginname="TraversoCommands" modifierkeys="SHIFT" commandname="FoldSheet" arguments="fold_sheet" />
@@ -596,11 +594,6 @@
 		</keyfact>
 		<keyfact type="D_FKEY" key1="R" >
 			<Objects>
-				<Object objectname="AudioClip" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveClip" />
-                                <Object objectname="Track" modes="All" sortorder="50" pluginname="TraversoCommands" commandname="RemoveTrack" />
-				<Object objectname="CurveView" slotsignature="remove_node" modes="All" />
-				<Object objectname="PluginView" slotsignature="remove_plugin" modes="All" />
-				<Object objectname="TimeLineView" slotsignature="remove_marker" modes="All" />
 				<Object objectname="FadeCurve" slotsignature="reset" modes="All" sortorder="6" />
 			</Objects>
 		</keyfact>
@@ -647,7 +640,7 @@
                                 <Object objectname="AudioClip" slotsignature="reset_fade_both" modes="All" sortorder="38" submenu="Fade" />
 			</Objects>
 		</keyfact>
-		<keyfact type="D_FKEY2" key1="C" key2="X" >
+		<keyfact type="D_FKEY2" key1="C" key2="" >
 			<Objects>
 				<Object objectname="CurveView" slotsignature="remove_all_nodes" modes="Effects" sortorder="40" />
 			</Objects>
