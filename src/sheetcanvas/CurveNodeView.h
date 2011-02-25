@@ -38,18 +38,25 @@ public:
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
-	void set_selected();
-	void reset_size();
+	void set_soft_selected(bool selected);
+	void set_hard_selected(bool selected);
 	
 	void set_color(QColor color);
 	void load_theme_data();
+
 	CurveNode* get_curve_node() const {return m_node;}
         CurveView* get_curve_view() const {return m_curveview;}
+
+	bool is_hard_selected() const {return m_isHardSelected;}
 	
 private:
 	CurveView*	m_curveview;
 	CurveNode*	m_node;
 	QColor		m_color;
+	bool		m_isSoftSelected;
+	bool		m_isHardSelected;
+
+	void update_hard_soft_selected_state();
 
 public slots:
 	void update_pos();

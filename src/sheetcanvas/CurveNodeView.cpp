@@ -39,11 +39,14 @@ CurveNodeView::CurveNodeView( SheetView * sv, CurveView* curveview, CurveNode * 
 	PENTERCONS;
 	m_sv = sv;
 	m_curveview = curveview;
-	int size = themer()->get_property("CurveNode:diameter", 6).toInt();
+	m_isSoftSelected = m_isHardSelected = false;
 	setCursor(themer()->get_cursor("CurveNode"));
-	m_boundingRect = QRectF(0, 0, size, size);
+
+	setFlags(QGraphicsItem::ItemIgnoresTransformations);
+
 	load_theme_data();
-	
+	update_hard_soft_selected_state();
+
 	connect(m_node->m_curve, SIGNAL(nodePositionChanged()), this, SLOT(update_pos()));
 }
 
@@ -60,15 +63,12 @@ void CurveNodeView::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	
 	painter->save();
 	
-	QPen pen;
-	pen.setColor(m_color);
-	
 	QPointF mapped = mapToParent(QPointF(0, 0));
 	int x = (int) mapped.x();
 	int y = (int) mapped.y();
 	int heightadjust = 0;
 	int widthadjust = 0;
-	
+
 	if ( (y + m_boundingRect.height()) > (int) m_parentViewItem->boundingRect().height() ) {
 		heightadjust = y - (int)m_parentViewItem->boundingRect().height() + (int) m_boundingRect.height();
 	}
@@ -80,16 +80,21 @@ void CurveNodeView::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 // 	printf("widthadjust is %d, heightadjust = %d\n", widthadjust, heightadjust);
 	if (x > 0) x = 0;
 	if (y > 0) y = 0;
-	
+
 	QRectF rect = m_boundingRect.adjusted(- x, - y, - widthadjust, -heightadjust);
 	painter->setClipRect(rect);
 	painter->setRenderHint(QPainter::Antialiasing);
-	painter->setPen(pen);
 	
 	QPainterPath path;
+	QColor color = m_color;
+	if (m_isHardSelected /*&& !m_isSoftSelected*/)
+	{
+		color = QColor(Qt::blue);
+	}
+
 	path.addEllipse(m_boundingRect);
+	painter->fillPath(path, QBrush(color));
 	
-	painter->fillPath(path, QBrush(m_color));
 	
 	painter->restore();
 } 
@@ -109,7 +114,7 @@ void CurveNodeView::set_color(QColor color)
 void CurveNodeView::update_pos( )
 {
 	qreal halfwidth = (m_boundingRect.width() / 2);
-	qreal parentheight = m_parentViewItem->boundingRect().height();
+	qreal parentheight = m_parentViewItem->get_height();
 	qreal when = ((TimeRef(m_node->get_when()) - m_curveview->get_start_offset()) / m_sv->timeref_scalefactor) - halfwidth;
 	qreal value = parentheight - (m_node->get_value() * parentheight + halfwidth);
 	setPos(when, value);
@@ -117,26 +122,37 @@ void CurveNodeView::update_pos( )
 	set_when_and_value((m_node->get_when() / m_sv->timeref_scalefactor), m_node->get_value());
 }
 
-void CurveNodeView::set_selected( )
+void CurveNodeView::set_soft_selected(bool selected)
 {
-	int size = themer()->get_property("CurveNode:diameter", 6).toInt();
-        m_boundingRect.setWidth(size + 1.5);
-        m_boundingRect.setHeight(size + 1.5);
+	m_isSoftSelected = selected;
+	update_hard_soft_selected_state();
+}
+
+void CurveNodeView::set_hard_selected(bool selected)
+{
+	m_isHardSelected = selected;
+	update_hard_soft_selected_state();
+}
+
+void CurveNodeView::update_hard_soft_selected_state()
+{
+	int size = 8;//themer()->get_property("CurveNode:diameter", 6).toInt();
+
+	if (m_isSoftSelected || m_isHardSelected) {
+		m_boundingRect.setWidth(size + 2);
+		m_boundingRect.setHeight(size + 2);
+	} else {
+		m_boundingRect.setWidth(size);
+		m_boundingRect.setHeight(size);
+	}
+
 	update_pos();
 }
 
-void CurveNodeView::reset_size( )
-{
-	int size = themer()->get_property("CurveNode:diameter", 6).toInt();
-	m_boundingRect.setWidth(size);
-	m_boundingRect.setHeight(size);
-	update_pos();
-}
 
 void CurveNodeView::load_theme_data()
 {
 	m_color = themer()->get_color("CurveNode:default");
-	calculate_bounding_rect();
 }
 
 
