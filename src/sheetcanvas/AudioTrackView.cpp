@@ -88,6 +88,9 @@ void AudioTrackView::add_new_audioclipview( AudioClip * clip )
 	PENTER;
 	AudioClipView* clipView = new AudioClipView(m_sv, this, clip);
 	m_clipViews.append(clipView);
+	if (!m_track->show_clip_volume_automation()) {
+		clipView->get_gain_curve_view()->hide();
+	}
 }
 
 void AudioTrackView::remove_audioclipview( AudioClip * clip )
