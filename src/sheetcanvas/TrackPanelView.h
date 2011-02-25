@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class Track;
 class AudioTrack;
 class TrackView;
+class TTrackLaneView;
 class TrackPanelView;
 class AudioTrackView;
 class TrackPanelViewPort;
@@ -101,28 +102,6 @@ public slots:
 	TCommand* toggle();
 };
 
-class TrackPanelBus : public ViewItem
-{
-	Q_OBJECT
-public:
-        TrackPanelBus(TrackPanelView* view, Track* track, int busType);
-	TrackPanelBus(){}
-	
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	
-	enum { BUSIN, BUSOUT };
-
-private:
-        Track*	m_track;
-        int	m_type;
-	QString m_busName;
-	QPixmap m_pix;
-
-public slots:
-        void bus_changed();
-};
-
-
 class TrackPanelView : public ViewItem
 {
 	Q_OBJECT
@@ -140,16 +119,18 @@ protected:
         Track*                  m_track;
         TrackView*              m_trackView;
 	TrackPanelViewPort*	m_viewPort;
-	TrackPanelGain*		m_gainView;
-	TrackPanelPan*		m_panView;
 	
-        TrackPanelLed*          m_muteLed;
-        TrackPanelLed*          m_soloLed;
-	
-        TrackPanelBus*          m_inBus;
-        TrackPanelBus*  	m_outBus;
+	TrackPanelLed*          m_infoLed;
+	TrackPanelLed*          m_muteLed;
+	TrackPanelLed*          m_soloLed;
+	TrackPanelLed*          m_portLed;
+	TrackPanelLed*          m_preLedButton;
+	TrackPanelLed*          m_panKnob;
+
 
         VUMeterView*            m_vuMeterView;
+
+	QMap<int, ViewItem*>	m_ledViews;
 
 	void draw_panel_name(QPainter* painter);
         virtual void layout_panel_items();
@@ -202,6 +183,24 @@ protected:
 private:
 };
 
+
+
+class TAutomationTrackPanelView : public ViewItem
+{
+	Q_OBJECT
+
+public:
+	TAutomationTrackPanelView(TTrackLaneView* laneView);
+	~TAutomationTrackPanelView();
+
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+	void calculate_bounding_rect();
+
+private:
+	TTrackLaneView*	m_laneView;
+
+};
 
 #endif
 

@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioDevice.h"
 #include "TConfig.h"
 #include "TrackPanelView.h"
+#include "TTrackLaneView.h"
 #include "AudioTrackView.h"
 #include "TBusTrackView.h"
 #include "SheetView.h"
@@ -55,19 +56,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define MICRO_HEIGHT 35
 #define SMALL_HEIGHT 65
 
-const int LED_SPACING = 5;
-const int LED_WIDTH = 17;
-const int LED_HEIGHT = 12;
-const int MUTE_X_POS = 120;
-const int SOLO_X_POS = MUTE_X_POS + LED_SPACING + LED_WIDTH;
-const int REC_X_POS = SOLO_X_POS + LED_SPACING + LED_WIDTH;
-const int LED_Y_POS = 3;
+const int LED_WIDTH = 16;
+const int LED_HEIGHT = 16;
+const int LED_Y_POS = 24;
 const int VU_WIDTH = 8;
-const int GAIN_X_POS = 10;
-const int GAIN_Y_POS = 23;
-const int PAN_X_POS = 10;
-const int PAN_Y_POS = GAIN_Y_POS + 13;
-const int INPUT_OUTPUT_BUTTON_Y_POS = PAN_Y_POS + 30;
+const int GAIN_Y_POS = 48;
+const int INDENT = 10;
 
 
 TrackPanelView::TrackPanelView(TrackView* view)
@@ -78,19 +72,25 @@ TrackPanelView::TrackPanelView(TrackView* view)
         m_sv = view->get_sheetview();
 
         m_trackView = view;
-        m_viewPort = m_trackView->get_sheetview()->get_trackpanel_view_port();
+	m_viewPort = m_sv->get_trackpanel_view_port();
         m_track = m_trackView->get_track();
 
-        m_gainView = new TrackPanelGain(this, m_track);
-        m_gainView->set_width(m_viewPort->width() - 30);
+	m_infoLed = new TrackPanelLed(this, m_track, "I", "info");
+	m_soloLed = new TrackPanelLed(this, m_track, "S", "solo");
+	m_muteLed = new TrackPanelLed(this, m_track, "M", "mute");
+	m_preLedButton = new TrackPanelLed(this, m_track, "P", "pre");
+	m_panKnob = new TrackPanelLed(this, m_track, "PAN", "pan");
 
-        m_panView = new TrackPanelPan(this, m_track);
-        m_panView->set_width(m_viewPort->width() - 30);
+	m_infoLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
+	m_muteLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
+	m_soloLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
+	m_preLedButton->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
+	m_preLedButton->ison_changed(true);
+	m_panKnob->set_bounding_rect(QRectF(0, 0, LED_WIDTH + 4, LED_HEIGHT + 4));
 
-        m_soloLed = new TrackPanelLed(this, m_track, "solo", "solo");
-        m_muteLed = new TrackPanelLed(this, m_track, "mute", "mute");
-        m_muteLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
-        m_soloLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
+	m_ledViews.insert(10, m_muteLed);
+	m_ledViews.insert(11, m_soloLed);
+	m_ledViews.insert(1, m_infoLed);
 
         if (m_track->is_solo()) {
                 m_soloLed->ison_changed(true);
@@ -101,9 +101,6 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         m_vuMeterView = new VUMeterView(this, m_track);
 
-        m_inBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSIN);
-        m_outBus = new TrackPanelBus(this, m_track, TrackPanelBus::BUSOUT);
-
         m_viewPort->scene()->addItem(this);
 
         connect(m_track, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
@@ -111,9 +108,6 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain()));
         connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
-
-        connect(pm().get_project(), SIGNAL(trackPropertyChanged()), m_inBus, SLOT(bus_changed()));
-        connect(pm().get_project(), SIGNAL(trackPropertyChanged()), m_outBus, SLOT(bus_changed()));
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
         connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
@@ -160,10 +154,10 @@ void TrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 
         if (m_trackView->m_bottomborderwidth > 0) {
                 QColor color = themer()->get_color("Track:clipbottomoffset");
-                painter->fillRect(xstart, m_sv->get_track_height(m_track) - m_trackView->m_bottomborderwidth, pixelcount, m_trackView->m_bottomborderwidth, color);
+		painter->fillRect(xstart, m_trackView->get_total_height() - m_trackView->m_bottomborderwidth, pixelcount, m_trackView->m_bottomborderwidth, color);
         }
 
-        painter->fillRect(m_viewPort->width() - 3, 0, 3, m_sv->get_track_height(m_track) - 1, themer()->get_color("TrackPanel:trackseparation"));
+	painter->fillRect(m_viewPort->width() - 3, 0, 3, m_trackView->get_total_height() - 1, themer()->get_color("TrackPanel:trackseparation"));
 
         if (xstart < 180) {
                 draw_panel_name(painter);
@@ -177,37 +171,39 @@ void TrackPanelView::update_name()
 
 void TrackPanelView::update_gain()
 {
-        m_gainView->update();
+//        m_gainView->update();
 }
 
 
 void TrackPanelView::update_pan()
 {
-        m_panView->update();
+//        m_panView->update();
 }
 
 
 void TrackPanelView::draw_panel_name(QPainter* painter)
 {
-        QString title = QString::number(m_track->get_sort_index() + 1) + "  " + m_track->get_name();
+	painter->save();
+	painter->setRenderHint(QPainter::Antialiasing);
 
-        if (m_sv->get_track_height(m_track) < SMALL_HEIGHT) {
-                QFontMetrics fm(themer()->get_font("TrackPanel:fontscale:name"));
-                title = fm.elidedText(title, Qt::ElideMiddle, 110);
-        }
+	QColor color = themer()->get_color("BusTrack:background").darker(200);
+	painter->setPen(color.darker(180));
+	painter->setBrush(color);
+	int corner = 5;
+	painter->drawRoundedRect(INDENT, 3, 175, 15, corner, corner);
 
-        painter->save();
         painter->setPen(themer()->get_color("TrackPanel:text"));
         painter->setFont(themer()->get_font("TrackPanel:fontscale:name"));
-        painter->drawText(4, 12, title);
-        painter->restore();
+	painter->drawText(INDENT + 8, 14, m_track->get_name());
+
+	painter->restore();
 }
 
 
 void TrackPanelView::calculate_bounding_rect()
 {
         prepareGeometryChange();
-        m_boundingRect = QRectF(0, 0, 200, m_sv->get_track_height(m_track));
+	m_boundingRect = QRectF(0, 0, 200, m_trackView->get_total_height());
         layout_panel_items();
 }
 
@@ -222,60 +218,40 @@ void TrackPanelView::layout_panel_items()
                 m_vuMeterView->setPos(m_boundingRect.width() - VU_WIDTH - 5, 2);
         } else {
                 adjust = 14;
-                m_vuMeterView->set_bounding_rect(QRectF(0, 0, 170, VU_WIDTH));
-                m_vuMeterView->setPos(10, GAIN_Y_POS);
+		m_vuMeterView->set_bounding_rect(QRectF(0, 0, 140, 16));
+		m_vuMeterView->setPos(10, GAIN_Y_POS);
         }
 
+	m_panKnob->setPos(165, GAIN_Y_POS - 2);
 
-        m_gainView->setPos(GAIN_X_POS, GAIN_Y_POS + adjust);
-        m_panView->setPos(PAN_X_POS, PAN_Y_POS + adjust);
 
-        m_inBus->setPos(4, INPUT_OUTPUT_BUTTON_Y_POS);
-        m_outBus->setPos(96, INPUT_OUTPUT_BUTTON_Y_POS);
+	int ledViewXPos = INDENT;
+	int ledSpacing = 8;
+	foreach(ViewItem* ledView, m_ledViews) {
+		ledView->setPos(ledViewXPos, LED_Y_POS);
+		ledViewXPos += ledView->boundingRect().width() + ledSpacing;
+	}
 
-        m_soloLed->setPos(SOLO_X_POS, LED_Y_POS);
-        m_muteLed->setPos(MUTE_X_POS, LED_Y_POS);
-
-        if ((m_outBus->pos().y() + m_outBus->boundingRect().height()) >= height) {
-                m_outBus->hide();
-                m_inBus->hide();
-        } else {
-                m_outBus->show();
-                m_inBus->show();
-        }
-
-        if ( (m_panView->pos().y() + m_panView->boundingRect().height()) >= height) {
-                m_panView->hide();
-        } else {
-                m_panView->show();
-        }
-
-        if ( (m_gainView->pos().y() + m_gainView->boundingRect().height()) >= height) {
-                m_gainView->hide();
-        } else {
-                m_gainView->show();
-        }
+	int preLedXPos = 135;
+	m_preLedButton->setPos(preLedXPos, LED_Y_POS);
 
         if ( (m_vuMeterView->pos().y() + m_vuMeterView->boundingRect().height()) >= height) {
                 m_vuMeterView->hide();
+		m_panKnob->hide();
         } else {
                 m_vuMeterView->show();
+		m_panKnob->show();
         }
-
 }
 
 void TrackPanelView::theme_config_changed()
 {
         m_vuMeterView->update_orientation();
         layout_panel_items();
-        m_gainView->load_theme_data();
-        m_panView->update();
-        m_soloLed->update();
-        m_muteLed->update();
-        m_inBus->update();
-        m_outBus->update();
+	foreach(ViewItem* ledViews, m_ledViews) {
+		ledViews->update();
+	}
 }
-
 
 
 AudioTrackPanelView::AudioTrackPanelView(AudioTrackView* trackView)
@@ -284,8 +260,10 @@ AudioTrackPanelView::AudioTrackPanelView(AudioTrackView* trackView)
 	PENTERCONS;
 
         m_tv = trackView;
-        m_recLed = new TrackPanelLed(this, m_track, "rec", "toggle_arm");
+	m_recLed = new TrackPanelLed(this, m_track, "R", "toggle_arm");
         m_recLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
+
+	m_ledViews.insert(12, m_recLed);
 
         if (m_tv->get_track()->armed()) {
                 m_recLed->ison_changed(true);
@@ -308,7 +286,6 @@ void AudioTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsIte
 void AudioTrackPanelView::layout_panel_items()
 {
         TrackPanelView::layout_panel_items();
-        m_recLed->setPos(REC_X_POS, LED_Y_POS);
 }
 
 
@@ -317,10 +294,7 @@ TBusTrackPanelView::TBusTrackPanelView(TBusTrackView* view)
 {
         PENTERCONS;
 
-        m_panView->hide();
-        m_muteLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
-        m_soloLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
-
+//        m_panView->hide();
 }
 
 TBusTrackPanelView::~TBusTrackPanelView( )
@@ -349,6 +323,42 @@ void TBusTrackPanelView::layout_panel_items()
         TrackPanelView::layout_panel_items();
 }
 
+
+TAutomationTrackPanelView::TAutomationTrackPanelView(TTrackLaneView* laneView)
+	: ViewItem(laneView, laneView)
+{
+	PENTERCONS;
+	m_laneView = laneView;
+	setZValue(laneView->zValue() + 200);
+}
+
+TAutomationTrackPanelView::~TAutomationTrackPanelView( )
+{
+	PENTERDES;
+}
+
+
+void TAutomationTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+	Q_UNUSED(widget);
+	Q_UNUSED(option);
+
+//	int xstart = (int)option->exposedRect.x();
+//	int pixelcount = (int)option->exposedRect.width();
+
+	QColor color = themer()->get_color("BusTrack:background");
+	painter->fillRect(m_boundingRect, color);
+
+	painter->setPen(themer()->get_color("TrackPanel:text"));
+	painter->setFont(themer()->get_font("TrackPanel:fontscale:name"));
+	painter->drawText(20, 20, m_parentViewItem->get_name());
+}
+
+void TAutomationTrackPanelView::calculate_bounding_rect()
+{
+	prepareGeometryChange();
+	m_boundingRect = QRectF(0, 0, 175, m_laneView->get_height());
+}
 
 
 TrackPanelGain::TrackPanelGain(TrackPanelView *parent, Track *track)
@@ -536,20 +546,20 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 	
 	painter->save();
 	
-//	painter->setRenderHint(QPainter::Antialiasing);
+	painter->setRenderHint(QPainter::Antialiasing);
 	
 	if (m_isOn) {
+		QColor background = themer()->get_color("TrackPanel:led:inactive");
 		QColor color = themer()->get_color("TrackPanel:" + m_name + "led");
                 if (has_active_context()) {
 			color = color.light(110);
 		}
 		
-		painter->setPen(themer()->get_color("TrackPanel:led:margin:active"));
-		painter->setBrush(color);
-		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
-		
+		painter->setPen(color);
+		painter->setBrush(background);
+		painter->drawEllipse(m_boundingRect);
+
 		painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
-                painter->setPen(themer()->get_color("TrackPanel:led:font:active"));
 		
                 QString shortString = m_name.left(1).toUpper();
                 painter->drawText(m_boundingRect, Qt::AlignCenter, shortString);
@@ -561,13 +571,27 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		
 		painter->setPen(themer()->get_color("TrackPanel:led:margin:inactive"));
 		painter->setBrush(color);
-		painter->drawRoundRect(m_boundingRect, roundfactor, roundfactor);
+		painter->drawEllipse(m_boundingRect);
 		
 		painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
 		painter->setPen(themer()->get_color("TrackPanel:led:font:inactive"));
-		
-                QString shortString = m_name.left(1).toUpper();
-                painter->drawText(m_boundingRect, Qt::AlignCenter, shortString);
+
+		if (m_name == "PAN") {
+			painter->setBrush(QColor(Qt::transparent));
+			QPen pen(QColor(100, 100, 100, 220));
+			pen.setWidth(2);
+			painter->setPen(pen);
+			painter->drawEllipse(m_boundingRect);
+			painter->drawLine(m_boundingRect.width() / 2, 0, m_boundingRect.width() / 2, m_boundingRect.height() / 2);
+		} else if (m_name == "I") {
+			painter->setPen(themer()->get_color("TrackPanel:led:margin:inactive"));
+			painter->setBrush(QColor(255, 255, 255, 50));
+			painter->drawEllipse(m_boundingRect);
+			painter->setPen(themer()->get_color("TrackPanel:led:font:inactive"));
+			painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
+		} else {
+			painter->drawText(m_boundingRect, Qt::AlignCenter, m_name);
+		}
 	}
 	
 	painter->restore();
@@ -593,93 +617,3 @@ TCommand * TrackPanelLed::toggle()
         QMetaObject::invokeMethod(m_track, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(TCommand*, com));
 	return 0;
 }
-
-
-
-TrackPanelBus::TrackPanelBus(TrackPanelView *view, Track *track, int busType)
-        : ViewItem(view, 0)
-        , m_track(track)
-        , m_type(busType)
-{
-	bus_changed();
-        m_boundingRect = QRectF(0, 0, 84, 13);
-}
-
-void TrackPanelBus::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
-{
-	Q_UNUSED(option);
-	Q_UNUSED(widget);
-	
-	QColor color = themer()->get_color("TrackPanel:bus:background");
-	
-	painter->save();
-	
-        if (has_active_context()) {
-		color = color.light(110);
-	}
-	 
-	painter->setPen(themer()->get_color("TrackPanel:bus:margin"));
-	painter->setBrush(color);
-        painter->drawRect(m_boundingRect);
-	
-        painter->setFont(themer()->get_font("TrackPanel:fontscale:bus"));
-	painter->setPen(themer()->get_color("TrackPanel:bus:font"));
-	
-			
-        if (m_type == BUSIN) {
-                painter->drawPixmap(3, 3, m_pix);
-                painter->drawText(m_boundingRect.adjusted(20, 0, 0, 0), Qt::AlignVCenter, m_busName);
-        } else {
-                painter->drawPixmap(m_boundingRect.width() - (m_pix.width() + 3), 3, m_pix);
-                painter->drawText(m_boundingRect.adjusted(3, 0, 0, 0), Qt::AlignVCenter, m_busName);
-        }
-	
-	painter->restore();
-}
-
-void TrackPanelBus::bus_changed()
-{
-	QFontMetrics fm(themer()->get_font("TrackPanel:bus"));
-	prepareGeometryChange();
-        int maxbuswidth = 70;
-	
-	if (m_type == BUSIN) {
-                if (m_track->get_type() == Track::BUS) {
-                        QList<TSend*> sends  = pm().get_project()->get_inputs_for_bus_track(qobject_cast<TBusTrack*>(m_track));
-                        if (sends.size() == 0) {
-                                m_busName = "No Input";
-                        } else if (sends.size() == 1) {
-                                m_busName = sends.first()->get_from_name();
-                        } else {
-                                m_busName = "Multi" + QString("  (%1)").arg(sends.size());
-                        }
-
-                } else {
-                        m_busName =  m_track-> get_bus_in_name();
-                }
-
-                int stringwidth = fm.width(m_busName) + 10;
-                if (stringwidth > maxbuswidth) {
-                        stringwidth = maxbuswidth;
-                }
-                m_pix = find_pixmap(":/bus_in");
-	} else {
-                QList<TSend*> sends  = m_track->get_post_sends();
-                if (sends.size() == 0) {
-                        m_busName = "No Outputs";
-                } else if (sends.size() == 1) {
-                        m_busName = sends.first()->get_name();
-                } else {
-                        m_busName = "Multi" + QString("  (%1)").arg(sends.size());
-                }
-
-                int stringwidth = fm.width(m_busName) + 10;
-                if (stringwidth > maxbuswidth) {
-                        stringwidth = maxbuswidth;
-                }
-                m_pix = find_pixmap(":/bus_out");
-	}
-	
-	update();
-}
-

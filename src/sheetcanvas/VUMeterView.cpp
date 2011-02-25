@@ -82,14 +82,21 @@ void VUMeterView::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 {
         PENTER3;
 
-        painter->setPen(themer()->get_color("VUMeter:levelseparator"));
+	QPen pen(themer()->get_color("VUMeter:levelseparator"));
+	pen.setWidth(m_vulevelspacing);
+	painter->setPen(pen);
         if (m_orientation == Qt::Vertical) {
                 int center = qRound(m_boundingRect.width() / 2);
                 painter->drawLine(center, 0, center, int(m_boundingRect.height()));
         } else {
-                int center = qRound(m_boundingRect.height() / 2) - 1;
-                painter->drawLine(0, center, int(m_boundingRect.width()), center);
+		int center = qRound(m_boundingRect.height() / 2);
+		painter->drawLine(2, center, int(m_boundingRect.width()) - 4, center);
         }
+
+	painter->setRenderHint(QPainter::Antialiasing);
+	painter->setBrush(QColor(0, 0, 0, 250));
+	painter->setPen(Qt::NoPen);
+	painter->drawRoundedRect(m_boundingRect, 5, 5);
 }
 
 void VUMeterView::calculate_bounding_rect()
@@ -102,14 +109,15 @@ void VUMeterView::set_bounding_rect(QRectF rect)
         m_boundingRect = rect;
         int vertPos = 0;
         int horizontalPos = 0;
+	m_vulevelspacing = 3;
         foreach(VUMeterLevelView* level, m_levels) {
                 if (m_orientation == Qt::Vertical) {
                         level->set_bounding_rect(QRectF(0, 0, m_boundingRect.width() / m_levels.size(), m_boundingRect.height()));
                         level->setPos(horizontalPos, 0);
                         horizontalPos += level->boundingRect().width() + m_vulevelspacing;
                 } else {
-                        level->set_bounding_rect(QRectF(0, 0, m_boundingRect.width(), (m_boundingRect.height() / m_levels.size()) - 1));
-                        level->setPos(0, vertPos);
+			level->set_bounding_rect(QRectF(0, 0, m_boundingRect.width() - 12, (m_boundingRect.height() / m_levels.size()) - 3));
+			level->setPos(6, vertPos + 2);
                         vertPos += level->boundingRect().height() + m_vulevelspacing;
                 }
         }
@@ -268,7 +276,7 @@ VUMeterLevelView::VUMeterLevelView(ViewItem* parent, VUMonitor* monitor)
 {
         m_monitor = monitor;
 
-        m_boundingRect = QRectF(0, 0, parent->boundingRect().width(), 5);
+	m_boundingRect = QRectF(0, 0, parent->boundingRect().width(), 5);
         m_tailDeltaY = m_peakHoldValue = m_rms = -120.0;
         m_overCount = m_rmsIndex = 0;
         m_peakHoldFalling = false;
