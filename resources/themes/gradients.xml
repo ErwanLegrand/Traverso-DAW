@@ -19,7 +19,6 @@
         <property value="0" name="Track:topborderwidth"/>
         <property value="5" name="VUMeter:layout:vulayoutspacing"/>
         <property value="20" name="Sheet:track:minimumheight"/>
-        <property value="300" name="Sheet:track:maximumheight"/>
         <property value="13" name="AudioClip:infoareaheight"/>
     </properties>
     <fonts>

@@ -12,7 +12,6 @@
 		
                 <property name="Sheet:track:seperatingheight" value="0" />
                 <property name="Sheet:track:minimumheight" value="20" />
-                <property name="Sheet:track:maximumheight" value="600" />
                 <property name="Sheet:track:topindent" value="0" />
 		
 		

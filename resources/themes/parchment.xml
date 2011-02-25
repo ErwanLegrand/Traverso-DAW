@@ -9,7 +9,7 @@
         <property value="0" name="Sheet:track:topindent"/>
         <property value="40" name="AudioClip:mimimumheightforinfoarea"/>
         <property value="1" name="Track:bottomborderwidth"/>
-        <property value="6" name="CurveNode:diameter"/>
+	<property value="8" name="CurveNode:diameter"/>
         <property value="1" name="AudioClip:drawbackground"/>
         <property value="0" name="Track:paintbackground"/>
         <property value="0" name="AudioClip:wavemicroview:antialiased"/>
@@ -20,7 +20,7 @@
         <property value="0" name="Track:topborderwidth"/>
         <property value="5" name="VUMeter:layout:vulayoutspacing"/>
         <property value="20" name="Sheet:track:minimumheight"/>
-        <property value="300" name="Sheet:track:maximumheight"/>
+        <property value="1200" name="Sheet:track:maximumheight"/>
         <property value="13" name="AudioClip:infoareaheight"/>
     </properties>
     <fonts>
@@ -129,7 +129,7 @@
         <color alpha="255" red="178" blue="182" name="AudioClip:channelseperator" green="191"/>
         <color alpha="255" red="246" blue="255" name="FFTMeter:margin" green="246"/>
         <color alpha="155" red="252" blue="153" name="FFTMeter:foreground" green="250"/>
-        <color alpha="255" red="255" blue="50" name="TrackPanel:muteled" green="255"/>
+	<color alpha="255" red="255" blue="50" name="TrackPanel:Mled" green="255"/>
         <color alpha="255" red="235" blue="255" name="AudioClip:wavemacroview:outline:curvemode" green="230"/>
         <color alpha="255" red="0" blue="31" name="PluginSlider:background" green="28"/>
         <color alpha="150" red="255" blue="255" name="Curve:inactive" green="0"/>
@@ -138,7 +138,8 @@
         <color alpha="255" red="182" blue="123" name="CorrelationMeter:centerline" green="180"/>
         <color alpha="255" red="0" blue="0" name="TrackPanel:led:font:active" green="0"/>
         <color alpha="255" red="0" blue="200" name="VUMeter:foreground:-6db" green="175"/>
-        <color alpha="255" red="255" blue="58" name="TrackPanel:recled" green="58"/>
+	<color alpha="255" red="255" blue="58" name="TrackPanel:Rled" green="58"/>
+	<color alpha="255" red="153" blue="21" name="TrackPanel:Pled" green="101"/>
         <color alpha="105" red="100" blue="100" name="TrackPanel:bus:margin" green="100"/>
         <color alpha="255" red="55" blue="90" name="TrackPanel:head:inactive" green="80"/>
         <color alpha="100" red="35" blue="60" name="TrackPanel:led:inactive" green="60"/>
@@ -152,7 +153,7 @@
         <color alpha="255" red="255" blue="0" name="VUMeter:overled:active" green="0"/>
         <color alpha="255" red="0" blue="0" name="FFTMeter:tickmarks:main" green="0"/>
         <color alpha="200" red="99" blue="128" name="AudioClip:clipinfobackground:inactive" green="120"/>
-        <color alpha="255" red="135" blue="135" name="TrackPanel:sololed" green="254"/>
+	<color alpha="255" red="135" blue="135" name="TrackPanel:Sled" green="254"/>
         <color alpha="100" red="40" blue="155" name="AudioClip:clipinfobackground" green="100"/>
         <color alpha="255" red="255" blue="255" name="VUMeter:background:widget" green="255"/>
         <color alpha="180" red="255" blue="0" name="Playhead:active" green="0"/>
