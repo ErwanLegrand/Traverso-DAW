@@ -58,7 +58,8 @@ public:
 
         bool is_muted_by_solo();
         bool is_solo();
-        bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
+	bool show_track_volume_automation() const {return m_showTrackVolumeAutomation;}
+	bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
 
         void add_input_bus(const QString& name);
         void add_post_send(qint64 busId);
@@ -87,6 +88,7 @@ protected:
         int             m_channelCount;
         bool            m_mutedBySolo;
         bool            m_isSolo;
+	bool		m_showTrackVolumeAutomation;
 
         APILinkedList   m_postSends;
         APILinkedList   m_preSends;
@@ -97,12 +99,14 @@ protected:
         void process_post_sends(nframes_t nframes);
         void process_pre_sends(nframes_t nframes);
         virtual void add_input_bus(AudioBus* bus);
+        void remove_input_bus(AudioBus* bus);
 
 private:
         void process_send(TSend* send, nframes_t nframes);
 
 public slots:
         TCommand* solo();
+	TCommand* toggle_show_track_volume_automation();
 
 private slots:
         void private_add_post_send(TSend*);
@@ -110,9 +114,11 @@ private slots:
         void private_remove_post_send(TSend*);
         void private_remove_pre_send(TSend*);
         void private_add_input_bus(AudioBus*);
+        void private_remove_input_bus(AudioBus*);
 
 signals:
         void soloChanged(bool isSolo);
+	void automationVisibilityChanged();
         void routingConfigurationChanged();
 };
 

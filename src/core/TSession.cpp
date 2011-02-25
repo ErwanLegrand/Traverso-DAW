@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TSession.h"
 
+#include "AudioDevice.h"
 #include "AddRemove.h"
 #include "AudioTrack.h"
 #include "TConfig.h"
@@ -556,6 +557,10 @@ void TSession::private_track_added(Track *track)
                 Q_ASSERT("TSession::private_track_added() Unknown Track type, this is a programming error!");
         }
 
+        if ( (!is_child_session()) && (audiodevice().get_driver_type() == "Jack")) {
+                track->connect_to_jack(true, true);
+        }
+
         emit trackAdded(track);
 }
 
@@ -570,6 +575,10 @@ void TSession::private_track_removed(Track *track)
                 break;
         default:
                 Q_ASSERT("TSession::private_track_removed() Unknown Track type, this is a programming error!");
+        }
+
+        if ( (!is_child_session()) && (audiodevice().get_driver_type() == "Jack")) {
+                track->disconnect_from_jack(true, true);
         }
 
         emit trackRemoved(track);

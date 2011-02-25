@@ -40,9 +40,10 @@ Track::Track(TSession* session)
         : ProcessingData(session)
 {
         m_sortIndex = -1;
-        m_isSolo = m_mutedBySolo = m_isMuted = false;
+	m_isSolo = m_mutedBySolo = m_isMuted = false;
+	m_showTrackVolumeAutomation = false;
         m_inputBus = 0;
-        m_channelCount = 0;
+        m_channelCount = 2;
 
         for (int i=0; i<2; ++i) {
                 m_vumonitors.append(new VUMonitor());
@@ -76,7 +77,8 @@ void Track::get_state(QDomDocument& doc, QDomElement& node, bool istemplate)
         node.setAttribute("mute", m_isMuted);
         node.setAttribute("solo", m_isSolo);
         node.setAttribute("mutedbysolo", m_mutedBySolo);
-        node.setAttribute("sortindex", m_sortIndex);
+	node.setAttribute("showtrackvolumeautomation", m_showTrackVolumeAutomation);
+	node.setAttribute("sortindex", m_sortIndex);
         node.setAttribute("height", m_session->get_track_height(m_id));
 
         QDomNode pluginChainNode = doc.createElement("PluginChain");
@@ -99,6 +101,8 @@ void Track::get_state(QDomDocument& doc, QDomElement& node, bool istemplate)
 int Track::set_state( const QDomNode & node )
 {
         QDomElement e = node.toElement();
+
+	m_showTrackVolumeAutomation = e.attribute("showtrackvolumeautomation", 0).toInt();
 
         m_sortIndex = e.attribute( "sortindex", "-1" ).toInt();
         m_name = e.attribute( "name", "" );
@@ -157,7 +161,6 @@ int Track::set_state( const QDomNode & node )
                 }
         }
 
-
         return 1;
 }
 
@@ -175,7 +178,13 @@ TCommand* Track::solo(  )
         return (TCommand*) 0;
 }
 
+TCommand* Track::toggle_show_track_volume_automation()
+{
+	m_showTrackVolumeAutomation = !m_showTrackVolumeAutomation;
+	emit automationVisibilityChanged();
 
+	return (TCommand*) 0;
+}
 
 bool Track::is_solo()
 {
@@ -231,6 +240,16 @@ void Track::add_input_bus(AudioBus *bus)
                 THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_add_input_bus(AudioBus*), routingConfigurationChanged())
         } else {
                 private_add_input_bus(bus);
+                emit routingConfigurationChanged();
+        }
+}
+
+void Track::remove_input_bus(AudioBus *bus)
+{
+        if (m_session && m_session->is_transport_rolling()) {
+                THREAD_SAVE_INVOKE_AND_EMIT_SIGNAL(this, bus, private_remove_input_bus(AudioBus*), routingConfigurationChanged())
+        } else {
+                private_remove_input_bus(bus);
                 emit routingConfigurationChanged();
         }
 }
@@ -367,6 +386,13 @@ void Track::private_add_input_bus(AudioBus* bus)
         m_inputBus = bus;
 }
 
+void Track::private_remove_input_bus(AudioBus *bus)
+{
+        if (bus == m_inputBus) {
+                m_inputBus = 0;
+        }
+}
+
 void Track::add_input_bus(const QString &name)
 {
         m_busInName = name;
@@ -472,12 +498,12 @@ bool Track::connect_to_jack(bool inports, bool outports)
 
         if (m_channelCount == 0) {
                 PERROR("Channel count == 0");
+                return false;
         }
 
         Project* project = pm().get_project();
         AudioBus* bus = 0;
 
-        QStringList channelnames;
         BusConfig busconfig;
         busconfig.channelcount = m_channelCount;
         busconfig.name = m_name;
@@ -516,6 +542,25 @@ bool Track::connect_to_jack(bool inports, bool outports)
 
 bool Track::disconnect_from_jack(bool inports, bool outports)
 {
+        Project* project = pm().get_project();
+
+        if (inports && m_inputBus) {
+                project->remove_software_audio_bus(m_inputBus);
+        }
+
+        if (outports) {
+                QList<qint64> jackSends;
+                apill_foreach(TSend* send, TSend, m_postSends) {
+                        if (send->get_bus()->get_bus_type() == BusIsSoftware) {
+                                jackSends.append(send->get_id());
+                                project->remove_software_audio_bus(send->get_bus());
+                        }
+                }
+                if (jackSends.size()) {
+                        remove_post_sends(jackSends);
+                }
+        }
+
         return true;
 }
 
