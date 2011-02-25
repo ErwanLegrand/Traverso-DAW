@@ -844,7 +844,7 @@ void TMainWindow::create_menus( )
 	m_editToolBar->addAction(m_effectAction);
 	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
 
-        menu = m_mainMenuBar->addMenu(tr("Vi&ew"));
+	menu = m_mainMenuBar->addMenu(tr("&View"));
         menu->installEventFilter(this);
 
         menu->addAction(m_historyDW->toggleViewAction());
