@@ -141,7 +141,7 @@ private:
 	int			m_shuttleXfactor;
 	int			m_shuttleYfactor;
 	int			m_sceneHeight;
-        int                     m_meanTrackHeight;
+	float                   m_meanTrackHeight;
         bool			m_dragShuttle;
 	QTimer			m_shuttletimer;
 	QScrollBar*		m_vScrollBar;
@@ -156,7 +156,6 @@ private:
 	int	m_trackMaximumHeight;
 	int	m_trackTopIndent;
 	
-	void layout_tracks();
         void update_tracks_bounding_rect();
         void collect_item_browser_data(ItemBrowserData& data);
         static void calculate_cursor_dict();
@@ -209,6 +208,7 @@ private slots:
         void session_horizontal_scrollbar_position_changed();
         void context_changed();
         void jog_finished();
+	void layout_tracks();
 };
 
 

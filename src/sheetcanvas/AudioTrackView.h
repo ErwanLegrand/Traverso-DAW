@@ -29,7 +29,6 @@ class AudioClipView;
 class AudioTrack;
 class AudioTrackPanelView;
 class PluginChainView;
-class CurveView;
 
 class AudioTrackView : public TrackView
 {
@@ -44,10 +43,9 @@ public:
         AudioTrack* get_track() const {return m_track;}
         AudioClipView* get_nearest_audioclip_view(TimeRef location) const;
         QList<AudioClipView* > get_clipviews() {return m_clipViews;}
+	CurveView* get_gain_curve_view() const {return m_curveView;}
 	
-        int get_childview_y_offset() const;
         int get_height();
-	void set_height(int height);
 	
 	void load_theme_data();
 	
@@ -55,13 +53,14 @@ public:
 	
 private:
         AudioTrack*		m_track;
-        CurveView*              m_curveView;
 	QList<AudioClipView* >	m_clipViews;
-	
 
 public slots:
 	TCommand* insert_silence();
         TCommand* show_track_gain_curve();
+
+protected slots:
+	void automation_visibility_changed();
 
 private slots:
 	void add_new_audioclipview(AudioClip* clip);

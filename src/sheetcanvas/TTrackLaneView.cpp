@@ -56,33 +56,8 @@ void TTrackLaneView::paint(QPainter* painter, const QStyleOptionGraphicsItem* op
 {
 	Q_UNUSED(widget);
 
-// 	printf("TrackView:: PAINT :: exposed rect is: x=%f, y=%f, w=%f, h=%f\n", option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
-
-	int xstart = (int)option->exposedRect.x();
-	int pixelcount = (int)option->exposedRect.width();
-	painter->save();
-//	if (m_topborderwidth > 0) {
-//		QColor color = themer()->get_color("Track:cliptopoffset");
-//		painter->fillRect(xstart, 0, pixelcount+1, m_topborderwidth, color);
-//	}
-
-//	m_bottomborderwidth = 2;
-//	if (m_bottomborderwidth > 0) {
-//		QColor color = themer()->get_color("Track:clipbottomoffset");
-//		painter->fillRect(xstart, m_height - m_bottomborderwidth, pixelcount+1, m_bottomborderwidth, color);
-//	}
-
-//	if (m_isMoving || m_track->has_active_context()) {
-//		QPen pen;
-//		int penwidth = 1;
-//		pen.setWidth(penwidth);
-//		pen.setColor(themer()->get_color("Track:mousehover"));
-//		painter->setPen(pen);
-//		painter->drawLine(xstart, m_topborderwidth, xstart+pixelcount, m_topborderwidth);
-//		painter->drawLine(xstart, m_height, xstart+pixelcount, m_height);
-//	}
-
-	painter->restore();
+//	int xstart = (int)option->exposedRect.x();
+//	int pixelcount = (int)option->exposedRect.width();
 }
 
 void TTrackLaneView::set_height(int height)
@@ -106,7 +81,6 @@ void TTrackLaneView::load_theme_data()
 {
 	m_paintBackground = themer()->get_property("Track:paintbackground").toInt();
 	m_topborderwidth = themer()->get_property("Track:topborderwidth").toInt();
-	m_bottomborderwidth = 2;//themer()->get_property("Track:bottomborderwidth").toInt();
 }
 
 void TTrackLaneView::move_to( int x, int y )

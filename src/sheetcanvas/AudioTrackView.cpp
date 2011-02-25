@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <Sheet.h>
 #include <AudioTrack.h>
+#include "TTrackLaneView.h"
 #include <AudioClip.h>
 #include <Utils.h>
 #include "CurveView.h"
@@ -62,10 +63,7 @@ AudioTrackView::AudioTrackView(SheetView* sv, AudioTrack * track)
                 add_new_audioclipview(clip);
         }
 
-        m_curveView = new CurveView(m_sv, this, m_track->get_plugin_chain()->get_fader()->get_curve());
-        m_curveView->calculate_bounding_rect();
-        m_curveView->setZValue(200);
-        m_curveView->hide();
+	automation_visibility_changed();
 }
 
 void AudioTrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -105,14 +103,9 @@ void AudioTrackView::remove_audioclipview( AudioClip * clip )
 	}
 }
 
-int AudioTrackView::get_childview_y_offset() const
-{
-	return m_topborderwidth + m_cliptopmargin;
-}
-
 int AudioTrackView::get_height( )
 {
-        return m_sv->get_track_height(m_track) - (m_topborderwidth + m_bottomborderwidth + m_clipbottommargin + m_cliptopmargin);
+	return m_sv->get_track_height(m_track);
 }
 
 
@@ -121,9 +114,6 @@ void AudioTrackView::load_theme_data()
 	m_paintBackground = themer()->get_property("Track:paintbackground").toInt();
 	m_topborderwidth = themer()->get_property("Track:topborderwidth").toInt();
 	m_bottomborderwidth = themer()->get_property("Track:bottomborderwidth").toInt();
-	
-	m_cliptopmargin = themer()->get_property("Track:cliptopmargin").toInt();
-        m_clipbottommargin = themer()->get_property("Track:clipbottommargin").toInt();
 }
 
 
@@ -189,8 +179,23 @@ TCommand* AudioTrackView::show_track_gain_curve()
         if (m_curveView->isVisible()) {
                 m_curveView->hide();
         } else {
-                m_curveView->show();
+		m_curveView->show();
         }
 
         return 0;
+}
+
+void AudioTrackView::automation_visibility_changed()
+{
+	if (m_track->show_clip_volume_automation()) {
+		foreach(AudioClipView* acView, m_clipViews) {
+			acView->get_gain_curve_view()->show();
+		}
+	} else {
+		foreach(AudioClipView* acView, m_clipViews) {
+			acView->get_gain_curve_view()->hide();
+		}
+	}
+
+	TrackView::automation_visibility_changed();
 }

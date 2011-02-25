@@ -22,59 +22,71 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef TRACK_VIEW_H
 #define TRACK_VIEW_H
 
-#include "ViewItem.h"
+#include "TAbstractTrackView.h"
 
 class AudioClip;
 class AudioTrack;
-class Track;
-class TrackPanelView;
 class PluginChainView;
+class TTrackLaneView;
+class CurveView;
 
-class TrackView : public ViewItem
+class TrackView : public TAbstractTrackView
 {
         Q_OBJECT
 
 public:
-        TrackView(SheetView* sv, Track* track);
-        ~TrackView();
+	TrackView(SheetView* sv, Track* track);
+	TrackView(ViewItem* parentView, Track* track);
+	~TrackView();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
         Track* get_track() const {return m_track;}
         TrackPanelView* get_panel_view() const {return m_panel;}
+	TTrackLaneView* get_primary_lane_view() const {return m_primaryLaneView;}
 
         virtual int get_childview_y_offset() const;
-        void move_to(int x, int y);
         void set_moving(bool move);
         bool is_moving() const {return m_isMoving;}
-        int get_height();
-        void set_height(int height);
+	virtual int get_height();
+	virtual void set_height(int height);
+	int get_total_height();
+	void layout_lanes();
 
         void calculate_bounding_rect();
         void load_theme_data();
 
 protected:
-        Track*                  m_track;
-        TrackPanelView*		m_panel;
-        PluginChainView*	m_pluginChainView;
-        int			m_height;
-        int			m_paintBackground;
-        int			m_cliptopmargin;
-        int			m_clipbottommargin;
-        int			m_topborderwidth;
-        int			m_bottomborderwidth;
-        bool                    m_isMoving;
+	TTrackLaneView*		m_primaryLaneView;
+	TTrackLaneView*		m_volumeAutomationLaneView;
+	PluginChainView*	m_pluginChainView;
+	CurveView*              m_curveView;
+
+	void add_lane_view(TTrackLaneView* laneView);
 
         friend class TrackPanelView;
         friend class AudioTrackPanelView;
         friend class TBusTrackPanelView;
 
+private:
+	QList<TTrackLaneView*>	m_laneViews;
+	int	m_laneSpacing;
+	int	m_cliptopmargin;
+	int	m_clipbottommargin;
+	int	m_visibleLanes;
+
 public slots:
         TCommand* edit_properties();
         TCommand* add_new_plugin();
 
+protected slots:
+	virtual void automation_visibility_changed();
+
 private slots:
         void active_context_changed() {update();}
+
+signals:
+	void totalTrackHeightChanged();
 };
 
 

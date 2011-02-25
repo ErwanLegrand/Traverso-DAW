@@ -83,9 +83,10 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	m_vScrollBar = sheetwidget->m_vScrollBar;
 	m_hScrollBar = sheetwidget->m_hScrollBar;
 	m_actOnPlayHead = true;
-	m_viewportReady = false;
+        m_viewportReady = false;
         m_sheetMasterOutView = 0;
         m_projectMasterOutView = 0;
+	timeref_scalefactor = UNIVERSAL_SAMPLE_RATE;
 
 	m_clipsViewPort->scene()->addItem(this);
 
@@ -196,7 +197,6 @@ void SheetView::scale_factor_changed( )
         timeref_scalefactor = qint64(zoom * (UNIVERSAL_SAMPLE_RATE / 44100));
 	m_tlvp->scale_factor_changed();
 	
-	layout_tracks();
         update_tracks_bounding_rect();
 }
 
@@ -248,7 +248,7 @@ void SheetView::move_trackview_up(TrackView *trackView)
         }
 
         AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
-        TBusTrackView* sgv = qobject_cast<TBusTrackView*>(trackView);
+	TBusTrackView* btv = qobject_cast<TBusTrackView*>(trackView);
 
         int newindex = index - 1;
 
@@ -260,7 +260,7 @@ void SheetView::move_trackview_up(TrackView *trackView)
                 }
         }
 
-        if (sgv) {
+	if (btv) {
                 for(int i=0; i<m_busTrackViews.size(); i++) {
                         if (i==newindex) {
                                 m_busTrackViews.at(i)->get_track()->set_sort_index(i+1);
@@ -286,7 +286,7 @@ void SheetView::move_trackview_down(TrackView *trackView)
         }
 
         AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
-        TBusTrackView* sgv = qobject_cast<TBusTrackView*>(trackView);
+	TBusTrackView* btv = qobject_cast<TBusTrackView*>(trackView);
 
         int newindex = index + 1;
 
@@ -301,7 +301,7 @@ void SheetView::move_trackview_down(TrackView *trackView)
                 }
         }
 
-        if (sgv) {
+	if (btv) {
                 for(int i=0; i<m_busTrackViews.size(); i++) {
                         if (i==newindex) {
                                 m_busTrackViews.at(i)->get_track()->set_sort_index(i-1);
@@ -325,7 +325,7 @@ void SheetView::move_trackview_down(TrackView *trackView)
 void SheetView::to_bottom(TrackView *trackView)
 {
         AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
-        TBusTrackView* sgv = qobject_cast<TBusTrackView*>(trackView);
+	TBusTrackView* btv = qobject_cast<TBusTrackView*>(trackView);
 
         if (atv) {
                 QList<TrackView*> list = m_audioTrackViews;
@@ -336,14 +336,14 @@ void SheetView::to_bottom(TrackView *trackView)
                 atv->get_track()->set_sort_index(list.size());
         }
 
-        if (sgv) {
+	if (btv) {
                 QList<TrackView*> list = m_busTrackViews;
                 list.removeAll(atv);
 
                 for(int i=0; i<list.size(); i++) {
                         list.at(i)->get_track()->set_sort_index(i);
                 }
-                sgv->get_track()->set_sort_index(list.size());
+		btv->get_track()->set_sort_index(list.size());
         }
 
 
@@ -362,7 +362,7 @@ void SheetView::to_top(TrackView *trackView)
         }
 
         AudioTrackView* atv = qobject_cast<AudioTrackView*>(trackView);
-        TBusTrackView* sgv = qobject_cast<TBusTrackView*>(trackView);
+	TBusTrackView* btv = qobject_cast<TBusTrackView*>(trackView);
 
         if (atv) {
                 QList<TrackView*> list = m_audioTrackViews;
@@ -374,10 +374,10 @@ void SheetView::to_top(TrackView *trackView)
                 }
         }
 
-        if (sgv) {
+	if (btv) {
                 QList<TrackView*> list = m_busTrackViews;
                 list.removeAll(atv);
-                sgv->get_track()->set_sort_index(0);
+		btv->get_track()->set_sort_index(0);
 
                 for(int i=0; i<list.size(); i++) {
                         list.at(i)->get_track()->set_sort_index(i + 1);
@@ -395,25 +395,28 @@ void SheetView::add_new_track_view(Track* track)
 {
         TrackView* view;
 
-        AudioTrack* audiotrack = qobject_cast<AudioTrack*>(track);
-        TBusTrack* group = qobject_cast<TBusTrack*>(track);
+	AudioTrack* audioTrack = qobject_cast<AudioTrack*>(track);
+	TBusTrack* busTrack = qobject_cast<TBusTrack*>(track);
 
         int sortIndex = track->get_sort_index();
 
-        if (audiotrack) {
-                view = new AudioTrackView(this, audiotrack);
+	if (audioTrack) {
+		view = new AudioTrackView(this, audioTrack);
                 if(sortIndex < 0) {
                         track->set_sort_index(m_audioTrackViews.size());
                 }
                 m_audioTrackViews.append(view);
-        } else {
-                view = new TBusTrackView(this, group);
+	}
+
+	if (busTrack) {
+		view = new TBusTrackView(this, busTrack);
                 if(sortIndex < 0) {
                         track->set_sort_index(m_busTrackViews.size());
                 }
                 m_busTrackViews.append(view);
         }
 
+	connect(view, SIGNAL(totalTrackHeightChanged()), this, SLOT(layout_tracks()));
 
         qSort(m_audioTrackViews.begin(), m_audioTrackViews.end(), smallerTrackView);
         qSort(m_busTrackViews.begin(), m_busTrackViews.end(), smallerTrackView);
@@ -510,7 +513,6 @@ void SheetView::vzoom(qreal factor)
 	}
 	
         update_tracks_bounding_rect();
-	layout_tracks();
 }
 
 
@@ -519,12 +521,12 @@ TCommand* SheetView::toggle_expand_all_tracks(int height)
         if (height < 0) {
                 if (m_meanTrackHeight > m_trackMinimumHeight) {
                         foreach(TrackView* view, get_track_views()) {
-                                m_session->set_track_height(view->get_track()->get_id(), m_trackMinimumHeight);
-                        }
-                } else {
+				m_session->set_track_height(view->get_track()->get_id(), m_trackMinimumHeight);
+			}
+		} else {
                         foreach(TrackView* view, get_track_views()) {
-                                m_session->set_track_height(view->get_track()->get_id(), Track::INITIAL_HEIGHT);
-                        }
+				m_session->set_track_height(view->get_track()->get_id(), Track::INITIAL_HEIGHT);
+			}
                 }
         } else {
                 foreach(TrackView* view, get_track_views()) {
@@ -533,7 +535,6 @@ TCommand* SheetView::toggle_expand_all_tracks(int height)
         }
 
         update_tracks_bounding_rect();
-        layout_tracks();
 
         return 0;
 }
@@ -552,6 +553,8 @@ void SheetView::set_track_height(TrackView *view, int newheight)
 
         view->calculate_bounding_rect();
         layout_tracks();
+
+        center_in_view(view, Qt::AlignVCenter);
 }
 
 void SheetView::hzoom(qreal factor)
@@ -565,19 +568,21 @@ void SheetView::hzoom(qreal factor)
 void SheetView::layout_tracks()
 {
 	int verticalposition = m_trackTopIndent;
+	int totalTrackHeightPrimaryLanes = 0;
 
         QList<TrackView*> views = get_track_views();
 
         for (int i=0; i<views.size(); ++i) {
                 TrackView* view = views.at(i);
 		view->move_to(0, verticalposition);
-                verticalposition += (get_track_height(view->get_track()) + m_trackSeperatingHeight);
+		verticalposition += view->get_total_height() + m_trackSeperatingHeight;
+		totalTrackHeightPrimaryLanes += get_track_height(view->get_track());
 	}
 
 	m_sceneHeight = verticalposition;
 
-        // + 2, one for sheet master and one for project master track view!
-        m_meanTrackHeight = int(m_sceneHeight / (m_audioTrackViews.size() + m_busTrackViews.size() + 2));
+	// + 1, one for sheet master!
+	m_meanTrackHeight = float(totalTrackHeightPrimaryLanes) / (m_audioTrackViews.size() + m_busTrackViews.size() + 1);
 
 	update_scrollbars();
 }
@@ -589,6 +594,8 @@ void SheetView::update_tracks_bounding_rect()
         for (int i=0; i<views.size(); ++i) {
                 views.at(i)->calculate_bounding_rect();
         }
+
+	layout_tracks();
 }
 
 TCommand* SheetView::center()
@@ -890,15 +897,14 @@ int SheetView::vscrollbar_value() const
 void SheetView::load_theme_data()
 {
 	m_trackSeperatingHeight = themer()->get_property("Sheet:track:seperatingheight", 0).toInt();
-        m_trackMinimumHeight = themer()->get_property("Sheet:track:minimumheight", 20).toInt();
-	m_trackMaximumHeight = themer()->get_property("Sheet:track:maximumheight", 300).toInt();
+        m_trackMinimumHeight = 40;
+        m_trackMaximumHeight = 1600;
 	m_trackTopIndent = themer()->get_property("Sheet:track:topindent", 6).toInt();
 	
 	m_clipsViewPort->setBackgroundBrush(themer()->get_color("Sheet:background"));
 	m_tpvp->setBackgroundBrush(themer()->get_brush("TrackPanel:background", QPoint(0, 0), QPoint(0, m_tpvp->height())));
 
         update_tracks_bounding_rect();
-	layout_tracks();
 }
 
 TCommand * SheetView::add_marker()
@@ -1143,7 +1149,7 @@ TCommand* SheetView::to_lower_context_level()
         if (data.currentContext == "CurveView") {
                 browse_to_audio_clip_view(data.acv);
         } else if (data.currentContext == "AudioClipView") {
-                browse_to_track(data.acv->get_audio_track_view()->get_track());
+		browse_to_track(data.acv->get_clip()->get_track());
         } else if (data.currentContext == "AudioTrackView" || data.currentContext == "TBusTrackView") {
                 browse_to_time_line();
         }
@@ -1360,7 +1366,7 @@ void SheetView::center_in_view(ViewItem *item, enum Qt::AlignmentFlag flag)
         if (flag == Qt::AlignHCenter) {
                 set_hscrollbar_value(item->scenePos().x() - m_clipsViewPort->width() / 2);
         } else if (flag == Qt::AlignVCenter) {
-                set_vscrollbar_value(item->scenePos().y() - (m_clipsViewPort->height() / 2) + item->boundingRect().height());
+                set_vscrollbar_value(item->scenePos().y() + (item->boundingRect().height() / 2) - (m_clipsViewPort->height() / 2));
         }
 }
 
@@ -1371,7 +1377,14 @@ void SheetView::move_edit_point_to(TimeRef location, int sceneY)
         int x = m_clipsViewPort->mapFromScene(m_workCursor->scenePos()).x();
         int y = m_clipsViewPort->mapFromScene(0, sceneY).y();
 
-        if (x < 0 || x > m_clipsViewPort->width()) {
+        int canvasWidth = m_clipsViewPort->width();
+        int nearBorderMargin = 50;
+        if (nearBorderMargin > (canvasWidth / 4))
+        {
+                nearBorderMargin = 0;
+        }
+
+        if (x < (0 + nearBorderMargin) || x > (canvasWidth - nearBorderMargin)) {
                 center_in_view(m_workCursor, Qt::AlignHCenter);
         }
 
