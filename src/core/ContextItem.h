@@ -93,8 +93,6 @@ private:
         QPointer<ContextItem>    m_contextItem;
         bool            m_hasActiveContext;
 
-	friend class Tsar;
-
 signals:
         void activeContextChanged();
 };
