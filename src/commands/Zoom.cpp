@@ -243,7 +243,13 @@ void Zoom::set_collected_number(const QString &collected)
                 number = QString(cleared.data()[cleared.size() -1]).toInt(&ok);
         }
 
-        m_sv->set_track_height(m_tv, collected_number_to_track_height(collected));
+        int newHeight = collected_number_to_track_height(collected);
+        // - 1 means  full height.
+        if (newHeight == -1) {
+                m_sv->set_track_height(m_tv, m_sv->get_clips_viewport()->height());
+        } else {
+                m_sv->set_track_height(m_tv, newHeight);
+        }
 }
 
 
@@ -263,17 +269,13 @@ int Zoom::collected_number_to_track_height(const QString& collected) const
 
         if (ok && m_tv) {
                 switch(number) {
-                case 0: trackHeight = 10; break;
-                case 1: trackHeight = 30; break;
                 case 2: trackHeight = 60; break;
-                case 3: trackHeight = 90; break;
-                case 4: trackHeight = 120; break;
-                case 5: trackHeight = 150; break;
-                case 6: trackHeight = 180; break;
-                case 7: trackHeight = 210; break;
-                case 8: trackHeight = 260; break;
-                case 9: trackHeight = 340; break;
-                default: trackHeight = 50;
+                case 3: trackHeight = 100; break;
+                case 4: trackHeight = 180; break;
+                case 5: trackHeight = 320; break;
+                case 6: trackHeight = 640; break;
+                case 7: trackHeight = -1; break;
+                default: trackHeight = 40;
                 }
         }
 
@@ -304,6 +306,6 @@ void Zoom::toggle_expand_all_tracks(bool autorepeat)
                 return;
         }
 
-        m_sv->toggle_expand_all_tracks(m_trackHeight);
+	m_sv->toggle_expand_all_tracks(-1);
 }
 
