@@ -24,22 +24,28 @@
 
 #include "MoveCommand.h"
 #include "defines.h"
+#include <QRectF>
 
 class CurveView;
 class CurveNode;
+class Curve;
 class QPoint;
+class QRectF;
 
 class MoveCurveNode : public MoveCommand
 {
         Q_OBJECT
 
 public:
-        MoveCurveNode(CurveNode* node,
-                CurveView* curveview,
+	MoveCurveNode(Curve* curve,
+		QList<CurveNode*> nodes,
+		float height,
                 qint64 scalefactor,
-                TimeRef rangeMin,
-                TimeRef rangeMax,
-                const QString& des);
+		TimeRef minWhenDiff,
+		TimeRef maxWhenDiff,
+		double	minValueDiff,
+		double	maxValueDiff,
+		const QString& des);
 
         int prepare_actions();
         int do_action();
@@ -49,26 +55,41 @@ public:
         int begin_hold();
         int jog();
         void set_cursor_shape(int useX, int useY);
-        void set_vertical_only();
+
+	void set_height(int height) {
+		d->height = height;
+	}
+
+	int get_height() {
+		return d->height;
+	}
 
 private :
         struct	Data {
-                CurveView*	curveView;
                 qint64		scalefactor;
-                TimeRef		rangeMin;
-                TimeRef		rangeMax;
                 QPoint		mousepos;
                 bool		verticalOnly;
-        };
+		float		height;
+		double		maxValueDiff;
+		double		minValueDiff;
+		TimeRef		maxWhenDiff;
+		TimeRef		minWhenDiff;
+	};
 
-        Data* d;
-        CurveNode* m_node;
-        double	m_origWhen;
-        double	m_origValue;
-        double	m_newWhen;
-        double 	m_newValue;
+	MoveCurveNode::Data* d;
 
-        int calculate_and_set_node_values();
+	struct CurveNodeData {
+		CurveNode* node;
+		double	origWhen;
+		double	origValue;
+	};
+
+	double	m_valueDiff;
+	TimeRef	m_whenDiff;
+
+	QList<CurveNodeData> m_nodeDatas;
+
+	int check_and_apply_when_and_value_diffs();
 
 
 public slots:
@@ -76,6 +97,7 @@ public slots:
         void move_down(bool autorepeat);
         void move_left(bool autorepeat);
         void move_right(bool autorepeat);
+	void toggle_vertical_only(bool autorepeat);
 };
 
 #endif // MOVECURVENODE_H

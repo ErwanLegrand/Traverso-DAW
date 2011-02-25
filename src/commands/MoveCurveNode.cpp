@@ -22,31 +22,50 @@
 
 #include "MoveCurveNode.h"
 
+#include "Curve.h"
 #include "CurveView.h"
 #include "CurveNode.h"
 #include "SheetView.h"
 #include "Mixer.h"
 
-MoveCurveNode::MoveCurveNode(CurveNode* node,
-        CurveView* curveview,
-        qint64 scalefactor,
-        TimeRef rangeMin,
-        TimeRef rangeMax,
-        const QString& des)
-        : MoveCommand(curveview->get_context(), des)
-        , d(new Data)
+MoveCurveNode::MoveCurveNode(Curve* curve,
+	QList<CurveNode*> nodes,
+	float height,
+	qint64 scalefactor,
+	TimeRef minWhenDiff,
+	TimeRef maxWhenDiff,
+	double	minValueDiff,
+	double	maxValueDiff,
+	const QString& des)
+	: MoveCommand(curve, des)
+	, d(new MoveCurveNode::Data)
 {
-        m_node = node;
-        d->rangeMin = rangeMin;
-        d->rangeMax = rangeMax;
-        d->curveView = curveview;
+	foreach(CurveNode* node, nodes) {
+		CurveNodeData curveData;
+		curveData.node = node;
+		curveData.origValue = node->get_value();
+		curveData.origWhen = node->get_when();
+		m_nodeDatas.append(curveData);
+	}
+
+	d->height = height;
+	d->minWhenDiff = minWhenDiff;
+	d->maxWhenDiff = maxWhenDiff;
+	d->minValueDiff = minValueDiff;
+	d->maxValueDiff = maxValueDiff;
         d->scalefactor = scalefactor;
         d->verticalOnly = false;
+
+	m_valueDiff = 0.0f;
 }
 
-void MoveCurveNode::set_vertical_only()
+void MoveCurveNode::toggle_vertical_only(bool autorepeat)
 {
-        d->verticalOnly = true;
+	if (autorepeat) {
+		return;
+	}
+
+	d->verticalOnly = !d->verticalOnly;
 }
 
 int MoveCurveNode::prepare_actions()
@@ -68,9 +87,6 @@ void MoveCurveNode::cancel_action()
 
 int MoveCurveNode::begin_hold()
 {
-        m_origWhen = m_newWhen = m_node->get_when();
-        m_origValue = m_newValue = m_node->get_value();
-
         d->mousepos = QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
         return 1;
 }
@@ -78,95 +94,104 @@ int MoveCurveNode::begin_hold()
 
 int MoveCurveNode::do_action()
 {
-        m_node->set_when_and_value(m_newWhen, m_newValue);
+	foreach(const CurveNodeData& nodeData, m_nodeDatas) {
+		nodeData.node->set_when_and_value(nodeData.origWhen + m_whenDiff.universal_frame(), nodeData.origValue + m_valueDiff);
+	}
+
         return 1;
 }
 
 int MoveCurveNode::undo_action()
 {
-        m_node->set_when_and_value(m_origWhen, m_origValue);
+	foreach(const CurveNodeData& nodeData, m_nodeDatas) {
+		nodeData.node->set_when_and_value(nodeData.origWhen, nodeData.origValue);
+	}
+
         return 1;
 }
 
 void MoveCurveNode::move_up(bool )
 {
-        m_newValue = m_newValue + ( 1 / d->curveView->boundingRect().height());
-        calculate_and_set_node_values();
+	m_valueDiff += m_speed / d->height;
+
+	check_and_apply_when_and_value_diffs();
 }
 
 void MoveCurveNode::move_down(bool )
 {
-        m_newValue = m_newValue - ( 1 / d->curveView->boundingRect().height());
-        calculate_and_set_node_values();
+	m_valueDiff -= m_speed / d->height;
+
+	check_and_apply_when_and_value_diffs();
 }
 
 void MoveCurveNode::move_left(bool )
 {
-        m_newWhen = m_newWhen - (d->curveView->get_sheetview()->timeref_scalefactor * m_speed);
-        calculate_and_set_node_values();
+	m_whenDiff -= d->scalefactor * m_speed;
+
+	check_and_apply_when_and_value_diffs();
 }
 
 void MoveCurveNode::move_right(bool )
 {
-        m_newWhen = m_newWhen + (d->curveView->get_sheetview()->timeref_scalefactor * m_speed);
-        calculate_and_set_node_values();
+	m_whenDiff += d->scalefactor * m_speed;
+
+	check_and_apply_when_and_value_diffs();
 }
 
 void MoveCurveNode::set_cursor_shape(int useX, int useY)
 {
-        cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+//        cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
 }
 
 int MoveCurveNode::jog()
 {
-        QPoint mousepos = cpointer().pos();
+	QPoint mousepos = cpointer().pos();
 
-        int dx, dy;
-        dx = mousepos.x() - d->mousepos.x();
-        dy = mousepos.y() - d->mousepos.y();
+	int dx, dy;
+	dx = mousepos.x() - d->mousepos.x();
+	dy = mousepos.y() - d->mousepos.y();
 
-        d->mousepos = mousepos;
+	d->mousepos = mousepos;
 
-        if (!d->verticalOnly) {
-                m_newWhen = m_newWhen + dx * d->scalefactor;
-        }
-        m_newValue = m_newValue - ( dy / d->curveView->boundingRect().height());
+	m_whenDiff += dx * d->scalefactor;
+	m_valueDiff -= dy / d->height;
 
-        TimeRef startoffset = d->curveView->get_start_offset();
-        if ( ((TimeRef(m_newWhen) - startoffset) / d->scalefactor) > d->curveView->boundingRect().width()) {
-                m_newWhen = double(d->curveView->boundingRect().width() * d->scalefactor + startoffset.universal_frame());
-        }
-        if ((TimeRef(m_newWhen) - startoffset) < TimeRef()) {
-                m_newWhen = startoffset.universal_frame();
-        }
-
-        return calculate_and_set_node_values();
+	return check_and_apply_when_and_value_diffs();
 }
 
-int MoveCurveNode::calculate_and_set_node_values()
+int MoveCurveNode::check_and_apply_when_and_value_diffs()
 {
-        if (m_newValue < 0.0) {
-                m_newValue = 0.0;
-        }
-        if (m_newValue > 1.0) {
-                m_newValue = 1.0;
-        }
-        if (m_newWhen < 0.0) {
-                m_newWhen = 0.0;
-        }
+	if (d->verticalOnly) {
+		m_whenDiff = TimeRef();
+	}
 
-        if (m_newWhen < d->rangeMin) {
-                m_newWhen = double(d->rangeMin.universal_frame());
-        } else if (d->rangeMax != qint64(-1) && m_newWhen > d->rangeMax) {
-                m_newWhen = double(d->rangeMax.universal_frame());
-        }
+	if (m_whenDiff > d->maxWhenDiff) {
+		m_whenDiff = d->maxWhenDiff;
+	}
+
+	if (m_whenDiff < d->minWhenDiff) {
+		m_whenDiff = d->minWhenDiff;
+	}
+
+	if (m_valueDiff > d->maxValueDiff) {
+		m_valueDiff = d->maxValueDiff;
+	}
+
+	if (m_valueDiff < d->minValueDiff) {
+		m_valueDiff = d->minValueDiff;
+	}
 
         // NOTE: this obviously only makes sense when the Node == GainEnvelope Node
         // Use a delegate (or something similar) in the future that set's the correct value.
-        float dbFactor = coefficient_to_dB(m_newValue);
-        cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	if (m_nodeDatas.size() == 1) {
+		float dbFactor = coefficient_to_dB(m_nodeDatas.first().origValue + m_valueDiff);
+		cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(dbFactor, 'f', 2).append(" dB"));
+	}
+
         cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
 
         return do_action();
 }
+
+
 
