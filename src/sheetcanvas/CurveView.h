@@ -45,6 +45,7 @@ public:
 	void calculate_bounding_rect();
 	void load_theme_data();
         void mouse_hover_move_event();
+	QString get_name() const;
 
         void set_start_offset(TimeRef offset);
         TimeRef get_start_offset() const {return m_startoffset;}
@@ -62,6 +63,7 @@ private:
 	int		m_blinkDarkness;
 	int		m_blinkColorDirection;
 	QList<CurveNodeView*>	m_nodeViews;
+	QList<CurveNode*>	m_selectedNodes;
 	TimeRef		m_startoffset;
 	
 
@@ -70,13 +72,13 @@ public slots:
 	TCommand* remove_node();
 	TCommand* remove_all_nodes();
 	TCommand* drag_node();
-	TCommand* drag_node_vertical_only();
+	TCommand* select_lazy_selected_node();
+	TCommand* toggle_select_all_nodes();
 	
 private slots:
 	void add_curvenode_view(CurveNode* node);
 	void remove_curvenode_view(CurveNode* node);
 	void node_moved();
-	void set_view_mode();
 	void update_blink_color();
         void active_context_changed();
 

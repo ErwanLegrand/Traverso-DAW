@@ -41,6 +41,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define NODE_SOFT_SELECTION_DISTANCE 40
 	
 
+#include "limits.h"
+#include "float.h"
+
 CurveView::CurveView(SheetView* sv, ViewItem* parentViewItem, Curve* curve)
 	: ViewItem(parentViewItem, curve)
 	, m_curve(curve)
@@ -66,11 +69,8 @@ CurveView::CurveView(SheetView* sv, ViewItem* parentViewItem, Curve* curve)
 	connect(m_curve, SIGNAL(nodeRemoved(CurveNode*)), this, SLOT(remove_curvenode_view(CurveNode*)));
 	connect(m_curve, SIGNAL(nodePositionChanged()), this, SLOT(node_moved()));
         connect(m_curve, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
-	connect(m_sv->get_sheet(), SIGNAL(modeChanged()), this, SLOT(set_view_mode()));
 	
         m_hasMouseTracking = true;
-	
-	set_view_mode();
 }
 
 CurveView::~ CurveView( )
@@ -87,8 +87,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 {
 	Q_UNUSED(widget);
 	PENTER2;
-	
-	
+
 	int xstart = (int) option->exposedRect.x();
 	int pixelcount = (int) option->exposedRect.width()+1;
 	int height = int(m_boundingRect.height());
@@ -96,7 +95,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	
 
         if (m_curve->has_active_context()) {
-                painter->fillRect(option->exposedRect, QColor(255,255,255,70));
+		painter->fillRect(option->exposedRect, QColor(0, 0, 0, 50));
         }
 
         QPen pen;
@@ -167,8 +166,8 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
     				vector,
     				pixelcount);
 	
-	for (int i=0; i<pixelcount; i++) {
-                polygon <<  QPointF(xstart + i, height - (vector[i] * height) );
+	for (int i=0; i<pixelcount; i+=3) {
+		polygon <<  QPointF(xstart + i, height - (vector[i] * height) );
 	}
 	
 	// Depending on the zoom level, curve nodes can end up to be aligned 
@@ -179,26 +178,18 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 		qreal x = view->x();
 		if ( (x > xstart) && x < (xstart + pixelcount)) {
 			polygon <<  QPointF( x + view->boundingRect().width() / 2,
-                                (height - (view->get_curve_node()->get_value() * height)) );
+					(height - (view->get_curve_node()->get_value() * height)) );
 		}
 	}
 	
 	// Which means we have to sort the polygon *sigh* (rather cpu costly, but what can I do?)
 	qSort(polygon.begin(), polygon.end(), smallerpoint);
-	
+
 /*	for (int i=0; i<polygon.size(); ++i) {
 		printf("polygin %d, x=%d, y=%d\n", i, (int)polygon.at(i).x(), (int)polygon.at(i).y());
 	}*/
 
-        QPainterPath path;
-        path.addPolygon(polygon);
-
-        painter->drawPath(path);
-	
-	if (xstart <= 100) {
-		painter->setFont(themer()->get_font("CurveView:fontscale:label"));
-		painter->drawText(10, (int)(m_boundingRect.height() - 14), "Gain Curve");
-	}
+	painter->drawPolyline(polygon);
 
 	painter->restore();
 }
@@ -222,7 +213,7 @@ void CurveView::add_curvenode_view(CurveNode* node)
 	AddRemove* cmd = (AddRemove*) m_guicurve->add_node(nodeview, false);
 	cmd->set_instantanious(true);
 	TCommand::process_command(cmd);
-	
+
 	qSort(m_nodeViews.begin(), m_nodeViews.end(), Curve::smallerNode);
 	
 	update();
@@ -269,7 +260,7 @@ void CurveView::active_context_changed()
                 m_blinkTimer.stop();
                 if (m_blinkingNode) {
                         m_blinkingNode->set_color(themer()->get_color("CurveNode:default"));
-                        m_blinkingNode->reset_size();
+			m_blinkingNode->set_soft_selected(false);
                         m_blinkingNode = 0;
                 }
 
@@ -328,13 +319,13 @@ void CurveView::update_softselected_node(QPointF point)
 	if (prevNode && (prevNode != m_blinkingNode) ) {
 		prevNode->set_color(themer()->get_color("CurveNode:default"));
 		prevNode->update();
-		prevNode->reset_size();
+		prevNode->set_soft_selected(false);
 		if (m_blinkingNode) {
-			m_blinkingNode->set_selected();
+			m_blinkingNode->set_soft_selected(true);
 		}
 	}
 	if (!prevNode && m_blinkingNode) {
-		m_blinkingNode->set_selected();
+		m_blinkingNode->set_soft_selected(true);
 		m_blinkDarkness = 100;
 	}
 }
@@ -400,42 +391,78 @@ TCommand* CurveView::drag_node()
 {
 	PENTER;
 
-        update_softselected_node(cpointer().on_first_input_event_scene_pos());
-	
-	if (m_blinkingNode) {
-		TimeRef min(qint64(0));
-		TimeRef max(qint64(-1));
-		APILinkedList nodeList = m_curve->get_nodes();
+	update_softselected_node(cpointer().on_first_input_event_scene_pos());
+
+	QMap<qint64, CurveNode*> nodesMap;
+
+	foreach(CurveNodeView* curveNodeView, m_nodeViews) {
+		if (curveNodeView->is_hard_selected()) {
+			CurveNode* node = curveNodeView->get_curve_node();
+			nodesMap.insert(node->get_when(), node);
+		}
+	}
+
+	if (!nodesMap.size() && m_blinkingNode) {
 		CurveNode* node = m_blinkingNode->get_curve_node();
-		int index = nodeList.indexOf(node);
-		
-		emit curveModified();
-		
-		if (index > 0) {
-			min = qint64(((CurveNode*)nodeList.at(index-1))->get_when() + 1);
-		}
-		if (nodeList.size() > (index + 1)) {
-			max = qint64(((CurveNode*)nodeList.at(index+1))->get_when() - 1);
-		}
-                return new MoveCurveNode(m_blinkingNode->get_curve_node(), this, m_sv->timeref_scalefactor, min, max, tr("Move Curve Node"));
+		nodesMap.insert(node->get_when(), node);
 	}
-	return ie().did_not_implement();
-}
 
-
-TCommand * CurveView::drag_node_vertical_only()
-{
-        MoveCurveNode* drag = qobject_cast<MoveCurveNode*>(drag_node());
-	
-	if (!drag) {
-		return 0;
+	if (!nodesMap.size()) {
+		return ie().failure();
 	}
-	
-	drag->set_vertical_only();
-	
-	return drag;
-}
 
+	TimeRef min(qint64(0));
+	TimeRef max(qint64(DBL_MAX));
+	APILinkedList nodeList = m_curve->get_nodes();
+	QList<CurveNode*> sortedNodeList = nodesMap.values();
+
+	int indexFirstNode = nodeList.indexOf(sortedNodeList.first());
+	int indexLastNode = nodeList.indexOf(sortedNodeList.last());
+
+	if (indexFirstNode > 0) {
+		min = TimeRef(((CurveNode*)nodeList.at(indexFirstNode-1))->get_when() + 1);
+	}
+
+	if (nodeList.size() > (indexLastNode + 1)) {
+		max = TimeRef(((CurveNode*)nodeList.at(indexLastNode+1))->get_when() - 1);
+	}
+
+	if (boundingRect().width() * m_sv->timeref_scalefactor < max) {
+		max = boundingRect().width() * m_sv->timeref_scalefactor;
+	}
+
+	if ((min - get_start_offset()) < TimeRef()) {
+		min = get_start_offset();
+	}
+
+	TimeRef startLocation = TimeRef(sortedNodeList.first()->get_when());
+	TimeRef endLocation  = TimeRef(sortedNodeList.last()->get_when());
+	TimeRef minWhenDiff = min - startLocation;
+	TimeRef maxWhenDiff = max - endLocation;
+
+
+	double maxValue = DBL_MIN;
+	double minValue = DBL_MAX;
+	foreach(CurveNode* node, sortedNodeList) {
+		double value = node->get_value();
+		if (value > maxValue) {
+			maxValue = value;
+		}
+		if (value < minValue) {
+			minValue = value;
+		}
+	}
+
+	double minValueDiff = 0 - minValue;
+	double maxValuediff = 1 - maxValue;
+
+	QString text = tr("Move Curve Node(s)", "", nodesMap.size());
+
+	emit curveModified();
+
+	return new MoveCurveNode(m_curve, sortedNodeList, boundingRect().height(), m_sv->timeref_scalefactor,
+				 minWhenDiff, maxWhenDiff, minValueDiff, maxValuediff, text);
+}
 
 void CurveView::node_moved( )
 {
@@ -484,15 +511,6 @@ void CurveView::node_moved( )
 	update(xleft, 0, xright - xleft + 3, m_boundingRect.height());
 }
 
-void CurveView::set_view_mode()
-{
-	if (m_sv->get_sheet()->get_mode() == Sheet::EFFECTS) {
-		show();
-	} else {
-		hide();
-	}
-}
-
 void CurveView::load_theme_data()
 {
 	calculate_bounding_rect();
@@ -524,6 +542,43 @@ TCommand * CurveView::remove_all_nodes()
 	return group;
 }
 
+TCommand* CurveView::select_lazy_selected_node()
+{
+	if (!m_blinkingNode)
+	{
+		return ie().failure();
+	}
+
+	m_blinkingNode->set_hard_selected(!m_blinkingNode->is_hard_selected());
+
+	return ie().succes();
+}
+
+TCommand* CurveView::toggle_select_all_nodes()
+{
+	bool selectedNodes = false;
+	foreach(CurveNodeView* nodeView, m_nodeViews) {
+		if (nodeView->is_hard_selected()) {
+			selectedNodes = true;
+			break;
+		}
+	}
+
+	if (selectedNodes) {
+		foreach(CurveNodeView* nodeView, m_nodeViews) {
+			nodeView->set_hard_selected(false);
+		}
+	} else {
+		foreach(CurveNodeView* nodeView, m_nodeViews) {
+			nodeView->set_hard_selected(true);
+		}
+	}
+
+	update();
+
+	return ie().succes();
+}
+
 CurveNodeView* CurveView::get_node_view_before(TimeRef location) const
 {
         TimeRef curveStartOffset = m_curve->get_start_offset();
@@ -551,4 +606,9 @@ CurveNodeView* CurveView::get_node_view_after(TimeRef location) const
         }
 
         return 0;
+}
+
+QString CurveView::get_name() const
+{
+	return "Volume";
 }
