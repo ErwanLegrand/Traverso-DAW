@@ -140,6 +140,7 @@ TraversoCommands::TraversoCommands()
         m_dict.insert("ArrowKeyBrowser", ArrowKeyBrowserCommand);
         m_dict.insert("WorkCursorMove", WorkCursorMoveCommand);
         m_dict.insert("PlayHeadMove", PlayHeadMoveCommand);
+	m_dict.insert("MoveCurveNodes", MoveCurveNodesCommand);
 }
 
 void TraversoCommands::create_menu_translations()
@@ -183,6 +184,7 @@ void TraversoCommands::create_menu_translations()
         translator->add_entry("TraversoCommands::ArrowKeyBrowser", tr("Arrow Key Browser"));
         translator->add_entry("TraversoCommands::WorkCursorMove", tr("Move Work Cursor"));
         translator->add_entry("TraversoCommands::PlayHeadMove", tr("Set Play Position"));
+	translator->add_entry("TraversoCommands::MoveCurveNodes", tr("Move Curve Node(s)"));
 }
 
 
@@ -472,6 +474,16 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
                         }
                         return new PlayHeadMove(view);
                 }
+
+		case MoveCurveNodesCommand:
+		{
+			CurveView* curveView = qobject_cast<CurveView*>(obj);
+			if (!curveView) {
+				return 0;
+			}
+
+			return curveView->drag_node();
+		}
 
                 case ScrollCommand:
 		{

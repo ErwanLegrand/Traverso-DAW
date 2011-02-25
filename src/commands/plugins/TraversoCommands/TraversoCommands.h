@@ -59,7 +59,8 @@ private:
                 WorkCursorMoveCommand,
                 PlayHeadMoveCommand,
                 MoveEdgeCommand,
-                MoveMarkerCommand
+		MoveMarkerCommand,
+		MoveCurveNodesCommand
         };
 };
 
