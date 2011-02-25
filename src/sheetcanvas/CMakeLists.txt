@@ -26,6 +26,8 @@ PluginChainView.cpp
 PluginView.cpp
 PositionIndicator.cpp
 TrackView.cpp
+TAbstractTrackView.cpp
+TTrackLaneView.cpp
 SheetView.cpp
 SheetWidget.cpp
 TBusTrackView.cpp
@@ -52,6 +54,8 @@ MarkerView.h
 PluginChainView.h
 PluginView.h
 TrackView.h
+TAbstractTrackView.h
+TTrackLaneView.h
 PositionIndicator.h
 TBusTrackView.h
 ViewItem.h
