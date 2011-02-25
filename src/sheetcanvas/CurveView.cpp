@@ -379,12 +379,38 @@ TCommand* CurveView::remove_node()
 
         update_softselected_node(cpointer().on_first_input_event_scene_pos());
 
-	if (m_blinkingNode) {
-		CurveNode* node = m_blinkingNode->get_curve_node();
-		m_blinkingNode = 0;
-		return m_curve->remove_node(node);
+	QList<CurveNode*> nodesToBeRemoved;
+
+	foreach(CurveNodeView* curveNodeView, m_nodeViews) {
+		if (curveNodeView->is_hard_selected()) {
+			curveNodeView->set_hard_selected(false);
+			CurveNode* node = curveNodeView->get_curve_node();
+			nodesToBeRemoved.append(node);
+		}
 	}
-	return ie().did_not_implement();
+
+	if (!nodesToBeRemoved.size() && m_blinkingNode) {
+		CurveNode* node = m_blinkingNode->get_curve_node();
+		nodesToBeRemoved.append(node);
+
+	}
+
+	if (!nodesToBeRemoved.size()) {
+		return ie().failure();
+	}
+
+	CommandGroup* group = new CommandGroup(m_curve, tr("Clear Nodes"));
+
+	foreach(CurveNode* node, nodesToBeRemoved) {
+		TCommand* command = m_curve->remove_node(node);
+		if (command) {
+			group->add_command(command);
+		}
+	}
+
+	return group;
+
+
 }
 
 TCommand* CurveView::drag_node()
