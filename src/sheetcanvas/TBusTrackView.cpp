@@ -40,6 +40,8 @@ TBusTrackView::TBusTrackView(SheetView* sv, TBusTrack* group)
 
         m_panel = new TBusTrackPanelView(this);
         calculate_bounding_rect();
+
+	automation_visibility_changed();
 }
 
 void TBusTrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -64,7 +66,4 @@ void TBusTrackView::load_theme_data()
         m_paintBackground = themer()->get_property("Track:paintbackground").toInt();
         m_topborderwidth = themer()->get_property("Track:topborderwidth").toInt();
         m_bottomborderwidth = themer()->get_property("Track:bottomborderwidth").toInt();
-
-        m_cliptopmargin = themer()->get_property("Track:cliptopmargin").toInt();
-        m_clipbottommargin = themer()->get_property("Track:clipbottommargin").toInt();
 }
