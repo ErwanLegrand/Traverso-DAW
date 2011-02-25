@@ -441,7 +441,7 @@ int AudioClip::process(nframes_t nframes)
 	Q_ASSERT(m_sheet);
 	
 	// Handle silence clips
-	if (get_channels() == 0) {
+	if (get_channel_count() == 0) {
 		return 0;
 	}
 	
@@ -464,7 +464,7 @@ int AudioClip::process(nframes_t nframes)
 	bus->silence_buffers(nframes);
 	
 	TimeRef mix_pos;
-	int channelcount = get_channels();
+	int channelcount = get_channel_count();
 	audio_sample_t* mixdown[channelcount];
 	uint framesToProcess = nframes;
 
@@ -789,7 +789,7 @@ void AudioClip::finish_recording()
 	disconnect(m_sheet, SIGNAL(transportStopped()), this, SLOT(finish_recording()));
 }
 
-int AudioClip::get_channels( ) const
+int AudioClip::get_channel_count( ) const
 {
 	if (m_readSource) {
 		return m_readSource->get_channel_count();

@@ -87,7 +87,7 @@ public:
 	TimeRef get_source_start_location() const {return m_sourceStartLocation;}
 	TimeRef get_source_end_location() const {return m_sourceEndLocation;}
 	
-	int get_channels() const;
+	int get_channel_count() const;
 	int get_rate() const;
 	int get_bitdepth() const;
 	qint64 get_readsource_id() const;
