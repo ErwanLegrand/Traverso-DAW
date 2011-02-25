@@ -63,6 +63,7 @@ public:
                 m_parentViewItem = parentViewItem;
                 setCursor(themer()->get_cursor("Default"));
                 m_hasMouseTracking = false;
+		m_isLayoutItem = false;
         }
 
         virtual ~ViewItem() {}
@@ -80,7 +81,9 @@ public:
 	}
 	virtual int get_childview_y_offset() const {return 0;}
 	virtual int type() const;
+	bool is_layout_item() const {return m_isLayoutItem;}
 	virtual int get_height() const {return (int)m_boundingRect.height();}
+	virtual QString get_name() const {return m_parentViewItem ? m_parentViewItem->get_name() : "";}
 	
 	/**
 	 *      Reimplement and call update() in the reimplementation
@@ -104,6 +107,7 @@ protected:
 	ViewItem*	m_parentViewItem;
 	QRectF		m_boundingRect;
         bool            m_hasMouseTracking;
+	bool		m_isLayoutItem;
 };
 
 inline QRectF ViewItem::boundingRect() const {return m_boundingRect;}

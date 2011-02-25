@@ -180,12 +180,14 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
 
                         foreach(QGraphicsItem* item, itemsUnderCursor) {
-                                if (ViewItem::is_viewitem(item)) {
-                                        ViewItem* vItem = (ViewItem*)item;
-                                        activeContextItems.append(vItem);
-                                        if (vItem->has_mouse_tracking()) {
-                                                mouseTrackingItems.append(vItem);
-                                        }
+				if (ViewItem::is_viewitem(item)) {
+					ViewItem* viewItem = (ViewItem*)item;
+					if (!viewItem->is_layout_item()) {
+						activeContextItems.append(viewItem);
+						if (viewItem->has_mouse_tracking()) {
+							mouseTrackingItems.append(viewItem);
+						}
+					}
                                 }
                         }
                 } else {
@@ -228,8 +230,8 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 void ViewPort::tabletEvent(QTabletEvent * event)
 {
 	PMESG("ViewPort tablet event:: x, y: %d, %d", (int)event->x(), (int)event->y());
-	PMESG("ViewPort tablet event:: high resolution x, y: %d, %d", 
-	      (int)event->hiResGlobalX(), (int)event->hiResGlobalY());
+	PMESG("ViewPort tablet event:: high resolution x, y: %f, %f",
+	      event->hiResGlobalX(), event->hiResGlobalY());
         cpointer().set_mouse_cursor_position((int)event->x(), (int)event->y());
 	
 	QGraphicsView::tabletEvent(event);
@@ -244,10 +246,10 @@ void ViewPort::enterEvent(QEvent* e)
 
 void ViewPort::leaveEvent(QEvent *)
 {
-        // Force the next mouse move event to do something
+	cpointer().set_current_viewport(0);
+	// Force the next mouse move event to do something
         // even if the mouse didn't move, so switching viewports
         // does update the current context!
-        cpointer().set_current_viewport(0);
         m_oldMousePos = QPoint();
 }
 
