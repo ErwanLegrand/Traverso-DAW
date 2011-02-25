@@ -49,12 +49,14 @@ ClipsViewPort::ClipsViewPort(QGraphicsScene* scene, SheetWidget* sw)
 
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+	scale(1.0, 1.0);
 }
 
 void ClipsViewPort::resizeEvent( QResizeEvent * e )
 {
 	ViewPort::resizeEvent(e);
-	m_sw->get_sheetview()->clipviewport_resize_event();
+//	m_sw->get_sheetview()->clipviewport_resize_event();
 }
 
 
@@ -122,7 +124,7 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 	PENTER;
 	Q_UNUSED(event)
 	
-	if (!importTrack) {
+	if (!m_importTrack) {
 		return;
 	}
 
@@ -136,7 +138,7 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 		if (clip) {
 			bool hadSheet = clip->has_sheet();
                         clip->set_sheet(((Sheet*)m_sw->get_sheet()));
-			clip->set_track(importTrack);
+			clip->set_track(m_importTrack);
 			if (!hadSheet) {
 				clip->set_state(clip->get_dom_node());
 			}
@@ -150,8 +152,8 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 		if (source) {
 			clip = resources_manager()->new_audio_clip(source->get_short_name());
 			resources_manager()->set_source_for_clip(clip, source);
-			clip->set_sheet(importTrack->get_sheet());
-			clip->set_track(importTrack);
+			clip->set_sheet(m_importTrack->get_sheet());
+			clip->set_track(m_importTrack);
 			clip->set_track_start_location(startpos);
 			startpos = clip->get_track_end_location();
 			AddRemoveClip* arc = new AddRemoveClip(clip, AddRemoveClip::ADD);
@@ -161,7 +163,7 @@ void ClipsViewPort::dropEvent(QDropEvent* event )
 	
 	bool firstItem = true;
 	foreach(Import* import, m_imports) {
-		import->set_track(importTrack);
+		import->set_track(m_importTrack);
 		if (firstItem) {
 			// Place first item at cursor, others at end of track.
 			import->set_position(startpos);
@@ -188,7 +190,7 @@ void ClipsViewPort::dragMoveEvent( QDragMoveEvent * event )
 		return;
 	}
 	
-	importTrack = 0;
+	m_importTrack = 0;
 	
 	// hmmm, code below is candidate for improvements...?
 	
@@ -200,7 +202,7 @@ void ClipsViewPort::dragMoveEvent( QDragMoveEvent * event )
 	foreach(QGraphicsItem* obj, itemlist) {
 		AudioTrackView* tv = dynamic_cast<AudioTrackView*>(obj);
 		if (tv) {
-			importTrack = tv->get_track();
+			m_importTrack = tv->get_track();
 			return;
 		}
 	}

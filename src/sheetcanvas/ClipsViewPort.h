@@ -45,12 +45,12 @@ protected:
 	void paintEvent( QPaintEvent* e);
 	void dragEnterEvent(QDragEnterEvent *event);
 	void dropEvent(QDropEvent *event);
-	void dragMoveEvent(QDragMoveEvent *event);
+        void dragMoveEvent(QDragMoveEvent *event);
 private:
 	SheetWidget*	m_sw;
 	QList<Import*>	m_imports;
 	QList<qint64 >	m_resourcesImport;
-	AudioTrack*          importTrack;
+	AudioTrack*     m_importTrack;
 };
 
 
