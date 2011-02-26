@@ -285,7 +285,7 @@
 				<Object objectname="Gain" slotsignature="increase_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_right" modes="All" sortorder="1" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_increment" modes="All" sortorder="1" />
-                                <Object objectname="Zoom" slotsignature="vzoom_out" modes="All" sortorder="7" />
+				<Object objectname="Zoom" slotsignature="track_vzoom_out" modes="All" sortorder="7" />
 				<Object objectname="TrackPan" slotsignature="pan_right" modes="All" sortorder="2" />
                                 <Object objectname="CropClip" slotsignature="adjust_left" modes="All" />
                         </Objects>
@@ -297,7 +297,7 @@
 				<Object objectname="Gain" slotsignature="decrease_gain" modes="All" />
 				<Object objectname="TrackPanelPan" slotsignature="pan_left" modes="All" sortorder="2" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" modes="All" sortorder="2" />
-                                <Object objectname="Zoom" slotsignature="vzoom_in" modes="All" sortorder="8" />
+				<Object objectname="Zoom" slotsignature="track_vzoom_in" modes="All" sortorder="8" />
 				<Object objectname="TrackPan" slotsignature="pan_left" modes="All" sortorder="1" />
                                 <Object objectname="CropClip" slotsignature="adjust_right" modes="All" />
                         </Objects>
