@@ -1,168 +1,174 @@
 <!DOCTYPE TraversoTheming>
 <Themer>
     <properties>
-        <property value="0.05" name="GainSlider:smoothfactor"/>
-        <property value="0" name="Sheet:track:seperatingheight"/>
-        <property value="1" name="VUMeter:layout:mainlayoutmargin"/>
-        <property value="2" name="Track:clipbottommargin"/>
-        <property value="6" name="VUMeter:layout:minimumlevelwidth"/>
-        <property value="0" name="Sheet:track:topindent"/>
-        <property value="40" name="AudioClip:mimimumheightforinfoarea"/>
-        <property value="1" name="Track:bottomborderwidth"/>
+	<property value="0.05" name="GainSlider:smoothfactor"/>
+	<property value="0" name="Sheet:track:seperatingheight"/>
+	<property value="1" name="VUMeter:layout:mainlayoutmargin"/>
+	<property value="2" name="Track:clipbottommargin"/>
+	<property value="6" name="VUMeter:layout:minimumlevelwidth"/>
+	<property value="0" name="Sheet:track:topindent"/>
+	<property value="40" name="AudioClip:mimimumheightforinfoarea"/>
+	<property value="1" name="Track:bottomborderwidth"/>
 	<property value="8" name="CurveNode:diameter"/>
-        <property value="1" name="AudioClip:drawbackground"/>
-        <property value="0" name="Track:paintbackground"/>
-        <property value="0" name="AudioClip:wavemicroview:antialiased"/>
-        <property value="1" name="AudioClip:fillwave"/>
-        <property value="3" name="VUMeter:layout:vuspacing"/>
-        <property value="2" name="VUMeter:layout:mainlayoutspacing"/>
-        <property value="2" name="Track:cliptopmargin"/>
-        <property value="0" name="Track:topborderwidth"/>
-        <property value="5" name="VUMeter:layout:vulayoutspacing"/>
-        <property value="20" name="Sheet:track:minimumheight"/>
-        <property value="1200" name="Sheet:track:maximumheight"/>
-        <property value="13" name="AudioClip:infoareaheight"/>
+	<property value="1" name="AudioClip:drawbackground"/>
+	<property value="0" name="Track:paintbackground"/>
+	<property value="0" name="AudioClip:wavemicroview:antialiased"/>
+	<property value="1" name="AudioClip:fillwave"/>
+	<property value="2" name="VUMeter:layout:mainlayoutspacing"/>
+	<property value="3" name="VUMeter:layout:vuspacing"/>
+	<property value="2" name="Track:cliptopmargin"/>
+	<property value="0" name="Track:topborderwidth"/>
+	<property value="5" name="VUMeter:layout:vulayoutspacing"/>
+	<property value="20" name="Sheet:track:minimumheight"/>
+	<property value="1200" name="Sheet:track:maximumheight"/>
+	<property value="13" name="AudioClip:infoareaheight"/>
     </properties>
     <fonts>
-        <font value="0.75" name="VUMeter:fontscale:label"/>
-        <font value="0.8999999364217123" name="InfoWidget:fontscale:values"/>
-        <font value="0.8000000317891439" name="TrackPanel:fontscale:pan"/>
-        <font value="1" name="MessageWidget:fontscale:log"/>
-        <font value="1.5" name="Playhead:fontscale:info"/>
-        <font value="0.8999999364217123" name="Timeline:fontscale:label"/>
-        <font value="0.8999999364217123" name="AudioClip:fontscale:title"/>
-        <font value="0.8999999364217123" name="TrackPanel:fontscale:led"/>
-        <font value="0.75" name="AudioClip:fontscale:dblines"/>
-        <font value="1" name="ViewPort:fontscale:infocursor"/>
-        <font value="0.8000000317891439" name="TrackPanel:fontscale:gain"/>
-        <font value="0.8500000105963813" name="TrackPanel:fontscale:bus"/>
-        <font value="0.8999999364217123" name="TrackPanel:fontscale:name"/>
-        <font value="0.75" name="FFTMeter:fontscale:label"/>
-        <font value="0.9500000211927626" name="ContextMenu:fontscale:actions"/>
-        <font value="0.9500000211927626" name="Timeline:fontscale:marker"/>
-        <font value="0.75" name="CurveView:fontscale:label"/>
-        <font value="0.75" name="CorrelationMeter:fontscale:label"/>
-        <font value="0.8999999364217123" name="Plugin:fontscale:name"/>
+	<font value="0.75" name="VUMeter:fontscale:label"/>
+	<font value="0.8999999364217123" name="InfoWidget:fontscale:values"/>
+	<font value="0.8000000317891439" name="TrackPanel:fontscale:pan"/>
+	<font value="1" name="MessageWidget:fontscale:log"/>
+	<font value="1.5" name="Playhead:fontscale:info"/>
+	<font value="0.8999999364217123" name="Timeline:fontscale:label"/>
+	<font value="0.8999999364217123" name="AudioClip:fontscale:title"/>
+	<font value="0.8999999364217123" name="TrackPanel:fontscale:led"/>
+	<font value="0.75" name="AudioClip:fontscale:dblines"/>
+	<font value="1" name="ViewPort:fontscale:infocursor"/>
+	<font value="0.8000000317891439" name="TrackPanel:fontscale:gain"/>
+	<font value="0.8500000105963813" name="TrackPanel:fontscale:bus"/>
+	<font value="0.8999999364217123" name="TrackPanel:fontscale:name"/>
+	<font value="0.75" name="FFTMeter:fontscale:label"/>
+	<font value="0.9500000211927626" name="ContextMenu:fontscale:actions"/>
+	<font value="0.9500000211927626" name="Timeline:fontscale:marker"/>
+	<font value="0.75" name="CurveView:fontscale:label"/>
+	<font value="0.75" name="CorrelationMeter:fontscale:label"/>
+	<font value="0.8999999364217123" name="Plugin:fontscale:name"/>
     </fonts>
     <colors>
-        <color alpha="255" red="30" blue="48" name="Sheet:background" green="48"/>
-        <color alpha="255" red="146" blue="155" name="CorrelationMeter:margin" green="146"/>
-        <color alpha="180" red="150" blue="150" name="AudioClip:db-grid" green="150"/>
-        <color alpha="255" red="230" blue="230" name="TrackPanel:led:font:inactive" green="230"/>
-        <color alpha="170" red="155" blue="40" name="AudioClip:background:recording" green="55"/>
-        <color alpha="255" red="0" blue="255" name="CorrelationMeter:foreground:center" green="0"/>
-        <color alpha="155" red="255" blue="0" name="Playhead:inactive" green="0"/>
-        <color alpha="255" red="210" blue="50" name="AudioClip:wavemicroview:curvemode" green="210"/>
-        <color alpha="255" red="255" blue="0" name="VUMeter:foreground:6db" green="100"/>
-        <color alpha="45" red="45" blue="70" name="TrackPanel:slider:border" green="60"/>
-        <color alpha="255" red="255" blue="128" name="Marker:blink" green="0"/>
-        <color alpha="80" red="30" blue="180" name="Plugin:background:bypassed" green="100"/>
-        <color alpha="140" red="255" blue="255" name="CurveNode:default" green="0"/>
-        <color alpha="205" red="135" blue="25" name="PluginSlider:value" green="90"/>
-        <color alpha="255" red="128" blue="248" name="Marker:default" green="200"/>
-        <color alpha="255" red="0" blue="0" name="Text:dark" green="0"/>
-        <color alpha="105" red="205" blue="255" name="CorrelationMeter:grid" green="223"/>
-        <color alpha="255" red="100" blue="100" name="FFTMeter:tickmarks:sub" green="100"/>
-        <color alpha="125" red="105" blue="200" name="GainSlider:0db" green="155"/>
-        <color alpha="255" red="100" blue="120" name="Track:clipbottomoffset" green="100"/>
-        <color alpha="255" red="185" blue="185" name="CorrelationMeter:text" green="185"/>
-        <color alpha="105" red="205" blue="255" name="FFTMeter:grid" green="223"/>
-        <color alpha="255" red="15" blue="38" name="BusTrackPanel:background" green="20"/>
-        <color alpha="100" red="255" blue="0" name="AudioClip:invalidreadsource" green="0"/>
-        <color alpha="170" red="235" blue="235" name="AudioClip:background:muted:mousehover" green="235"/>
-        <color alpha="255" red="140" blue="50" name="TrackPanel:head:active" green="140"/>
-        <color alpha="255" red="255" blue="255" name="Timeline:text" green="255"/>
-        <color alpha="255" red="255" blue="0" name="AudioClip:sampleoverload" green="0"/>
-        <color alpha="255" red="255" blue="0" name="Curve:active" green="255"/>
-        <color alpha="255" red="255" blue="255" name="Plugin:text" green="255"/>
-        <color alpha="255" red="24" blue="210" name="AudioClip:channelseperator:selected" green="137"/>
-        <color alpha="235" red="82" blue="165" name="AudioClip:wavemacroview:brush:curvemode" green="130"/>
-        <color alpha="100" red="81" blue="121" name="AudioClip:background:selected" green="91"/>
-        <color alpha="80" red="185" blue="25" name="Fade:bypassed" green="160"/>
-        <color alpha="125" red="0" blue="200" name="GainSlider:-6db" green="155"/>
-        <color alpha="255" red="255" blue="255" name="TrackPanel:bus:font" green="255"/>
-        <color alpha="255" red="200" blue="200" name="Text:light" green="200"/>
-        <color alpha="255" red="25" blue="50" name="TrackPanel:background" green="50"/>
-        <color alpha="200" red="125" blue="135" name="AudioClip:background:mousehover" green="123"/>
-        <color alpha="255" red="255" blue="255" name="CorrelationMeter:foreground:side" green="0"/>
-        <color alpha="255" red="245" blue="0" name="VUMeter:foreground:0db" green="255"/>
-        <color alpha="255" red="24" blue="55" name="CorrelationMeter:background" green="45"/>
-        <color alpha="255" red="180" blue="180" name="TrackPanel:trackseparation" green="180"/>
-        <color alpha="255" red="0" blue="0" name="FFTMeter:text" green="0"/>
-        <color alpha="255" red="160" blue="150" name="InfoWidget:background" green="170"/>
-        <color alpha="255" red="0" blue="255" name="VUMeter:foreground:-60db" green="25"/>
-        <color alpha="255" red="0" blue="0" name="VUMeter:font:active" green="0"/>
-        <color alpha="120" red="245" blue="245" name="AudioClip:background:muted" green="245"/>
-        <color alpha="0" red="100" blue="100" name="TrackPanel:led:margin:active" green="100"/>
-        <color alpha="125" red="28" blue="80" name="VUMeter:levelseparator" green="0"/>
-        <color alpha="60" red="181" blue="201" name="AudioClip:background" green="205"/>
-        <color alpha="255" red="50" blue="50" name="VUMeter:background:bar" green="50"/>
-        <color alpha="255" red="165" blue="0" name="PanSlider:-1" green="165"/>
-        <color alpha="255" red="130" blue="0" name="AudioClip:wavemacroview:brush:hover" green="105"/>
-        <color alpha="255" red="80" blue="80" name="AudioClip:contour" green="80"/>
-        <color alpha="255" red="220" blue="240" name="Track:cliptopoffset" green="220"/>
-        <color alpha="170" red="30" blue="230" name="Plugin:background" green="100"/>
-        <color alpha="100" red="180" blue="210" name="Fade:default" green="200"/>
-        <color alpha="0" red="100" blue="40" name="TrackPanel:slider:background" green="100"/>
-        <color alpha="60" red="160" blue="245" name="Track:mousehover" green="190"/>
-        <color alpha="255" red="92" blue="90" name="AudioClip:wavemacroview:brush:curvemode:hover" green="50"/>
-        <color alpha="255" red="255" blue="255" name="PluginSlider:text" green="255"/>
-        <color alpha="255" red="29" blue="39" name="Timeline:background" green="39"/>
-        <color alpha="255" red="30" blue="47" name="Track:background" green="30"/>
-        <color alpha="255" red="100" blue="220" name="Workcursor:default" green="200"/>
-        <color alpha="255" red="128" blue="255" name="Marker:blinkend" green="0"/>
-        <color alpha="255" red="255" blue="55" name="Marker:end" green="0"/>
-        <color alpha="150" red="111" blue="182" name="AudioClip:background:selected:mousehover" green="121"/>
-        <color alpha="105" red="30" blue="30" name="TrackPanel:led:margin:inactive" green="30"/>
-        <color alpha="255" red="128" blue="0" name="VUMeter:overled:inactive" green="0"/>
-        <color alpha="255" red="24" blue="55" name="FFTMeter:background" green="45"/>
-        <color alpha="255" red="255" blue="255" name="TrackPanel:text" green="255"/>
-        <color alpha="255" red="150" blue="205" name="AudioClip:wavemicroview" green="150"/>
-        <color alpha="255" red="0" blue="0" name="TrackPanel:sliderborder" green="0"/>
-        <color alpha="255" red="55" blue="75" name="AudioClip:wavemacroview:brush" green="65"/>
-        <color alpha="255" red="140" blue="148" name="SheetPanel:background" green="140"/>
-        <color alpha="125" red="10" blue="155" name="GainSlider:-60db" green="25"/>
-        <color alpha="220" red="120" blue="220" name="CurveNode:blink" green="120"/>
-        <color alpha="255" red="200" blue="200" name="VUMeter:font:inactive" green="200"/>
-        <color alpha="255" red="241" blue="255" name="FFTMeter:foreground:light" green="255"/>
-        <color alpha="255" red="200" blue="200" name="AudioClip:wavemacroview:brush:muted" green="200"/>
-        <color alpha="255" red="178" blue="182" name="AudioClip:channelseperator" green="191"/>
-        <color alpha="255" red="246" blue="255" name="FFTMeter:margin" green="246"/>
-        <color alpha="155" red="252" blue="153" name="FFTMeter:foreground" green="250"/>
-	<color alpha="255" red="255" blue="50" name="TrackPanel:Mled" green="255"/>
-        <color alpha="255" red="235" blue="255" name="AudioClip:wavemacroview:outline:curvemode" green="230"/>
-        <color alpha="255" red="0" blue="31" name="PluginSlider:background" green="28"/>
-        <color alpha="150" red="255" blue="255" name="Curve:inactive" green="0"/>
-        <color alpha="255" red="235" blue="235" name="AudioClip:wavemacroview:outline" green="235"/>
-        <color alpha="125" red="255" blue="100" name="GainSlider:6db" green="150"/>
-        <color alpha="255" red="182" blue="123" name="CorrelationMeter:centerline" green="180"/>
-        <color alpha="255" red="0" blue="0" name="TrackPanel:led:font:active" green="0"/>
-        <color alpha="255" red="0" blue="200" name="VUMeter:foreground:-6db" green="175"/>
-	<color alpha="255" red="255" blue="58" name="TrackPanel:Rled" green="58"/>
+	<color alpha="255" red="30" blue="48" name="Sheet:background" green="48"/>
+	<color alpha="255" red="146" blue="155" name="CorrelationMeter:margin" green="146"/>
+	<color alpha="180" red="150" blue="150" name="AudioClip:db-grid" green="150"/>
+	<color alpha="150" red="255" blue="242" name="TrackPanel:led:font:inactive" green="254"/>
+	<color alpha="170" red="155" blue="40" name="AudioClip:background:recording" green="55"/>
+	<color alpha="255" red="0" blue="255" name="CorrelationMeter:foreground:center" green="0"/>
+	<color alpha="155" red="255" blue="0" name="Playhead:inactive" green="0"/>
+	<color alpha="255" red="210" blue="50" name="AudioClip:wavemicroview:curvemode" green="210"/>
+	<color alpha="255" red="255" blue="0" name="VUMeter:foreground:6db" green="100"/>
+	<color alpha="45" red="45" blue="70" name="TrackPanel:slider:border" green="60"/>
+	<color alpha="255" red="255" blue="128" name="Marker:blink" green="0"/>
+	<color alpha="170" red="255" blue="242" name="Timeline:majorticks" green="254"/>
+	<color alpha="80" red="30" blue="180" name="Plugin:background:bypassed" green="100"/>
+	<color alpha="205" red="135" blue="25" name="PluginSlider:value" green="90"/>
+	<color alpha="140" red="255" blue="55" name="CurveNode:default" green="138"/>
+	<color alpha="255" red="128" blue="248" name="Marker:default" green="200"/>
+	<color alpha="255" red="0" blue="0" name="Text:dark" green="0"/>
+	<color alpha="105" red="205" blue="255" name="CorrelationMeter:grid" green="223"/>
+	<color alpha="255" red="100" blue="120" name="Track:clipbottomoffset" green="100"/>
+	<color alpha="125" red="105" blue="200" name="GainSlider:0db" green="155"/>
+	<color alpha="255" red="100" blue="100" name="FFTMeter:tickmarks:sub" green="100"/>
+	<color alpha="255" red="185" blue="185" name="CorrelationMeter:text" green="185"/>
+	<color alpha="105" red="205" blue="255" name="FFTMeter:grid" green="223"/>
+	<color alpha="255" red="140" blue="50" name="TrackPanel:head:active" green="140"/>
+	<color alpha="100" red="255" blue="0" name="AudioClip:invalidreadsource" green="0"/>
+	<color alpha="170" red="235" blue="235" name="AudioClip:background:muted:mousehover" green="235"/>
+	<color alpha="170" red="255" blue="242" name="Timeline:text" green="254"/>
+	<color alpha="255" red="255" blue="255" name="Plugin:text" green="255"/>
+	<color alpha="255" red="255" blue="0" name="AudioClip:sampleoverload" green="0"/>
+	<color alpha="200" red="255" blue="55" name="Curve:active" green="138"/>
+	<color alpha="20" red="178" blue="182" name="AudioClip:channelseperator:selected" green="191"/>
+	<color alpha="235" red="82" blue="165" name="AudioClip:wavemacroview:brush:curvemode" green="130"/>
+	<color alpha="100" red="81" blue="121" name="AudioClip:background:selected" green="91"/>
+	<color alpha="80" red="185" blue="25" name="Fade:bypassed" green="160"/>
 	<color alpha="255" red="153" blue="21" name="TrackPanel:Pled" green="101"/>
-        <color alpha="105" red="100" blue="100" name="TrackPanel:bus:margin" green="100"/>
-        <color alpha="255" red="55" blue="90" name="TrackPanel:head:inactive" green="80"/>
-        <color alpha="100" red="35" blue="60" name="TrackPanel:led:inactive" green="60"/>
-        <color alpha="255" red="120" blue="58" name="PanSlider:0" green="58"/>
-        <color alpha="105" red="35" blue="75" name="TrackPanel:bus:background" green="70"/>
-        <color alpha="255" red="90" blue="90" name="AudioClip:wavemacroview:outline:muted" green="90"/>
-        <color alpha="100" red="50" blue="45" name="BusTrack:background" green="50"/>
-        <color alpha="255" red="165" blue="0" name="PanSlider:1" green="165"/>
-        <color alpha="255" red="243" blue="255" name="ResourcesBin:alternaterowcolor" green="248"/>
-        <color alpha="255" red="255" blue="0" name="FFTMeter:curve:average" green="0"/>
-        <color alpha="255" red="255" blue="0" name="VUMeter:overled:active" green="0"/>
-        <color alpha="255" red="0" blue="0" name="FFTMeter:tickmarks:main" green="0"/>
-        <color alpha="200" red="99" blue="128" name="AudioClip:clipinfobackground:inactive" green="120"/>
+	<color alpha="255" red="255" blue="255" name="TrackPanel:bus:font" green="255"/>
+	<color alpha="125" red="0" blue="200" name="GainSlider:-6db" green="155"/>
+	<color alpha="255" red="25" blue="50" name="TrackPanel:background" green="50"/>
+	<color alpha="255" red="200" blue="200" name="Text:light" green="200"/>
+	<color alpha="100" red="50" blue="45" name="BusTrack:background" green="50"/>
+	<color alpha="200" red="125" blue="135" name="AudioClip:background:mousehover" green="123"/>
+	<color alpha="255" red="255" blue="255" name="CorrelationMeter:foreground:side" green="0"/>
+	<color alpha="255" red="255" blue="71" name="VUMeter:foreground:0db" green="145"/>
+	<color alpha="255" red="24" blue="55" name="CorrelationMeter:background" green="45"/>
+	<color alpha="255" red="180" blue="180" name="TrackPanel:trackseparation" green="180"/>
+	<color alpha="255" red="0" blue="0" name="FFTMeter:text" green="0"/>
+	<color alpha="255" red="160" blue="150" name="InfoWidget:background" green="170"/>
+	<color alpha="255" red="0" blue="255" name="VUMeter:foreground:-60db" green="25"/>
+	<color alpha="255" red="0" blue="0" name="VUMeter:font:active" green="0"/>
+	<color alpha="120" red="245" blue="245" name="AudioClip:background:muted" green="245"/>
+	<color alpha="0" red="100" blue="100" name="TrackPanel:led:margin:active" green="100"/>
+	<color alpha="125" red="28" blue="80" name="VUMeter:levelseparator" green="0"/>
+	<color alpha="60" red="181" blue="201" name="AudioClip:background" green="205"/>
+	<color alpha="255" red="50" blue="50" name="VUMeter:background:bar" green="50"/>
+	<color alpha="255" red="165" blue="0" name="PanSlider:-1" green="165"/>
+	<color alpha="255" red="130" blue="0" name="AudioClip:wavemacroview:brush:hover" green="105"/>
+	<color alpha="255" red="220" blue="240" name="Track:cliptopoffset" green="220"/>
+	<color alpha="255" red="80" blue="80" name="AudioClip:contour" green="80"/>
+	<color alpha="170" red="30" blue="230" name="Plugin:background" green="100"/>
+	<color alpha="0" red="100" blue="40" name="TrackPanel:slider:background" green="100"/>
+	<color alpha="100" red="180" blue="210" name="Fade:default" green="200"/>
+	<color alpha="60" red="160" blue="245" name="Track:mousehover" green="190"/>
+	<color alpha="255" red="92" blue="90" name="AudioClip:wavemacroview:brush:curvemode:hover" green="50"/>
+	<color alpha="255" red="255" blue="50" name="TrackPanel:Mled" green="255"/>
+	<color alpha="255" red="255" blue="255" name="PluginSlider:text" green="255"/>
+	<color alpha="255" red="30" blue="47" name="Track:background" green="30"/>
+	<color alpha="255" red="29" blue="39" name="Timeline:background" green="39"/>
+	<color alpha="255" red="100" blue="220" name="Workcursor:default" green="200"/>
+	<color alpha="255" red="128" blue="255" name="Marker:blinkend" green="0"/>
+	<color alpha="255" red="255" blue="55" name="Marker:end" green="0"/>
+	<color alpha="150" red="111" blue="182" name="AudioClip:background:selected:mousehover" green="121"/>
+	<color alpha="105" red="30" blue="30" name="TrackPanel:led:margin:inactive" green="30"/>
+	<color alpha="255" red="128" blue="0" name="VUMeter:overled:inactive" green="0"/>
+	<color alpha="255" red="24" blue="55" name="FFTMeter:background" green="45"/>
+	<color alpha="220" red="255" blue="242" name="TrackPanel:text" green="254"/>
+	<color alpha="255" red="150" blue="205" name="AudioClip:wavemicroview" green="150"/>
+	<color alpha="255" red="0" blue="0" name="TrackPanel:sliderborder" green="0"/>
+	<color alpha="255" red="55" blue="75" name="AudioClip:wavemacroview:brush" green="65"/>
+	<color alpha="255" red="255" blue="58" name="TrackPanel:Rled" green="58"/>
+	<color alpha="255" red="140" blue="148" name="SheetPanel:background" green="140"/>
+	<color alpha="125" red="10" blue="155" name="GainSlider:-60db" green="25"/>
+	<color alpha="220" red="255" blue="55" name="CurveNode:blink" green="138"/>
+	<color alpha="255" red="200" blue="200" name="VUMeter:font:inactive" green="200"/>
+	<color alpha="255" red="241" blue="255" name="FFTMeter:foreground:light" green="255"/>
+	<color alpha="255" red="200" blue="200" name="AudioClip:wavemacroview:brush:muted" green="200"/>
+	<color alpha="20" red="178" blue="182" name="AudioClip:channelseperator" green="191"/>
+	<color alpha="255" red="246" blue="255" name="FFTMeter:margin" green="246"/>
+	<color alpha="155" red="252" blue="153" name="FFTMeter:foreground" green="250"/>
+	<color alpha="255" red="255" blue="0" name="TrackPanel:muteled" green="255"/>
+	<color alpha="255" red="235" blue="255" name="AudioClip:wavemacroview:outline:curvemode" green="230"/>
+	<color alpha="255" red="0" blue="31" name="PluginSlider:background" green="28"/>
+	<color alpha="150" red="255" blue="255" name="Curve:inactive" green="0"/>
+	<color alpha="255" red="235" blue="235" name="AudioClip:wavemacroview:outline" green="235"/>
+	<color alpha="125" red="255" blue="100" name="GainSlider:6db" green="150"/>
+	<color alpha="255" red="182" blue="123" name="CorrelationMeter:centerline" green="180"/>
+	<color alpha="255" red="0" blue="0" name="TrackPanel:led:font:active" green="0"/>
+	<color alpha="255" red="0" blue="200" name="VUMeter:foreground:-6db" green="175"/>
+	<color alpha="105" red="100" blue="100" name="TrackPanel:bus:margin" green="100"/>
+	<color alpha="255" red="255" blue="0" name="TrackPanel:recled" green="0"/>
+	<color alpha="255" red="55" blue="90" name="TrackPanel:head:inactive" green="80"/>
+	<color alpha="100" red="35" blue="60" name="TrackPanel:led:inactive" green="60"/>
+	<color alpha="255" red="120" blue="58" name="PanSlider:0" green="58"/>
+	<color alpha="105" red="35" blue="75" name="TrackPanel:bus:background" green="70"/>
+	<color alpha="255" red="90" blue="90" name="AudioClip:wavemacroview:outline:muted" green="90"/>
+	<color alpha="255" red="165" blue="0" name="PanSlider:1" green="165"/>
+	<color alpha="255" red="15" blue="38" name="BusTrackPanel:background" green="20"/>
+	<color alpha="70" red="255" blue="242" name="Timeline:minorticks" green="254"/>
+	<color alpha="255" red="243" blue="255" name="ResourcesBin:alternaterowcolor" green="248"/>
+	<color alpha="255" red="255" blue="0" name="FFTMeter:curve:average" green="0"/>
+	<color alpha="255" red="255" blue="0" name="VUMeter:overled:active" green="0"/>
 	<color alpha="255" red="135" blue="135" name="TrackPanel:Sled" green="254"/>
-        <color alpha="100" red="40" blue="155" name="AudioClip:clipinfobackground" green="100"/>
-        <color alpha="255" red="255" blue="255" name="VUMeter:background:widget" green="255"/>
-        <color alpha="180" red="255" blue="0" name="Playhead:active" green="0"/>
+	<color alpha="100" red="100" blue="120" name="Track:laneseperator" green="100"/>
+	<color alpha="255" red="0" blue="0" name="FFTMeter:tickmarks:main" green="0"/>
+	<color alpha="200" red="99" blue="128" name="AudioClip:clipinfobackground:inactive" green="120"/>
+	<color alpha="255" red="0" blue="0" name="TrackPanel:sololed" green="255"/>
+	<color alpha="100" red="40" blue="155" name="AudioClip:clipinfobackground" green="100"/>
+	<color alpha="255" red="255" blue="255" name="VUMeter:background:widget" green="255"/>
+	<color alpha="180" red="255" blue="0" name="Playhead:active" green="0"/>
     </colors>
     <gradients>
-        <gradient name="CorrelationMeter:foreground">
-            <stop alpha="255" value="0" red="241" blue="255" green="250"/>
-            <stop alpha="255" value="0.5" red="82" blue="123" green="80"/>
-            <stop alpha="255" value="1" red="241" blue="255" green="250"/>
-        </gradient>
+	<gradient name="CorrelationMeter:foreground">
+	    <stop alpha="255" value="0" red="241" blue="255" green="250"/>
+	    <stop alpha="255" value="0.5" red="82" blue="123" green="80"/>
+	    <stop alpha="255" value="1" red="241" blue="255" green="250"/>
+	</gradient>
     </gradients>
 </Themer>

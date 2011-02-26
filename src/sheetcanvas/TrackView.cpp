@@ -114,6 +114,9 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 	}
 
 	if (m_visibleLanes > 1) {
+		QPen pen;
+		pen.setColor(themer()->get_color("Track:laneseperator"));
+		painter->setPen(pen);
 		for (int i = 1; i<m_laneViews.size(); ++i) {
 			TTrackLaneView* laneView = m_laneViews.at(i);
 			int y =  laneView->pos().y() - 1;

@@ -145,9 +145,6 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
         }
         painter->fillRect(xstart, 0,  pixelcount, height, backgroundColor );
 	
-	painter->setPen(themer()->get_color("Timeline:text"));
-	painter->setFont( themer()->get_font("Timeline:fontscale:label") );
-	
 	TimeRef major;
 	
 	if (m_zooms.contains(m_sv->timeref_scalefactor)) {
@@ -169,6 +166,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 
 	TimeRef factor = (firstLocation/major)*major;
 	// Draw minor ticks
+	painter->setPen(themer()->get_color("Timeline:minorticks"));
 	TimeRef range((lastLocation-firstLocation+major) / minor);
 	for (qint64 i = 0; i < range.universal_frame(); i++ ) {
 		int x = (int)((factor + i * minor) / m_sv->timeref_scalefactor) - xstartoffset;
@@ -176,12 +174,18 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	}
 	
 	// Draw major ticks
+	painter->setPen(themer()->get_color("Timeline:majorticks"));
 	for (TimeRef location = factor; location < lastLocation; location += major) {
 		int x = int(location/m_sv->timeref_scalefactor - xstartoffset);
 		painter->drawLine(x, height - 13, x, height - 1);
-		if (paintText) {
-			painter->drawText(x + 4, height - 8, timeref_to_text(location, m_sv->timeref_scalefactor));
-		}
+	}
+
+	painter->setPen(themer()->get_color("Timeline:text"));
+	painter->setFont( themer()->get_font("Timeline:fontscale:label") );
+	// Draw text
+	for (TimeRef location = factor; location < lastLocation; location += major) {
+		int x = int(location/m_sv->timeref_scalefactor - xstartoffset);
+		painter->drawText(x + 4, height - 8, timeref_to_text(location, m_sv->timeref_scalefactor));
 	}
 	
 	painter->restore();

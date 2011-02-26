@@ -65,8 +65,9 @@ Themer::Themer()
 	
 	// Detect and set theme based on current style
 	// but only when no theme was specified by the user!
-	
-	m_currentTheme = config().get_property("Themer", "currenttheme", "").toString();
+
+	// FIXME: undo change till all the other themes are updated.
+	m_currentTheme = "Parchment";//config().get_property("Themer", "currenttheme", "").toString();
 	m_systempallete = QApplication::palette();
 	
 	QString style = config().get_property("Themer", "style", "").toString();
