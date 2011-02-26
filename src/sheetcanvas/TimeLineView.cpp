@@ -127,9 +127,6 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	// can be screwed up, so give it some room, 100 pixels should do!
 	int xstart = (int) option->exposedRect.x() - 100;
 	int pixelcount = (int) option->exposedRect.width() + 100;
-	int expheight = (int) option->exposedRect.height();
-	int top = (int) option->exposedRect.top();
-	bool paintText = top > 28 &&  expheight < 2 ? false : true;
 	
 	if (xstart < 0) {
 		xstart = 0;
@@ -141,7 +138,7 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	
         QColor backgroundColor = themer()->get_color("Timeline:background");
         if (m_timeline->has_active_context()) {
-                backgroundColor = backgroundColor.lighter(250);
+		backgroundColor = backgroundColor.lighter(130);
         }
         painter->fillRect(xstart, 0,  pixelcount, height, backgroundColor );
 	
@@ -158,34 +155,52 @@ void TimeLineView::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
 	// @Ben : is still still the same when using TimeRef based calculations?
 	double minor = double(major/double(10));
 
-	TimeRef firstLocation = TimeRef(xstart * m_sv->timeref_scalefactor);
+	TimeRef firstLocation = (TimeRef(xstart * m_sv->timeref_scalefactor)/major)*major;
 	TimeRef lastLocation = TimeRef(xstart * m_sv->timeref_scalefactor + pixelcount * m_sv->timeref_scalefactor);
 	int xstartoffset = m_sv->hscrollbar_value();
 	
 	painter->setMatrixEnabled(false);
 
-	TimeRef factor = (firstLocation/major)*major;
-	// Draw minor ticks
-	painter->setPen(themer()->get_color("Timeline:minorticks"));
-	TimeRef range((lastLocation-firstLocation+major) / minor);
-	for (qint64 i = 0; i < range.universal_frame(); i++ ) {
-		int x = (int)((factor + i * minor) / m_sv->timeref_scalefactor) - xstartoffset;
-		painter->drawLine(x, height - 5, x, height - 1);
+	int count = TimeRef((lastLocation-firstLocation+major) / minor).universal_frame();
+
+	QList<int> minorTicks, majorTicks;
+	QList<TimeRef> majorTimeRefs;
+
+	// calculate minor tick x values
+	for (qint64 i = 0; i < count; i++ ) {
+		int x = (int)((firstLocation + i * minor) / m_sv->timeref_scalefactor) - xstartoffset;
+		minorTicks.append(x);
 	}
 	
-	// Draw major ticks
-	painter->setPen(themer()->get_color("Timeline:majorticks"));
-	for (TimeRef location = factor; location < lastLocation; location += major) {
+	// calculate major tick x values
+	for (TimeRef location = firstLocation; location < lastLocation; location += major) {
 		int x = int(location/m_sv->timeref_scalefactor - xstartoffset);
-		painter->drawLine(x, height - 13, x, height - 1);
+		majorTicks.append(x);
+		majorTimeRefs.append(location);
+		// remove duplicates from minor ticks, so major tick is only painted once!
+		minorTicks.removeAll(x);
+	}
+
+	// Draw minor ticks
+	painter->setPen(themer()->get_color("Timeline:minorticks"));
+	for(int i=0; i<minorTicks.size(); ++i) {
+		int x = minorTicks.at(i);
+		painter->drawLine(x, height - 5, x, height - 1);
+	}
+
+	painter->setPen(themer()->get_color("Timeline:majorticks"));
+	// Draw major ticks
+	for (int i=0; i<majorTicks.size(); ++i) {
+		int x = majorTicks.at(i);
+		painter->drawLine(x, height - 16, x, height - 1);
 	}
 
 	painter->setPen(themer()->get_color("Timeline:text"));
 	painter->setFont( themer()->get_font("Timeline:fontscale:label") );
 	// Draw text
-	for (TimeRef location = factor; location < lastLocation; location += major) {
-		int x = int(location/m_sv->timeref_scalefactor - xstartoffset);
-		painter->drawText(x + 4, height - 8, timeref_to_text(location, m_sv->timeref_scalefactor));
+	for (int i=0; i<majorTicks.size(); ++i) {
+		int x = majorTicks.at(i);
+		painter->drawText(x + 4, height - 8, timeref_to_text(majorTimeRefs.at(i), m_sv->timeref_scalefactor));
 	}
 	
 	painter->restore();
