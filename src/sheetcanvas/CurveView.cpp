@@ -375,34 +375,22 @@ TCommand* CurveView::remove_node()
 {
 	PENTER;
 
-	emit curveModified();
-
         update_softselected_node(cpointer().on_first_input_event_scene_pos());
 
-	QList<CurveNode*> nodesToBeRemoved;
+	QList<CurveNodeView*> nodesToBeRemoved = get_selected_nodes();
 
-	foreach(CurveNodeView* curveNodeView, m_nodeViews) {
-		if (curveNodeView->is_hard_selected()) {
-			curveNodeView->set_hard_selected(false);
-			CurveNode* node = curveNodeView->get_curve_node();
-			nodesToBeRemoved.append(node);
-		}
-	}
-
-	if (!nodesToBeRemoved.size() && m_blinkingNode) {
-		CurveNode* node = m_blinkingNode->get_curve_node();
-		nodesToBeRemoved.append(node);
-
-	}
 
 	if (!nodesToBeRemoved.size()) {
 		return ie().failure();
 	}
 
+	emit curveModified();
+
 	CommandGroup* group = new CommandGroup(m_curve, tr("Clear Nodes"));
 
-	foreach(CurveNode* node, nodesToBeRemoved) {
-		TCommand* command = m_curve->remove_node(node);
+	foreach(CurveNodeView* nodeView, nodesToBeRemoved) {
+		nodeView->set_hard_selected(false);
+		TCommand* command = m_curve->remove_node(nodeView->get_curve_node());
 		if (command) {
 			group->add_command(command);
 		}
@@ -419,31 +407,22 @@ TCommand* CurveView::drag_node()
 
 	update_softselected_node(cpointer().on_first_input_event_scene_pos());
 
-	QMap<qint64, CurveNode*> nodesMap;
-
-	foreach(CurveNodeView* curveNodeView, m_nodeViews) {
-		if (curveNodeView->is_hard_selected()) {
-			CurveNode* node = curveNodeView->get_curve_node();
-			nodesMap.insert(node->get_when(), node);
-		}
+	QList<CurveNodeView*> selectedNodeViews = get_selected_nodes();
+	QList<CurveNode*> selectedNodes;
+	foreach(CurveNodeView* nodeView, selectedNodeViews) {
+		selectedNodes.append(nodeView->get_curve_node());
 	}
 
-	if (!nodesMap.size() && m_blinkingNode) {
-		CurveNode* node = m_blinkingNode->get_curve_node();
-		nodesMap.insert(node->get_when(), node);
-	}
-
-	if (!nodesMap.size()) {
+	if (!selectedNodes.size()) {
 		return ie().failure();
 	}
 
 	TimeRef min(qint64(0));
 	TimeRef max(qint64(DBL_MAX));
 	APILinkedList nodeList = m_curve->get_nodes();
-	QList<CurveNode*> sortedNodeList = nodesMap.values();
 
-	int indexFirstNode = nodeList.indexOf(sortedNodeList.first());
-	int indexLastNode = nodeList.indexOf(sortedNodeList.last());
+	int indexFirstNode = nodeList.indexOf(selectedNodes.first());
+	int indexLastNode = nodeList.indexOf(selectedNodes.last());
 
 	if (indexFirstNode > 0) {
 		min = TimeRef(((CurveNode*)nodeList.at(indexFirstNode-1))->get_when() + 1);
@@ -461,15 +440,15 @@ TCommand* CurveView::drag_node()
 		min = get_start_offset();
 	}
 
-	TimeRef startLocation = TimeRef(sortedNodeList.first()->get_when());
-	TimeRef endLocation  = TimeRef(sortedNodeList.last()->get_when());
+	TimeRef startLocation = TimeRef(selectedNodes.first()->get_when());
+	TimeRef endLocation  = TimeRef(selectedNodes.last()->get_when());
 	TimeRef minWhenDiff = min - startLocation;
 	TimeRef maxWhenDiff = max - endLocation;
 
 
 	double maxValue = DBL_MIN;
 	double minValue = DBL_MAX;
-	foreach(CurveNode* node, sortedNodeList) {
+	foreach(CurveNode* node, selectedNodes) {
 		double value = node->get_value();
 		if (value > maxValue) {
 			maxValue = value;
@@ -482,30 +461,36 @@ TCommand* CurveView::drag_node()
 	double minValueDiff = 0 - minValue;
 	double maxValuediff = 1 - maxValue;
 
-	QString text = tr("Move Curve Node(s)", "", nodesMap.size());
+	QString text = tr("Move Curve Node(s)", "", selectedNodes.size());
 
 	emit curveModified();
 
-	return new MoveCurveNode(m_curve, sortedNodeList, boundingRect().height(), m_sv->timeref_scalefactor,
+	return new MoveCurveNode(m_curve, selectedNodes, boundingRect().height(), m_sv->timeref_scalefactor,
 				 minWhenDiff, maxWhenDiff, minValueDiff, maxValuediff, text);
 }
 
 void CurveView::node_moved( )
 {
-	if (!m_blinkingNode) {
-		update();
-		return;
-	}
-
 	CurveNodeView* prev = 0;
 	CurveNodeView* next = 0;
 	
-	int index = m_nodeViews.indexOf(m_blinkingNode);
-	int xleft = (int) m_blinkingNode->x(), xright = (int) m_blinkingNode->x();
-	int leftindex = index;
+	QList<CurveNodeView*> selectedNodes = get_selected_nodes();
+
+	if (!selectedNodes.size()) {
+		return;
+	}
+
+	CurveNodeView* firstSelectedNodeView = selectedNodes.first();
+	CurveNodeView* lastSelectedNodeView = selectedNodes.last();
+
+	int xleft = (int) firstSelectedNodeView->x();
+	int xright = (int) lastSelectedNodeView->x();
+	int leftindex = m_nodeViews.indexOf(firstSelectedNodeView);
+	int rightindex = m_nodeViews.indexOf(lastSelectedNodeView);
 	int count = 0;
-	
-	if (m_blinkingNode == m_nodeViews.first()) {
+
+
+	if (firstSelectedNodeView == m_nodeViews.first()) {
 		xleft = 0;
 	} else {
 		while ( leftindex > 0 && count < 2) {
@@ -517,9 +502,8 @@ void CurveView::node_moved( )
 	
 	
 	count = 0;
-	int rightindex = index;
 	
-	if (m_blinkingNode == m_nodeViews.last()) {
+	if (lastSelectedNodeView == m_nodeViews.last()) {
 		xright = (int) m_boundingRect.width();
 	} else {
 		while (rightindex < (m_nodeViews.size() - 1) && count < 2) {
@@ -534,8 +518,7 @@ void CurveView::node_moved( )
 	if (next) xright = (int) next->x();
 	
 	
-//	update(xleft, 0, xright - xleft + 3, m_boundingRect.height());
-	update();
+	update(xleft, 0, xright - xleft + 3, m_boundingRect.height());
 }
 
 void CurveView::load_theme_data()
@@ -638,4 +621,22 @@ CurveNodeView* CurveView::get_node_view_after(TimeRef location) const
 QString CurveView::get_name() const
 {
 	return "Volume";
+}
+
+QList<CurveNodeView*> CurveView::get_selected_nodes()
+{
+	QList<CurveNodeView*> list;
+
+	foreach(CurveNodeView* curveNodeView, m_nodeViews) {
+		if (curveNodeView->is_hard_selected()) {
+			list.append(curveNodeView);
+		}
+	}
+
+	if (!list.size() && m_blinkingNode) {
+		list.append(m_blinkingNode);
+
+	}
+
+	return list;
 }

@@ -63,9 +63,9 @@ private:
 	int		m_blinkDarkness;
 	int		m_blinkColorDirection;
 	QList<CurveNodeView*>	m_nodeViews;
-	QList<CurveNode*>	m_selectedNodes;
 	TimeRef		m_startoffset;
 	
+	QList<CurveNodeView*>	get_selected_nodes();
 
 public slots:
 	TCommand* add_node();
