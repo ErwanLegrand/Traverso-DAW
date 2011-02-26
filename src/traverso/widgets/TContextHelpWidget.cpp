@@ -161,9 +161,12 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
         ContextItem* ci = qobject_cast<ContextItem*>(obj);
         QList<const QMetaObject*> metas;
         metas.append(mo);
-        if (ci && ci->get_context()) {
-                metas.append(ci->get_context()->metaObject());
-        }
+	while (ci) {
+		if (ci->get_context()) {
+			metas.append(ci->get_context()->metaObject());
+		}
+		ci = ci->get_context();
+	}
 
         QString html = translator->create_html_for_metas(metas, obj);
 
