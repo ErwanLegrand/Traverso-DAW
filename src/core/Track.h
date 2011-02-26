@@ -58,6 +58,7 @@ public:
 
         bool is_muted_by_solo();
         bool is_solo();
+	bool presend_on() const {return m_preSendOn;}
 	bool show_track_volume_automation() const {return m_showTrackVolumeAutomation;}
 	bool is_smaller_then(APILinkedListNode* node) {return ((Track*)node)->get_sort_index() > get_sort_index();}
 
@@ -89,6 +90,7 @@ protected:
         bool            m_mutedBySolo;
         bool            m_isSolo;
 	bool		m_showTrackVolumeAutomation;
+	bool		m_preSendOn;
 
         APILinkedList   m_postSends;
         APILinkedList   m_preSends;
@@ -106,6 +108,7 @@ private:
 
 public slots:
         TCommand* solo();
+	TCommand* toggle_presend();
 	TCommand* toggle_show_track_volume_automation();
 
 private slots:
@@ -118,6 +121,7 @@ private slots:
 
 signals:
         void soloChanged(bool isSolo);
+	void preSendChanged(bool preSendOn);
 	void automationVisibilityChanged();
         void routingConfigurationChanged();
 };

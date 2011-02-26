@@ -42,6 +42,7 @@ Track::Track(TSession* session)
         m_sortIndex = -1;
 	m_isSolo = m_mutedBySolo = m_isMuted = false;
 	m_showTrackVolumeAutomation = false;
+	m_preSendOn = false;
         m_inputBus = 0;
         m_channelCount = 2;
 
@@ -176,6 +177,15 @@ TCommand* Track::solo(  )
 
         sheet->solo_track(this);
         return (TCommand*) 0;
+}
+
+TCommand* Track::toggle_presend()
+{
+	m_preSendOn = !m_preSendOn;
+
+	emit preSendChanged(m_preSendOn);
+
+	return (TCommand*) 0;
 }
 
 TCommand* Track::toggle_show_track_volume_automation()
