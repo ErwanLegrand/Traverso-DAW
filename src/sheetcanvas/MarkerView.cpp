@@ -77,8 +77,8 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setFont(themer()->get_font("Timeline:fontscale:marker"));
 	
-	painter->setPen(QColor(Qt::black));
 	painter->setBrush(m_fillColor);
+	painter->setPen(themer()->get_color("Marker:outline"));
 
 	const QPointF pts[3] = {
 			QPointF(0, 0),
@@ -86,6 +86,9 @@ void MarkerView::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 			QPointF((m_width+ 0.5)/2, m_ascent) };
 
 	painter->drawPolygon(pts, 3);
+
+	painter->setPen(themer()->get_color("Timeline:text"));
+
 	if (m_marker->get_type() == Marker::ENDMARKER) {
 		painter->drawText(m_width + 1, m_ascent-2, m_marker->get_description());
 	} else {
@@ -160,14 +163,14 @@ void MarkerView::set_active(bool b)
 		} else {
 			m_fillColor = themer()->get_color("Marker:blink");
 		}
-		m_line->set_color(QColor(0, 0, 0, 140));
+		m_line->set_color(themer()->get_color("Marker:line:active"));
 	} else {
 		if (m_marker->get_type() == Marker::ENDMARKER) {
 			m_fillColor = themer()->get_color("Marker:end");
 		} else {
 			m_fillColor = themer()->get_color("Marker:default");
 		}
-		m_line->set_color(QColor(0, 0, 0, 45));
+		m_line->set_color(themer()->get_color("Marker:line:inactive"));
 	}
 
         set_dragging(b);
