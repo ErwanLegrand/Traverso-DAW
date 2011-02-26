@@ -48,7 +48,7 @@
 	<color alpha="255" red="30" blue="48" name="Sheet:background" green="48"/>
 	<color alpha="255" red="146" blue="155" name="CorrelationMeter:margin" green="146"/>
 	<color alpha="180" red="150" blue="150" name="AudioClip:db-grid" green="150"/>
-	<color alpha="150" red="255" blue="242" name="TrackPanel:led:font:inactive" green="254"/>
+	<color alpha="120" red="255" blue="242" name="TrackPanel:led:font:inactive" green="254"/>
 	<color alpha="170" red="155" blue="40" name="AudioClip:background:recording" green="55"/>
 	<color alpha="255" red="0" blue="255" name="CorrelationMeter:foreground:center" green="0"/>
 	<color alpha="155" red="255" blue="0" name="Playhead:inactive" green="0"/>
@@ -59,7 +59,7 @@
 	<color alpha="170" red="255" blue="242" name="Timeline:majorticks" green="254"/>
 	<color alpha="80" red="30" blue="180" name="Plugin:background:bypassed" green="100"/>
 	<color alpha="205" red="135" blue="25" name="PluginSlider:value" green="90"/>
-	<color alpha="140" red="255" blue="55" name="CurveNode:default" green="138"/>
+	<color alpha="140" red="153" blue="21" name="CurveNode:default" green="101"/>
 	<color alpha="255" red="128" blue="248" name="Marker:default" green="200"/>
 	<color alpha="255" red="0" blue="0" name="Text:dark" green="0"/>
 	<color alpha="105" red="205" blue="255" name="CorrelationMeter:grid" green="223"/>
@@ -74,14 +74,14 @@
 	<color alpha="170" red="255" blue="242" name="Timeline:text" green="254"/>
 	<color alpha="255" red="255" blue="255" name="Plugin:text" green="255"/>
 	<color alpha="255" red="255" blue="0" name="AudioClip:sampleoverload" green="0"/>
-	<color alpha="200" red="255" blue="55" name="Curve:active" green="138"/>
+	<color alpha="200" red="153" blue="21" name="Curve:active" green="101"/>
 	<color alpha="20" red="178" blue="182" name="AudioClip:channelseperator:selected" green="191"/>
 	<color alpha="235" red="82" blue="165" name="AudioClip:wavemacroview:brush:curvemode" green="130"/>
 	<color alpha="100" red="81" blue="121" name="AudioClip:background:selected" green="91"/>
 	<color alpha="80" red="185" blue="25" name="Fade:bypassed" green="160"/>
-	<color alpha="255" red="153" blue="21" name="TrackPanel:Pled" green="101"/>
 	<color alpha="255" red="255" blue="255" name="TrackPanel:bus:font" green="255"/>
 	<color alpha="125" red="0" blue="200" name="GainSlider:-6db" green="155"/>
+	<color alpha="255" red="153" blue="21" name="TrackPanel:Pled" green="101"/>
 	<color alpha="255" red="25" blue="50" name="TrackPanel:background" green="50"/>
 	<color alpha="255" red="200" blue="200" name="Text:light" green="200"/>
 	<color alpha="100" red="50" blue="45" name="BusTrack:background" green="50"/>
@@ -126,7 +126,7 @@
 	<color alpha="255" red="255" blue="58" name="TrackPanel:Rled" green="58"/>
 	<color alpha="255" red="140" blue="148" name="SheetPanel:background" green="140"/>
 	<color alpha="125" red="10" blue="155" name="GainSlider:-60db" green="25"/>
-	<color alpha="220" red="255" blue="55" name="CurveNode:blink" green="138"/>
+	<color alpha="220" red="153" blue="21" name="CurveNode:blink" green="101"/>
 	<color alpha="255" red="200" blue="200" name="VUMeter:font:inactive" green="200"/>
 	<color alpha="255" red="241" blue="255" name="FFTMeter:foreground:light" green="255"/>
 	<color alpha="255" red="200" blue="200" name="AudioClip:wavemacroview:brush:muted" green="200"/>
@@ -136,7 +136,6 @@
 	<color alpha="255" red="255" blue="0" name="TrackPanel:muteled" green="255"/>
 	<color alpha="255" red="235" blue="255" name="AudioClip:wavemacroview:outline:curvemode" green="230"/>
 	<color alpha="255" red="0" blue="31" name="PluginSlider:background" green="28"/>
-	<color alpha="150" red="255" blue="255" name="Curve:inactive" green="0"/>
 	<color alpha="255" red="235" blue="235" name="AudioClip:wavemacroview:outline" green="235"/>
 	<color alpha="125" red="255" blue="100" name="GainSlider:6db" green="150"/>
 	<color alpha="255" red="182" blue="123" name="CorrelationMeter:centerline" green="180"/>

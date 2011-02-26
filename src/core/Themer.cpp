@@ -530,7 +530,6 @@ void Themer::load_defaults()
         m_defaultColors.insert("AudioClip:sampleoverload", QColor(Qt::red));
         m_defaultColors.insert("AudioClip:invalidreadsource", QColor(Qt::red));
         m_defaultColors.insert("Curve:active", p.color(QPalette::BrightText));
-        m_defaultColors.insert("Curve:inactive", p.color(QPalette::BrightText));
         m_defaultColors.insert("CurveNode:default", p.color(QPalette::BrightText));
         m_defaultColors.insert("CurveNode:blink", p.color(QPalette::BrightText));
         c = p.color(QPalette::Highlight);

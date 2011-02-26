@@ -85,13 +85,13 @@ class TrackPanelLed : public ViewItem
 {
 	Q_OBJECT
 public:
-        TrackPanelLed(TrackPanelView* view, Track* track, const QString& name, const QString& toggleslot);
+	TrackPanelLed(TrackPanelView* view, QObject* obj, const QString& name, const QString& toggleslot);
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void set_bounding_rect(QRectF rect);
 
 private:
-        Track*  m_track;
+	QObject*  m_object;
         QString m_name;
 	QString m_toggleslot;
         bool    m_isOn;

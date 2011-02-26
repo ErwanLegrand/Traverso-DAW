@@ -75,17 +75,16 @@ TrackPanelView::TrackPanelView(TrackView* view)
 	m_viewPort = m_sv->get_trackpanel_view_port();
         m_track = m_trackView->get_track();
 
-	m_infoLed = new TrackPanelLed(this, m_track, "I", "info");
+	m_infoLed = new TrackPanelLed(this, view, "I", "edit_properties");
 	m_soloLed = new TrackPanelLed(this, m_track, "S", "solo");
 	m_muteLed = new TrackPanelLed(this, m_track, "M", "mute");
-	m_preLedButton = new TrackPanelLed(this, m_track, "P", "pre");
+	m_preLedButton = new TrackPanelLed(this, m_track, "P", "toggle_presend");
 	m_panKnob = new TrackPanelLed(this, m_track, "PAN", "pan");
 
 	m_infoLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 	m_muteLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 	m_soloLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 	m_preLedButton->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
-	m_preLedButton->ison_changed(true);
 	m_panKnob->set_bounding_rect(QRectF(0, 0, LED_WIDTH + 4, LED_HEIGHT + 4));
 
 	m_ledViews.insert(10, m_muteLed);
@@ -98,6 +97,9 @@ TrackPanelView::TrackPanelView(TrackView* view)
         if (m_track->is_muted()) {
                 m_muteLed->ison_changed(true);
         }
+	if (m_track->presend_on()) {
+		m_preLedButton->ison_changed(true);
+	}
 
         m_vuMeterView = new VUMeterView(this, m_track);
 
@@ -105,6 +107,7 @@ TrackPanelView::TrackPanelView(TrackView* view)
 
         connect(m_track, SIGNAL(soloChanged(bool)), m_soloLed, SLOT(ison_changed(bool)));
         connect(m_track, SIGNAL(muteChanged(bool)), m_muteLed, SLOT(ison_changed(bool)));
+	connect(m_track, SIGNAL(preSendChanged(bool)), m_preLedButton, SLOT(ison_changed(bool)));
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain()));
         connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
@@ -529,21 +532,19 @@ TCommand* TrackPanelPan::pan_right()
 
 
 
-TrackPanelLed::TrackPanelLed(TrackPanelView* view, Track *track, const QString& name, const QString& toggleslot)
+TrackPanelLed::TrackPanelLed(TrackPanelView* view, QObject *obj, const QString& name, const QString& toggleslot)
         : ViewItem(view, 0)
 	, m_name(name)
 	, m_toggleslot(toggleslot)
 	, m_isOn(false)
 {
-        m_track = track;
+	m_object = obj;
 }
 
 void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
 	Q_UNUSED(widget);
 
-        int roundfactor = 10;
-	
 	painter->save();
 	
 	painter->setRenderHint(QPainter::Antialiasing);
@@ -614,6 +615,6 @@ void TrackPanelLed::ison_changed(bool isOn)
 TCommand * TrackPanelLed::toggle()
 {
 	TCommand* com;
-        QMetaObject::invokeMethod(m_track, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(TCommand*, com));
+	QMetaObject::invokeMethod(m_object, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(TCommand*, com));
 	return 0;
 }
