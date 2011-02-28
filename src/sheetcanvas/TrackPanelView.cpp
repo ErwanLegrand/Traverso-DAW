@@ -47,9 +47,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Sheet.h"
 #include "TBusTrack.h"
 #include "Track.h"
-#include "TSend.h"
 #include "TMainWindow.h"
 #include "VUMeterView.h"
+#include "TKnobView.h"
 		
 #include <Debugger.h>
 
@@ -79,13 +79,12 @@ TrackPanelView::TrackPanelView(TrackView* view)
 	m_soloLed = new TrackPanelLed(this, m_track, "S", "solo");
 	m_muteLed = new TrackPanelLed(this, m_track, "M", "mute");
 	m_preLedButton = new TrackPanelLed(this, m_track, "P", "toggle_presend");
-	m_panKnob = new TrackPanelLed(this, m_track, "PAN", "pan");
+	m_panKnob = new TPanKnobView(this, m_track);
 
 	m_infoLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 	m_muteLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 	m_soloLed->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
 	m_preLedButton->set_bounding_rect(QRectF(0, 0, LED_WIDTH, LED_HEIGHT));
-	m_panKnob->set_bounding_rect(QRectF(0, 0, LED_WIDTH + 4, LED_HEIGHT + 4));
 
 	m_ledViews.insert(10, m_muteLed);
 	m_ledViews.insert(11, m_soloLed);
@@ -482,79 +481,6 @@ TCommand* TrackPanelGain::gain_decrement()
 	return 0;
 }
 
-TrackPanelPan::TrackPanelPan(TrackPanelView *parent, Track *track)
-        : ViewItem(parent, 0)
-        , m_track(track)
-{
-}
-
-void TrackPanelPan::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
-{
-	Q_UNUSED(widget);
-
-	QColor color = themer()->get_color("TrackPanel:slider:background");
-        if (has_active_context()) {
-		color = color.light(110);
-	}
-	
-        const int PAN_H = 6;
-
-	int sliderWidth = (int)m_boundingRect.width() - 75;
-	float v;
-	//	int y;
-	QString s, span;
-	painter->setPen(themer()->get_color("TrackPanel:text"));
-	painter->setFont(themer()->get_font("TrackPanel:fontscale:pan"));
-
-        painter->drawText(0, PAN_H + 1, "Pan");
-
-        v = m_track->get_pan();
-        span = QByteArray::number(v, 'f', 2);
-	s = ( v > 0 ? QString("+") + span :  span );
-        painter->fillRect(30, 0, sliderWidth, PAN_H, color);
-        int pm= 31 + sliderWidth/2;
-        int z = abs((int)(v*(sliderWidth/2)));
-
-        if (v>=0) {
-                painter->fillRect(pm, 1, z, PAN_H-1, m_gradient2D);
-        } else {
-                painter->fillRect(pm-z, 1, z, PAN_H-1, m_gradient2D);
-        }
-        painter->drawText(30 + sliderWidth + 10, PAN_H + 1, s);
-
-        painter->setPen(themer()->get_color("TrackPanel:slider:border"));
-        painter->drawRect(30, 0, sliderWidth, PAN_H);
-}
-
-void TrackPanelPan::set_width(int width)
-{
-	m_boundingRect = QRectF(0, 0, width, 9);
-        load_theme_data();
-}
-
-void TrackPanelPan::load_theme_data()
-{
-        m_gradient2D.setColorAt(0.0, themer()->get_color("PanSlider:-1"));
-        m_gradient2D.setColorAt(0.5, themer()->get_color("PanSlider:0"));
-        m_gradient2D.setColorAt(1.0, themer()->get_color("PanSlider:1"));
-        m_gradient2D.setStart(QPointF(m_boundingRect.width() - 40, 0));
-        m_gradient2D.setFinalStop(31, 0);
-}
-
-
-TCommand* TrackPanelPan::pan_left()
-{
-        m_track->set_pan(m_track->get_pan() - 0.05);
-	return 0;
-}
-
-TCommand* TrackPanelPan::pan_right()
-{
-        m_track->set_pan(m_track->get_pan() + 0.05);
-	return 0;
-}
-
-
 
 TrackPanelLed::TrackPanelLed(TrackPanelView* view, QObject *obj, const QString& name, const QString& toggleslot)
         : ViewItem(view, 0)
@@ -601,14 +527,7 @@ void TrackPanelLed::paint(QPainter* painter, const QStyleOptionGraphicsItem * op
 		painter->setFont(themer()->get_font("TrackPanel:fontscale:led"));
 		painter->setPen(themer()->get_color("TrackPanel:led:font:inactive"));
 
-		if (m_name == "PAN") {
-			painter->setBrush(QColor(Qt::transparent));
-			QPen pen(QColor(100, 100, 100, 220));
-			pen.setWidth(2);
-			painter->setPen(pen);
-			painter->drawEllipse(m_boundingRect);
-			painter->drawLine(m_boundingRect.width() / 2, 0, m_boundingRect.width() / 2, m_boundingRect.height() / 2);
-		} else if (m_name == "I") {
+		if (m_name == "I") {
 			painter->setPen(themer()->get_color("TrackPanel:led:margin:inactive"));
 			painter->setBrush(QColor(255, 255, 255, 50));
 			painter->drawEllipse(m_boundingRect);

@@ -35,6 +35,7 @@ class PanelLed;
 class AudioTrackPanelView;
 class TBusTrackView;
 class VUMeterView;
+class TPanKnobView;
 
 class TrackPanelGain : public ViewItem
 {
@@ -56,29 +57,6 @@ private:
         Track* m_track;
         QLinearGradient	m_gradient2D;
 };
-
-class TrackPanelPan : public ViewItem
-{
-	Q_OBJECT
-	
-public:
-        TrackPanelPan(TrackPanelView* parent, Track* track);
-	TrackPanelPan(){}
-	
-
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	void set_width(int width);
-        void load_theme_data();
-
-public slots:
-	TCommand* pan_left();
-	TCommand* pan_right();
-
-private:
-        Track* m_track;
-        QLinearGradient	m_gradient2D;
-};
-
 
 
 class TrackPanelLed : public ViewItem
@@ -125,7 +103,7 @@ protected:
 	TrackPanelLed*          m_soloLed;
 	TrackPanelLed*          m_portLed;
 	TrackPanelLed*          m_preLedButton;
-	TrackPanelLed*          m_panKnob;
+	TPanKnobView*	        m_panKnob;
 
 
         VUMeterView*            m_vuMeterView;
