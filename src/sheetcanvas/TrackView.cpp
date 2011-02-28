@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <Debugger.h>
 
 TrackView::TrackView(SheetView* sv, Track * track)
-	: TAbstractTrackView(0, track)
+	: ViewItem(0, track)
 {
         PENTERCONS;
 	m_sv = sv;
@@ -68,14 +68,14 @@ TrackView::TrackView(SheetView* sv, Track * track)
 	connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 	connect(m_track, SIGNAL(automationVisibilityChanged()), this, SLOT(automation_visibility_changed()));
 
-	m_primaryLaneView = new TTrackLaneView(this, track);
+	m_primaryLaneView = new TTrackLaneView(this);
 	m_laneViews.append(m_primaryLaneView);
 
-	m_volumeAutomationLaneView = new TTrackLaneView(this, track);
+	m_volumeAutomationLaneView = new TTrackLaneView(this);
 	m_laneViews.append(m_volumeAutomationLaneView);
 
 	m_curveView = new CurveView(m_sv, m_volumeAutomationLaneView, m_track->get_plugin_chain()->get_fader()->get_curve());
-	m_volumeAutomationLaneView->set_curve_view(m_curveView);
+	m_volumeAutomationLaneView->set_child_view(m_curveView);
 
 	m_visibleLanes = 1;
 }
@@ -123,11 +123,6 @@ void TrackView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 			painter->drawLine(xstart, y, xstart+pixelcount, y);
 		}
 	}
-}
-
-int TrackView::get_childview_y_offset() const
-{
-	return m_topborderwidth;
 }
 
 int TrackView::get_height( )
@@ -191,6 +186,13 @@ void TrackView::set_moving(bool move)
         m_isMoving = move;
         update();
         m_panel->update();
+}
+
+void TrackView::move_to( int x, int y )
+{
+	Q_UNUSED(x);
+	setPos(0, y);
+	m_panel->setPos(-200, y);
 }
 
 void TrackView::layout_lanes()

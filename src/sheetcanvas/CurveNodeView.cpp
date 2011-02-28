@@ -62,7 +62,7 @@ void CurveNodeView::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	Q_UNUSED(widget);
 	
 	painter->save();
-	
+
 	QPointF mapped = mapToParent(QPointF(0, 0));
 	int x = (int) mapped.x();
 	int y = (int) mapped.y();
@@ -81,7 +81,7 @@ void CurveNodeView::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	if (x > 0) x = 0;
 	if (y > 0) y = 0;
 
-	QRectF rect = m_boundingRect.adjusted(- x, - y, - widthadjust, -heightadjust);
+	QRectF rect = m_boundingRect.adjusted(- x, 0, - widthadjust, 0);
 	painter->setClipRect(rect);
 	painter->setRenderHint(QPainter::Antialiasing);
 	
@@ -89,11 +89,11 @@ void CurveNodeView::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	QColor color = m_color;
 	if (m_isHardSelected /*&& !m_isSoftSelected*/)
 	{
-		color = QColor(Qt::blue);
+		color.setAlpha(255);
 	}
 
 	path.addEllipse(m_boundingRect);
-	painter->fillPath(path, QBrush(color));
+	painter->fillPath(path, color);
 	
 	
 	painter->restore();

@@ -25,22 +25,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TrackView.h"
 #include "TrackPanelView.h"
 
-class Track;
-class TAutomationTrackPanelView;
+class TTrackLanePanelView;
 
-class TTrackLaneView : public TAbstractTrackView
+class TTrackLaneView : public ViewItem
 {
 	Q_OBJECT
 
 public:
-	TTrackLaneView(ViewItem* parentView, Track* track);
+	TTrackLaneView(ViewItem* parent);
 	~TTrackLaneView();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 	int get_height() { return m_height;}
 	void set_height(int height);
-	void set_curve_view(CurveView* view);
+	void set_child_view(ViewItem* view);
 	QString get_name() const;
 
 	void move_to(int x, int y);
@@ -48,9 +47,11 @@ public:
 	void load_theme_data();
 
 private:
-	TAutomationTrackPanelView*	m_lanePanel;
+	TTrackLanePanelView*	m_panel;
 	QString		m_name;
-	CurveView*	m_curveView;
+	ViewItem*	m_childView;
+	int		m_height;
+	bool		m_paintBackground;
 };
 
 #endif // TTRACKLANEVIEW_H

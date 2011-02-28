@@ -55,6 +55,8 @@ public:
 	
         void update_softselected_node(QPointF pos);
 
+	static const int BORDER_MARGIN = 8;
+
 private:
 	Curve*		m_curve;
 	Curve*		m_guicurve;

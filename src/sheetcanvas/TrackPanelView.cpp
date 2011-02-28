@@ -327,21 +327,23 @@ void TBusTrackPanelView::layout_panel_items()
 }
 
 
-TAutomationTrackPanelView::TAutomationTrackPanelView(TTrackLaneView* laneView)
+TTrackLanePanelView::TTrackLanePanelView(TTrackLaneView* laneView)
 	: ViewItem(laneView, laneView)
 {
 	PENTERCONS;
 	m_laneView = laneView;
+	m_ignoreContext = true;
 	setZValue(laneView->zValue() + 200);
 }
 
-TAutomationTrackPanelView::~TAutomationTrackPanelView( )
+TTrackLanePanelView::~TTrackLanePanelView( )
 {
 	PENTERDES;
 }
 
+#include "CurveView.h"
 
-void TAutomationTrackPanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void TTrackLanePanelView::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
 	Q_UNUSED(widget);
 	Q_UNUSED(option);
@@ -355,9 +357,31 @@ void TAutomationTrackPanelView::paint(QPainter* painter, const QStyleOptionGraph
 	painter->setPen(themer()->get_color("TrackPanel:text"));
 	painter->setFont(themer()->get_font("TrackPanel:fontscale:name"));
 	painter->drawText(20, 20, m_parentViewItem->get_name());
+
+
+	painter->setPen(QColor(100, 100, 100, 100));
+	int xpos = 50;
+	int halfFontHeight = 5;
+	int height = m_laneView->get_height() - CurveView::BORDER_MARGIN;
+	int topBorderMargin = CurveView::BORDER_MARGIN / 2;
+
+	int y = (1.0 - dB_to_scale_factor(0.0f)) * height + topBorderMargin;
+	int textY = y + halfFontHeight;
+	painter->drawLine(m_boundingRect.width() - 4, y, m_boundingRect.width(), y);
+	painter->drawText(m_boundingRect.width() - xpos, textY, "  0 dB");
+
+	y = (1.0 - dB_to_scale_factor(-6.0f)) * height + topBorderMargin;
+	textY = y + halfFontHeight;
+	painter->drawLine(m_boundingRect.width() - 4, y, m_boundingRect.width(), y);
+	painter->drawText(m_boundingRect.width() - xpos, textY, " - 6 dB");
+
+	y = (1.0 - dB_to_scale_factor(-24.0f)) * height + topBorderMargin;
+	textY = y + halfFontHeight;
+	painter->drawLine(m_boundingRect.width() - 4, y, m_boundingRect.width(), y);
+	painter->drawText(m_boundingRect.width() - xpos, textY, " -24 dB");
 }
 
-void TAutomationTrackPanelView::calculate_bounding_rect()
+void TTrackLanePanelView::calculate_bounding_rect()
 {
 	prepareGeometryChange();
 	m_boundingRect = QRectF(0, 0, 175, m_laneView->get_height());
@@ -616,5 +640,7 @@ TCommand * TrackPanelLed::toggle()
 {
 	TCommand* com;
 	QMetaObject::invokeMethod(m_object, QS_C(m_toggleslot), Qt::DirectConnection, Q_RETURN_ARG(TCommand*, com));
+	Q_ASSERT(!com);
+
 	return 0;
 }

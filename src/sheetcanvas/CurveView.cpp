@@ -94,11 +94,11 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	int offset = int(m_startoffset / m_sv->timeref_scalefactor);
 	
 
-        if (m_curve->has_active_context()) {
-		painter->fillRect(option->exposedRect, QColor(0, 0, 0, 50));
-        }
+//        if (m_curve->has_active_context()) {
+//		painter->fillRect(option->exposedRect, QColor(0, 0, 0, 50));
+//        }
 
-        QPen pen;
+	QPen pen;
 	
         pen.setColor(themer()->get_color("Curve:active"));
 	
@@ -107,7 +107,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
         }
 	painter->save();
 	painter->setPen(pen);
-	painter->setClipRect(m_boundingRect);
+//	painter->setClipRect(m_boundingRect);
 	
 	
 	if (m_nodeViews.size() == 1) {
@@ -242,9 +242,11 @@ void CurveView::remove_curvenode_view(CurveNode* node)
 
 void CurveView::calculate_bounding_rect()
 {
-	int y  = m_parentViewItem->get_childview_y_offset();
-	m_boundingRect = QRectF(0, 0, m_parentViewItem->boundingRect().width(), m_parentViewItem->get_height());
-	setPos(0, y);
+	// Add a bit of top/bottom margin so the curve line doesn't go all the
+	// way to the top/bottom of the view, and as a side effect, the nodes
+	// can be painted in the margin area, so they won't chop off.
+	m_boundingRect = QRectF(0, 0, m_parentViewItem->boundingRect().width(), m_parentViewItem->get_height() - BORDER_MARGIN);
+	setPos(0, BORDER_MARGIN / 2);
 	ViewItem::calculate_bounding_rect();
 }
 

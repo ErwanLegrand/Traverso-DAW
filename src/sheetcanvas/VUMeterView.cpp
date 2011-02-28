@@ -182,7 +182,6 @@ static const float LUT_MULTIPLY		= 5.0;
 VUMeterRulerView::VUMeterRulerView(ViewItem* parent)
         : ViewItem(parent)
 {
-        QFontMetrics fm(themer()->get_font("VUMeter:fontscale:label"));
         m_boundingRect = parent->boundingRect();
 
         // labels

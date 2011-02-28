@@ -182,7 +182,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
                         foreach(QGraphicsItem* item, itemsUnderCursor) {
 				if (ViewItem::is_viewitem(item)) {
 					ViewItem* viewItem = (ViewItem*)item;
-					if (!viewItem->is_layout_item()) {
+					if (!viewItem->ignore_context()) {
 						activeContextItems.append(viewItem);
 						if (viewItem->has_mouse_tracking()) {
 							mouseTrackingItems.append(viewItem);

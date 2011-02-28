@@ -243,10 +243,9 @@ void FadeCurveView::calculate_bounding_rect()
 		if (m_boundingRect.width() > m_parentViewItem->boundingRect().width()) {
 			diff = (int)(m_boundingRect.width() - m_parentViewItem->boundingRect().width());
 		}
-		setPos(m_parentViewItem->boundingRect().width() - m_boundingRect.width() + diff, 
-		       m_parentViewItem->get_childview_y_offset());
+		setPos(m_parentViewItem->boundingRect().width() - m_boundingRect.width() + diff, 0);
 	} else {
-		setPos(0, m_parentViewItem->get_childview_y_offset());
+		setPos(0, 0);
 	}
 }
 

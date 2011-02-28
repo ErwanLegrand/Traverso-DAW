@@ -185,13 +185,13 @@ private:
 
 
 
-class TAutomationTrackPanelView : public ViewItem
+class TTrackLanePanelView : public ViewItem
 {
 	Q_OBJECT
 
 public:
-	TAutomationTrackPanelView(TTrackLaneView* laneView);
-	~TAutomationTrackPanelView();
+	TTrackLanePanelView(TTrackLaneView* laneView);
+	~TTrackLanePanelView();
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

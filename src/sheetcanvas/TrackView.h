@@ -22,15 +22,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #ifndef TRACK_VIEW_H
 #define TRACK_VIEW_H
 
-#include "TAbstractTrackView.h"
+#include "ViewItem.h"
 
 class AudioClip;
 class AudioTrack;
 class PluginChainView;
-class TTrackLaneView;
 class CurveView;
+class Track;
+class TrackPanelView;
+class TTrackLaneView;
 
-class TrackView : public TAbstractTrackView
+
+class TrackView : public ViewItem
 {
         Q_OBJECT
 
@@ -45,8 +48,8 @@ public:
         TrackPanelView* get_panel_view() const {return m_panel;}
 	TTrackLaneView* get_primary_lane_view() const {return m_primaryLaneView;}
 
-        virtual int get_childview_y_offset() const;
         void set_moving(bool move);
+	void move_to(int x, int y);
         bool is_moving() const {return m_isMoving;}
 	virtual int get_height();
 	virtual void set_height(int height);
@@ -61,6 +64,13 @@ protected:
 	TTrackLaneView*		m_volumeAutomationLaneView;
 	PluginChainView*	m_pluginChainView;
 	CurveView*              m_curveView;
+	Track*                  m_track;
+	TrackPanelView*		m_panel;
+	int			m_height;
+	int			m_paintBackground;
+	int			m_topborderwidth;
+	int			m_bottomborderwidth;
+	bool                    m_isMoving;
 
 	void add_lane_view(TTrackLaneView* laneView);
 

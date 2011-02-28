@@ -27,24 +27,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-TTrackLaneView::TTrackLaneView(ViewItem* parentView, Track* track)
-	: TAbstractTrackView(parentView, 0)
+TTrackLaneView::TTrackLaneView(ViewItem* parent)
+	: ViewItem(parent, 0)
 {
-	m_sv = parentView->get_sheetview();
-	m_height = 100;
-	m_track = track;
-	m_isLayoutItem = true;
-	m_lanePanel = 0;
-	m_curveView = 0;
-	setZValue(parentView->zValue() + 1);
+	m_sv = parent->get_sheetview();
+	m_height = 150;
+	m_ignoreContext = true;
+	m_panel = 0;
+	m_childView = 0;
+	setZValue(parent->zValue() + 1);
 }
 
-void TTrackLaneView::set_curve_view(CurveView *view)
+void TTrackLaneView::set_child_view(ViewItem *view)
 {
-	m_curveView = view;
+	m_childView = view;
 
-	m_lanePanel = new TAutomationTrackPanelView(this);
-	view->setZValue(zValue() + 1);
+	m_panel = new TTrackLanePanelView(this);
+	view->setZValue(zValue());
 }
 
 TTrackLaneView::~TTrackLaneView()
@@ -71,31 +70,30 @@ void TTrackLaneView::calculate_bounding_rect()
 {
 	prepareGeometryChange();
 	m_boundingRect = QRectF(0, 0, MAX_CANVAS_WIDTH, m_height);
-	if (m_lanePanel) {
-		m_lanePanel->calculate_bounding_rect();
+	if (m_panel) {
+		m_panel->calculate_bounding_rect();
 	}
 	ViewItem::calculate_bounding_rect();
 }
 
 void TTrackLaneView::load_theme_data()
 {
-	m_paintBackground = themer()->get_property("Track:paintbackground").toInt();
-	m_topborderwidth = themer()->get_property("Track:topborderwidth").toInt();
+	m_paintBackground = themer()->get_property("TrackLane:paintbackground").toInt();
 }
 
 void TTrackLaneView::move_to( int x, int y )
 {
 	Q_UNUSED(x);
 	setPos(0, y);
-	if (m_lanePanel) {
-		m_lanePanel->setPos(-180, 0);
+	if (m_panel) {
+		m_panel->setPos(-180, 0);
 	}
 }
 
 QString TTrackLaneView::get_name() const
 {
-	if (m_curveView) {
-		return m_curveView->get_name();
+	if (m_childView) {
+		return m_childView->get_name();
 	}
 
 	return "";
