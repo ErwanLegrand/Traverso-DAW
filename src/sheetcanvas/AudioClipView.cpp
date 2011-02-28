@@ -72,8 +72,6 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
         m_sheet = m_clip->get_sheet();
 
         load_theme_data();
-        create_brushes();
-        create_clipinfo_string();
 
         m_waitingForPeaks = false;
         m_progress = 0;
@@ -158,7 +156,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
                                 else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgMuted);
                         } else {
                                 if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgHover);
-                                else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBg);
+				else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBg);
                         }
                 }
         }
@@ -198,9 +196,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
                 }
         }
 
-        if (m_height > m_mimimumheightforinfoarea) {
-                draw_clipinfo_area(painter, xstart, pixelcount);
-        }
+	draw_clipinfo_area(painter, xstart, pixelcount);
 
         // Draw the db lines at 0 and -6 db
         if (m_drawDbGrid) {
@@ -381,14 +377,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
                 // calculate the height of the area available for peak drawing
                 // and if the infoarea is displayed, translate the painter
                 // drawing by dy = m_infoAreaHeight
-                int height;
-
-                if (m_height >= m_mimimumheightforinfoarea) {
-                        p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
-                        height = (m_height - m_infoAreaHeight) / channels;
-                } else {
-                        height = m_height / channels;
-                }
+		int height = m_height / channels;
 
 
                 float scaleFactor = ( (float) height * 0.90 / 2) * m_clip->get_gain() * curveDefaultValue;
@@ -546,13 +535,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 
 void AudioClipView::draw_clipinfo_area(QPainter* p, int xstart, int pixelcount)
 {
-        // fill info area bg
-        p->fillRect(xstart, 1, pixelcount, m_infoAreaHeight, themer()->get_color("AudioClip:clipinfobackground:inactive"));
-        if (m_height >= m_mimimumheightforinfoarea) {
-                if (xstart < (7 + m_clipInfo.width())) {
-                        p->drawPixmap(7, 1, m_clipInfo);
-                }
-	}
+	p->drawPixmap(6, m_height - m_clipInfo.height(), m_clipInfo);
 }
 
 
@@ -560,8 +543,7 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
 {
         p->save();
 
-        int height;
-        int channels = m_clip->get_channel_count();
+	int channels = m_clip->get_channel_count();
         bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
         int linestartpos = xstart;
         if (xstart < m_lineOffset) linestartpos = m_lineOffset;
@@ -571,12 +553,7 @@ void AudioClipView::draw_db_lines(QPainter* p, qreal xstart, int pixelcount)
         }
 
         // calculate the height of one channel
-        if (m_height >= m_mimimumheightforinfoarea) {
-                p->setMatrix(matrix().translate(0, m_infoAreaHeight), true);
-                height = (m_height - m_infoAreaHeight) / channels;
-        } else {
-                height = m_height / channels;
-        }
+	int height = m_height / channels;
 
         p->setPen(themer()->get_color("AudioClip:db-grid"));
         p->setFont( themer()->get_font("AudioClip:fontscale:dblines") );
@@ -639,7 +616,6 @@ void AudioClipView::create_brushes()
 {
         /** TODO: The following part is identical to calculations in draw_db_lines(). Move to a central place. **/
         bool microView = m_sheet->get_hzoom() < 64 ? 1 : 0;
-        int height;
         int channels = m_clip->get_channel_count();
 
         if ((m_mergedView) || (channels == 0)) {
@@ -647,11 +623,7 @@ void AudioClipView::create_brushes()
         }
 
         // calculate the height of one channel
-        if (m_height >= m_mimimumheightforinfoarea) {
-                height = (m_height - m_infoAreaHeight) / channels;
-        } else {
-                height = m_height / channels;
-        }
+	int height = m_height / channels;
 
         if (m_classicView || microView)
         {
@@ -681,21 +653,20 @@ void AudioClipView::create_brushes()
 void AudioClipView::create_clipinfo_string()
 {
         PENTER;
-        QString sclipGain = "Gain: "+ coefficient_to_dbstring(m_clip->get_gain());
-
         QFont font = themer()->get_font("AudioClip:fontscale:title");
         QFontMetrics fm(font);
 
-        QString clipinfoString = fm.elidedText(m_clip->get_name(), Qt::ElideMiddle, 150)
-                           + "    " + sclipGain + "   " + QString::number(m_clip->get_rate()) +  " Hz";
+	QString clipinfoString = fm.elidedText(m_clip->get_name(), Qt::ElideRight, 200);
 
         int clipInfoWidth = fm.boundingRect(clipinfoString).width();
 
         m_clipInfo = QPixmap(clipInfoWidth, m_infoAreaHeight);
         m_clipInfo.fill(Qt::transparent);
+	QColor textColor = themer()->get_color("AudioClip:text");
 
 	QPainter painter(&m_clipInfo);
         painter.setFont(font);
+	painter.setPen(textColor);
         painter.drawText(m_clipInfo.rect(), clipinfoString);
 }
 
@@ -752,17 +723,12 @@ void AudioClipView::repaint( )
 void AudioClipView::set_height( int height )
 {
         m_height = height;
-        create_brushes();
+	create_brushes();
         if (m_height < m_mimimumheightforinfoarea) {
                 m_classicView = false;
         } else {
                 m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
         }
-}
-
-int AudioClipView::get_childview_y_offset() const
-{
-        return (m_height >= m_mimimumheightforinfoarea) ? m_infoAreaHeight : 0;
 }
 
 void AudioClipView::update_start_pos()
@@ -831,7 +797,7 @@ void AudioClipView::load_theme_data()
 {
         m_drawbackground = themer()->get_property("AudioClip:drawbackground", 1).toInt();
         m_infoAreaHeight = themer()->get_property("AudioClip:infoareaheight", 16).toInt();
-        m_mimimumheightforinfoarea = themer()->get_property("AudioClip:mimimumheightforinfoarea", 45).toInt();
+	m_mimimumheightforinfoarea = themer()->get_property("AudioClip:mimimumheightforinfoarea", 45).toInt();
         m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
         m_mergedView = config().get_property("Themer", "paintstereoaudioasmono", false).toBool();
         m_fillwave = themer()->get_property("AudioClip:fillwave", 1).toInt();
@@ -845,7 +811,8 @@ void AudioClipView::load_theme_data()
         m_lineOffset = fm.width(" -6 dB ");
         m_lineVOffset = fm.ascent()/2;
 
-        create_brushes();
+	create_brushes();
+	create_clipinfo_string();
 }
 
 

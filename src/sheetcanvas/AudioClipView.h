@@ -54,8 +54,7 @@ public:
 	AudioClip* get_clip() const {return m_clip;}
         AudioTrackView* get_audio_track_view() const {return m_tv;}
         CurveView* get_gain_curve_view() const {return m_gainCurveView;}
-	int get_height() const;
-	int get_childview_y_offset() const;
+	int get_height() const {return m_height;}
 	
 	void calculate_bounding_rect();
 	void load_theme_data();
@@ -141,13 +140,6 @@ private slots:
 	void clip_state_changed();
         void active_context_changed();
 };
-
-
-inline int AudioClipView::get_height() const {
-	int height;
-	(m_height > m_mimimumheightforinfoarea) ? height = m_height - m_infoAreaHeight : height = m_height;
-	return height;
-}
 
 #endif
 
