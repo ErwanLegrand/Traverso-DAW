@@ -434,6 +434,7 @@
 				<Object objectname="CurveView" mousehint="LRUD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="MoveCurveNodes" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
                                 <Object objectname="TrackView" mousehint="UD" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack"/>
+				<Object objectname="TPanKnobView" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 
 		<keyfact type="HKEY" key1="MouseButtonMiddle" >

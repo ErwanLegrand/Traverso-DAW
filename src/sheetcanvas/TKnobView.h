@@ -46,6 +46,7 @@ public:
 	double min_value() const {return m_minValue;}
 
 	virtual double get_value() const = 0;
+	Track* get_track() const {return m_track;}
 
 public slots:
 	TCommand* pan_left();

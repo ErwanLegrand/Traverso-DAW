@@ -217,9 +217,15 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 		{
                         Track* track = qobject_cast<Track*>(obj);
 			if (! track) {
-                                PERROR("TraversoCommands: Supplied QObject was not a Track! "
-                                        "TrackPanCommand needs a Track as argument");
-                                return 0;
+				TPanKnobView* knob = qobject_cast<TPanKnobView*>(obj);
+				if(knob) {
+					track = knob->get_track();
+				}
+				if (!track) {
+					PERROR("TraversoCommands: Supplied QObject was not a Track! "
+						"TrackPanCommand needs a Track as argument");
+					return 0;
+				}
 			}
 			return new TrackPan(track, arguments);
 		}

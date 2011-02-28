@@ -15,3 +15,4 @@
 #include "TrackPanelViewPort.h"
 #include "TBusTrackView.h"
 #include "ViewItem.h"
+#include "TKnobView.h"
