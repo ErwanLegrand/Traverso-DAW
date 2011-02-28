@@ -188,7 +188,7 @@ void TrackPanelView::draw_panel_name(QPainter* painter)
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing);
 
-	QColor color = themer()->get_color("BusTrack:background").darker(200);
+	QColor color = themer()->get_color("TrackPanel:header:background");
 	painter->setPen(color.darker(180));
 	painter->setBrush(color);
 	int corner = 5;

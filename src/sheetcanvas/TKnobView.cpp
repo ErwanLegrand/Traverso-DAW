@@ -60,11 +60,12 @@ void TKnobView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	int ym = m_boundingRect.y() + radius + m_borderWidth;
 	int xm = m_boundingRect.x() + radius + m_borderWidth;
 
-	pen.setWidth(2);
+	int borderWidth = 2;
+	pen.setWidth(borderWidth);
 	painter->setPen(pen);
 
-	rb = qMax(double((radius - 2) / 3.0), 0.0);
-	re = qMax(double(radius - 2), 0.0);
+	rb = qMax(double((radius - borderWidth) / 3.0), 0.0);
+	re = qMax(double(radius - borderWidth), 0.0);
 
 	QPoint center;
 	center.setX(m_boundingRect.width() / 2);
@@ -79,7 +80,7 @@ void TKnobView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	QFont font = themer()->get_font("TrackPanel:fontscale:name");
 	font.setPixelSize(8);
 	painter->setFont(font);
-	painter->drawText(m_boundingRect.width() / 2 - 3, -2, "0");
+	painter->drawText(m_boundingRect.width() / 2 - 3, -1, "0");
 	font.setPixelSize(7);
 	painter->setFont(font);
 	painter->drawText(0, m_boundingRect.height() + 3, "L");

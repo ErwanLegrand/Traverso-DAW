@@ -108,12 +108,12 @@
 	<color alpha="170" red="30" blue="230" name="Plugin:background" green="100"/>
 	<color alpha="0" red="100" blue="40" name="TrackPanel:slider:background" green="100"/>
 	<color alpha="100" red="180" blue="210" name="Fade:default" green="200"/>
-	<color alpha="60" red="160" blue="245" name="Track:mousehover" green="190"/>
+	<color alpha="255" red="12" blue="26" name="Track:mousehover" green="26"/>
 	<color alpha="255" red="92" blue="90" name="AudioClip:wavemacroview:brush:curvemode:hover" green="50"/>
 	<color alpha="255" red="255" blue="50" name="TrackPanel:Mled" green="255"/>
 	<color alpha="20" red="0" blue="0" name="Marker:line:inactive" green="0"/>
 	<color alpha="255" red="255" blue="255" name="PluginSlider:text" green="255"/>
-	<color alpha="255" red="30" blue="47" name="Track:background" green="30"/>
+	<color alpha="255" red="25" blue="51" name="Track:background" green="51"/>
 	<color alpha="255" red="29" blue="39" name="Timeline:background" green="39"/>
 	<color alpha="255" red="107" blue="220" name="Workcursor:default" green="200"/>
 	<color alpha="255" red="128" blue="255" name="Marker:blinkend" green="0"/>
@@ -148,11 +148,12 @@
 	<color alpha="105" red="100" blue="100" name="TrackPanel:bus:margin" green="100"/>
 	<color alpha="255" red="255" blue="0" name="TrackPanel:recled" green="0"/>
 	<color alpha="255" red="55" blue="90" name="TrackPanel:head:inactive" green="80"/>
-	<color alpha="100" red="35" blue="60" name="TrackPanel:led:inactive" green="60"/>
+	<color alpha="255" red="25" blue="51" name="TrackPanel:led:inactive" green="51"/>
 	<color alpha="255" red="120" blue="58" name="PanSlider:0" green="58"/>
 	<color alpha="105" red="35" blue="75" name="TrackPanel:bus:background" green="70"/>
 	<color alpha="255" red="90" blue="90" name="AudioClip:wavemacroview:outline:muted" green="90"/>
 	<color alpha="255" red="165" blue="0" name="PanSlider:1" green="165"/>
+	<color alpha="255" red="19" blue="39" name="TrackPanel:header:background" green="39"/>
 	<color alpha="255" red="15" blue="38" name="BusTrackPanel:background" green="20"/>
 	<color alpha="70" red="255" blue="242" name="Timeline:minorticks" green="254"/>
 	<color alpha="255" red="243" blue="255" name="ResourcesBin:alternaterowcolor" green="248"/>
