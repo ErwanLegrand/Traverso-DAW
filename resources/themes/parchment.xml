@@ -51,7 +51,7 @@
 	<color alpha="120" red="255" blue="242" name="TrackPanel:led:font:inactive" green="254"/>
 	<color alpha="170" red="155" blue="40" name="AudioClip:background:recording" green="55"/>
 	<color alpha="255" red="0" blue="255" name="CorrelationMeter:foreground:center" green="0"/>
-	<color alpha="155" red="255" blue="0" name="Playhead:inactive" green="0"/>
+	<color alpha="155" red="147" blue="37" name="Playhead:inactive" green="37"/>
 	<color alpha="255" red="210" blue="50" name="AudioClip:wavemicroview:curvemode" green="210"/>
 	<color alpha="255" red="255" blue="0" name="VUMeter:foreground:6db" green="100"/>
 	<color alpha="45" red="45" blue="70" name="TrackPanel:slider:border" green="60"/>
@@ -69,6 +69,7 @@
 	<color alpha="255" red="185" blue="185" name="CorrelationMeter:text" green="185"/>
 	<color alpha="105" red="205" blue="255" name="FFTMeter:grid" green="223"/>
 	<color alpha="255" red="140" blue="50" name="TrackPanel:head:active" green="140"/>
+	<color alpha="90" red="255" blue="242" name="AudioClip:text" green="254"/>
 	<color alpha="100" red="255" blue="0" name="AudioClip:invalidreadsource" green="0"/>
 	<color alpha="170" red="235" blue="235" name="AudioClip:background:muted:mousehover" green="235"/>
 	<color alpha="170" red="255" blue="242" name="Timeline:text" green="254"/>
@@ -85,7 +86,7 @@
 	<color alpha="255" red="25" blue="50" name="TrackPanel:background" green="50"/>
 	<color alpha="255" red="200" blue="200" name="Text:light" green="200"/>
 	<color alpha="100" red="50" blue="45" name="BusTrack:background" green="50"/>
-	<color alpha="200" red="125" blue="135" name="AudioClip:background:mousehover" green="123"/>
+	<color alpha="200" red="80" blue="88" name="AudioClip:background:mousehover" green="90"/>
 	<color alpha="255" red="255" blue="255" name="CorrelationMeter:foreground:side" green="0"/>
 	<color alpha="255" red="255" blue="71" name="VUMeter:foreground:0db" green="145"/>
 	<color alpha="255" red="24" blue="55" name="CorrelationMeter:background" green="45"/>
@@ -101,7 +102,7 @@
 	<color alpha="60" red="181" blue="201" name="AudioClip:background" green="205"/>
 	<color alpha="255" red="50" blue="50" name="VUMeter:background:bar" green="50"/>
 	<color alpha="255" red="165" blue="0" name="PanSlider:-1" green="165"/>
-	<color alpha="255" red="130" blue="0" name="AudioClip:wavemacroview:brush:hover" green="105"/>
+	<color alpha="255" red="80" blue="0" name="AudioClip:wavemacroview:brush:hover" green="62"/>
 	<color alpha="255" red="220" blue="240" name="Track:cliptopoffset" green="220"/>
 	<color alpha="255" red="80" blue="80" name="AudioClip:contour" green="80"/>
 	<color alpha="170" red="30" blue="230" name="Plugin:background" green="100"/>
@@ -114,7 +115,7 @@
 	<color alpha="255" red="255" blue="255" name="PluginSlider:text" green="255"/>
 	<color alpha="255" red="30" blue="47" name="Track:background" green="30"/>
 	<color alpha="255" red="29" blue="39" name="Timeline:background" green="39"/>
-	<color alpha="255" red="100" blue="220" name="Workcursor:default" green="200"/>
+	<color alpha="255" red="107" blue="220" name="Workcursor:default" green="200"/>
 	<color alpha="255" red="128" blue="255" name="Marker:blinkend" green="0"/>
 	<color alpha="255" red="255" blue="55" name="Marker:end" green="0"/>
 	<color alpha="150" red="111" blue="182" name="AudioClip:background:selected:mousehover" green="121"/>
@@ -139,7 +140,7 @@
 	<color alpha="255" red="255" blue="0" name="TrackPanel:muteled" green="255"/>
 	<color alpha="255" red="235" blue="255" name="AudioClip:wavemacroview:outline:curvemode" green="230"/>
 	<color alpha="255" red="0" blue="31" name="PluginSlider:background" green="28"/>
-	<color alpha="255" red="235" blue="235" name="AudioClip:wavemacroview:outline" green="235"/>
+	<color alpha="255" red="50" blue="69" name="AudioClip:wavemacroview:outline" green="59"/>
 	<color alpha="125" red="255" blue="100" name="GainSlider:6db" green="150"/>
 	<color alpha="255" red="182" blue="123" name="CorrelationMeter:centerline" green="180"/>
 	<color alpha="255" red="0" blue="0" name="TrackPanel:led:font:active" green="0"/>
@@ -164,7 +165,7 @@
 	<color alpha="255" red="0" blue="0" name="TrackPanel:sololed" green="255"/>
 	<color alpha="100" red="40" blue="155" name="AudioClip:clipinfobackground" green="100"/>
 	<color alpha="255" red="255" blue="255" name="VUMeter:background:widget" green="255"/>
-	<color alpha="180" red="255" blue="0" name="Playhead:active" green="0"/>
+	<color alpha="200" red="184" blue="47" name="Playhead:active" green="47"/>
     </colors>
     <gradients>
 	<gradient name="CorrelationMeter:foreground">
