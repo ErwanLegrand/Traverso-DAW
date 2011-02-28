@@ -88,6 +88,7 @@ TMenuTranslator::TMenuTranslator()
         add_meta_object(&FadeRange::staticMetaObject);
         add_meta_object(&Shuttle::staticMetaObject);
         add_meta_object(&SplitClip::staticMetaObject);
+	add_meta_object(&TPanKnobView::staticMetaObject);
 
         add_entry("ArrowKeyBrowser", tr("Arrow Key Browser"));
         add_entry("ArmTracks", tr("Arm Tracks"));
@@ -103,6 +104,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("Shuttle", tr("Shuttle"));
         add_entry("SplitClip", tr("Split Clip"));
         add_entry("TrackPan", tr("Track Panorama"));
+	add_entry("TPanKnob", tr("Pan Knob"));
+
         add_entry("WorkCursorMove", tr("Move Work Cursor"));
         add_entry("Zoom", tr("Zoom"));
 
@@ -311,7 +314,9 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TrackPanelPan::pan_right", tr("To Right"));
         add_entry("TrackPan::pan_left", tr("Pan to Left"));
         add_entry("TrackPan::pan_right", tr("Pan to Right"));
-        add_entry("WorkCursorMove::move_left", tr("Move Left"));
+	add_entry("TPanKnobView::pan_left", tr("Pan to Left"));
+	add_entry("TPanKnobView::pan_right", tr("Pan to Right"));
+	add_entry("WorkCursorMove::move_left", tr("Move Left"));
         add_entry("WorkCursorMove::move_right", tr("Move Right"));
         add_entry("WorkCursorMove::next_snap_pos", tr("To next snap position"));
         add_entry("WorkCursorMove::prev_snap_pos", tr("To previous snap position"));
