@@ -28,7 +28,7 @@ TKnobView::TKnobView(ViewItem *parent, Track *track)
 	: ViewItem(parent, 0)
 	, m_track(track)
 {
-	m_boundingRect = QRectF(0, 0, 24, 24);
+	m_boundingRect = QRectF(0, 0, 22, 22);
 
 	m_minValue = -1.0f;
 	m_maxValue = 1.0f;
@@ -39,12 +39,12 @@ void TKnobView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 {
 	Q_UNUSED(widget);
 
-	int m_borderWidth = 4;
+	int m_borderWidth = 3;
 
 	painter->setRenderHint(QPainter::Antialiasing);
 
 	QPen pen(QColor(100, 100, 100, 220));
-	pen.setWidth(2);
+	pen.setWidth(1);
 	painter->setPen(pen);
 	painter->setBrush(QColor(Qt::transparent));
 
@@ -63,8 +63,8 @@ void TKnobView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	pen.setWidth(2);
 	painter->setPen(pen);
 
-	rb = qMax(double((radius - 4) / 3.0), 0.0);
-	re = qMax(double(radius - 4), 0.0);
+	rb = qMax(double((radius - 2) / 3.0), 0.0);
+	re = qMax(double(radius - 2), 0.0);
 
 	QPoint center;
 	center.setX(m_boundingRect.width() / 2);
@@ -77,9 +77,11 @@ void TKnobView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 			ym - int(rint(ca * re)));
 
 	QFont font = themer()->get_font("TrackPanel:fontscale:name");
-	font.setPixelSize(9);
+	font.setPixelSize(8);
 	painter->setFont(font);
 	painter->drawText(m_boundingRect.width() / 2 - 3, -2, "0");
+	font.setPixelSize(7);
+	painter->setFont(font);
 	painter->drawText(0, m_boundingRect.height() + 3, "L");
 	painter->drawText(m_boundingRect.width() - 3, m_boundingRect.height() + 3, "R");
 
