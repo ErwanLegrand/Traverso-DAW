@@ -109,7 +109,6 @@ TrackPanelView::TrackPanelView(TrackView* view)
 	connect(m_track, SIGNAL(preSendChanged(bool)), m_preLedButton, SLOT(ison_changed(bool)));
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_gain()));
-        connect(m_track, SIGNAL(panChanged()), this, SLOT(update_pan()));
 
         connect(m_track, SIGNAL(stateChanged()), this, SLOT(update_name()));
         connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
@@ -177,12 +176,6 @@ void TrackPanelView::update_gain()
 }
 
 
-void TrackPanelView::update_pan()
-{
-//        m_panView->update();
-}
-
-
 void TrackPanelView::draw_panel_name(QPainter* painter)
 {
 	painter->save();
@@ -225,7 +218,6 @@ void TrackPanelView::layout_panel_items()
         }
 
 	m_panKnob->setPos(165, GAIN_Y_POS - 2);
-
 
 	int ledViewXPos = INDENT;
 	int ledSpacing = 8;
@@ -295,8 +287,6 @@ TBusTrackPanelView::TBusTrackPanelView(TBusTrackView* view)
         : TrackPanelView(view)
 {
         PENTERCONS;
-
-//        m_panView->hide();
 }
 
 TBusTrackPanelView::~TBusTrackPanelView( )
@@ -346,9 +336,6 @@ void TTrackLanePanelView::paint(QPainter* painter, const QStyleOptionGraphicsIte
 {
 	Q_UNUSED(widget);
 	Q_UNUSED(option);
-
-//	int xstart = (int)option->exposedRect.x();
-//	int pixelcount = (int)option->exposedRect.width();
 
 	QColor color = themer()->get_color("BusTrack:background");
 	painter->fillRect(m_boundingRect, color);

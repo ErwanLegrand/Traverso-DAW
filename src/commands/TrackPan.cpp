@@ -26,6 +26,7 @@
 #include "ContextPointer.h"
 #include "Track.h"
 #include "Mixer.h"
+#include "InputEngine.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -107,7 +108,11 @@ void TrackPan::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	d->mousePos = QCursor::pos();
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+	if (useX) {
+		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+	} else {
+		cpointer().get_viewport()->set_holdcursor("");
+	}
 }
 
 int TrackPan::jog()
@@ -167,3 +172,13 @@ void TrackPan::pan_right(bool autorepeat)
 	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
 }
 
+void TrackPan::reset_pan(bool autorepeat)
+{
+	if (autorepeat) {
+		return;
+	}
+
+	m_newPan = 0.0f;
+	do_action();
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+}

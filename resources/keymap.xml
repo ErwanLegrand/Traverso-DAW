@@ -216,7 +216,8 @@
                                 <Object objectname="TimeLineView" slotsignature="TMainWindow::show_marker_dialog" modes="All" />
                                 <Object objectname="Zoom" modes="All" sortorder="1" slotsignature="toggle_expand_all_tracks" />
                                 <Object objectname="SheetView" slotsignature="edit_properties" modes="All" sortorder="11" modifierkeys="SHIFT" />
-                        </Objects>
+				<Object objectname="AudioClip" modifierkeys="CTRL" modes="All" sortorder="18" pluginname="TraversoCommands" commandname="AudioClipExternalProcessing" />
+			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="N" >
 			<Objects>
@@ -228,11 +229,6 @@
 				<Object objectname="FadeCurve" slotsignature="toggle_bypass" modes="All" sortorder="10" />
 				<Object objectname="Plugin" slotsignature="toggle_bypass" modes="All" />
 				<Object objectname="LV2Plugin" slotsignature="toggle_bypass" modes="All" />
-			</Objects>
-		</keyfact>
-		<keyfact type="FKEY" key1="P" >
-			<Objects>
-                                <Object objectname="FadeCurveView" slotsignature="select_fade_shape" modes="All"  sortorder="1"/>
 			</Objects>
 		</keyfact>
 		<keyfact type="FKEY" key1="M" >
@@ -258,6 +254,7 @@
 			<Objects>
 				<Object objectname="AudioTrack" slotsignature="toggle_arm" modes="All" sortorder="4" />
 				<Object objectname="FadeCurve" slotsignature="toggle_raster" modes="All" sortorder="11" />
+				<Object objectname="TrackPan" slotsignature="reset_pan" modes="All" isholdmodifier="1" sortorder="4" />
 			</Objects>
 		</keyfact>
                 <keyfact type="FKEY" key1="MouseButtonLeft" >
@@ -376,11 +373,6 @@
                                 <Object objectname="AudioTrackView" modes="All" sortorder="13"  slotsignature="insert_silence" />
 			</Objects>
 		</keyfact>
-		<keyfact type="FKEY2" key1="E" key2="P" >
-			<Objects>
-				<Object objectname="AudioClip" modes="All" sortorder="18" pluginname="TraversoCommands" commandname="AudioClipExternalProcessing" />
-			</Objects>
-		</keyfact>
                 <keyfact type="FKEY2" key1="I" key2="O" >
                         <Objects>
                                 <Object objectname="TMainWindow" modes="All" sortorder="13"  slotsignature="audio_io_dialog" />
@@ -420,6 +412,7 @@
 		<keyfact type="HKEY" key1="P" sortorder="16" >
 			<Objects>
                                 <Object objectname="Track" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
+				<Object objectname="FadeCurveView" slotsignature="select_fade_shape" modes="All"  sortorder="1"/>
 			</Objects>
 		</keyfact>
 		<keyfact type="HKEY" key1="O" sortorder="18" >
@@ -434,7 +427,7 @@
 				<Object objectname="CurveView" mousehint="LRUD" modes="All" sortorder="3" pluginname="TraversoCommands" commandname="MoveCurveNodes" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" modes="All" sortorder="3" />
                                 <Object objectname="TrackView" mousehint="UD" modes="All" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack"/>
-				<Object objectname="TPanKnobView" mousehint="LR"  modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
+				<Object objectname="TPanKnobView" modes="All" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 			</Objects>
 		</keyfact> 
 		<keyfact type="HKEY" key1="MouseButtonMiddle" >
@@ -588,11 +581,6 @@
 				<Object objectname="AudioClip" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="ResetGain" arguments="1.0" />
                                 <Object objectname="TrackView" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
 				<Object objectname="Sheet" modes="All" sortorder="30" pluginname="TraversoCommands" commandname="ResetGain" arguments="0.5" />
-			</Objects>
-		</keyfact>
-		<keyfact type="D_FKEY" key1="P" >
-			<Objects>
-                                <Object objectname="Track" modes="All" sortorder="22" pluginname="TraversoCommands" commandname="ResetTrackPan" arguments="0" />
 			</Objects>
 		</keyfact>
 		<keyfact type="D_FKEY" key1="R" >

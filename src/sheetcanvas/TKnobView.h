@@ -32,7 +32,7 @@ class TKnobView : public ViewItem
 	Q_OBJECT
 
 public:
-	TKnobView(ViewItem* parent, Track* track);
+	TKnobView(ViewItem* parent);
 	TKnobView(){}
 
 
@@ -46,14 +46,8 @@ public:
 	double min_value() const {return m_minValue;}
 
 	virtual double get_value() const = 0;
-	Track* get_track() const {return m_track;}
-
-public slots:
-	TCommand* pan_left();
-	TCommand* pan_right();
 
 protected:
-	Track*		m_track;
 
 private:
 	double		m_angle;
@@ -69,10 +63,17 @@ class TPanKnobView : public TKnobView
 	Q_OBJECT
 
 public:
-
 	TPanKnobView(ViewItem* parent, Track* track);
 
 	double get_value() const;
+	Track* get_track() const {return m_track;}
+
+private:
+	Track*		m_track;
+
+public slots:
+	TCommand* pan_left();
+	TCommand* pan_right();
 
 private slots:
 	void track_pan_changed();

@@ -24,9 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Track.h"
 #include "math.h"
 
-TKnobView::TKnobView(ViewItem *parent, Track *track)
+TKnobView::TKnobView(ViewItem *parent)
 	: ViewItem(parent, 0)
-	, m_track(track)
 {
 	m_boundingRect = QRectF(0, 0, 22, 22);
 
@@ -39,7 +38,7 @@ void TKnobView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 {
 	Q_UNUSED(widget);
 
-	int m_borderWidth = 3;
+	int borderWidth = 3;
 
 	painter->setRenderHint(QPainter::Antialiasing);
 
@@ -55,17 +54,17 @@ void TKnobView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	rarc = m_angle * M_PI / 180.0;
 	double ca = cos(rarc);
 	double sa = -sin(rarc);
-	radius = m_boundingRect.width() / 2 - m_borderWidth;
+	radius = m_boundingRect.width() / 2 - borderWidth;
 	if (radius < 3) radius = 3;
-	int ym = m_boundingRect.y() + radius + m_borderWidth;
-	int xm = m_boundingRect.x() + radius + m_borderWidth;
+	int ym = m_boundingRect.y() + radius + borderWidth;
+	int xm = m_boundingRect.x() + radius + borderWidth;
 
-	int borderWidth = 2;
-	pen.setWidth(borderWidth);
+	int penWidth = 2;
+	pen.setWidth(penWidth);
 	painter->setPen(pen);
 
-	rb = qMax(double((radius - borderWidth) / 3.0), 0.0);
-	re = qMax(double(radius - borderWidth), 0.0);
+	rb = qMax(double((radius - penWidth) / 3.0), 0.0);
+	re = qMax(double(radius - penWidth), 0.0);
 
 	QPoint center;
 	center.setX(m_boundingRect.width() / 2);
@@ -104,18 +103,6 @@ void TKnobView::load_theme_data()
 }
 
 
-TCommand* TKnobView::pan_left()
-{
-	m_track->set_pan(m_track->get_pan() - 0.05);
-	return 0;
-}
-
-TCommand* TKnobView::pan_right()
-{
-	m_track->set_pan(m_track->get_pan() + 0.05);
-	return 0;
-}
-
 void TKnobView::update_angle()
 {
 	m_angle = (get_value() - 0.5 * (min_value() + max_value()))
@@ -127,7 +114,8 @@ void TKnobView::update_angle()
 
 
 TPanKnobView::TPanKnobView(ViewItem* parent, Track* track)
-	: TKnobView(parent, track)
+	: TKnobView(parent)
+	, m_track(track)
 {
 	connect(m_track, SIGNAL(panChanged()), this, SLOT(track_pan_changed()));
 	update_angle();
@@ -142,4 +130,16 @@ void TPanKnobView::track_pan_changed()
 {
 	update_angle();
 	update();
+}
+
+TCommand* TPanKnobView::pan_left()
+{
+	m_track->set_pan(m_track->get_pan() - 0.05);
+	return 0;
+}
+
+TCommand* TPanKnobView::pan_right()
+{
+	m_track->set_pan(m_track->get_pan() + 0.05);
+	return 0;
 }

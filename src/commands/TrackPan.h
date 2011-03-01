@@ -59,6 +59,7 @@ private :
 public slots:
 	void pan_left(bool autorepeat);
 	void pan_right(bool autorepeat);
+	void reset_pan(bool autorepeat);
 
 };
 

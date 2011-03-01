@@ -86,7 +86,7 @@
 	<color alpha="255" red="25" blue="50" name="TrackPanel:background" green="50"/>
 	<color alpha="255" red="200" blue="200" name="Text:light" green="200"/>
 	<color alpha="100" red="50" blue="45" name="BusTrack:background" green="50"/>
-	<color alpha="200" red="80" blue="88" name="AudioClip:background:mousehover" green="90"/>
+	<color alpha="140" red="45" blue="50" name="AudioClip:background:mousehover" green="51"/>
 	<color alpha="255" red="255" blue="255" name="CorrelationMeter:foreground:side" green="0"/>
 	<color alpha="255" red="255" blue="71" name="VUMeter:foreground:0db" green="145"/>
 	<color alpha="255" red="24" blue="55" name="CorrelationMeter:background" green="45"/>
