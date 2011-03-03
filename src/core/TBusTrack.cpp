@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "PluginChain.h"
 #include "Utils.h"
 #include "TSession.h"
+#include "AudioDevice.h"
 
 TBusTrack::TBusTrack(TSession* session, const QString& name, int channelCount)
         : Track(session)
@@ -127,6 +128,17 @@ int TBusTrack::process(nframes_t nframes)
                 panFactor = 1 + m_pan;
                 Mixer::apply_gain_to_buffer(m_processBus->get_buffer(1, nframes), nframes, panFactor);
         }
+
+	// gain automation curve only understands audio_sample_t** atm
+	// so wrap the process buffers into a audio_sample_t**
+	audio_sample_t* mixdown[m_processBus->get_channel_count()];
+	for(int chan=0; chan<m_processBus->get_channel_count(); chan++) {
+		mixdown[chan] = m_processBus->get_buffer(chan, nframes);
+	}
+
+	TimeRef location = m_session->get_transport_location();
+	TimeRef endlocation = location + TimeRef(nframes, audiodevice().get_sample_rate());
+	m_fader->process_gain(mixdown, location, endlocation, nframes, m_processBus->get_channel_count());
 
 
         m_pluginChain->process_post_fader(m_processBus, nframes);
