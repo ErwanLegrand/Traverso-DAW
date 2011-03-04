@@ -105,6 +105,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("SplitClip", tr("Split Clip"));
         add_entry("TrackPan", tr("Track Panorama"));
 	add_entry("TPanKnob", tr("Pan Knob"));
+	add_entry("TPanKnobView", tr("Pan Knob"));
 
         add_entry("WorkCursorMove", tr("Move Work Cursor"));
         add_entry("Zoom", tr("Zoom"));
@@ -313,7 +314,8 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TrackPanelPan::pan_left", tr("To Left"));
         add_entry("TrackPanelPan::pan_right", tr("To Right"));
         add_entry("TrackPan::pan_left", tr("Pan to Left"));
-        add_entry("TrackPan::pan_right", tr("Pan to Right"));
+	add_entry("TrackPan::pan_right", tr("Pan to Right"));
+	add_entry("TrackPan::reset_pan", tr("Reset"));
 	add_entry("TPanKnobView::pan_left", tr("Pan to Left"));
 	add_entry("TPanKnobView::pan_right", tr("Pan to Right"));
 	add_entry("WorkCursorMove::move_left", tr("Move Left"));
