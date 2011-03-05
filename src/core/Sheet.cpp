@@ -536,14 +536,15 @@ int Sheet::render(ExportSpecification* spec)
 	/* foreach output channel ... */
 
 	float* buf;
+	AudioBus* masterOutBus = m_masterOut->get_process_bus();
 
 	for (chn = 0; chn < spec->channels; ++chn) {
-                buf = m_masterOut->get_process_bus()->get_buffer(chn, nframes);
+		buf = masterOutBus->get_buffer(chn, nframes);
 
 		if (!buf) {
 			// Seem we are exporting at least to Stereo from an AudioBus with only one channel...
 			// Use the first channel..
-                        buf = m_masterOut->get_process_bus()->get_buffer(0, nframes);
+			buf = masterOutBus->get_buffer(0, nframes);
 		}
 
 		for (x = 0; x < nframes; ++x) {
@@ -765,6 +766,7 @@ int Sheet::process_export( nframes_t nframes )
         apill_foreach(TBusTrack* busTrack, TBusTrack, m_rtBusTracks) {
                 busTrack->get_process_bus()->silence_buffers(nframes);
         }
+
         memset (mixdown, 0, sizeof (audio_sample_t) * nframes);
 
 	// Process all Tracks.
@@ -772,8 +774,12 @@ int Sheet::process_export( nframes_t nframes )
 		track->process(nframes);
 	}
 
-        Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(0, nframes), nframes, m_masterOut->get_gain());
-        Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(1, nframes), nframes, m_masterOut->get_gain());
+	apill_foreach(TBusTrack* busTrack, TBusTrack, m_rtBusTracks) {
+		busTrack->process(nframes);
+	}
+
+	Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(0, nframes), nframes, m_masterOut->get_gain());
+	Mixer::apply_gain_to_buffer(m_masterOut->get_process_bus()->get_buffer(1, nframes), nframes, m_masterOut->get_gain());
 
 	// update the m_transportFrame
 // 	m_transportFrame += nframes;
