@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <AddRemove.h>
 #include "AudioDevice.h"
 
+#include "Debugger.h"
+
 static bool smallerMarker(const Marker* left, const Marker* right )
 {
 	return left->get_when() < right->get_when();
@@ -224,6 +226,7 @@ QList<Marker*> TimeLine::get_cd_layout(bool & endmarker)
 // match
 QString TimeLine::format_cdtrack_name(Marker *marker, int i)
 {
+	PENTER;
         QString name;
         QString song = marker->get_description();
         QString performer = marker->get_performer();
@@ -246,10 +249,15 @@ QString TimeLine::format_cdtrack_name(Marker *marker, int i)
 // such as if no markers are present, or if an end marker is missing.
 QList<Marker*> TimeLine::get_cdtrack_list(ExportSpecification *spec)
 {
+	PENTER;
         bool endmarker;
         QList<Marker*> lst = get_cd_layout(endmarker);
 
-        // make sure there are at least a start- and end-marker in the list
+	// FIXME: this function is called from the export thread, creating
+	// new marker objects gives this warning:
+	// QObject: Cannot create children for a parent that is in a different thread.
+
+	// make sure there are at least a start- and end-marker in the list
         if (lst.size() == 0) {
                 lst.push_back(new Marker(this, spec->startLocation, Marker::CDTRACK));
         }

@@ -115,7 +115,7 @@ Project::Project(const QString& title)
 
         connect(this, SIGNAL(privateSheetRemoved(Sheet*)), this, SLOT(sheet_removed(Sheet*)));
         connect(this, SIGNAL(privateSheetAdded(Sheet*)), this, SLOT(sheet_added(Sheet*)));
-        connect(this, SIGNAL(exportFinished()), this, SLOT(export_finished()));
+	connect(this, SIGNAL(exportFinished()), this, SLOT(export_finished()), Qt::QueuedConnection);
         connect(&audiodevice(), SIGNAL(driverParamsChanged()), this, SLOT(audiodevice_params_changed()), Qt::DirectConnection);
 }
 
