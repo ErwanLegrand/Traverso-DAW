@@ -224,7 +224,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 
 void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 {
-        PENTER2;
+	PENTER4;
 
         Peak* peak = m_clip->get_peak();
 

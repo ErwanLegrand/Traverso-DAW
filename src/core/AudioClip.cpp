@@ -649,16 +649,14 @@ int AudioClip::init_recording()
 
 TCommand* AudioClip::mute()
 {
-	PCommand* cmd = new PCommand(this, "toggle_mute", tr("Toggle Mute"));
-	cmd->set_historable(false);
-	return cmd;
+	toggle_mute();
+	return 0;
 }
 
 TCommand* AudioClip::lock()
 {
-	PCommand* cmd = new PCommand(this, "toggle_lock", tr("Toggle Lock"));
-	cmd->set_historable(false);
-	return cmd;
+	toggle_lock();
+	return 0;
 }
 
 TCommand* AudioClip::reset_fade_in()

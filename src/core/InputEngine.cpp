@@ -188,18 +188,12 @@ InputEngine::InputEngine()
         m_isJogging = false;
 	reset();
 
-        m_clearTime = 2000;
-        m_assumeHoldTime = 200; // it will wait a release for 200 ms. Otherwise it will assume a hold
-        m_doubleFactWaitTime = 200;
         m_collectedNumber = -1;
         m_sCollectedNumber = "";
-        m_holdTimer.setSingleShot(true);
         activate();
 
         connect(&m_holdKeyRepeatTimer, SIGNAL(timeout()), this, SLOT(process_hold_modifier_keys()));
-        connect( &m_holdTimer, SIGNAL(timeout()), this, SLOT(assume_hold()));
-        connect( &m_secondChanceTimer, SIGNAL(timeout()), this, SLOT(quit_second_chance()));
-        connect( &m_clearOutputTimer, SIGNAL(timeout()), this, SLOT(clear_output()));
+
 
 //#define profile
 
@@ -244,14 +238,12 @@ void InputEngine::activate()
 {
 	PENTER3;
         m_isFirstFact=true;
-        m_active=true;
 }
 
 
 void InputEngine::suspend()
 {
 	PENTER3;
-        m_active=false;
 	set_jogging(false);
 }
 
@@ -261,7 +253,7 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 	IEAction* action = 0;
 
 	foreach(IEAction* ieaction, m_ieActions) {
-		if (ieaction->keySequence == keySequence) {
+		if (ieaction->keyString == keySequence) {
 			action = ieaction;
 			break;
 		}
@@ -277,10 +269,10 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 		return -1;
 	}
 	
-	if ( action && ((action->type == HOLDKEY) || (action->type == HKEY2))) {
-		info().information(tr("Hold actions are not supported from Context Menu"));
-		return -1;
-	}
+//	if ( action && ((action->type == HOLDKEY) || (action->type == HKEY2))) {
+//		info().information(tr("Hold actions are not supported from Context Menu"));
+//		return -1;
+//	}
 	
 
 	return broadcast_action(action, false, true);
@@ -291,7 +283,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 {
 	PENTER2;
 
-        PMESG("Trying to find IEAction for key sequence %s", action->keySequence.data());
+	PMESG("Trying to find IEAction for key sequence %s", QS_C(action->keyString));
 
         TCommand* k = 0;
 	QObject* item = 0;
@@ -378,7 +370,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 		QString currentmode = m_modes.key(cpointer().get_current_mode());
 		QString allmodes = m_modes.key(0);
 		if ( (! data->modes.contains(currentmode)) && (! data->modes.contains(allmodes))) {
-			PMESG("%s on %s is not valid for mode %s", action->keySequence.data(), item->metaObject()->className(), QS_C(currentmode));
+			PMESG("%s on %s is not valid for mode %s", QS_C(action->keyString), item->metaObject()->className(), QS_C(currentmode));
 			continue;
 		}
 		
@@ -510,10 +502,12 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 		if (m_broadcastResult) {
 			if (m_broadcastResult == SUCCES) {
 				PMESG("Broadcast Result indicates succes, but no returned Command object");
+				conclusion();
 				return 1;
 			}
 			if (m_broadcastResult == FAILURE) {
 				PMESG("Broadcast Result indicates failure, and doesn't want lower level items to be processed");
+				conclusion();
 				return 0;
 			}
 			if (m_broadcastResult == DIDNOTIMPLEMENT) {
@@ -523,29 +517,31 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			}
 		}
 		
-                if (k && (!m_isHolding)) {
-			if (k->prepare_actions() != -1) {
-				k->set_valid(true);
-				if (k->push_to_history_stack() < 0) {
-					// The command doesn't have a history stack, or wasn't
-					// historable for some reason.... At least call do_action
-					// since that still isn't done (should be done by QUndoStack...)
-					k->do_action();
-					delete k;
-					k = 0;
-				}
-			} else {
-				PWARN("prepare actions failed!");
-				delete k;
-				k = 0;
-			}
-		}
+//                if (k && (!m_isHolding)) {
+//			if (k->prepare_actions() != -1) {
+//				k->set_valid(true);
+//				if (k->push_to_history_stack() < 0) {
+//					// The command doesn't have a history stack, or wasn't
+//					// historable for some reason.... At least call do_action
+//					// since that still isn't done (should be done by QUndoStack...)
+//					k->do_action();
+//					delete k;
+//					k = 0;
+//				}
+//			} else {
+//				PWARN("prepare actions failed!");
+//				delete k;
+//				k = 0;
+//			}
+//		}
 		
-                if (k && m_isHolding) {
+		if (k) {
 			if (k->begin_hold() != -1) {
 				k->set_valid(true);
 				k->set_cursor_shape(useX, useY);
                                 m_holdingCommand = k;
+				m_isHolding = true;
+				m_holdEventCode = action->key;
 				set_jogging(true);
 			} else {
 				PERROR("hold action begin_hold() failed!");
@@ -554,7 +550,6 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 				delete k;
 				k = 0;
 				set_jogging( false );
-                                m_wholeMapIndex = -1;
 			}
 		}
 		
@@ -635,34 +630,14 @@ bool InputEngine::is_jogging()
         return m_isJogging;
 }
 
-
-
-// JMB ENGINE : EVENT LEVEL HANDLING -------------------------------
-
-// reset the event stack and the press 'stack' (not exactly a stack)
 void InputEngine::reset()
 {
 	PENTER3;
-        m_isFirstFact = true;
-        m_isDoubleKey = false;
-        m_fact1_k1 = 0;
-        m_fact1_k2 = 0;
         m_isHolding = false;
-        m_isPressEventLocked = false;
 	m_cancelHold = false;
-        m_stackIndex = 0;
-        m_pressEventCounter = 0;
-        m_fact2_k1 = 0;
-        m_fact2_k2 = 0;
-        m_wholeMapIndex = -1;
 	m_bypassJog = false;
+	m_isFirstFact = true;
 	
-	for (int i=0; i < STACK_SIZE; i++) {
-                m_eventType[i] = 0;
-                m_eventStack[i] = 0;
-                m_eventTime[i] = 0;
-	}
-
         set_numerical_input("");
 }
 
@@ -761,42 +736,8 @@ void InputEngine::process_press_event(int eventcode)
 		return;
 	}
 	
-        if (m_isFirstFact && !m_isHolding) {
-		cpointer().inputengine_first_input_event();
-                if (m_eventStack[0] == 0) {
-                        // Here we jump straight to the [K] command if "K" is unambiguously a HOLDKEY
-                        int holdKeyIndex = find_index_for_instant_hold_key(eventcode);
-                        if (holdKeyIndex >= 0) {
-                                push_event(PRESS_EVENT, eventcode);
-                                press_checker();
-                                assume_hold();
-                                return;
-                        }
-
-			// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
-			int fkey_index = find_index_for_instant_fkey(eventcode);
-			if (fkey_index >= 0) {
-                                m_holdTimer.stop(); // quit the holding check..
-				IEAction* action = m_ieActions.at(fkey_index);
-                                broadcast_action(action);
-				conclusion();
-				return;
-			}
-		} else {
-			// Here we jump straight to the <KL> command if "KL" is unambiguously an FKEY2
-                        int fkey2_index = find_index_for_instant_fkey2(eventcode, m_eventStack[0]);
-			if (fkey2_index >= 0) {
-                                m_holdTimer.stop(); // quit the holding check..
-				IEAction* action = m_ieActions.at(fkey2_index);
-                                broadcast_action(action);
-				conclusion();
-				return;
-			}
-		}
-	}
-	
         if (m_isHolding) {
-		int index = find_index_for_single_fact(FKEY, eventcode, 0);
+		int index = find_index_for_key(eventcode);
 		// PRE-CONDITION:
 		// The eventcode must be bind to a single key fact AND
 		// the eventcode must be != the current active holding 
@@ -819,16 +760,17 @@ void InputEngine::process_press_event(int eventcode)
 		}
 		return;
 	}
-		
-        if (!m_isPressEventLocked) {
-                if (m_pressEventCounter < 2) {
-                        m_pressEventCounter++;
-			push_event(PRESS_EVENT, eventcode);
-			press_checker();
-                        if (!m_holdTimer.isActive())
-                                m_holdTimer.start( m_assumeHoldTime); // single shot timer
-		} else {
-                        m_isPressEventLocked = true;
+
+	if (m_isFirstFact) {
+		// Here we jump straight to the <K> command if "K" is unambiguously an FKEY
+		int fkey_index = find_index_for_key(eventcode);
+		if (fkey_index >= 0) {
+
+			cpointer().inputengine_first_input_event();
+
+			IEAction* action = m_ieActions.at(fkey_index);
+			broadcast_action(action);
+			return;
 		}
 	}
 }
@@ -855,13 +797,8 @@ void InputEngine::process_release_event(int eventcode)
 			return;
 		} else {
 			PMESG("release event for hold action detected!");
-                        m_holdEventCode = -100;
+			finish_hold();
 		}
-	}
-	
-        if ((!is_fake(eventcode)) && (m_stackIndex != 0)) {
-		push_event(RELEASE_EVENT, eventcode);
-		release_checker();
 	}
 }
 
@@ -890,90 +827,11 @@ void InputEngine::process_hold_modifier_keys()
         }
 }
 
-void InputEngine::assume_hold() // no release so far ? so consider it a hold...
-{
-        PENTER3;
-        PMESG3("No release so far (waited %d ms). Assuming this is a hold and dispatching it", m_assumeHoldTime);
-        m_isHolding = true;
-        dispatch_hold();
-}
-
-void InputEngine::clear_output()
-{
-        PENTER3;
-        if ((m_isHoldingOutput)) {
-                m_clearOutputTimer.stop();
-                m_isHoldingOutput=false;
-        }
-}
-
-void InputEngine::quit_second_chance()
-{
-        PENTER3;
-        m_secondChanceTimer.stop();
-        if (!m_isHolding) // if it is holding, there is no need to push a new fact
-        {
-                PMESG3("No second fact (waited %d ms) ... Forcing a null second fact", m_doubleFactWaitTime);
-                push_fact(0,0); // no second press performed, so I am adding a pair of Zeros as second press and keep going...
-        }
-}
-
-// This pushes an event to the stack
-void InputEngine::push_event(  int pType,  int pCode )
-{
-	PENTER3;
-        if (m_stackIndex < STACK_SIZE) {
-                m_eventType[m_stackIndex] = pType;
-                m_eventStack[m_stackIndex] = pCode;
-		QTime currTime = QTime::currentTime();
-		long ts=currTime.msec() + (currTime.second() * 1000) + (currTime.minute() * 1000 * 60);
-                m_eventTime[m_stackIndex] = ts;
-                PMESG3("Pushing EVENT %d (%s) key=%d at %ld",m_stackIndex,( pType==PRESS_EVENT ? "PRESS" : "RELEASE" ),pCode,ts);
-                m_stackIndex++;
-		for (int j=0; j<STACK_SIZE; j++) {
-                        PMESG4("eventStack[%d]=%d %s at timestamp=%ld\n",j,m_eventStack[j],(m_eventType[j]==PRESS_EVENT?"P":"R"),m_eventTime[j]);
-		}
-	}
-}
-
-
-// this is a intermediate step to push. Only non-fake events are allowed to be pushed
-bool InputEngine::is_fake(int codeVal)
-{
-	// A fake event is an event which is generated by a ignored PRESS_EVENT
-        bool b =   ( codeVal!=m_eventStack[0] )
-                && ( codeVal!=m_eventStack[1] )
-                && ( codeVal!=m_eventStack[2] )
-                && ( codeVal!=m_eventStack[3] );
-	return b;
-}
-
 bool InputEngine::is_modifier_keyfact(int eventcode)
 {
 	return m_modifierKeys.contains(eventcode);
 }
 
-// this is the method that detects wether a fact is double key (KK) or single key (K)
-// by measuring the time difference between the first 2 presses (in case event[0] AND
-// event[1] are PRESS_EVENT's
-void InputEngine::press_checker()
-{
-	PENTER3;
-        if (m_stackIndex==2) // first two events happend
-	{
-		PMESG3("Checking if 2 first events are PRESS'es and what is the time diff between them");
-                if (     ( m_eventType[0]==PRESS_EVENT )
-                                && ( m_eventType[1]==PRESS_EVENT )
-		)
-		{
-                        m_isDoubleKey = ( m_eventTime[1] - m_eventTime[0] < MAX_TIME_DIFFERENCE_FOR_DOUBLE_KEY_CONSIDERATION );
-		}
-                if (m_isDoubleKey)
-		{
-			PMESG3("Detected 2 initial PRESS almost together. It is a double key (KK) !");
-		}
-	}
-}
 
 // This is the one who consolidate a fact. It can detect
 // if the fact is K or KK, and also calls the push_fact handler
@@ -984,272 +842,19 @@ void InputEngine::release_checker()
 		finish_hold();
 		return;
 	}
-	// If it is not fake, then lets take a look in the pairs
-	// Remember that event 0 is always PRESS_EVENT
-        if (m_eventType[1]==RELEASE_EVENT) {
-		// event 0 and event 1 are a pair because event 1 must be the release of 0
-		// since the event 1 was a release, then the first fact is finished
-		// Now we must push_fact, but only if it is a release very fast (that
-		// didnt cause a HOLD.
-                if (!m_isHolding)
-                        push_fact(m_eventStack[0],0);
-		return;
-	}
-	// event 1 is ALSO a PRESS_EVENT. so we must check for a double key
-        if (m_isDoubleKey) // ( very short time difference between 2 first presses)
-	{
-		// Now we dont know if this is the event 2 or event 3
-                if (m_stackIndex==3)
-		{
-			// So we are processing event (??), which is a release
-			// So this can be release of event 0 or 1 , so..
-                        if (m_eventStack[2]==m_eventStack[0])
-                                m_pairOf2 = 0;
-			else
-                                m_pairOf2 = 1;
-			// the event is not finished yet but it must be avoided
-			// any reentrance (any new PRESS_EVENT)
-                        m_isPressEventLocked = true;
-			return;
-		}
-		// we are in the event 3 . the last!
-		// the event is finished , surely. But we must check the pairs
-		// we already know who event 2 is pair of. So ...
-                if (m_pairOf2 == 0)
-                        m_pairOf3 = 1;
-		else
-                        m_pairOf3 = 0;
-		// The event is finished, and we know the pairs. So..
-		// I must push_fact, but only if it is a release very fast (that
-		// didnt cause a HOLD.
-                if (!m_isHolding)
-                        push_fact(m_eventStack[0],m_eventStack[1]);
-	} else {
-		// although the sequence was P-P-R-R (press, press, release, release)
-		// the time difference between two first presses was too long
-		// so it CAN'T be a double key (KK).
-		// So the only possible explanation is that this is a >K>K action
-		// where user typed too fast, so the release of 1st P happend AFTER the
-		// 2nd press. In this case, I have to assume this is a >K>K
-		// action, and dispatch TWO facts.
-		// Now forcing prematurally a 2 facts by splitting and syncronizing
-		// these events into 2 different facts. Probably this is a >K>K
-		// of course, this  >K>K assumption mentioned above can be made ONLY if it is the first fact.
-                if (m_isFirstFact) {
-			PMESG("Inital double key too slow. It must be a premature >K>K. Dispatching 2 individual <K> facts.");
-                        int f1_k1=m_eventStack[0];
-                        int f2_k1=m_eventStack[1];
-			push_fact (f1_k1,0);
-			push_fact (f2_k1,0);
-		}
-	}
-
 }
 
 
 // ----------------------------- JMB ENGINE : PRESS LEVEL HANDLING -------------------------
 
 
-void InputEngine::push_fact(int k1,int k2)
+int InputEngine::find_index_for_key(int key)
 {
-	PENTER3;
-	PMESG3("Pushing FACT : k1=%d k2=%d",k1,k2);
-        m_holdTimer.stop(); // quit the holding check..
-        if (m_isFirstFact) {
-		// this is the first fact
-		PMESG3("First fact detected !");
-		// first try to find some action like k1k2
-                m_fact1_k1 = k1;
-                m_fact1_k2 = k2;
-
-		int mapIndex = identify_first_fact();
-		if (mapIndex < 0) {
-			PMESG3("First fact alone does not match anything in the map. Waiting for a second fact...");
-			// Action not identified. Maybe is part of a double fact action. so...
-			give_a_chance_for_second_fact();
-			return;
-		}
-		PMESG3("First fact matches map in position %d",mapIndex);
-		// there is a single-fact action which matches this !! now must check if is not an immediate action
-		
-		if (!m_ieActions.at(mapIndex)->isInstantaneous) {
-			PMESG3("Although this could be an SINGLE PRESS Action, it is not protected, so...");
-			// action is not an immediate action, so...
-			give_a_chance_for_second_fact();
-			return;
-		}
-		// Action exists AND it is a immediate action. So
-		// forces it to be a single fact action
-		PMESG3("This is protected (immediate) action. It'll be treated as <K>");
-		dispatch_action(mapIndex);
-		conclusion();
-	} else // ok . We are in the second fact.
-	{
-                m_secondChanceTimer.stop();
-                m_fact2_k1 = k1;
-                m_fact2_k2 = k2;
-                if (m_fact2_k1!=0) {
-			// this is the second press
-			PMESG3("Second fact detected !");
-		}
-		// try to complement the first press.
-                m_wholeMapIndex = identify_first_and_second_facts_together();
-                if (m_wholeMapIndex >= 0) {
-                        PMESG3("First and second facts together matches with action %d !! Dispatching it...",m_wholeMapIndex );
-                        dispatch_action(m_wholeMapIndex);
-		} else {
-			PMESG3("Apparently, first and second facts together do not match any action. Sorry :-(");
-		}
-		conclusion();
-	}
-}
-
-
-int InputEngine::identify_first_fact()
-{
-	PENTER3;
-        m_fact1Type = 0;
-	// First we need to know the first fact type.
-        if (m_fact1_k2==0) // <K> or [K]
-	{
-                if (!m_isHolding)
+	foreach(IEAction* action, m_ieActions) {
+			
+		if (action->key == key)
 		{
-			PMESG3("Detected <K>");
-                        m_fact1Type = FKEY;
-		} else
-		{
-			PMESG3("Detected [K]");
-                        m_fact1Type = HOLDKEY;
-                        m_holdEventCode = m_fact1_k1;
-
-		}
-	}
-	else // <KK> or [KK]
-	{
-                if (!m_isHolding) {
-			PMESG3("Detected <KK>");
-                        m_fact1Type = FKEY2;
-		} else {
-			PMESG3("Detected [KK]");
-                        m_fact1Type = HKEY2;
-                        m_holdEventCode = m_fact1_k2;
-		}
-	}
-
-	// Fact 1 Type identified .
-        int index = find_index_for_single_fact(m_fact1Type, m_fact1_k1, m_fact1_k2);
-	if (index >= 0) {
-		return index;
-	}
-	
-	PMESG3("No single fact candidate action found. Keep going, since a 2nd fact might come soon");
-	give_a_chance_for_second_fact();
-	return -1;
-}
-
-
-// Only return a valid index if there is an FKEY defined for key, and there are no
-// other conflicting keyfacts (HOLDKEY, FKEY2, etc)
-int InputEngine::find_index_for_instant_fkey( int key )
-{
-	int fkey_index = find_index_for_single_fact(FKEY, key, 0);
-	if (fkey_index < 0) {
-		return -1;
-	}
-
-	foreach(IEAction* action, m_ieActions) {
-			
-		if (action->type == FKEY)
-			continue;
-		if (action->fact1_key1==key || action->fact1_key2==key) {
-			PMESG3("Found a conflict (%s) for instantaneous keyfact key=%d", action->keySequence.data(), key);
-			return -1;
-                }
-        }
-
-	return fkey_index;
-}
-
-int InputEngine::find_index_for_instant_hold_key(int key)
-{
-        PENTER;
-        int holdKeyIndex = find_index_for_single_fact(HOLDKEY, key, 0);
-        if (holdKeyIndex < 0) {
-                return -1;
-        }
-
-        // if modifier keys are pressed, this can't be an instant hold key!
-        if (m_activeModifierKeys.size()) {
-                return -1;
-        }
-
-        foreach(IEAction* action, m_ieActions) {
-
-                if (action->type == HOLDKEY) {
-                        continue;
-                }
-
-                if (action->fact1_key1==key || action->fact1_key2==key) {
-                        // if this action doesn't have any 'normal' objects, then
-                        // the only objects available for this ieaction are modifier key
-                        // enabled objects, so we are sure we can ignore this action.
-                        // this on the other hand does't work if key1 is a
-                        // 'modifier key for hold commands'... who do we solve that?
-                        foreach(IEAction::Data* data, action->objects) {
-                                if (!data->isHoldModifierKey) {
-                                        PMESG2("InputEngine::is_instant_hold_key: Found a conflict (%s) (slot: %s) \n",
-                                              action->keySequence.data(), QS_C(data->slotsignature));
-                                        return -1;
-                                }
-                        }
-                }
-        }
-
-        return holdKeyIndex;
-}
-
-// Only return a valid index if there is an FKEY2 defined for key1, key2, and there are no
-// other conflicting keyfacts (HOLDKEY2, etc)
-int InputEngine::find_index_for_instant_fkey2( int key1, int key2 )
-{
-	int fkey2_index = find_index_for_single_fact(FKEY2, key1, key2);
-	if (fkey2_index < 0) {
-		return -1;
-	}
-
-	foreach(IEAction* action, m_ieActions) {
-			
-		if (action->type == D_FKEY2 || action->type == HKEY2) {
-			if ( (action->fact1_key1==key1 && action->fact1_key2==key2) ||
-			(action->fact1_key1==key2 && action->fact1_key2==key1) ) {
-				PMESG3("Found a conflict (%s) for instantaneous keyfact keys=%d,%d", action->keySequence.data(), key1, key2);
-				return -1;
-			}
-		}
-	}
-	return fkey2_index;
-}
-
-
-int InputEngine::find_index_for_single_fact( int type, int key1, int key2 )
-{
-	foreach(IEAction* action, m_ieActions) {
-			
-		if (action->type != type )
-			continue;
-		if (
-			(
-				((action->fact1_key1==key1) && ( action->fact1_key2==key2))
-				||
-				((action->fact1_key1==key2) && ( action->fact1_key2==key1))
-			)
-			&&
-			( action->fact2_key1 == 0 )
-			&&
-			( action->fact2_key2 == 0 )
-		) {
-			// 'i' is a candidate for first press
-			PMESG3("Found a match in map position %d, keyfact %s", m_ieActions.indexOf(action), action->keySequence.data());
+			PMESG("Found a match keyString %s", QS_C(action->keyString));
 			return m_ieActions.indexOf(action);
 		}
 	}
@@ -1258,182 +863,19 @@ int InputEngine::find_index_for_single_fact( int type, int key1, int key2 )
 }
 
 
-// This is called whenever a second fact happens right after the first
-int InputEngine::identify_first_and_second_facts_together()
-{
-	PENTER3;
-        PMESG3("Adding a 2nd fact %d,%d  to the 1st one  %d,%d",m_fact2_k1,m_fact2_k2,m_fact1_k1,m_fact1_k2);
-        if (m_fact2_k1!=0) {
-                if (!m_isHolding) {
-                        if (m_fact1_k2==0) // first press is <K> (I know that its not [K] because if it was I'd never reach identify_first_and_second_facts_together())
-			{
-                                if (m_fact2_k2==0)
-                                        if (m_fact1_k1 == m_fact2_k1)
-					{
-						PMESG3("Whole action is a <<K>>");
-                                                m_wholeActionType = D_FKEY;  // <<K>>
-					} else
-					{
-						PMESG3("Whole action is a >K>K");
-                                                m_wholeActionType = S_FKEY_FKEY; // >K>K
-					}
-				else
-				{
-					PMESG3("Whole action is a >K>KK");
-                                        m_wholeActionType = S_FKEY_FKEY2;  // >K>KK
-				}
-			}
-
-			else {
-                                if (m_fact2_k2==0) {
-					PMESG3("Whole action is a >KK>K");
-                                        m_wholeActionType = S_FKEY2_FKEY;  // >KK>K
-				} else {
-					if (
-                                                ((m_fact1_k1==m_fact2_k1) && (m_fact1_k2==m_fact2_k2)) ||
-                                                ((m_fact1_k1==m_fact2_k2) && (m_fact1_k2==m_fact2_k1))
-					) {
-						PMESG3("Whole action is a <<KK>>");
-                                                m_wholeActionType = D_FKEY2;
-					} else {
-						PMESG3("Whole action is a >KK>KK");
-                                                m_wholeActionType = S_FKEY2_FKEY2;
-					}
-				}
-			}
-		} else {
-                        if (m_fact1_k2==0) // first press is <K> (I know that its not [K] because if it was I'd never reach identify_first_and_second_facts_together())
-			{
-                                if (m_fact2_k2==0)
-                                        if (m_fact1_k1 == m_fact2_k1)
-					{
-						PMESG3("Whole action is a <[K]>");
-                                                m_wholeActionType = FHKEY;
-					} else
-					{
-						PMESG3("Whole action is a >K[K]");
-                                                m_wholeActionType = S_FKEY_HKEY;
-					}
-				else
-				{
-					PMESG3("Whole action is a >K[KK]");
-                                        m_wholeActionType = S_FKEY_HKEY2;
-				}
-			}
-			else {
-                                if (m_fact2_k2==0) {
-					PMESG3("Whole action is a KK[K]");
-                                        m_wholeActionType = S_FKEY2_HKEY;
-				} else {
-					PMESG3("Whole action is a >KK[KK]");
-                                        m_wholeActionType = S_FKEY2_HKEY2;
-				}
-			}
-		}
-	} else {
-                PMESG3("Second fact is null (0,0). Assuming wholeActionType is %d", m_fact1Type);
-                m_wholeActionType = m_fact1Type;
-	}
-
-	// whole action type identified .
-        PMESG3("Searching for a %d action that matches %d,%d,%d,%d ", m_wholeActionType, m_fact1_k1, m_fact1_k2, m_fact2_k1, m_fact2_k2);
-	foreach(IEAction* action, m_ieActions) {
-                if ( action->type != m_wholeActionType )
-			continue;
-		int ap1k1 = action->fact1_key1;
-		int ap1k2 = action->fact1_key2;
-		int ap2k1 = action->fact2_key1;
-		int ap2k2 = action->fact2_key2;
-                PMESG4("COMPARING %d,%d,%d,%d  \tWITH  %d,%d,%d,%d",ap1k1,ap1k2,ap2k1,ap2k2,m_fact1_k1,m_fact1_k2,m_fact2_k1,m_fact2_k2);
-		if (
-			(
-                                ((ap1k1==m_fact1_k1) && (ap1k2==m_fact1_k2))
-				||
-                                ((ap1k1==m_fact1_k2) && (ap1k2==m_fact1_k1))
-			)
-			&&
-			(
-                                ((ap2k1==m_fact2_k1) && (ap2k2==m_fact2_k2))
-				||
-                                ((ap2k1==m_fact2_k2) && (ap2k2==m_fact2_k1))
-			)
-		) {
-			// 'i' is a candidate the whole action
-			PMESG3("Found a match : action %s", action->keySequence.data());
-			return m_ieActions.indexOf(action);
-		}
-	}
-	PMESG3("No candidates found :-(");
-	return -1;
-}
-
-
-void InputEngine::give_a_chance_for_second_fact()
-{
-	PENTER3;
-        PMESG3("Waiting %d ms for second fact ...",m_doubleFactWaitTime );
-        m_secondChanceTimer.start( m_doubleFactWaitTime );
-        m_isFirstFact=false;
-        m_isHolding = false;
-        m_isPressEventLocked = false;
-        m_stackIndex = 0;
-        m_pressEventCounter = 0;
-        m_fact2_k1 = 0;
-        m_fact2_k2 = 0;
-        m_wholeMapIndex = -1;
-	for (int i=0; i < STACK_SIZE; i++) {
-                m_eventType[i] = 0;
-                m_eventStack[i] = 0;
-                m_eventTime[i] = 0;
-	}
-}
-
-
-
-// ----------------------------- JMB ENGINE : ACTION LEVEL HANDLING -------------------------
 void InputEngine::dispatch_action(int mapIndex)
 {
 	PENTER2;
 	broadcast_action(m_ieActions.at(mapIndex));
 }
 
-
-
-// This is called by
-void InputEngine::dispatch_hold()
-{
-	PENTER2;
-        m_clearOutputTimer.stop();
-        m_isHoldingOutput=false;
-
-        m_wholeMapIndex = -1;
-        if (m_isFirstFact) {
-                m_fact1_k1 = m_eventStack[0];
-                m_fact1_k2 = m_eventStack[1];
-                m_wholeMapIndex = identify_first_fact(); // I can consider first press the last because there is nothing after a []
-	} else {
-                m_fact2_k1 = m_eventStack[0];
-                m_fact2_k2 = m_eventStack[1];
-                m_wholeMapIndex = identify_first_and_second_facts_together();
-	}
-
-        if (m_wholeMapIndex>=0) {
-                broadcast_action(m_ieActions.at(m_wholeMapIndex));
-	}
-	
-	stop_collecting();
-	// note that we dont call conclusion() here :-)
-}
-
-
-
-
 void InputEngine::finish_hold()
 {
 	PENTER3;
-        PMESG("Finishing hold action %d",m_wholeMapIndex);
+	PMESG("Finishing hold action %s", m_holdingCommand->metaObject()->className());
 
         m_isHolding = false;
+	m_holdEventCode = -100;
 
         clear_hold_modifier_keys();
 
@@ -1494,17 +936,6 @@ void InputEngine::conclusion()
 {
 	PENTER3;
 	reset();
-	hold_output();
-}
-
-
-void InputEngine::hold_output()
-{
-	PENTER3;
-        if (!m_isHoldingOutput) {
-                m_clearOutputTimer.start(m_clearTime);
-                m_isHoldingOutput=true;
-	}
 }
 
 
@@ -1585,8 +1016,7 @@ int InputEngine::init_map(const QString& keymap)
 	QDomNode keyfactsNode = root.firstChildElement("Keyfacts");
 	QDomNode keyfactNode = keyfactsNode.firstChild();
 	
-	QString keyFactType;
-	QString key1, key2, key3, key4, mouseHint, modifierKeys;
+	QString mouseHint, modifierKeys;
 	IEAction::Data* data;
 	
 	while( !keyfactNode.isNull() ) {
@@ -1603,54 +1033,12 @@ int InputEngine::init_map(const QString& keymap)
 		
 		IEAction* action = new IEAction();
 		
-		keyFactType = e.attribute( "type", "" );
-		key1 = e.attribute( "key1", "");
-		key2 = e.attribute( "key2", "" );
+		key = e.attribute("key", "");
 
-		if (keyFactType == "FKEY")
-			action->type = FKEY;
-		else if (keyFactType == "FKEY2")
-			action->type = FKEY2;
-		else if (keyFactType == "HKEY")
-			action->type = HOLDKEY;
-		else if (keyFactType == "HKEY2")
-			action->type = HKEY2;
-		else if (keyFactType == "D_FKEY")
-			action->type = D_FKEY;
-		else if (keyFactType == "D_FKEY2")
-			action->type = D_FKEY2;
-		else if (keyFactType == "S_FKEY_FKEY")
-			action->type = S_FKEY_FKEY;
-		else {
-			PWARN("keyFactType not supported!");
-		}
-
-                if (!set_hexcode(action->fact1_key1, key1)) {
-                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key1));
-                }
-                if (!set_hexcode(action->fact1_key2, key2)) {
-                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key2));
-                }
-                if (!set_hexcode(action->fact2_key1, key3)) {
-                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key3));
-                }
-                if (!set_hexcode(action->fact2_key2, key4)) {
-                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key4));
+		if (!set_hexcode(action->key, key)) {
+			info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key));
                 }
 
-		
-		// Fix the keyCode positions
-		if  (( action->type == D_FKEY  ) || ( action->type == FHKEY  )) {
-			action->fact2_key1=action->fact1_key1;
-		} else if (( action->type == D_FKEY2 ) || ( action->type == FHKEY  )) {
-			action->fact2_key1=action->fact1_key1;
-			action->fact2_key2=action->fact1_key2;
-		} else if (( action->type == S_FKEY_FKEY ) || ( action->type == S_FKEY_HKEY )) {
-			action->fact2_key1=action->fact1_key2;
-			action->fact1_key2=0;
-		}
-
-		
 		QDomElement objectsNode = e.firstChildElement("Objects");
 		QDomNode objectNode = objectsNode.firstChild();
 	
@@ -1662,7 +1050,7 @@ int InputEngine::init_map(const QString& keymap)
 			QString objectname = e.attribute("objectname", "");
 			
 			data->slotsignature = e.attribute("slotsignature", "");
-			data->modes = e.attribute("modes", "").split(";");
+			data->modes = e.attribute("modes", "All").split(";");
 			data->pluginname = e.attribute( "pluginname", "");
 			data->commandname = e.attribute( "commandname", "");
                         data->submenu = e.attribute("submenu", "");
@@ -1703,13 +1091,13 @@ int InputEngine::init_map(const QString& keymap)
 			}
 			
 			if (QString(objectname) == "") {
-				PERROR("no objectname given in keyaction %s", QS_C(keyFactType));
+				PERROR("no objectname given in keyaction %s", QS_C(key));
 			}
 			if (data->slotsignature.isEmpty() && data->pluginname.isEmpty()) {
-				PERROR("no slotsignature given in keyaction %s, object %s", QS_C(keyFactType), QS_C(objectname));
+				PERROR("no slotsignature given in keyaction %s, object %s", QS_C(key), QS_C(objectname));
 			}
 			if (QString(data->modes.join(";")) == "") {
-				PERROR("no modes given in keyaction %s, object %s", QS_C(keyFactType), QS_C(objectname));
+				PERROR("no modes given in keyaction %s, object %s", QS_C(key), QS_C(objectname));
 			}
 	
 			if (modifierKeys.isEmpty()) {
@@ -1718,100 +1106,17 @@ int InputEngine::init_map(const QString& keymap)
                                 action->objectUsingModifierKeys.insertMulti(objectname, data);
 			}
 		
-                        PMESG3("ADDED action: type=%d keys=%d,%d,%d,%d useX=%d useY=%d, slot=%s", action->type, action->fact1_key1,action->fact1_key2,action->fact2_key1,action->fact2_key2,data->useX,data->useY, QS_C(data->slotsignature));
+			PMESG3("ADDED action: type=%d key=%d useX=%d useY=%d, slot=%s", action->type, action->key, data->useX, data->useY, QS_C(data->slotsignature));
 
                         objectNode = objectNode.nextSibling();
 		}
 		
-		action->isInstantaneous = false;
-		action->render_key_sequence(key1, key2);
-	
-		bool exists = false;
-		for (int i=0; i<m_ieActions.size(); ++i) {
-		 	IEAction* existingaction = m_ieActions.at(i);
-			if ( 	(action->fact1_key1 == existingaction->fact1_key1) &&
-				(action->fact1_key2 == existingaction->fact1_key2) &&
-				(action->fact2_key1 == existingaction->fact2_key1) &&
-				(action->fact2_key2 == existingaction->fact2_key2) &&
-				(action->type == existingaction->type) ) {
-				exists = true;
-				QString errorstring = QString("InputEngine:: keyfact with: type=%1, key1='%2', key2='%3' already exists!\n"
-						"You should only define keyfact types one time!!\n").arg(keyFactType).arg(key1).arg(key2); 
-                                printf("%s", QS_C(errorstring));
-				info().warning(errorstring);
-				break;
-			}
-				
-		}
-		
-		if (!exists) {
-			m_ieActions.append(action);
-		}
+		action->keyString = key;
+
+		m_ieActions.append(action);
 		
 		keyfactNode = keyfactNode.nextSibling();
 	}
-
-
-	PMESG2("Optimizing map for best performance ...");
-	int optimizedActions=0;
-	foreach(IEAction* action, m_ieActions) {
-                int key1 = action->fact1_key1;
-                int key2 = action->fact1_key2;
-
-		if ( (action->type == FKEY) ) {
-			bool alone = true;
-			foreach(IEAction* aloneAction, m_ieActions) {
-				if (action == aloneAction)
-					continue;
-				int tt    = aloneAction->type;
-				int t1A   = aloneAction->fact1_key1;
-				if  (
-                                        (t1A==key1)  &&
-					(
-						(tt==D_FKEY)       ||
-						(tt==FHKEY)        ||
-						(tt==S_FKEY_FKEY)  ||
-						(tt==S_FKEY_FKEY2) ||
-						(tt==S_FKEY_HKEY)  ||
-						(tt==S_FKEY_HKEY2)
-					)
-				)
-					alone=false;
-			}
-			if (alone) {
-				PMESG3("Setting <K> fact (slot=%s) as protected (Instantaneous response)", action->keySequence.data());
-				action->isInstantaneous = true;
-				optimizedActions++;
-			} else
-				action->isInstantaneous = false;
-
-		} else if ((action->type == FKEY2)) {
-			bool alone = true;
-			foreach(IEAction* aloneAction, m_ieActions) {
-				if (action == aloneAction)
-					continue;
-				int tt    = aloneAction->type;
-				int t1A   = aloneAction->fact1_key1;
-				int t2A   = aloneAction->fact1_key2;
-                                if ( ((t1A==key1) && (t2A==key2)) &&
-                                      ( (tt==HOLDKEY)      ||
-                                        (tt==D_FKEY2)      ||
-                                        (tt==S_FKEY2_FKEY) ||
-                                        (tt==S_FKEY2_FKEY2)||
-                                        (tt==S_FKEY2_HKEY) ||
-                                        (tt==S_FKEY2_HKEY2)) ) {
-					alone=false;
-                                }
-			}
-			if (alone) {
-				PMESG3("Setting <KK> fact (slot=%s) for instantaneous response", action->keySequence.data());
-				action->isInstantaneous = true;
-				optimizedActions++;
-			} else
-				action->isInstantaneous = false;
-		}
-	}
-	PMESG2("Keymap initialized! %d actions registered ( %d instantanious) .", m_ieActions.size(), optimizedActions);
 
 	return 1;
 }
@@ -1833,7 +1138,7 @@ QStringList InputEngine::keyfacts_for_hold_command(const QString& className)
                         }
                         foreach(IEAction::Data* data, datalist) {
                                 if (data->commandname == className) {
-                                        QString keyfact = ieaction->keySequence;
+					QString keyfact = ieaction->keyString;
                                         make_keyfacts_human_readable(keyfact);
                                         result.append(keyfact);
                                 }
@@ -1860,22 +1165,25 @@ void InputEngine::make_keyfacts_human_readable(QString& keyfact)
         keyfact.replace(QString("MINUS"), QString("-"));
         keyfact.replace(QString("PLUS"), QString("+"));
         keyfact.replace(QString("PAGEDOWN"), tr("Page Down"));
-        keyfact.replace(QString("PAGEUP"), tr("Page Up"));
+	keyfact.replace(QString("PAGEUP"), tr("Page Up"));
 }
 
-void InputEngine::set_clear_time(int time)
+void InputEngine::filter_unknown_sequence(QString& sequence)
 {
-        m_clearTime = time;
-}
-
-void InputEngine::set_hold_sensitiveness(int htime)
-{
-        m_assumeHoldTime=htime;
-}
-
-void InputEngine::set_double_fact_interval(int time)
-{
-        m_doubleFactWaitTime = time;
+//	sequence.replace(tr("Scroll Wheel"));
+//	sequence.replace(tr("Scroll Wheel"));
+//	sequence.replace(tr("Right MB"));
+//	sequence.replace(tr("Left MB"));
+//	sequence.replace(tr("Center MB"));
+	sequence.replace(tr("Up Arrow"), "Up");
+	sequence.replace(tr("Down Arrow"), "Down");
+	sequence.replace(tr("Left Arrow"), "Left");
+	sequence.replace(tr("Right Arrow"), "Right");
+//	sequence.replace(tr("Delete", "Delete"));
+	sequence.replace(QString("-"), "Minus");
+	sequence.replace(QString("+"), "Plus");
+//	sequence.replace(tr("Page Down"));
+//	sequence.replace(tr("Page Up"));
 }
 
 void InputEngine::create_menu_translations()
@@ -1964,35 +1272,6 @@ TCommand * InputEngine::get_holding_command() const
         return m_holdingCommand;
 }
 
-void IEAction::render_key_sequence(const QString& key1, const QString& key2)
-{
-	switch(type) {
-	case	FKEY:
-		keySequence = QString("< " + key1 + " >").toAscii().data();
-		break;
-	case	FKEY2:
-		keySequence = QString("< " + key1 + " " + key2 + " >").toAscii().data();
-		break;
-	case	HOLDKEY:
-		keySequence = QString("[ " + key1 + " ]").toAscii().data();
-		break;
-	case	HKEY2:
-		keySequence = QString("[ " + key1 +  " " + key2 + " ]").toAscii().data();
-		break;
-	case	D_FKEY:
-		keySequence = QString("<< " + key1 + " >>").toAscii().data();
-		break;
-	case	D_FKEY2:
-		keySequence = QString("<< " + key1 + " " + key2 + " >>").toAscii().data();
-		break;
-	case	S_FKEY_FKEY:
-		keySequence = QString("> " + key1 + " > " + key2).toAscii().data();
-		break;
-	default	:
-		keySequence = "Unknown Key Sequence";
-	}
-}
-
 IEAction::~ IEAction()
 {
 	foreach(Data* data, objects) {
@@ -2003,3 +1282,25 @@ IEAction::~ IEAction()
 	}
 }
 
+QString MenuData::getKeySequence()
+{
+	QString sequence;
+
+	foreach(int modifier, modifierkeys) {
+		if (modifier == Qt::Key_Alt) {
+			sequence += "Alt+";
+		} else if (modifier == Qt::Key_Control) {
+			sequence += "Ctrl+";
+		} else if (modifier == Qt::Key_Shift) {
+			sequence += "Shift+";
+		} else if (modifier == Qt::Key_Meta) {
+			sequence += "Meta+";
+		}
+	}
+
+	sequence += keyString;
+
+	ie().make_keyfacts_human_readable(sequence);
+
+	return sequence;
+}

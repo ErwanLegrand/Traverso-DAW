@@ -221,7 +221,7 @@ TMainWindow::TMainWindow()
         m_mainMenuToolBar = new QToolBar(this);
         m_mainMenuToolBar->setObjectName(tr("MainToolBar"));
         m_mainMenuToolBar->toggleViewAction()->setText("Main Tool Bar");
-        m_mainMenuToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
+//        m_mainMenuToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
         m_mainMenuToolBar->setMovable(false);
 
 #if defined (Q_WS_MAC)  // OS X is a lot pickier about menu bars. If we don't use
@@ -1044,33 +1044,10 @@ TCommand * TMainWindow::show_context_menu( )
                 // which could be referenced again in inputengine, causing a segfault.
                 // so showing it will be sufficient. In fact, using exec() is
                 // considered bad practice due this very issue.
-                toplevelmenu->move(QCursor::pos());
-                toplevelmenu->show();
+		toplevelmenu->popup(QCursor::pos());
         }
 	
 	return 0;
-}
-
-QString create_keyfact_string(QString& keyfact, QList<int> modifiers) 
-{
-	QString modifierkey = "";
-	foreach(int key, modifiers) {
-                if (keyfact.contains("ALT+") || keyfact.contains("CTRL+") || keyfact.contains("SHIFT+")) continue;
-		if (key == Qt::Key_Alt) {
-			modifierkey += "ALT+";
-		} else if (key == Qt::Key_Control) {
-			modifierkey += "CTRL+";
-                } else if (key == Qt::Key_Shift) {
-                        modifierkey += "SHIFT+";
-		} else {
-			QKeySequence seq(key);
-			modifierkey += seq.toString() + " +";
-		}
-	}
-
-        ie().make_keyfacts_human_readable(keyfact);
-
-        return modifierkey + " " + keyfact;
 }
 
 TCommand * TMainWindow::export_keymap()
@@ -1157,16 +1134,16 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 	for (int i=0; i<list.size(); ++i) {
 		MenuData data = list.at(i);
 		
-		// Merge entries with equal actions, but different key facts.
-		for (int j=i+1; j<list.size(); ++j) {
-			if (list.at(j).description == data.description && list.at(j).submenu == data.submenu) {
-				QString mergestring = list.at(j).keysequence;
-				data.keysequence = create_keyfact_string(data.keysequence, data.modifierkeys) +
-						" ,  " +
-						create_keyfact_string(mergestring, list.at(j).modifierkeys);
-				list.removeAt(j);
-			}
-		}
+//		 Merge entries with equal actions, but different key facts.
+//		for (int j=i+1; j<list.size(); ++j) {
+//			if (list.at(j).description == data.description && list.at(j).submenu == data.submenu) {
+//				QString mergestring = list.at(j).keysequence;
+//				data.keysequence = create_keyfact_string(data.keysequence, data.modifierkeys) +
+//						" ,  " +
+//						create_keyfact_string(mergestring, list.at(j).modifierkeys);
+//				list.removeAt(j);
+//			}
+//		}
 		
 		// If this MenuData item is a submenu, add to the 
 		// list of submenus, which will be processed lateron
@@ -1179,12 +1156,13 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 			list = submenus.value(data.submenu);
 			list->append(data);
 		} else {
-			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);
-			QString text = QString(data.description + "  " + keyfact);
 			QAction* action = new QAction(this);
-			action->setText(text);
+			action->setText(data.description);
+			QString sequence = data.getKeySequence();
+			ie().filter_unknown_sequence(sequence);
+			action->setShortcut(sequence);
 			QStringList strings;
-			strings << data.iedata << data.description << keyfact;
+			strings << data.getKeySequence() << data.description;
 			action->setData(strings);
 			menu->addAction(action);
 		}
@@ -1210,13 +1188,14 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
                 action->setText(TMenuTranslator::instance()->get_translation_for(key));
 		foreach(MenuData data, *list) {
                         QAction* action = new QAction(subMenu);
-			QString keyfact = create_keyfact_string(data.keysequence, data.modifierkeys);
-			QString text = QString(data.description + "  " + keyfact);
-			action->setText(text);
+			action->setText(data.description);
+			QString sequence = data.getKeySequence();
+			ie().filter_unknown_sequence(sequence);
+			action->setShortcut(sequence);
 			QStringList strings;
-			strings << data.iedata << data.description << keyfact;
+			strings << data.getKeySequence() << data.description;
 			action->setData(strings);
-                        subMenu->addAction(action);
+			subMenu->addAction(action);
 		}
 		
 		delete list;

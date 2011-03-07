@@ -23,17 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ExternalProcessingDialog.h"
 
-#include <AudioClip.h>
-#include <AudioClipView.h>
-#include <AudioTrack.h>
-#include <InputEngine.h>
-#include <ReadSource.h>
-#include <ProjectManager.h>
-#include <Project.h>
-#include <ResourcesManager.h>
-#include <Utils.h>
+#include "AudioClip.h"
+#include "AudioTrack.h"
 #include "TMainWindow.h"
-
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -69,6 +61,15 @@ int AudioClipExternalProcessing::prepare_actions()
 	return 1;
 }
 
+int AudioClipExternalProcessing::begin_hold()
+{
+	return 1;
+}
+
+int AudioClipExternalProcessing::finish_hold()
+{
+	return 1;
+}
 
 int AudioClipExternalProcessing::do_action()
 {

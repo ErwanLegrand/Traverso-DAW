@@ -38,27 +38,11 @@ class ContextItem;
 class TCommand;
 class CommandPlugin;
 
-static const int FKEY = 0;                 // <K>    - press one key fast
-static const int FKEY2 = 1;                // <KK>   - press two keys fast, together
-static const int HOLDKEY = 2;                 // [K]    - Hold one key
-static const int HKEY2 = 3;                // [KK]   - Hold two keys, together
-static const int D_FKEY = 4;               // <<K>>  - double press one key fast
-static const int D_FKEY2 = 5;              // <<KK>> - double press two keys fast, together
-static const int FHKEY = 6;                // <[K]>  - press fast and then hold one key
-static const int FHKEY2 = 7;               // <[KK]> - press fast and then hold two keys together
-static const int S_FKEY_FKEY = 8;          // >K>K   - press one key and then other key fast and sequentially
-static const int S_FKEY_FKEY2 = 9;         // >K>KK  - press one key and then two other keys fast and sequentially
-static const int S_FKEY2_FKEY = 10;        // >KK>K  - press two keys and then another one fast and sequentially
-static const int S_FKEY2_FKEY2 = 11;       // >KK>KK  - press two keys and then another one fast and sequentially
-static const int S_FKEY_HKEY = 12;         // >K[K]  - press fastly one key and then hold another key, sequentially
-static const int S_FKEY_HKEY2 = 13;        // >K[KK] - press fastly one key and then hold two ther ones, sequentially
-static const int S_FKEY2_HKEY = 14;        // >KK[K] - press two keys together fastly and then hold a third one, sequentially
-static const int S_FKEY2_HKEY2 = 15;       // >KK[KK] - press two keys together fastly and then hold a third one, sequentially
-
+static const int FKEY = 0;
+static const int HOLDKEY = 1;
 
 struct IEAction
 {
-        void render_key_sequence(const QString& key1, const QString& key2);
 	~IEAction();
         struct Data {
         	QStringList modes;
@@ -80,14 +64,11 @@ struct IEAction
 	QHash<QString, Data*> objectUsingModifierKeys;
 
         int type;
-        int fact1_key1;
-        int fact1_key2;
-        int fact2_key1;
-        int fact2_key2;
+	int key;
         int autorepeatInterval;
         int autorepeatStartDelay;
         bool isInstantaneous;
-        QByteArray keySequence;
+	QString keyString;
 };
 
 
@@ -100,12 +81,15 @@ struct MenuData {
         {
                 return left->sortorder > right->sortorder;
         }
-	QString 	keysequence;
-	QString		iedata;
+
+	QString getKeySequence();
+
+	QList<int > 	modifierkeys;
+	QString 	keyString;
         QString		description;
 	QString		submenu;
         int		sortorder;
-	QList<int > 	modifierkeys;
+	int		key;
 };
 
 class InputEngine : public QObject
@@ -131,6 +115,7 @@ public:
         QList<IEAction*> get_ie_actions() const {return m_ieActions;}
         QStringList keyfacts_for_hold_command(const QString& className);
         void make_keyfacts_human_readable(QString& keyfact);
+	void filter_unknown_sequence(QString& sequence);
 
         int broadcast_action_from_contextmenu(const QString& name);
 
@@ -149,9 +134,6 @@ public:
 
         int init_map(const QString& mapFilename);
 
-        void set_clear_time(int time);
-        void set_hold_sensitiveness(int factor);
-        void set_double_fact_interval(int time);
         void create_menu_translations();
 
 
@@ -160,8 +142,6 @@ private:
         InputEngine(const InputEngine&) : QObject() {}
         ~InputEngine();
 
-        static const int 	STACK_SIZE = 4;
-        static const int 	MAX_ACTIONS = 300;
         static const int 	PRESS_EVENT = 1;
         static const int 	RELEASE_EVENT = 2;
 	
@@ -188,56 +168,24 @@ private:
         QString			m_sCollectedNumber;
 	QPoint			m_jogBypassPos;
         QTimer                  m_holdKeyRepeatTimer;
-        QTimer                  m_holdTimer;
-        QTimer                  m_clearOutputTimer;
-        QTimer                  m_secondChanceTimer;
 
 
-        bool 			m_active;
         bool 			m_isHolding;
-        bool 			m_isPressEventLocked;
-        bool 			m_isHoldingOutput;
-        bool 			m_isFirstFact;
-        bool 			m_isDoubleKey;
         bool 			m_isJogging;
 	bool			m_cancelHold;
 	bool			m_bypassJog;
+	bool			m_isFirstFact;
 
-        int 			m_fact1_k1;
-        int 			m_fact1_k2;
-        int 			m_fact2_k1;
-        int 			m_fact2_k2;
-        int 			m_fact1Type;
-        int 			m_wholeMapIndex;
-        int 			m_wholeActionType;
         int 			m_collectedNumber;
-        int 			m_stackIndex;
-        int 			m_eventType[STACK_SIZE];
-        int 			m_eventStack[STACK_SIZE];
-        int 			m_pressEventCounter; // that avoid more than 2 press events in a same fact
-        int 			m_pairOf2;
-        int 			m_pairOf3;
-        int 			m_clearTime;
-        int 			m_assumeHoldTime;
-        int 			m_doubleFactWaitTime;
-        long 			m_eventTime[STACK_SIZE];
+
 	int			m_broadcastResult;
 	int			m_unbypassJogDistance;
         int                     m_holdEventCode;
 
-        bool 			is_fake( int keyval);
-        int 			identify_first_fact();
-        int 			identify_first_and_second_facts_together();
-        void 			push_event(int pType,  int pKey);
-        void 			press_checker();
         void 			release_checker();
-        void 			push_fact( int k1 ,  int k2);
-        void 			give_a_chance_for_second_fact();
         void 			dispatch_action(int mapIndex);
-        void 			dispatch_hold();
         void 			finish_hold();
         void 			conclusion();
-        void 			hold_output();
         void 			stop_collecting();
         bool 			check_number_collection(int eventcode);
 
@@ -249,10 +197,7 @@ private:
 	void reset();
         void process_press_event(int eventcode);
         void process_release_event(int eventcode);
-        int find_index_for_instant_hold_key( int key );
-	int find_index_for_instant_fkey( int key );
-	int find_index_for_instant_fkey2( int key1, int key2 );
-        int find_index_for_single_fact(int type, int key1, int key2);
+	int find_index_for_key(int key);
 	bool is_modifier_keyfact(int eventcode);
         void clear_hold_modifier_keys();
 
@@ -261,9 +206,6 @@ private:
         friend InputEngine& ie();
 
 private slots:
-        void assume_hold();
-        void quit_second_chance();
-        void clear_output();
         void process_hold_modifier_keys();
 
 signals:

@@ -862,8 +862,6 @@ void KeyboardConfigPage::save_config()
         config().set_property("CCE", "jobbypassdistance", mouseTreshHoldSpinBox->value());
         config().set_property("CCE", "mouseclicktakesoverkeyboardnavigation", leftMouseClickRadioButton->isChecked());
 
-	ie().set_double_fact_interval(doubleFactTimeoutSpinBox->value());
-	ie().set_hold_sensitiveness(holdTimeoutSpinBox->value());
         cpointer().set_jog_bypass_distance(mouseTreshHoldSpinBox->value());
         cpointer().set_left_mouse_click_bypasses_jog(leftMouseClickRadioButton->isChecked());
 

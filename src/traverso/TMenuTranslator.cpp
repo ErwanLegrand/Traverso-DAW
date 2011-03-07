@@ -423,8 +423,8 @@ QString TMenuTranslator::create_html_for_metas(QList<const QMetaObject *> metas,
                 }
                 foreach(QAction* action, somemenu->actions()) {
                         QStringList strings = action->data().toStringList();
-                        if (strings.size() >= 3) {
-                                QString keyfact = strings.at(2);
+			if (strings.size() >= 2) {
+				QString keyfact = strings.at(0);
 
                                 if (metaobject_inherits_class(metas.first(), "TCommand")) {
                                         keyfact.replace("<", "");
@@ -437,10 +437,6 @@ QString TMenuTranslator::create_html_for_metas(QList<const QMetaObject *> metas,
                                 keyfact.replace(QString("Right Arrow"), QString("&rarr;"));
                                 keyfact.replace(QString("-"), QString("&#45;"));
                                 keyfact.replace(QString("+"), QString("&#43;"));
-                                keyfact.replace(QString("<<"), QString("&laquo;"));
-                                keyfact.replace(QString(">>"), QString("&raquo;"));
-                                keyfact.replace(QString("<"), QString("&lsaquo;"));
-                                keyfact.replace(QString(">"), QString("&rsaquo;"));
                                 keyfact.replace(QString(" , "), QString("<br />"));
 
 
@@ -507,18 +503,15 @@ void TMenuTranslator::create_menudata_for_metaobject(const QMetaObject * mo, QLi
                                 menudata.description = translator->get_translation_for(QString("%1::%2").arg(classname).arg(iedata->slotsignature));
                         }
 
-                        menudata.keysequence = ieaction->keySequence;
+			menudata.keyString = ieaction->keyString;
                         if (iedata->slotsignature == "numerical_input") {
-                                menudata.keysequence =  "< 0, 1, 2 ... 9 >";
+				menudata.keyString =  "0, 1, 2 ... 9";
                         }
-                        menudata.iedata = ieaction->keySequence;
+			menudata.key = ieaction->key;
+			menudata.keyString = ieaction->keyString;
                         menudata.sortorder = iedata->sortorder;
                         menudata.submenu = iedata->submenu;
                         menudata.modifierkeys = iedata->modifierkeys;
-                        if (menudata.modifierkeys.size()) {
-                                menudata.iedata.prepend("++");
-                        }
-
 
                         list.append(menudata);
                 }

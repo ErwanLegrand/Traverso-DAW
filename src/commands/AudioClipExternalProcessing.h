@@ -39,6 +39,9 @@ public :
 	int do_action();
 	int undo_action();
 
+	int begin_hold();
+	int finish_hold();
+
 // private :
 	AudioTrack* m_track;
 	AudioClip* m_clip;

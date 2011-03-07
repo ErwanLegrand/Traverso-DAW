@@ -38,6 +38,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 TContextHelpWidget::TContextHelpWidget(QWidget* parent)
         : QWidget(parent)
 {
+	setObjectName("ContextHelpWidget");
+
         m_comboBox = new QComboBox(parent);
         m_textEdit = new QTextEdit(parent);
         m_textEdit->setTextInteractionFlags(Qt::NoTextInteraction);
