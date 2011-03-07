@@ -93,6 +93,9 @@ public :
         QList<TrackView*> get_track_views() const;
         int get_track_height(Track* track) const;
         static QHash<QString, QString>* cursor_dict();
+
+	QScrollBar* getVScrollBar() {return m_vScrollBar;}
+	QScrollBar* getHScrollBar() {return m_hScrollBar;}
 	
 	void load_theme_data();
 	void start_shuttle(bool start, bool drag=false);

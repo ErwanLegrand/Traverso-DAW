@@ -56,6 +56,7 @@ MoveCurveNode.h
 MoveEdge.h
 MoveMarker.h
 Shuttle.h
+Scroll.h
 MoveTrack.h
 RemoveClip.h
 SplitClip.h

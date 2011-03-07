@@ -47,6 +47,7 @@ private:
 
 private slots:
         void browse();
+	void start_autorepeat_timer();
 };
 
 #endif // ARROWKEYBROWSER_H

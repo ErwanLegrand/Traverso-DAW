@@ -131,10 +131,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("HZoomOut", ZoomCommand);
         m_dict.insert("Zoom", ZoomCommand);
 	m_dict.insert("JogZoom", ZoomCommand);
-	m_dict.insert("ScrollRightHold", ScrollCommand);
-	m_dict.insert("ScrollLeftHold", ScrollCommand);
-	m_dict.insert("ScrollUpHold", ScrollCommand);
-	m_dict.insert("ScrollDownHold", ScrollCommand);
+	m_dict.insert("Scroll", ScrollCommand);
         m_dict.insert("Shuttle", ShuttleCommand);
         m_dict.insert("NormalizeClip", NormalizeClipCommand);
         m_dict.insert("ArrowKeyBrowser", ArrowKeyBrowserCommand);

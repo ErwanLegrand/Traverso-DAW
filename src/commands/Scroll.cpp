@@ -24,9 +24,10 @@
 #include "SheetView.h"
 #include "ContextPointer.h"
 #include "ClipsViewPort.h"
+#include "QScrollBar"
 
 Scroll::Scroll(SheetView* sv, QVariantList args)
-	: TCommand("Scroll")
+	: MoveCommand("Scroll")
 {
 	m_sv = sv;
 	m_dx = m_dy = 0;
@@ -75,6 +76,28 @@ int Scroll::do_action( )
 int Scroll::undo_action( )
 {
 	return -1;
+}
+
+void Scroll::move_up(bool )
+{
+	int step = m_sv->getVScrollBar()->pageStep();
+	m_sv->set_vscrollbar_value(m_sv->vscrollbar_value() - step * m_speed);
+}
+
+void Scroll::move_down(bool )
+{
+	int step = m_sv->getVScrollBar()->pageStep();
+	m_sv->set_vscrollbar_value(m_sv->vscrollbar_value() + step * m_speed);
+}
+
+void Scroll::move_left(bool )
+{
+	m_sv->set_hscrollbar_value(m_sv->hscrollbar_value() - (m_speed * 5));
+}
+
+void Scroll::move_right(bool )
+{
+	m_sv->set_hscrollbar_value(m_sv->hscrollbar_value() + (m_speed * 5));
 }
 
 
