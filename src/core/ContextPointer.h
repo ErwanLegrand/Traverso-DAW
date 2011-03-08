@@ -61,7 +61,10 @@ public:
 	 * @return The current scene x coordinate, mapped from the ViewPort's mouse x coordinate
 	 */
 	inline int scene_x() const {
-                Q_ASSERT(m_port);
+		if (!m_port) {
+			qDebug("scene_x() called, but no ViewPort was set!");
+			return 0;
+		}
                 return (int) m_port->map_to_scene(m_x, m_y).x();
 	}
 
@@ -72,8 +75,11 @@ public:
 	 * @return The current ViewPort's scene y coordinate, mapped from the ViewPort's mouse y coordinate
 	 */
 	inline int scene_y() const {
-                Q_ASSERT(m_port);
-                return (int) m_port->map_to_scene(m_x, m_y).y();
+		if (!m_port) {
+			qDebug("scene_y() called, but no ViewPort was set!");
+			return 0;
+		}
+		return (int) m_port->map_to_scene(m_x, m_y).y();
 	}
 	
 	/**
@@ -81,8 +87,11 @@ public:
 	 * @return The current's ViewPort's mouse position in the ViewPort's scene position.
 	 */
 	inline QPointF scene_pos() const {
-                Q_ASSERT(m_port);
-                return m_port->map_to_scene(m_x, m_y);
+		if (!m_port) {
+			qDebug("scene_pos() called, but no ViewPort was set!");
+			return QPointF(0,0);
+		}
+		return m_port->map_to_scene(m_x, m_y);
 	}
 	
 	

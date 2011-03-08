@@ -86,7 +86,7 @@ void ExternalProcessingDialog::prepare_for_external_processing()
 	
 	//This should NOT be possible, but just in case....
 	if (! rs) {
-		printf("ExternalProcessing:: resources manager did NOT return a resource for the to be processed audioclip (%lld) !!!!\n", m_acep->m_clip->get_id());
+		qDebug("ExternalProcessing:: resources manager did NOT return a resource for the to be processed audioclip (%lld) !!!!\n", m_acep->m_clip->get_id());
 		return;
 	}
 	

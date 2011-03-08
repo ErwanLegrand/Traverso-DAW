@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QObject>
 #include <QHash>
 
-struct MenuData;
+struct TShortcutData;
 
 class TMenuTranslator : public QObject
 {
@@ -37,18 +37,16 @@ public:
         void add_entry(const QString& signature, const QString& translation);
         void add_meta_object(const QMetaObject* mo);
         QString get_translation_for(const QString& entry);
-        QString create_html_for_metas(QList<const QMetaObject*> metas, QObject* obj=0);
-        QList<const QMetaObject*> get_metaobjects_for_class(const QString& className);
-        QList<MenuData > create_menudata_for(QObject* item);
+	QString createHtmlForMetaObects(QList<const QMetaObject*> metas, QObject* obj=0);
+	QList<const QMetaObject*> get_metaobjects_for_class(const QString& className);
         QHash<QString, QList<const QMetaObject*> > get_meta_objects() const {return m_objects;}
-        void create_menudata_for_metaobject(const QMetaObject* mo, QList<MenuData >& list) const;
+
 
 private:
         QHash<QString, QString> m_dict;
         static TMenuTranslator* m_instance;
         QHash<QString, QList<const QMetaObject*> > m_objects;
 
-        bool metaobject_inherits_class(const QMetaObject* mo, const QString & className);
 };
 
 #endif // TMENUTRANSLATOR_H

@@ -170,7 +170,7 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
 		ci = ci->get_context();
 	}
 
-        QString html = translator->create_html_for_metas(metas, obj);
+        QString html = translator->createHtmlForMetaObects(metas, obj);
 
         m_help.insert(mo->className(), html);
 
@@ -193,7 +193,7 @@ void TContextHelpWidget::combobox_activated(int index)
 
         QList<const QMetaObject*> metas = TMenuTranslator::instance()->get_metaobjects_for_class(className);
 
-        QString html = TMenuTranslator::instance()->create_html_for_metas(metas);
+        QString html = TMenuTranslator::instance()->createHtmlForMetaObects(metas);
 
         m_help.insert(className, html);
 

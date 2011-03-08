@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QUrl>
 #include <QFileInfo>
 #include <QDir>
+#include <QDragEnterEvent>
 		
 #include <Debugger.h>
 		

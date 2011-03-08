@@ -21,12 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "InputEngine.h"
 
-#include "ContextItem.h"
 #include "ContextPointer.h"
 #include "Information.h"
 #include "TCommand.h"
 #include <CommandPlugin.h>
 #include "Utils.h"
+#include "TShortcutManager.h"
 
 #include <QTime>
 #include <QFile>
@@ -36,13 +36,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QCoreApplication>
 #include <QPluginLoader>
 #include <QDir>
+#include <QKeyEvent>
+#include <QWheelEvent>
+
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
 
-#define MAX_TIME_DIFFERENCE_FOR_DOUBLE_KEY_CONSIDERATION 50
 #define MouseScrollHorizontalLeft -1
 #define MouseScrollHorizontalRight -2
 #define MouseScrollVerticalUp -3
@@ -259,22 +261,11 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 		}
 	}
 
-	if (keySequence.contains("++")) {
-		info().information(tr("Modifier key actions are not supported from Context Menu"));
-		return -1;
-	}
-	
 	if (! action) {
 		PERROR("ContextMenu keySequence doesn't apply to any InputEngine knows off!! (%s)", QS_C(keySequence));
 		return -1;
 	}
 	
-//	if ( action && ((action->type == HOLDKEY) || (action->type == HKEY2))) {
-//		info().information(tr("Hold actions are not supported from Context Menu"));
-//		return -1;
-//	}
-	
-
 	return broadcast_action(action, false, true);
 }
 
@@ -287,7 +278,6 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 
         TCommand* k = 0;
 	QObject* item = 0;
-	int useX=0, useY=0;
 
 	QList<QObject* > list;
 	 
@@ -314,67 +304,65 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			continue;
 		}
 		
-                IEAction::Data* data = 0;
-                QList<IEAction::Data*> dataList = action->objectUsingModifierKeys.values(item->metaObject()->className());
-		
-                foreach(IEAction::Data* maybeData, dataList) {
-                        // A match was found for actions using the modifier key
-                        // let's see if it is valid for the current active modifier keys!
-                        if (maybeData) {
-                                PMESG("found match in objectUsingModierKeys");
-
-                                if (maybeData->modifierkeys.size()) {
-                                        foreach(int key, maybeData->modifierkeys) {
-                                                if (m_activeModifierKeys.contains(key)) {
-                                                        data = maybeData;
-                                                        break;
-                                                } else {
-                                                        PMESG("m_activeModifierKeys doesn't contain code %d", key);
-                                                }
-                                        }
-                                }
-                        }
-                }
-		
+		TShortcutData* data = 0;	
 
                 const QMetaObject* metaobject = item->metaObject();
+		// traverse upwards till no more superclasses are found
+		// this supports inheritance on contextitems.
+		while (metaobject)
+		{
+			QList<TShortcutData*> dataList = action->objects.values(metaobject->className());
 
-                // No match found for actions using a modifier key, let's see if there
-		// is one in the 'normal' actions list.
-		if (! data ) {
-			// This test makes sure that we don't select an unmodified command
-			// when the user is holding down modifier keys.
-			if (m_activeModifierKeys.size() > 0) {
-				continue;
+			foreach(TShortcutData* maybeData, dataList) {
+				if (!maybeData) {
+					continue;
+				}
+
+				if (m_activeModifierKeys.size())
+				{
+					if (modifierKeysMatch(m_activeModifierKeys, maybeData->modifierkeys)) {
+						data = maybeData;
+						PMESG("found match in objectUsingModierKeys");
+						break;
+					} else {
+						PMESG("m_activeModifierKeys doesn't contain code %d", action->key);
+					}
+				}
+				else
+				{
+					if (maybeData->modifierkeys.isEmpty())
+					{
+						data = maybeData;
+						PMESG("found match in obects NOT using modifier keys");
+						break;
+					}
+				}
 			}
 
-                        // traverse upwards till no more superclasses are found
-                        // this supports inheritance on contextitems.
-                        while (metaobject) {
-                                data = action->objects.value(QString(metaobject->className()));
-                                if (data) {
-                                        break;
-                                }
-                                metaobject = metaobject->superClass();
-                        }
+			if (data)
+			{
+				// Now that we found a match, we still have to check if
+				// the current mode is valid for this data!
+				QString currentmode = m_modes.key(cpointer().get_current_mode());
+				QString allmodes = m_modes.key(0);
+				if ( data->modes.size() && (! data->modes.contains(currentmode)) && (! data->modes.contains(allmodes))) {
+					PMESG("%s on %s is not valid for mode %s", QS_C(action->keyString), item->metaObject()->className(), QS_C(currentmode));
+					continue;
+				}
 
-				
-			if (! data ) {
-				PMESG("No data found for object %s", item->metaObject()->className());
-				continue;
+				break;
 			}
+
+			metaobject = metaobject->superClass();
 		}
-		
-		// Now that we found a match, we still have to check if 
-		// the current mode is valid for this data!
-		QString currentmode = m_modes.key(cpointer().get_current_mode());
-		QString allmodes = m_modes.key(0);
-		if ( (! data->modes.contains(currentmode)) && (! data->modes.contains(allmodes))) {
-			PMESG("%s on %s is not valid for mode %s", QS_C(action->keyString), item->metaObject()->className(), QS_C(currentmode));
+
+
+		if (! data ) {
+			PMESG("No data found for object %s", item->metaObject()->className());
 			continue;
 		}
-		
-		PMESG("Data found for %s!", item->metaObject()->className());
+				
+		PMESG("Data found for %s!", metaobject->className());
 		PMESG("setting slotsignature to %s", QS_C(data->slotsignature));
 		PMESG("setting pluginname to %s", QS_C(data->pluginname));
 		PMESG("setting plugincommand to %s", QS_C(data->commandname));
@@ -383,10 +371,7 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 		slotsignature = data->slotsignature;
 		pluginname = data->pluginname;
 		commandname = data->commandname;
-		useX = data->useX;
-		useY = data->useY;
 
-		
                 if (item == m_holdingCommand) {
 			if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_ARG(bool, autorepeat))) {
                                 PMESG("HIT, invoking %s::%s", m_holdingCommand->metaObject()->className(), QS_C(slotsignature));
@@ -421,10 +406,10 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			} 
 		}
 		
-		// Either the plugins didn't have a match, or were holding.
+		// Either the plugins didn't have a match, or we are holding.
 		if ( ! k ) {
 		
-			IEAction::Data* delegatingdata;
+			TShortcutData* delegatingdata;
 			QString delegatedobject;
 			
                         if (m_holdingCommand) {
@@ -433,9 +418,9 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			} else {
                                 delegatedobject = metaobject->className();
 				if (m_activeModifierKeys.size() > 0) {
-                                        //FIXME: objectsusingmodifierkeys has values inserted with insertMulti()
-                                        // do we have to use values(delegatedobject) instead of value(delegatedobject)
-                                        // here too?
+					//FIXME: objects has values inserted with insertMulti()
+					// do we have to use values(delegatedobject) instead of value(delegatedobject)
+					// here too?
 					delegatingdata = action->objectUsingModifierKeys.value(delegatedobject);
 				} else {
 					delegatingdata = action->objects.value(delegatedobject);
@@ -517,28 +502,11 @@ int InputEngine::broadcast_action(IEAction* action, bool autorepeat, bool fromCo
 			}
 		}
 		
-//                if (k && (!m_isHolding)) {
-//			if (k->prepare_actions() != -1) {
-//				k->set_valid(true);
-//				if (k->push_to_history_stack() < 0) {
-//					// The command doesn't have a history stack, or wasn't
-//					// historable for some reason.... At least call do_action
-//					// since that still isn't done (should be done by QUndoStack...)
-//					k->do_action();
-//					delete k;
-//					k = 0;
-//				}
-//			} else {
-//				PWARN("prepare actions failed!");
-//				delete k;
-//				k = 0;
-//			}
-//		}
-		
+
 		if (k) {
 			if (k->begin_hold() != -1) {
 				k->set_valid(true);
-				k->set_cursor_shape(useX, useY);
+				k->set_cursor_shape(data->useX, data->useY);
                                 m_holdingCommand = k;
 				m_isHolding = true;
 				m_holdEventCode = action->key;
@@ -1017,7 +985,7 @@ int InputEngine::init_map(const QString& keymap)
 	QDomNode keyfactNode = keyfactsNode.firstChild();
 	
 	QString mouseHint, modifierKeys;
-	IEAction::Data* data;
+	TShortcutData* data;
 	
 	while( !keyfactNode.isNull() ) {
 		QDomElement e = keyfactNode.toElement();
@@ -1039,13 +1007,21 @@ int InputEngine::init_map(const QString& keymap)
 			info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key));
                 }
 
-		QDomElement objectsNode = e.firstChildElement("Objects");
-		QDomNode objectNode = objectsNode.firstChild();
+		QDomNode objectNode = e.firstChild();
 	
 		while(!objectNode.isNull()) {
-			data = new IEAction::Data;
+			data = new TShortcutData;
 			
 			QDomElement e = objectNode.toElement();
+
+			QString function = e.attribute("function", "");
+			if (!function.isEmpty())
+			{
+				data = tShortCutManager().getFunctionshortcut(function);
+				action->objects.insert(data->classname, data);
+				objectNode = objectNode.nextSibling();
+				continue;
+			}
 			
 			QString objectname = e.attribute("objectname", "");
 			
@@ -1057,7 +1033,6 @@ int InputEngine::init_map(const QString& keymap)
 			data->sortorder = e.attribute( "sortorder", "0").toInt();
                         data->autorepeatInterval = e.attribute("autorepeatinterval", "40").toInt();
                         data->autorepeatStartDelay = e.attribute("autorepeatstartdelay", "100").toInt();
-                        data->isHoldModifierKey = e.attribute("isholdmodifier", 0).toInt();
 			mouseHint = e.attribute( "mousehint", "" );
 			QString args = e.attribute("arguments", "");
 			modifierKeys = e.attribute("modifierkeys", "");
@@ -1100,11 +1075,7 @@ int InputEngine::init_map(const QString& keymap)
 				PERROR("no modes given in keyaction %s, object %s", QS_C(key), QS_C(objectname));
 			}
 	
-			if (modifierKeys.isEmpty()) {
-				action->objects.insert(objectname, data);
-			} else {
-                                action->objectUsingModifierKeys.insertMulti(objectname, data);
-			}
+			action->objects.insertMulti(objectname, data);
 		
 			PMESG3("ADDED action: type=%d key=%d useX=%d useY=%d, slot=%s", action->type, action->key, data->useX, data->useY, QS_C(data->slotsignature));
 
@@ -1128,53 +1099,31 @@ QStringList InputEngine::keyfacts_for_hold_command(const QString& className)
         for (int i=0; i<m_ieActions.size(); i++) {
                 IEAction* ieaction = m_ieActions.at(i);
 
-                if (ieaction->type == HOLDKEY) {
-                        QList<IEAction::Data*> datalist;
-                        foreach(IEAction::Data* data, ieaction->objects) {
+//                if (ieaction->type == HOLDKEY) {
+			QList<TShortcutData*> datalist;
+			foreach(TShortcutData* data, ieaction->objects) {
                                 datalist.append(data);
                         }
-                        foreach(IEAction::Data* data, ieaction->objectUsingModifierKeys) {
+			foreach(TShortcutData* data, ieaction->objectUsingModifierKeys) {
                                 datalist.append(data);
                         }
-                        foreach(IEAction::Data* data, datalist) {
+			foreach(TShortcutData* data, datalist) {
                                 if (data->commandname == className) {
 					QString keyfact = ieaction->keyString;
-                                        make_keyfacts_human_readable(keyfact);
+					TShortcutManager::makeShortcutKeyHumanReadable(keyfact);
                                         result.append(keyfact);
                                 }
                         }
-                }
+//                }
         }
         result.removeDuplicates();
 
         return result;
 }
 
-void InputEngine::make_keyfacts_human_readable(QString& keyfact)
-{
-        keyfact.replace(QString("MouseScrollVerticalUp"), tr("Scroll Wheel"));
-        keyfact.replace(QString("MouseScrollVerticalDown"), tr("Scroll Wheel"));
-        keyfact.replace(QString("MouseButtonRight"), tr("Right MB"));
-        keyfact.replace(QString("MouseButtonLeft"), tr("Left MB"));
-        keyfact.replace(QString("MouseButtonMiddle"), tr("Center MB"));
-        keyfact.replace(QString("UARROW"), tr("Up Arrow"));
-        keyfact.replace(QString("DARROW"), tr("Down Arrow"));
-        keyfact.replace(QString("LARROW"), tr("Left Arrow"));
-        keyfact.replace(QString("RARROW"), tr("Right Arrow"));
-        keyfact.replace(QString("DELETE"), tr("Delete"));
-        keyfact.replace(QString("MINUS"), QString("-"));
-        keyfact.replace(QString("PLUS"), QString("+"));
-        keyfact.replace(QString("PAGEDOWN"), tr("Page Down"));
-	keyfact.replace(QString("PAGEUP"), tr("Page Up"));
-}
 
 void InputEngine::filter_unknown_sequence(QString& sequence)
 {
-//	sequence.replace(tr("Scroll Wheel"));
-//	sequence.replace(tr("Scroll Wheel"));
-//	sequence.replace(tr("Right MB"));
-//	sequence.replace(tr("Left MB"));
-//	sequence.replace(tr("Center MB"));
 	sequence.replace(tr("Up Arrow"), "Up");
 	sequence.replace(tr("Down Arrow"), "Down");
 	sequence.replace(tr("Left Arrow"), "Left");
@@ -1274,33 +1223,28 @@ TCommand * InputEngine::get_holding_command() const
 
 IEAction::~ IEAction()
 {
-	foreach(Data* data, objects) {
+	foreach(TShortcutData* data, objects) {
 		delete data;
 	}
-	foreach(Data* data, objectUsingModifierKeys) {
+	foreach(TShortcutData* data, objectUsingModifierKeys) {
 		delete data;
 	}
 }
 
-QString MenuData::getKeySequence()
+bool InputEngine::modifierKeysMatch(QList<int>first, QList<int>second)
 {
-	QString sequence;
+	if (first.size() != second.size())
+	{
+		return false;
+	}
 
-	foreach(int modifier, modifierkeys) {
-		if (modifier == Qt::Key_Alt) {
-			sequence += "Alt+";
-		} else if (modifier == Qt::Key_Control) {
-			sequence += "Ctrl+";
-		} else if (modifier == Qt::Key_Shift) {
-			sequence += "Shift+";
-		} else if (modifier == Qt::Key_Meta) {
-			sequence += "Meta+";
+	foreach(int key, first)
+	{
+		if (!second.contains(key))
+		{
+			return false;
 		}
 	}
 
-	sequence += keyString;
-
-	ie().make_keyfacts_human_readable(sequence);
-
-	return sequence;
+	return true;
 }

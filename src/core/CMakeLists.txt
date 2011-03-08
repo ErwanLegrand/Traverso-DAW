@@ -26,6 +26,7 @@ AudioTrack.cpp
 AudioSource.cpp
 TCommand.cpp
 TConfig.cpp
+TShortcutManager.cpp
 ContextPointer.cpp
 Curve.cpp
 CurveNode.cpp
@@ -85,6 +86,7 @@ TimeLine.h
 Track.h
 TSession.h
 TCommand.h
+TShortcutManager.h
 WriteSource.h
 ContextItem.h
 InputEngine.h

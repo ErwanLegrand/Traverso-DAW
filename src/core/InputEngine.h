@@ -23,45 +23,28 @@
 #define INPUTENGINE_H
 
 
-#include <QKeyEvent>
-#include <QWheelEvent>
-#include <QString>
+
 #include <QObject>
 #include <QTimer>
 #include <QHash>
-#include <QStringList>
+#include <QPoint>
 
 #include "defines.h"
-
 
 class ContextItem;
 class TCommand;
 class CommandPlugin;
-
-static const int FKEY = 0;
-static const int HOLDKEY = 1;
+class TShortcutData;
+class QKeyEvent;
+class QWheelEvent;
+class QMouseEvent;
 
 struct IEAction
 {
 	~IEAction();
-        struct Data {
-        	QStringList modes;
-		QVariantList arguments;
-		QList<int > modifierkeys;
-        	QString slotsignature;
-		QString pluginname;
-		QString commandname;
-		QString submenu;
-		bool useX;
-		bool useY;
-		int sortorder;
-                int autorepeatInterval;
-                int autorepeatStartDelay;
-                bool isHoldModifierKey;
-        };
 
-        QHash<QString, Data*> objects;
-	QHash<QString, Data*> objectUsingModifierKeys;
+	QHash<QString, TShortcutData*> objects;
+	QHash<QString, TShortcutData*> objectUsingModifierKeys;
 
         int type;
 	int key;
@@ -71,26 +54,6 @@ struct IEAction
 	QString keyString;
 };
 
-
-struct MenuData {
-        static bool smaller(const MenuData left, const MenuData right )
-        {
-                return left.sortorder < right.sortorder;
-        }
-        static bool greater(const MenuData* left, const MenuData* right )
-        {
-                return left->sortorder > right->sortorder;
-        }
-
-	QString getKeySequence();
-
-	QList<int > 	modifierkeys;
-	QString 	keyString;
-        QString		description;
-	QString		submenu;
-        int		sortorder;
-	int		key;
-};
 
 class InputEngine : public QObject
 {
@@ -114,7 +77,6 @@ public:
 	TCommand* get_holding_command() const;
         QList<IEAction*> get_ie_actions() const {return m_ieActions;}
         QStringList keyfacts_for_hold_command(const QString& className);
-        void make_keyfacts_human_readable(QString& keyfact);
 	void filter_unknown_sequence(QString& sequence);
 
         int broadcast_action_from_contextmenu(const QString& name);
@@ -142,9 +104,6 @@ private:
         InputEngine(const InputEngine&) : QObject() {}
         ~InputEngine();
 
-        static const int 	PRESS_EVENT = 1;
-        static const int 	RELEASE_EVENT = 2;
-	
 	enum BroadcastResult {
 		SUCCES=1,
 		FAILURE=2,
@@ -199,6 +158,7 @@ private:
         void process_release_event(int eventcode);
 	int find_index_for_key(int key);
 	bool is_modifier_keyfact(int eventcode);
+	bool modifierKeysMatch(QList<int> first, QList<int> second);
         void clear_hold_modifier_keys();
 
 

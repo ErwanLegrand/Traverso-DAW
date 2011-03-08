@@ -29,7 +29,7 @@ ArrowKeyBrowser::ArrowKeyBrowser(SheetView *sv, QVariantList args)
 {
         m_sv = sv;
         m_arrow = -1;
-        m_repeatInterval = 100;
+	m_repeatInterval = 140;
 
         if (args.size() >= 1) {
                 m_arrow = args.at(0).toInt();
@@ -41,6 +41,11 @@ ArrowKeyBrowser::ArrowKeyBrowser(SheetView *sv, QVariantList args)
         connect(&m_browseTimer, SIGNAL(timeout()), this, SLOT(browse()));
 }
 
+void ArrowKeyBrowser::start_autorepeat_timer()
+{
+	m_browseTimer.start(m_repeatInterval);
+}
+
 int ArrowKeyBrowser::begin_hold()
 {
         if (m_arrow == -1) {
@@ -49,7 +54,12 @@ int ArrowKeyBrowser::begin_hold()
                 // bail out here
                 return -1;
         }
-        m_browseTimer.start(m_repeatInterval);
+
+	// always browse at least one time, autorepeat
+	// is simulated by the browseTimer
+	browse();
+
+	QTimer::singleShot(200, this, SLOT(start_autorepeat_timer()));
 
         return 1;
 }
@@ -84,3 +94,4 @@ void ArrowKeyBrowser::browse()
                 printf("m_arrow is not a supported arrow key %d\n", m_arrow);
         }
 }
+

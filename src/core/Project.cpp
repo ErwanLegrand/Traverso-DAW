@@ -1151,7 +1151,7 @@ void Project::set_current_session(qint64 id)
         TSession* session = get_session(id);
 
         if (!session) {
-                PERROR("id %lld doesn't match any known sessions???", id);
+		qDebug("id %lld doesn't match any known sessions???", id);
                 return;
         }
 

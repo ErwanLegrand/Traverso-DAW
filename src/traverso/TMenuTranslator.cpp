@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "commands.h"
 #include "TMainWindow.h"
 #include "InputEngine.h"
+#include "TShortcutManager.h"
 #include <QMenu>
 #include <QPalette>
 
@@ -266,7 +267,6 @@ TMenuTranslator::TMenuTranslator()
         add_entry("ProjectManager::exit", tr("Exit application"));
         add_entry("AudioTrack::toggle_arm", tr("Record: On/Off"));
         add_entry("AudioTrack::silence_others", tr("Silence other tracks"));
-	add_entry("AudioTrack::toggle_show_clip_volume_automation", tr("Show/Hide Clip Volume Automation"));
 	add_entry("CropClip::adjust_left", tr("Adjust Left"));
         add_entry("CropClip::adjust_right", tr("Adjust Right"));
         add_entry("Gain::increase_gain", tr("Increase"));
@@ -361,193 +361,117 @@ QString TMenuTranslator::get_translation_for(const QString &entry)
         return m_dict.value(entry);
 }
 
-QString TMenuTranslator::create_html_for_metas(QList<const QMetaObject *> metas, QObject* object)
+QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> metas, QObject* object)
 {
-        if (!metas.size()) {
-                return "";
-        }
+	if (!metas.size()) {
+		return "";
+	}
 
-        QString holdKeyFact = ie().keyfacts_for_hold_command(metas.first()->className()).join(" , ");
+	QString holdKeyFact = ie().keyfacts_for_hold_command(metas.first()->className()).join(" , ");
 
 
-        QString name = get_translation_for(QString(metas.first()->className()).remove(("View")));
+	QString name = get_translation_for(QString(metas.first()->className()).remove(("View")));
 
-        QColor bgcolor = themer()->get_color("ResourcesBin:alternaterowcolor");
-        QString html = QString("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
-              "<style type=\"text/css\">\n"
-              "table {font-size: 11px;}\n"
-              ".object {background-color: %1; font-size: 12px;}\n"
-              ".description {background-color: %2; font-size: 11px; font-weight: bold;}\n"
-              "</style>\n"
-              "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
+	QColor bgcolor = themer()->get_color("ResourcesBin:alternaterowcolor");
+	QString html = QString("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
+	      "<style type=\"text/css\">\n"
+	      "table {font-size: 11px;}\n"
+	      ".object {background-color: %1; font-size: 12px;}\n"
+	      ".description {background-color: %2; font-size: 11px; font-weight: bold;}\n"
+	      "</style>\n"
+	      "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
 
-        if (object && object->inherits("PCommand")) {
-                PCommand* pc = static_cast<PCommand*>(object);
-                html += "<table><tr class=\"object\">\n<td width=220 align=\"center\">" + pc->text() + "</td></tr>\n";
-        } else {
-                html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\"><b>" + name + "</b><font style=\"font-size: 11px;\">&nbsp;&nbsp;&nbsp;" + holdKeyFact + "</font></td></tr>\n";
-                html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
-        }
+	if (object && object->inherits("PCommand")) {
+		PCommand* pc = static_cast<PCommand*>(object);
+		html += "<table><tr class=\"object\">\n<td width=220 align=\"center\">" + pc->text() + "</td></tr>\n";
+	} else {
+		html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\"><b>" + name + "</b><font style=\"font-size: 11px;\">&nbsp;&nbsp;&nbsp;" + holdKeyFact + "</font></td></tr>\n";
+		html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
+	}
 
-        QStringList result;
-        int j=0;
-        QString submenuhtml;
-        QList<QMenu* > menulist;
-        QList<MenuData > list;
+	QStringList result;
+	int j=0;
+	QString submenuhtml;
+	QList<QMenu* > menulist;
+	QList<TShortcutData* > list;
 
-        foreach(const QMetaObject* mo, metas) {
-                while (mo) {
-                        create_menudata_for_metaobject(mo, list);
-                        mo = mo->superClass();
-                }
-        }
+	foreach(const QMetaObject* mo, metas) {
+		while (mo) {
+			tShortCutManager().getShortcutDataForMetaobject(mo, list);
+			mo = mo->superClass();
+		}
+	}
 
-        QMenu* menu = TMainWindow::instance()->create_context_menu(0, &list);
-        if (menu) {
-                menulist.append(menu);
-                foreach(QAction* action, menu->actions()) {
-                        if (action->menu()) {
-                                menulist.append(action->menu());
-                        }
-                }
-        }
+	QMenu* menu = TMainWindow::instance()->create_context_menu(0, &list);
+	if (menu) {
+		menulist.append(menu);
+		foreach(QAction* action, menu->actions()) {
+			if (action->menu()) {
+				menulist.append(action->menu());
+			}
+		}
+	}
 
-        QStringList submenushtml;
+	QStringList submenushtml;
 
-        for (int i=0; i<menulist.size(); ++i) {
-                QMenu* somemenu = menulist.at(i);
-                submenuhtml = "";
-                if (i>0) {
-                        submenuhtml = "<tr class=\"object\">\n<td colspan=\"2\" align=\"center\">"
-                                      "<font style=\"font-size: 11px;\"><b>" + somemenu->menuAction()->text() + "</b></font></td></tr>\n";
-                }
-                foreach(QAction* action, somemenu->actions()) {
-                        QStringList strings = action->data().toStringList();
+	for (int i=0; i<menulist.size(); ++i) {
+		QMenu* somemenu = menulist.at(i);
+		submenuhtml = "";
+		if (i>0) {
+			submenuhtml = "<tr class=\"object\">\n<td colspan=\"2\" align=\"center\">"
+				      "<font style=\"font-size: 11px;\"><b>" + somemenu->menuAction()->text() + "</b></font></td></tr>\n";
+		}
+		foreach(QAction* action, somemenu->actions()) {
+			QStringList strings = action->data().toStringList();
 			if (strings.size() >= 2) {
 				QString keyfact = strings.at(0);
 
-                                if (metaobject_inherits_class(metas.first(), "TCommand")) {
-                                        keyfact.replace("<", "");
-                                        keyfact.replace(">", "");
-                                }
+				if (t_MetaobjectInheritsClass(metas.first(), "TCommand")) {
+					keyfact.replace("<", "");
+					keyfact.replace(">", "");
+				}
 
-                                keyfact.replace(QString("Up Arrow"), QString("&uarr;"));
-                                keyfact.replace(QString("Down Arrow"), QString("&darr;"));
-                                keyfact.replace(QString("Left Arrow"), QString("&larr;"));
-                                keyfact.replace(QString("Right Arrow"), QString("&rarr;"));
-                                keyfact.replace(QString("-"), QString("&#45;"));
-                                keyfact.replace(QString("+"), QString("&#43;"));
-                                keyfact.replace(QString(" , "), QString("<br />"));
-
-
-                                QString alternatingColor;
-                                if ((j % 2) == 1) {
-                                        alternatingColor = QString("bgcolor=\"%1\"").arg(themer()->get_color("ResourcesBin:alternaterowcolor").name());
-                                } else {
-                                        alternatingColor = QString("bgcolor=\"%1\"").arg(TMainWindow::instance()->palette().color(QPalette::Base).name());
-                                }
-                                j += 1;
-
-                                if (i>0) {
-                                        submenuhtml += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
-                                } else {
-                                        result += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
-                                }
-                        }
-                }
-                if (!submenuhtml.isEmpty()) {
-                        submenushtml.append(submenuhtml);
-                }
-        }
-
-        foreach(QString html, submenushtml) {
-                result += html;
-        }
-
-        foreach(QMenu* menu, menulist) {
-                delete menu;
-        }
-
-        result.removeDuplicates();
-        html += result.join("");
-        html += "</table>\n";
-        html += "</body>\n</html>";
-
-        return html;
-}
-
-void TMenuTranslator::create_menudata_for_metaobject(const QMetaObject * mo, QList< MenuData > & list) const
-{
-        const char* classname = mo->className();
-        TMenuTranslator* translator = TMenuTranslator::instance();
-        QList<IEAction*> ieActions = ie().get_ie_actions();
-
-        for (int i=0; i<ieActions.size(); i++) {
-                IEAction* ieaction = ieActions.at(i);
-
-                QList<IEAction::Data*> datalist;
-                datalist.append(ieaction->objects.value(classname));
-                datalist.append(ieaction->objectUsingModifierKeys.values(classname));
-
-                foreach(IEAction::Data* iedata, datalist) {
-
-                        if ( ! iedata ) {
-                                continue;
-                        }
-
-                        MenuData menudata;
-
-                        if ( ! iedata->pluginname.isEmpty() ) {
-                                menudata.description = translator->get_translation_for(QString("%1::%2").arg(iedata->pluginname).arg(iedata->commandname));
-                        } else {
-                                menudata.description = translator->get_translation_for(QString("%1::%2").arg(classname).arg(iedata->slotsignature));
-                        }
-
-			menudata.keyString = ieaction->keyString;
-                        if (iedata->slotsignature == "numerical_input") {
-				menudata.keyString =  "0, 1, 2 ... 9";
-                        }
-			menudata.key = ieaction->key;
-			menudata.keyString = ieaction->keyString;
-                        menudata.sortorder = iedata->sortorder;
-                        menudata.submenu = iedata->submenu;
-                        menudata.modifierkeys = iedata->modifierkeys;
-
-                        list.append(menudata);
-                }
-        }
-}
-
-QList< MenuData > TMenuTranslator::create_menudata_for(QObject* item)
-{
-        QList<MenuData > list;
-        ContextItem* contextitem;
-
-        do {
-                const QMetaObject* mo = item->metaObject();
-
-                // traverse upwards till no more superclasses are found
-                // this supports inheritance on contextitems.
-                while (mo) {
-                        create_menudata_for_metaobject(mo, list);
-                        mo = mo->superClass();
-                }
-
-                contextitem = qobject_cast<ContextItem*>(item);
-        }
-        while (contextitem && (item = contextitem->get_context()) );
+				keyfact.replace(QString("Up Arrow"), QString("&uarr;"));
+				keyfact.replace(QString("Down Arrow"), QString("&darr;"));
+				keyfact.replace(QString("Left Arrow"), QString("&larr;"));
+				keyfact.replace(QString("Right Arrow"), QString("&rarr;"));
+				keyfact.replace(QString("-"), QString("&#45;"));
+				keyfact.replace(QString("+"), QString("&#43;"));
+				keyfact.replace(QString(" , "), QString("<br />"));
 
 
-        return list;
-}
+				QString alternatingColor;
+				if ((j % 2) == 1) {
+					alternatingColor = QString("bgcolor=\"%1\"").arg(themer()->get_color("ResourcesBin:alternaterowcolor").name());
+				} else {
+					alternatingColor = QString("bgcolor=\"%1\"").arg(TMainWindow::instance()->palette().color(QPalette::Base).name());
+				}
+				j += 1;
 
-bool TMenuTranslator::metaobject_inherits_class(const QMetaObject *mo, const QString& className)
-{
-        while (mo) {
-                if (mo->className() == className) {
-                        return true;
-                }
-                mo = mo->superClass();
-        }
-        return false;
+				if (i>0) {
+					submenuhtml += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
+				} else {
+					result += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
+				}
+			}
+		}
+		if (!submenuhtml.isEmpty()) {
+			submenushtml.append(submenuhtml);
+		}
+	}
+
+	foreach(QString html, submenushtml) {
+		result += html;
+	}
+
+	foreach(QMenu* menu, menulist) {
+		delete menu;
+	}
+
+	result.removeDuplicates();
+	html += result.join("");
+	html += "</table>\n";
+	html += "</body>\n</html>";
+
+	return html;
 }

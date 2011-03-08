@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <libtraversocore.h>
 #include "libtraversosheetcanvas.h"
 #include "commands.h"
+#include "TShortcutManager.h"
 
 #include "AudioChannel.h"
 #include <AudioDevice.h>
@@ -1088,7 +1089,7 @@ TCommand * TMainWindow::get_keymap(QString &str)
               "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
 	
 	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
-                str += translator->create_html_for_metas(objectlist);
+		str += translator->createHtmlForMetaObects(objectlist);
                 str += "<p></p><p></p>\n";
         }
 	
@@ -1097,11 +1098,11 @@ TCommand * TMainWindow::get_keymap(QString &str)
 	return 0;
 }
 
-QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulist)
+QMenu* TMainWindow::create_context_menu(QObject* item, QList<TShortcutData* >* menulist)
 {
-	QList<MenuData > list;
+	QList<TShortcutData* > list;
 	if (item) {
-                list = TMenuTranslator::instance()->create_menudata_for( item );
+		list = tShortCutManager().getShortcutDataFor( item );
 	} else {
 		list = *menulist;
 	}
@@ -1111,7 +1112,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 		return 0;
 	}
 	
-	qSort(list.begin(), list.end(), MenuData::smaller);
+	qSort(list.begin(), list.end(), TShortcutData::smaller);
 
 	QString name;
 	if (item) {
@@ -1129,10 +1130,10 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 	menu->addSeparator();
 	menu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
 	
-	QMap<QString, QList<MenuData>* > submenus;
+	QMap<QString, QList<TShortcutData*>* > submenus;
 	
 	for (int i=0; i<list.size(); ++i) {
-		MenuData data = list.at(i);
+		TShortcutData* data = list.at(i);
 		
 //		 Merge entries with equal actions, but different key facts.
 //		for (int j=i+1; j<list.size(); ++j) {
@@ -1148,21 +1149,21 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 		// If this MenuData item is a submenu, add to the 
 		// list of submenus, which will be processed lateron
 		// Else, add the MenuData item as action in the Menu
-		if ( ! data.submenu.isEmpty() ) {
-			QList<MenuData>* list;
-			if ( ! submenus.contains(data.submenu)) {
-				submenus.insert(data.submenu, new QList<MenuData>());
+		if ( ! data->submenu.isEmpty() ) {
+			QList<TShortcutData*>* list;
+			if ( ! submenus.contains(data->submenu)) {
+				submenus.insert(data->submenu, new QList<TShortcutData*>());
 			}
-			list = submenus.value(data.submenu);
+			list = submenus.value(data->submenu);
 			list->append(data);
 		} else {
 			QAction* action = new QAction(this);
-			action->setText(data.description);
-			QString sequence = data.getKeySequence();
+			action->setText(data->description);
+			QString sequence = data->getKeySequence();
 			ie().filter_unknown_sequence(sequence);
 			action->setShortcut(sequence);
 			QStringList strings;
-			strings << data.getKeySequence() << data.description;
+			strings << data->getKeySequence() << data->description;
 			action->setData(strings);
 			menu->addAction(action);
 		}
@@ -1173,9 +1174,9 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 	// menu is also done ~10 lines up ...
 	QList<QString> keys = submenus.keys();
 	foreach(const QString &key, keys) {
-		QList<MenuData>* list = submenus.value(key);
+		QList<TShortcutData*>* list = submenus.value(key);
 		
-		qSort(list->begin(), list->end(), MenuData::smaller);
+		qSort(list->begin(), list->end(), TShortcutData::smaller);
 
                 QMenu* subMenu = new QMenu(this);
                 subMenu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
@@ -1186,14 +1187,14 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<MenuData >* menulis
 		
                 QAction* action = menu->insertMenu(0, subMenu);
                 action->setText(TMenuTranslator::instance()->get_translation_for(key));
-		foreach(MenuData data, *list) {
+		foreach(TShortcutData* data, *list) {
                         QAction* action = new QAction(subMenu);
-			action->setText(data.description);
-			QString sequence = data.getKeySequence();
+			action->setText(data->description);
+			QString sequence = data->getKeySequence();
 			ie().filter_unknown_sequence(sequence);
 			action->setShortcut(sequence);
 			QStringList strings;
-			strings << data.getKeySequence() << data.description;
+			strings << data->getKeySequence() << data->description;
 			action->setData(strings);
 			subMenu->addAction(action);
 		}

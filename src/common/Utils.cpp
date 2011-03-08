@@ -259,3 +259,13 @@ QString language_name_from_qm_file(const QString& lang)
 	return translator.translate("LanguageName", "English", "The name of this Language, e.g. German would be Deutch");
 }
 
+bool t_MetaobjectInheritsClass(const QMetaObject *mo, const QString& className)
+{
+	while (mo) {
+		if (mo->className() == className) {
+			return true;
+		}
+		mo = mo->superClass();
+	}
+	return false;
+}
