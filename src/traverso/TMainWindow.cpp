@@ -1098,11 +1098,11 @@ TCommand * TMainWindow::get_keymap(QString &str)
 	return 0;
 }
 
-QMenu* TMainWindow::create_context_menu(QObject* item, QList<TShortcutData* >* menulist)
+QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menulist)
 {
-	QList<TShortcutData* > list;
+	QList<TFunction* > list;
 	if (item) {
-		list = tShortCutManager().getShortcutDataFor( item );
+		list = tShortCutManager().getFunctionsFor( item );
 	} else {
 		list = *menulist;
 	}
@@ -1112,7 +1112,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TShortcutData* >* m
 		return 0;
 	}
 	
-	qSort(list.begin(), list.end(), TShortcutData::smaller);
+	qSort(list.begin(), list.end(), TFunction::smaller);
 
 	QString name;
 	if (item) {
@@ -1130,10 +1130,10 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TShortcutData* >* m
 	menu->addSeparator();
 	menu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
 	
-	QMap<QString, QList<TShortcutData*>* > submenus;
+	QMap<QString, QList<TFunction*>* > submenus;
 	
 	for (int i=0; i<list.size(); ++i) {
-		TShortcutData* data = list.at(i);
+		TFunction* data = list.at(i);
 		
 //		 Merge entries with equal actions, but different key facts.
 //		for (int j=i+1; j<list.size(); ++j) {
@@ -1150,9 +1150,9 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TShortcutData* >* m
 		// list of submenus, which will be processed lateron
 		// Else, add the MenuData item as action in the Menu
 		if ( ! data->submenu.isEmpty() ) {
-			QList<TShortcutData*>* list;
+			QList<TFunction*>* list;
 			if ( ! submenus.contains(data->submenu)) {
-				submenus.insert(data->submenu, new QList<TShortcutData*>());
+				submenus.insert(data->submenu, new QList<TFunction*>());
 			}
 			list = submenus.value(data->submenu);
 			list->append(data);
@@ -1174,9 +1174,9 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TShortcutData* >* m
 	// menu is also done ~10 lines up ...
 	QList<QString> keys = submenus.keys();
 	foreach(const QString &key, keys) {
-		QList<TShortcutData*>* list = submenus.value(key);
+		QList<TFunction*>* list = submenus.value(key);
 		
-		qSort(list->begin(), list->end(), TShortcutData::smaller);
+		qSort(list->begin(), list->end(), TFunction::smaller);
 
                 QMenu* subMenu = new QMenu(this);
                 subMenu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
@@ -1187,7 +1187,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TShortcutData* >* m
 		
                 QAction* action = menu->insertMenu(0, subMenu);
                 action->setText(TMenuTranslator::instance()->get_translation_for(key));
-		foreach(TShortcutData* data, *list) {
+		foreach(TFunction* data, *list) {
                         QAction* action = new QAction(subMenu);
 			action->setText(data->description);
 			QString sequence = data->getKeySequence();

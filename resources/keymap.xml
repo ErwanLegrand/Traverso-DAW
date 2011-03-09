@@ -167,9 +167,8 @@
 
 		</keyfact>
 		<keyfact key="A" >
-
+				<Object function="AudioTrack::SilenceOthers" />
 				<Object objectname="CurveView" slotsignature="toggle_select_all_nodes" modifierkeys="CTRL" sortorder="37" />
-				<Object objectname="AudioTrack" slotsignature="silence_others" sortorder="20" />
 				<Object objectname="SheetView" mousehint="UD" sortorder="7" pluginname="TraversoCommands" commandname="ArmTracks"  arguments="" />
 				<Object objectname="WorkCursorMove" slotsignature="prev_snap_pos" sortorder="1" />
 				<Object objectname="MoveClip" slotsignature="prev_snap_pos" autorepeatinterval="150" autorepeatstartdelay="250" sortorder="5" />
@@ -179,7 +178,6 @@
 
 		</keyfact>
 		<keyfact key="O" >
-
 				<Object objectname="Track" slotsignature="solo" sortorder="3" />
 
 		</keyfact>
@@ -255,7 +253,7 @@
 		</keyfact>
 		<keyfact key="R" >
 
-				<Object objectname="AudioTrack" slotsignature="toggle_arm" sortorder="4" />
+				<Object function="AudioTrack::ToggleRecord" />
 				<Object objectname="FadeCurve" slotsignature="toggle_raster" sortorder="11" />
 				<Object objectname="TrackPan" slotsignature="reset_pan" isholdmodifier="1" sortorder="4" />
 				<Object objectname="AudioClipView" mousehint="LR" sortorder="16" pluginname="TraversoCommands" commandname="CropClip" />

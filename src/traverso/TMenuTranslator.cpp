@@ -265,8 +265,6 @@ TMenuTranslator::TMenuTranslator()
         add_entry("ProjectManager::save_project", tr("Save Project"));
         add_entry("ProjectManager::close_current_project", tr("Close Project"));
         add_entry("ProjectManager::exit", tr("Exit application"));
-        add_entry("AudioTrack::toggle_arm", tr("Record: On/Off"));
-        add_entry("AudioTrack::silence_others", tr("Silence other tracks"));
 	add_entry("CropClip::adjust_left", tr("Adjust Left"));
         add_entry("CropClip::adjust_right", tr("Adjust Right"));
         add_entry("Gain::increase_gain", tr("Increase"));
@@ -393,11 +391,11 @@ QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> meta
 	int j=0;
 	QString submenuhtml;
 	QList<QMenu* > menulist;
-	QList<TShortcutData* > list;
+	QList<TFunction* > list;
 
 	foreach(const QMetaObject* mo, metas) {
 		while (mo) {
-			tShortCutManager().getShortcutDataForMetaobject(mo, list);
+			tShortCutManager().getFunctionsForMetaobject(mo, list);
 			mo = mo->superClass();
 		}
 	}
@@ -425,11 +423,6 @@ QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> meta
 			QStringList strings = action->data().toStringList();
 			if (strings.size() >= 2) {
 				QString keyfact = strings.at(0);
-
-				if (t_MetaobjectInheritsClass(metas.first(), "TCommand")) {
-					keyfact.replace("<", "");
-					keyfact.replace(">", "");
-				}
 
 				keyfact.replace(QString("Up Arrow"), QString("&uarr;"));
 				keyfact.replace(QString("Down Arrow"), QString("&darr;"));

@@ -26,18 +26,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QVariantList>
 #include <QStringList>
 
-struct TShortcutData {
 
-	static bool smaller(const TShortcutData* left, const TShortcutData* right )
+struct TFunction {
+
+	static bool smaller(const TFunction* left, const TFunction* right )
 	{
 		return left->sortorder < right->sortorder;
 	}
-	static bool greater(const TShortcutData* left, const TShortcutData* right )
+	static bool greater(const TFunction* left, const TFunction* right )
 	{
 		return left->sortorder > right->sortorder;
 	}
 
-	TShortcutData() {
+	TFunction() {
 		useX = false;
 		useY = false;
 		sortorder = 0;
@@ -64,22 +65,44 @@ struct TShortcutData {
 	int autorepeatStartDelay;
 };
 
+struct TShortcutKey
+{
+	TShortcutKey(int keyValue)
+	{
+		keyvalue = keyValue;
+	}
+
+	~TShortcutKey();
+
+	QHash<QString, TFunction*> objects;
+
+	int type;
+	int keyvalue;
+	int autorepeatInterval;
+	int autorepeatStartDelay;
+	bool isInstantaneous;
+	QString keyString;
+};
+
+
 class TShortcutManager : public QObject
 {
 	Q_OBJECT
 public:
 
-	void addFunctionShortcut(const QString& function, TShortcutData* data);
-	TShortcutData* getFunctionshortcut(const QString& function) const;
+	void addFunction(const QString& function, TFunction* data);
+	TFunction* getFunctionshortcut(const QString& function) const;
 
-	QList<TShortcutData* > getShortcutDataFor(QObject* item);
-	void getShortcutDataForMetaobject(const QMetaObject* mo, QList<TShortcutData* >& list) const;
+	QList<TFunction* > getFunctionsFor(QObject* item);
+	void getFunctionsForMetaobject(const QMetaObject* mo, QList<TFunction* >& list) const;
+	TShortcutKey* getShortcutFor(const QString& key);
 
-	void loadDefaultShortcuts();
+	void loadFunctions();
 	static void makeShortcutKeyHumanReadable(QString& key);
 
 private:
-	QHash<QString, TShortcutData*>	m_dict;
+	QHash<QString, TFunction*>	m_functions;
+	QHash<int, TShortcutKey*>	m_shortcutKeys;
 
 	TShortcutManager();
 	TShortcutManager(const TShortcutManager&) : QObject() {}

@@ -76,7 +76,7 @@ class RestoreProjectBackupDialog;
 class ProgressToolBar;
 class WelcomeWidget;
 class TSessionTabWidget;
-struct TShortcutData;
+struct TFunction;
 
 class AbstractVUMeterLevel
 {
@@ -107,7 +107,7 @@ public :
         int get_vulevel_update_frequency() const {return m_vuLevelUpdateFrequency;}
 
         QLineEdit* get_track_finder() const {return m_trackFinder;}
-	QMenu* create_context_menu(QObject* item, QList<TShortcutData* >* list = 0);
+	QMenu* create_context_menu(QObject* item, QList<TFunction* >* list = 0);
 
 protected:
         void timerEvent(QTimerEvent *event);

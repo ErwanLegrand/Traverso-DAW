@@ -50,6 +50,8 @@ QStringList find_qm_files();
 QString language_name_from_qm_file(const QString& lang);
 
 bool t_MetaobjectInheritsClass(const QMetaObject* mo, const QString & className);
+bool t_KeyStringToKeyValue(int & variable, const QString& text);
+
 
 static inline unsigned int is_power_of_two (unsigned int n)
 {

@@ -269,3 +269,89 @@ bool t_MetaobjectInheritsClass(const QMetaObject *mo, const QString& className)
 	}
 	return false;
 }
+
+bool t_KeyStringToKeyValue(int &variable, const QString &text)
+{
+	variable = 0;
+	QString s;
+	int x  = 0;
+	if ((text != QString::null) && (text.length() > 0) ) {
+		s="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		x = s.indexOf(text);
+		if (x>=0) {
+			variable = Qt::Key_A + x;
+		} else {
+			s="|ESC     |TAB     |BACKTAB |BKSPACE |RETURN  |ENTER   |INSERT  |DELETE  "
+			"|PAUSE   |PRINT   |SYSREQ  |CLEAR   ";
+			x = s.indexOf("|" + text);
+			if (x>=0)
+				variable = Qt::Key_Escape + (x/9);
+			else {
+				s="|HOME    |END     |LARROW  |UARROW  |RARROW  "
+				"|DARROW  |PRIOR   |NEXT    ";
+				x = s.indexOf("|" + text);
+				if (x>=0)
+					variable = Qt::Key_Home + (x/9);
+				else {
+					s="|SHIFT   |CTRL    |META    |ALT     |CAPS    "
+					"|NUMLOCK |SCROLL  ";
+					x = s.indexOf("|" + text);
+					if (x>=0)
+						variable = Qt::Key_Shift + (x/9);
+					else {
+						s="F1 F2 F3 F4 F5 F6 F7 F8 F9 F10F11F12";
+						x=s.indexOf(text);
+						if (x>=0) {
+							variable = Qt::Key_F1 + (x/3);
+						} else if (text=="SPACE") {
+							variable = Qt::Key_Space;
+						} else if (text == "MouseButtonLeft") {
+							variable = Qt::LeftButton;
+						} else if (text == "MouseButtonRight") {
+							variable = Qt::RightButton;
+						} else if (text == "MouseButtonMiddle") {
+							variable = Qt::MidButton;
+						} else if (text == "MouseButtonX1") {
+							variable = Qt::XButton1;
+						} else if (text == "MouseButtonX2") {
+							variable = Qt::XButton2;
+						} else if (text == "MouseScrollHorizontalLeft") {
+							variable = MouseScrollHorizontalLeft;
+						} else if (text =="MouseScrollHorizontalRight") {
+							variable = MouseScrollHorizontalRight;
+						} else if (text == "MouseScrollVerticalUp") {
+							variable = MouseScrollVerticalUp;
+						} else if( text == "MouseScrollVerticalDown") {
+							variable = MouseScrollVerticalDown;
+						} else if( text == "/") {
+							variable = Qt::Key_Slash;
+						} else if ( text == "\\") {
+							variable = Qt::Key_Backslash;
+						} else if ( text == "[") {
+							variable = Qt::Key_BracketLeft;
+						} else if ( text == "]") {
+							variable = Qt::Key_BracketRight;
+						} else if ( text == "PAGEUP") {
+							variable = Qt::Key_PageUp;
+						} else if ( text == "PAGEDOWN") {
+							variable = Qt::Key_PageDown;
+						} else if (text == "MINUS") {
+							variable = Qt::Key_Minus;
+						} else if (text == "PLUS") {
+							variable = Qt::Key_Plus;
+						} else {
+							printf("KeyStringToValue: No value found for key %s", QS_C(text));
+							return false;
+						}
+					}
+				}
+			}
+		}
+
+
+
+	}
+
+	// Code found, return true
+	return true;
+}

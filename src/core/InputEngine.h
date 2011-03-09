@@ -31,28 +31,14 @@
 
 #include "defines.h"
 
-class ContextItem;
 class TCommand;
 class CommandPlugin;
-class TShortcutData;
+class TFunction;
 class QKeyEvent;
 class QWheelEvent;
 class QMouseEvent;
 
-struct IEAction
-{
-	~IEAction();
-
-	QHash<QString, TShortcutData*> objects;
-	QHash<QString, TShortcutData*> objectUsingModifierKeys;
-
-        int type;
-	int key;
-        int autorepeatInterval;
-        int autorepeatStartDelay;
-        bool isInstantaneous;
-	QString keyString;
-};
+struct TShortcutKey;
 
 
 class InputEngine : public QObject
@@ -75,7 +61,7 @@ public:
 	bool is_holding();
 
 	TCommand* get_holding_command() const;
-        QList<IEAction*> get_ie_actions() const {return m_ieActions;}
+	QList<TShortcutKey*> get_ie_actions() const {return m_ieActions;}
         QStringList keyfacts_for_hold_command(const QString& className);
 	void filter_unknown_sequence(QString& sequence);
 
@@ -84,9 +70,6 @@ public:
         void jog();
         void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=50);
         void update_jog_bypass_pos();
-
-        void activate();
-        void suspend();
 	void abort_current_hold_actions();
 	
 	TCommand* succes();
@@ -114,10 +97,10 @@ private:
                 int             keycode;
                 bool            wasExecuted;
                 trav_time_t     lastTimeExecuted;
-                IEAction*       ieaction;
+		TShortcutKey*       ieaction;
         };
 
-        QList<IEAction* >	m_ieActions;
+	QList<TShortcutKey* >	m_ieActions;
 	QList<int>		m_modifierKeys;
 	QList<int>		m_activeModifierKeys;
         QHash<int, HoldModifierKey*>  m_holdModifierKeys;
@@ -133,15 +116,12 @@ private:
         bool 			m_isJogging;
 	bool			m_cancelHold;
 	bool			m_bypassJog;
-	bool			m_isFirstFact;
 
         int 			m_collectedNumber;
-
 	int			m_broadcastResult;
 	int			m_unbypassJogDistance;
         int                     m_holdEventCode;
 
-        void 			release_checker();
         void 			dispatch_action(int mapIndex);
         void 			finish_hold();
         void 			conclusion();
@@ -149,7 +129,7 @@ private:
         bool 			check_number_collection(int eventcode);
 
         //! call the slot that handler a given action
-        int broadcast_action(IEAction* action, bool autorepeat=false, bool fromContextMenu=false);
+	int broadcast_action(TShortcutKey* action, bool autorepeat=false, bool fromContextMenu=false);
 
         void set_jogging(bool jog);
         void set_numerical_input(const QString& number);

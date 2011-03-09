@@ -23,11 +23,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextItem.h"
 #include "InputEngine.h"
+#include "Information.h"
+#include "Utils.h"
 
 #include "Debugger.h"
 
 
-QString TShortcutData::getKeySequence()
+QString TFunction::getKeySequence()
 {
 	QString sequence;
 
@@ -77,17 +79,17 @@ TShortcutManager& tShortCutManager()
 
 TShortcutManager::TShortcutManager()
 {
-	loadDefaultShortcuts();
+	loadFunctions();
 }
 
-void TShortcutManager::addFunctionShortcut(const QString &function, TShortcutData *data)
+void TShortcutManager::addFunction(const QString &function, TFunction *data)
 {
-	m_dict.insert(function, data);
+	m_functions.insert(function, data);
 }
 
-TShortcutData* TShortcutManager::getFunctionshortcut(const QString &function) const
+TFunction* TShortcutManager::getFunctionshortcut(const QString &function) const
 {
-	TShortcutData* data = m_dict.value(function, 0);
+	TFunction* data = m_functions.value(function, 0);
 	if (!data)
 	{
 		printf("TShortcutManager::getFunctionshortcut: Function %s not in database!!\n", function.toAscii().data());
@@ -97,19 +99,18 @@ TShortcutData* TShortcutManager::getFunctionshortcut(const QString &function) co
 }
 
 
-void TShortcutManager::getShortcutDataForMetaobject(const QMetaObject * mo, QList<TShortcutData* > & list) const
+void TShortcutManager::getFunctionsForMetaobject(const QMetaObject * mo, QList<TFunction* > & list) const
 {
 	const char* classname = mo->className();
-	QList<IEAction*> ieActions = ie().get_ie_actions();
+	QList<TShortcutKey*> ieActions = ie().get_ie_actions();
 
 	for (int i=0; i<ieActions.size(); i++) {
-		IEAction* ieaction = ieActions.at(i);
+		TShortcutKey* ieaction = ieActions.at(i);
 
-		QList<TShortcutData*> datalist;
+		QList<TFunction*> datalist;
 		datalist.append(ieaction->objects.value(classname));
-		datalist.append(ieaction->objectUsingModifierKeys.values(classname));
 
-		foreach(TShortcutData* data, datalist)
+		foreach(TFunction* data, datalist)
 		{
 			if (!data) continue;
 
@@ -124,9 +125,9 @@ void TShortcutManager::getShortcutDataForMetaobject(const QMetaObject * mo, QLis
 	}
 }
 
-QList< TShortcutData* > TShortcutManager::getShortcutDataFor(QObject* item)
+QList< TFunction* > TShortcutManager::getFunctionsFor(QObject* item)
 {
-	QList<TShortcutData* > list;
+	QList<TFunction* > list;
 	ContextItem* contextitem;
 
 	do {
@@ -135,7 +136,7 @@ QList< TShortcutData* > TShortcutManager::getShortcutDataFor(QObject* item)
 		// traverse upwards till no more superclasses are found
 		// this supports inheritance on contextitems.
 		while (mo) {
-			getShortcutDataForMetaobject(mo, list);
+			getFunctionsForMetaobject(mo, list);
 			mo = mo->superClass();
 		}
 
@@ -147,43 +148,69 @@ QList< TShortcutData* > TShortcutManager::getShortcutDataFor(QObject* item)
 	return list;
 }
 
-void TShortcutManager::loadDefaultShortcuts()
+TShortcutKey* TShortcutManager::getShortcutFor(const QString &keyString)
 {
-	foreach(TShortcutData* data, m_dict.values())
+	int keyValue = -1;
+
+	if (!t_KeyStringToKeyValue(keyValue, keyString)) {
+	       info().warning(tr("Shortcut Manager: Loaded keymap has this unrecognized key: %1").arg(keyString));
+	       return 0;
+	}
+
+	TShortcutKey* shortcutKey = m_shortcutKeys.value(keyValue, 0);
+
+	if (!shortcutKey)
+	{
+		printf("Adding key %s to shortcut keys\n", keyString.toAscii().data());
+		shortcutKey = new TShortcutKey(keyValue);
+		shortcutKey->keyString = keyString;
+		m_shortcutKeys.insert(keyValue, shortcutKey);
+
+	}
+
+	return shortcutKey;
+}
+
+void TShortcutManager::loadFunctions()
+{
+	foreach(TFunction* data, m_functions.values())
 	{
 		delete data;
 	}
 
-	m_dict.clear();
+	m_functions.clear();
 
 
-	TShortcutData* data;
+	TFunction* function;
 
-	data = new TShortcutData();
-	data->classname = "AudioTrack";
-	data->slotsignature = "toggle_show_clip_volume_automation";
-	data->sortorder = 53;
-	data->description = tr("Show/Hide Clip Volume Automation");
+	function = new TFunction();
+	function->classname = "AudioTrack";
+	function->slotsignature = "toggle_show_clip_volume_automation";
+	function->sortorder = 53;
+	function->description = tr("Show/Hide Clip Volume Automation");
+	addFunction("AudioTrack::ShowClipVolumeAutomation", function);
 
-	addFunctionShortcut("AudioTrack::ShowClipVolumeAutomation", data);
+	function = new TFunction();
+	function->classname = "AudioTrack";
+	function->slotsignature = "toggle_arm";
+	function->sortorder = 4;
+	function->description = tr("Record: On/Off");
+	addFunction("AudioTrack::ToggleRecord", function);
 
+	function = new TFunction();
+	function->classname = "AudioTrack";
+	function->slotsignature = "silence_others";
+	function->sortorder = 0;
+	function->description = tr("Silence other tracks");
+	addFunction("AudioTrack::SilenceOthers", function);
 
-//	data = new TShortcutData();
-//	data->classname = "";
-//	data->slotsignature = "";
-//	data->sortorder = 0;
-//	data->description = ;
+//	function = new TFunction();
+//	function->classname = "";
+//	function->slotsignature = "";
+//	function->sortorder = ;
+//	function->description = ;
+//	addFunction("", function);
 
-//	addFunctionShortcut("", data);
-
-
-//	data = new TShortcutData();
-//	data->classname = "";
-//	data->slotsignature = "";
-//	data->sortorder = 0;
-//	data->description = ;
-
-//	addFunctionShortcut("", data);
 
 }
 

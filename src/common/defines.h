@@ -324,6 +324,12 @@ struct AudioDeviceSetup {
         QString         ditherShape;
 };
 
+#define MouseScrollHorizontalLeft -1
+#define MouseScrollHorizontalRight -2
+#define MouseScrollVerticalUp -3
+#define MouseScrollVerticalDown -4
+
+
 class VUMonitor;
 typedef QList<VUMonitor*> VUMonitors;
 

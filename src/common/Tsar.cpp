@@ -181,11 +181,8 @@ void Tsar::finish_processed_events( )
 	
 	m_retryCount++;
 	
-	if (m_retryCount > 200) {
-		if (ie().is_holding()) {
-			ie().suspend();
-		}
-		
+	if (m_retryCount > 200)
+	{
 		if (audiodevice().get_driver_type() != "Null Driver") {
 			QMessageBox::critical( 0, 
 				tr("Traverso - Malfunction!"), 
