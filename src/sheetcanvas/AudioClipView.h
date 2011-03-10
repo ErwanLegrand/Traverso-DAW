@@ -49,7 +49,6 @@ public:
 
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	
-	void set_height(int height);
 	
 	AudioClip* get_clip() const {return m_clip;}
         AudioTrackView* get_audio_track_view() const {return m_tv;}

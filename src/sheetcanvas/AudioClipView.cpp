@@ -120,21 +120,24 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 
 //        printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f,? w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 
-        int xstart = qRound(option->exposedRect.x());
-        int pixelcount = qRound(option->exposedRect.width());
-        if (pixelcount == 0) {
+	printf("x, w %f, %f\n", option->exposedRect.x(), option->exposedRect.width());
+	qreal xstart = qRound(option->exposedRect.x());
+	qreal pixelcount = qRound(option->exposedRect.width());
+	if (pixelcount < 0.5) {
                 PWARN("AudioClipView::paint : Exposed rectangle has 0 width ????");
                 return;
         }
 
         painter->save();
-        painter->setClipRect(m_boundingRect);
+	painter->setClipRect(m_boundingRect);
+
+	QRectF fillRect = QRectF(xstart, 0.0f, pixelcount, float(m_height));
 
         if (m_clip->is_readsource_invalid()) {
-                painter->fillRect(xstart, 0, pixelcount, m_height, themer()->get_color("AudioClip:invalidreadsource"));
+		painter->fillRect(fillRect, themer()->get_color("AudioClip:invalidreadsource"));
                 draw_clipinfo_area(painter, xstart, pixelcount);
-                painter->setPen(themer()->get_color("AudioClip:contour"));
-                painter->drawRect(xstart, 0, pixelcount, m_height - 1);
+		painter->setPen(themer()->get_color("AudioClip:contour"));
+		painter->drawRect(xstart, 0, pixelcount, m_height - 1);
                 painter->setPen(Qt::black);
                 painter->setFont( themer()->get_font("AudioClip:fontscale:title") );
                 painter->drawText(30, 0, 300, m_height, Qt::AlignVCenter, tr("Click to reset AudioFile !"));
@@ -146,17 +149,17 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 
         if (m_drawbackground) {
                 if (m_clip->recording_state() == AudioClip::RECORDING) {
-                        painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgRecording);
+			painter->fillRect(fillRect, m_brushBgRecording);
                 } else {
                         if (m_clip->is_selected()) {
-                                if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgSelectedHover);
-                                else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgSelected);
+				if (mousehover) painter->fillRect(fillRect, m_brushBgSelectedHover);
+				else            painter->fillRect(fillRect, m_brushBgSelected);
                         } else if (m_clip->is_muted()) {
-                                if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgMutedHover);
-                                else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgMuted);
+				if (mousehover) painter->fillRect(fillRect, m_brushBgMutedHover);
+				else            painter->fillRect(fillRect, m_brushBgMuted);
                         } else {
-                                if (mousehover) painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBgHover);
-				else            painter->fillRect(xstart, 0, pixelcount+1, m_height, m_brushBg);
+				if (mousehover) painter->fillRect(fillRect, m_brushBgHover);
+				else            painter->fillRect(fillRect, m_brushBg);
                         }
                 }
         }
@@ -205,13 +208,7 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 
         // Draw the contour
         painter->setPen(themer()->get_color("AudioClip:contour"));
-        int adjust = 0;
-        float round = (m_boundingRect.width() - int(m_boundingRect.width()));
-        if (round < 0.5) {
-                adjust = 1;
-        }
-        QRect rect(0, 0, m_boundingRect.width() - adjust, m_height - 1);
-        painter->drawRect(rect);
+	painter->drawRect(m_boundingRect.adjusted(0, 0, -1.5, -1));
 
         // Paint a pixmap if the clip is locked
         if (m_clip->is_locked()) {
@@ -707,9 +704,16 @@ void AudioClipView::calculate_bounding_rect()
 {
         PENTER4;
         prepareGeometryChange();
-// 	printf("AudioClipView::calculate_bounding_rect()\n");
+
 	m_height = m_parentViewItem->get_height();
-        m_boundingRect = QRectF(0, 0, (m_clip->get_length() / m_sv->timeref_scalefactor), m_height);
+	m_boundingRect = QRectF(0, 0, (double(m_clip->get_length().universal_frame()) / m_sv->timeref_scalefactor), m_height);
+
+	if ((m_height / m_clip->get_channel_count()) < 30) {
+		m_classicView = false;
+	} else {
+		m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
+	}
+
         update_start_pos();
         ViewItem::calculate_bounding_rect();
 }
@@ -720,21 +724,10 @@ void AudioClipView::repaint( )
         update(m_boundingRect);
 }
 
-void AudioClipView::set_height( int height )
-{
-        m_height = height;
-	create_brushes();
-        if (m_height < m_mimimumheightforinfoarea) {
-                m_classicView = false;
-        } else {
-                m_classicView = ! config().get_property("Themer", "paintaudiorectified", false).toBool();
-        }
-}
-
 void AudioClipView::update_start_pos()
 {
 // 	printf("AudioClipView::update_start_pos()\n");
-	setPos(qRound(m_clip->get_track_start_location() / m_sv->timeref_scalefactor), 0);
+	setPos((double(m_clip->get_track_start_location().universal_frame()) / m_sv->timeref_scalefactor), 0);
 }
 
 TCommand * AudioClipView::fade_range()
