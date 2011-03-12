@@ -155,7 +155,6 @@ TMenuTranslator::TMenuTranslator()
         add_entry("AudioClipManager::select_all_clips", tr("Select all"));
         add_entry("AudioClipManager::invert_clip_selection", tr("Invert"));
         add_entry("FadeCurve::toggle_bypass", tr("Toggle Bypass"));
-        add_entry("FadeCurve::set_mode", tr("Cycle Shape"));
         add_entry("FadeCurve::reset", tr("Remove Fade"));
         add_entry("FadeCurve::toggle_raster", tr("Toggle Raster"));
         add_entry("ProcessingData::mute", tr("Mute"));
@@ -219,10 +218,6 @@ TMenuTranslator::TMenuTranslator()
         add_entry("SheetView::activate_next_track", tr("To Next Track"));
         add_entry("SheetView::to_upper_context_level", tr("One Context Layer Up"));
         add_entry("SheetView::to_lower_context_level", tr("One Context Layer Down"));
-        add_entry("SheetView::browse_to_previous_context_item", tr("To Previous Context Item"));
-        add_entry("SheetView::browse_to_next_context_item", tr("To Next Context Item"));
-        add_entry("SheetView::browse_to_context_item_above", tr("To Context Item Above"));
-        add_entry("SheetView::browse_to_context_item_below", tr("To Context Item Below"));
         add_entry("SheetView::edit_properties", tr("Edit Properties"));
         add_entry("SheetView::browse_to_time_line", tr("To Timeline"));
         add_entry("TimeLineView::add_marker", tr("Add Marker"));
@@ -239,9 +234,7 @@ TMenuTranslator::TMenuTranslator()
         add_entry("TrackPanelView::TrackView::edit_properties", tr("Edit properties"));
         add_entry("TrackPanelLed::toggle", tr("Toggle On/Off"));
         add_entry("TMainWindow::show_export_widget", tr("Show Export Dialog"));
-        add_entry("TMainWindow::show_context_menu", tr("Show Context Menu"));
         add_entry("TMainWindow::show_export_widget", tr("Show Export Dialog"));
-        add_entry("TMainWindow::show_context_menu", tr("Show Context Menu"));
         add_entry("TMainWindow::about_traverso", tr("About Traverso"));
         add_entry("TMainWindow::show_project_manager_dialog", tr("Show Project Management Dialog"));
         add_entry("TMainWindow::full_screen", tr("Full Screen"));
@@ -395,7 +388,7 @@ QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> meta
 
 	foreach(const QMetaObject* mo, metas) {
 		while (mo) {
-			tShortCutManager().getFunctionsForMetaobject(mo, list);
+			list << tShortCutManager().getFunctionsForMetaobject(mo);
 			mo = mo->superClass();
 		}
 	}

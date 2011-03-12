@@ -272,6 +272,11 @@ void TCommand::set_collected_number(const QString & collected)
 void TCommand::set_cursor_shape( int useX, int useY )
 {
         AbstractViewPort* port = cpointer().get_viewport();
+
+	if (!port)
+	{
+		return;
+	}
 	
 	if (useX && useY) {
                  port->set_cursor_shape("LRUD");

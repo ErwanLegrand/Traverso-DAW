@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <CommandPlugin.h>
 
+class TFunction;
+
 class TraversoCommands : public CommandPlugin
 {
 	Q_OBJECT
@@ -59,9 +61,11 @@ private:
                 WorkCursorMoveCommand,
                 PlayHeadMoveCommand,
                 MoveEdgeCommand,
-		MoveMarkerCommand,
 		MoveCurveNodesCommand
         };
+
+private:
+	void addFunction(TFunction* function, int command);
 };
 
 #endif

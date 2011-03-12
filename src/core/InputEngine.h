@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005-2008 Remon Sijrier
+    Copyright (C) 2005-2011 Remon Sijrier
 
     This file is part of Traverso
 
@@ -38,7 +38,7 @@ class QKeyEvent;
 class QWheelEvent;
 class QMouseEvent;
 
-struct TShortcutKey;
+struct TShortcut;
 
 
 class InputEngine : public QObject
@@ -61,11 +61,10 @@ public:
 	bool is_holding();
 
 	TCommand* get_holding_command() const;
-	QList<TShortcutKey*> get_ie_actions() const {return m_ieActions;}
         QStringList keyfacts_for_hold_command(const QString& className);
 	void filter_unknown_sequence(QString& sequence);
 
-        int broadcast_action_from_contextmenu(const QString& name);
+	int broadcast_action_from_contextmenu(const QString& name);
 
         void jog();
         void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=50);
@@ -97,10 +96,9 @@ private:
                 int             keycode;
                 bool            wasExecuted;
                 trav_time_t     lastTimeExecuted;
-		TShortcutKey*       ieaction;
+		TShortcut*      shortcut;
         };
 
-	QList<TShortcutKey* >	m_ieActions;
 	QList<int>		m_modifierKeys;
 	QList<int>		m_activeModifierKeys;
         QHash<int, HoldModifierKey*>  m_holdModifierKeys;
@@ -122,21 +120,19 @@ private:
 	int			m_unbypassJogDistance;
         int                     m_holdEventCode;
 
-        void 			dispatch_action(int mapIndex);
         void 			finish_hold();
         void 			conclusion();
         void 			stop_collecting();
         bool 			check_number_collection(int eventcode);
 
         //! call the slot that handler a given action
-	int broadcast_action(TShortcutKey* action, bool autorepeat=false, bool fromContextMenu=false);
+	int broadcast_action(TShortcut* action, bool autorepeat=false, bool fromContextMenu=false);
 
         void set_jogging(bool jog);
         void set_numerical_input(const QString& number);
 	void reset();
-        void process_press_event(int eventcode);
-        void process_release_event(int eventcode);
-	int find_index_for_key(int key);
+	void process_press_event(int keyValue);
+	void process_release_event(int keyValue);
 	bool is_modifier_keyfact(int eventcode);
 	bool modifierKeysMatch(QList<int> first, QList<int> second);
         void clear_hold_modifier_keys();

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2008 Remon Sijrier
+Copyright (C) 2005-2011 Remon Sijrier
 
 This file is part of Traverso
 
@@ -137,22 +137,12 @@ InputEngine::InputEngine()
 
 InputEngine::~ InputEngine( )
 {
-	foreach(TShortcutKey* action, m_ieActions) {
-		delete action;
-	}
 }
 
 int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 {
 	PENTER2;
-	TShortcutKey* action = 0;
-
-	foreach(TShortcutKey* ieaction, m_ieActions) {
-		if (ieaction->keyString == keySequence) {
-			action = ieaction;
-			break;
-		}
-	}
+	TShortcut* action = tShortCutManager().getShortcut(keySequence);
 
 	if (! action) {
 		PERROR("ContextMenu keySequence doesn't apply to any InputEngine knows off!! (%s)", QS_C(keySequence));
@@ -163,11 +153,11 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 }
 
 
-int InputEngine::broadcast_action(TShortcutKey* action, bool autorepeat, bool fromContextMenu)
+int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fromContextMenu)
 {
 	PENTER2;
 
-	PMESG("Trying to find IEAction for key sequence %s", QS_C(action->keyString));
+	PMESG("Trying to find TFunction for key sequence %s", QS_C(shortCut->keyString));
 
         TCommand* k = 0;
 	QObject* item = 0;
@@ -197,49 +187,49 @@ int InputEngine::broadcast_action(TShortcutKey* action, bool autorepeat, bool fr
 			continue;
 		}
 		
-		TFunction* data = 0;
+		TFunction* function = 0;
 
                 const QMetaObject* metaobject = item->metaObject();
 		// traverse upwards till no more superclasses are found
 		// this supports inheritance on QObjects.
 		while (metaobject)
 		{
-			QList<TFunction*> dataList = action->objects.values(metaobject->className());
+			QList<TFunction*> functions = shortCut->getFunctionsForObject(metaobject->className());
 
-			foreach(TFunction* maybeData, dataList) {
-				if (!maybeData) {
+			foreach(TFunction* f, functions) {
+				if (!f) {
 					continue;
 				}
 
 				if (m_activeModifierKeys.size())
 				{
-					if (modifierKeysMatch(m_activeModifierKeys, maybeData->modifierkeys)) {
-						data = maybeData;
+					if (modifierKeysMatch(m_activeModifierKeys, f->modifierkeys)) {
+						function = f;
 						PMESG("found match in objectUsingModierKeys");
 						break;
 					} else {
-						PMESG("m_activeModifierKeys doesn't contain code %d", action->keyvalue);
+						PMESG("m_activeModifierKeys doesn't contain code %d", shortCut->keyvalue);
 					}
 				}
 				else
 				{
-					if (maybeData->modifierkeys.isEmpty())
+					if (f->modifierkeys.isEmpty())
 					{
-						data = maybeData;
+						function = f;
 						PMESG("found match in obects NOT using modifier keys");
 						break;
 					}
 				}
 			}
 
-			if (data)
+			if (function)
 			{
 				// Now that we found a match, we still have to check if
 				// the current mode is valid for this data!
 				QString currentmode = m_modes.key(cpointer().get_current_mode());
 				QString allmodes = m_modes.key(0);
-				if ( data->modes.size() && (! data->modes.contains(currentmode)) && (! data->modes.contains(allmodes))) {
-					PMESG("%s on %s is not valid for mode %s", QS_C(action->keyString), item->metaObject()->className(), QS_C(currentmode));
+				if ( function->modes.size() && (! function->modes.contains(currentmode)) && (! function->modes.contains(allmodes))) {
+					PMESG("%s on %s is not valid for mode %s", QS_C(shortCut->keyString), item->metaObject()->className(), QS_C(currentmode));
 					continue;
 				}
 
@@ -250,20 +240,19 @@ int InputEngine::broadcast_action(TShortcutKey* action, bool autorepeat, bool fr
 		}
 
 
-		if (! data ) {
+		if (! function ) {
 			PMESG("No data found for object %s", item->metaObject()->className());
 			continue;
 		}
 				
-		PMESG("Data found for %s!", metaobject->className());
-		PMESG("setting slotsignature to %s", QS_C(data->slotsignature));
-		PMESG("setting pluginname to %s", QS_C(data->pluginname));
-		PMESG("setting plugincommand to %s", QS_C(data->commandname));
+		PMESG("Function found for %s!", metaobject->className());
+		PMESG("setting slotsignature to %s", QS_C(function->slotsignature));
+		PMESG("setting pluginname to %s", QS_C(function->pluginname));
+		PMESG("setting plugincommand to %s", QS_C(function->commandName));
 		
-		QString pluginname = "", commandname = "";
-		slotsignature = data->slotsignature;
-		pluginname = data->pluginname;
-		commandname = data->commandname;
+		slotsignature = function->slotsignature;
+		QString pluginname = function->pluginname;
+		QString commandname = function->commandName;
 
                 if (item == m_holdingCommand) {
 			if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_ARG(bool, autorepeat))) {
@@ -272,8 +261,8 @@ int InputEngine::broadcast_action(TShortcutKey* action, bool autorepeat, bool fr
                                 // the process_hold_modifier_keys() only knows about the corresonding ieaction
                                 // next time it'll be called, autorepeat interval of the object + keysequence will
                                 // be used!
-                                action->autorepeatInterval = data->autorepeatInterval;
-                                action->autorepeatStartDelay = data->autorepeatStartDelay;
+				shortCut->autorepeatInterval = function->autorepeatInterval;
+				shortCut->autorepeatStartDelay = function->autorepeatStartDelay;
 				break;
 			}
 		}
@@ -284,29 +273,30 @@ int InputEngine::broadcast_action(TShortcutKey* action, bool autorepeat, bool fr
 			
 			if ( ! pluginname.isEmpty() ) {
 				CommandPlugin* plug = m_commandplugins.value(pluginname);
-				if (!plug) {
+				if (!plug)
+				{
 					info().critical(tr("Command Plugin %1 not found!").arg(pluginname));
-				} else {
-					if ( ! plug->implements(commandname) ) {
-						info().critical(tr("Plugin %1 doesn't implement Command %2")
-								.arg(pluginname).arg(commandname));
-					} else {
-						PMESG("InputEngine:: Using plugin %s for command %s",
-								QS_C(pluginname), QS_C(data->commandname));
-						k = plug->create(item, commandname, data->arguments);
-					}
+					continue;
+				}
+
+				if ( ! plug->implements(commandname) )
+				{
+					info().critical(tr("Plugin %1 doesn't implement Command %2").arg(pluginname).arg(commandname));
+				} else
+				{
+					PMESG("InputEngine:: Using plugin %s for command %s", QS_C(pluginname), QS_C(function->commandName));
+					k = plug->create(item, commandname, function->arguments);
 				}
 			} 
 		}
 		
 		// Either the plugins didn't have a match, or we are holding.
-		if ( ! k ) {
-		
-			TFunction* delegatingdata;
+		if ( ! k )
+		{
 			QString delegatedobject;
 			
                         if (m_holdingCommand) {
-				delegatingdata = action->objects.value("HoldCommand");
+				function = shortCut->objects.value("HoldCommand");
 				delegatedobject = "HoldCommand";
 			} else {
                                 delegatedobject = metaobject->className();
@@ -314,19 +304,19 @@ int InputEngine::broadcast_action(TShortcutKey* action, bool autorepeat, bool fr
 					//FIXME: objects has values inserted with insertMulti()
 					// do we have to use values(delegatedobject) instead of value(delegatedobject)
 					// here too?
-					delegatingdata = action->objects.value(delegatedobject);
+					function = shortCut->objects.value(delegatedobject);
 				} else {
-					delegatingdata = action->objects.value(delegatedobject);
+					function = shortCut->objects.value(delegatedobject);
 				}
 				PMESG("delegatedobject is %s", QS_C(delegatedobject));
 			}
 				
-			if ( ! delegatingdata) {
+			if ( ! function) {
 				PMESG("No delegating data ? WEIRD");
 				continue;
 			}
 			
-			QStringList strlist = delegatingdata->slotsignature.split("::");
+			QStringList strlist = function->slotsignature.split("::");
 			
 			if (strlist.size() == 2) {
 				PMESG("Detected delegate action, checking if it is valid!");
@@ -399,10 +389,10 @@ int InputEngine::broadcast_action(TShortcutKey* action, bool autorepeat, bool fr
 		if (k) {
 			if (k->begin_hold() != -1) {
 				k->set_valid(true);
-				k->set_cursor_shape(data->useX, data->useY);
+				k->set_cursor_shape(function->useX, function->useY);
                                 m_holdingCommand = k;
 				m_isHolding = true;
-				m_holdEventCode = action->keyvalue;
+				m_holdEventCode = shortCut->keyvalue;
 				set_jogging(true);
 			} else {
 				PERROR("hold action begin_hold() failed!");
@@ -505,16 +495,13 @@ void InputEngine::abort_current_hold_actions()
 {
 	m_activeModifierKeys.clear();
         clear_hold_modifier_keys();
-        // Fake an escape key fact, so if a hold action was
+	// Fake an escape key press, so if a hold action was
         // running it will be canceled!
         if (is_holding()) {
                 process_press_event(Qt::Key_Escape);
         }
 }
 
-
-// Everthing starts here. Catch event takes anything happen in the keyboard
-// and pushes it into a stack.
 void InputEngine::catch_key_press(QKeyEvent * e )
 {
         if (e->isAutoRepeat()) {
@@ -575,44 +562,51 @@ void InputEngine::catch_scroll(QWheelEvent* e)
 	}
 }
 
-void InputEngine::process_press_event(int eventcode)
+void InputEngine::process_press_event(int keyValue)
 {
-	if (eventcode == Qt::Key_Escape && is_holding()) {
+	if (keyValue == Qt::Key_Escape && is_holding())
+	{
 		m_cancelHold = true;
 		finish_hold();
 		return;
 	}
 	
 	// first check if this key is just a collected number
-	if (check_number_collection(eventcode)) {
+	if (check_number_collection(keyValue))
+	{
 		// another digit was collected.
 		return;
 	}
 	
-	if (is_modifier_keyfact(eventcode)) {
-                if (!m_activeModifierKeys.contains(eventcode)) {
-			m_activeModifierKeys.append(eventcode);
+	if (is_modifier_keyfact(keyValue))
+	{
+		if (!m_activeModifierKeys.contains(keyValue))
+		{
+			m_activeModifierKeys.append(keyValue);
 		}
 		return;
 	}
-	
-        if (m_isHolding) {
-		int index = find_index_for_key(eventcode);
+
+	TShortcut* shortCut = tShortCutManager().getShortcut(keyValue);
+
+	if (m_isHolding)
+	{
 		// PRE-CONDITION:
 		// The eventcode must be bind to a single key fact AND
 		// the eventcode must be != the current active holding 
 		// command's eventcode!
-                if (index >= 0 && m_holdEventCode != eventcode) {
+		if (shortCut && m_holdEventCode != keyValue)
+		{
                         HoldModifierKey* hmk = new HoldModifierKey;
-                        hmk->keycode = eventcode;
+			hmk->keycode = keyValue;
                         hmk->wasExecuted = false;
                         hmk->lastTimeExecuted = 0;
-                        hmk->ieaction = m_ieActions.at(index);
-                        m_holdModifierKeys.insert(eventcode, hmk);
+			hmk->shortcut = shortCut;
+			m_holdModifierKeys.insert(keyValue, hmk);
                         // execute the first one directly, this is needed
                         // if the release event comes before the timer actually
                         // fires (mouse scroll wheel does press/release events real quick
-                        process_hold_modifier_keys();
+			process_hold_modifier_keys();
                         // only start it once
                         if (!m_holdKeyRepeatTimer.isActive()) {
                                 m_holdKeyRepeatTimer.start(10);
@@ -621,13 +615,11 @@ void InputEngine::process_press_event(int eventcode)
 		return;
 	}
 
-	int fkey_index = find_index_for_key(eventcode);
-	if (fkey_index >= 0) {
-
+	if (shortCut)
+	{
 		cpointer().inputengine_first_input_event();
 
-		TShortcutKey* action = m_ieActions.at(fkey_index);
-		broadcast_action(action);
+		broadcast_action(shortCut);
 		return;
 	}
 }
@@ -669,46 +661,24 @@ void InputEngine::process_hold_modifier_keys()
         foreach(HoldModifierKey* hmk, m_holdModifierKeys) {
                 if (!hmk->wasExecuted) {
                         hmk->wasExecuted = true;
-                        broadcast_action(hmk->ieaction);
-                        hmk->lastTimeExecuted = get_microseconds() + hmk->ieaction->autorepeatStartDelay * 1000;
+			broadcast_action(hmk->shortcut);
+			hmk->lastTimeExecuted = get_microseconds() + hmk->shortcut->autorepeatStartDelay * 1000;
                         continue;
                 }
 
                 int timeDiff = qRound(get_microseconds() - hmk->lastTimeExecuted);
                 // if timeDiff is very close (-2 ms) to it's interval value, execute it still
                 // else the next interval might be too long between the previous one.
-                if ((timeDiff + 2 * 1000) >= hmk->ieaction->autorepeatInterval * 1000) {
+		if ((timeDiff + 2 * 1000) >= hmk->shortcut->autorepeatInterval * 1000) {
                         hmk->lastTimeExecuted = get_microseconds();
-                        broadcast_action(hmk->ieaction, true);
+			broadcast_action(hmk->shortcut, true);
                 }
         }
 }
 
-bool InputEngine::is_modifier_keyfact(int eventcode)
+bool InputEngine::is_modifier_keyfact(int keyValue)
 {
-	return m_modifierKeys.contains(eventcode);
-}
-
-
-int InputEngine::find_index_for_key(int key)
-{
-	foreach(TShortcutKey* action, m_ieActions) {
-			
-		if (action->keyvalue == key)
-		{
-			PMESG("Found a match keyString %s", QS_C(action->keyString));
-			return m_ieActions.indexOf(action);
-		}
-	}
-	
-	return -1;
-}
-
-
-void InputEngine::dispatch_action(int mapIndex)
-{
-	PENTER2;
-	broadcast_action(m_ieActions.at(mapIndex));
+	return m_modifierKeys.contains(keyValue);
 }
 
 void InputEngine::finish_hold()
@@ -802,11 +772,11 @@ int InputEngine::init_map(const QString& keymap)
 
 	PMESG("Using keymap: %s", QS_C(keymap));
 	
-	foreach(TShortcutKey* action, m_ieActions) {
-		delete action;
-	}
+//	foreach(TShortcutKey* action, m_ieActions) {
+//		delete action;
+//	}
 	
-	m_ieActions.clear();
+//	m_ieActions.clear();
 	m_modifierKeys.clear();
 	m_modes.clear();
 	
@@ -875,34 +845,15 @@ int InputEngine::init_map(const QString& keymap)
 		
 		key = e.attribute("key", "");
 
-		TShortcutKey* shortcutKey = tShortCutManager().getShortcutFor(key);
-
-		if (!shortcutKey) {
-			continue;
-		}
-
 		QDomNode objectNode = e.firstChild();
 	
 		while(!objectNode.isNull()) {
 
 			QDomElement e = objectNode.toElement();
 
-			QString functionString = e.attribute("function", "");
-			if (!functionString.isEmpty())
-			{
-				function = tShortCutManager().getFunctionshortcut(functionString);
-				shortcutKey->objects.insert(function->classname, function);
-				objectNode = objectNode.nextSibling();
-				continue;
-			}
-			
 			function = new TFunction;
 
-			QString objectname = e.attribute("objectname", "");
-			function->slotsignature = e.attribute("slotsignature", "");
 			function->modes = e.attribute("modes", "All").split(";");
-			function->pluginname = e.attribute( "pluginname", "");
-			function->commandname = e.attribute( "commandname", "");
 			function->submenu = e.attribute("submenu", "");
 			function->sortorder = e.attribute( "sortorder", "0").toInt();
 			function->autorepeatInterval = e.attribute("autorepeatinterval", "40").toInt();
@@ -911,16 +862,20 @@ int InputEngine::init_map(const QString& keymap)
 			QString args = e.attribute("arguments", "");
 			modifierKeys = e.attribute("modifierkeys", "");
 			
-			if ( ! args.isEmpty() ) {
+			if ( ! args.isEmpty() )
+			{
 				QStringList arglist = args.split(";");
-				for (int i=0; i<arglist.size(); ++i) {
+				for (int i=0; i<arglist.size(); ++i)
+				{
 					function->arguments.append(arglist.at(i));
 				}
 			}
 			
-			if (! modifierKeys.isEmpty()) {
+			if (! modifierKeys.isEmpty())
+			{
 				QStringList modifierlist = modifierKeys.split(";");
-				for (int i=0; i<modifierlist.size(); ++i) {
+				for (int i=0; i<modifierlist.size(); ++i)
+				{
 					int keycode;
 					t_KeyStringToKeyValue(keycode, modifierlist.at(i));
 					function->modifierkeys.append(keycode);
@@ -937,26 +892,8 @@ int InputEngine::init_map(const QString& keymap)
 				function->useX = function->useY = true;
 			}
 			
-			if (QString(objectname) == "") {
-				PERROR("no objectname given in keyaction %s", QS_C(key));
-			}
-			if (function->slotsignature.isEmpty() && function->pluginname.isEmpty()) {
-				PERROR("no slotsignature given in keyaction %s, object %s", QS_C(key), QS_C(objectname));
-			}
-			if (QString(function->modes.join(";")) == "") {
-				PERROR("no modes given in keyaction %s, object %s", QS_C(key), QS_C(objectname));
-			}
-	
-			shortcutKey->objects.insertMulti(objectname, function);
-		
-			PMESG3("ADDED action: type=%d key=%d useX=%d useY=%d, slot=%s", shortcutKey->type, shortcutKey->keyvalue, function->useX, function->useY, QS_C(function->slotsignature));
-
-                        objectNode = objectNode.nextSibling();
+			objectNode = objectNode.nextSibling();
 		}
-		
-		shortcutKey->keyString = key;
-
-		m_ieActions.append(shortcutKey);
 		
 		keyfactNode = keyfactNode.nextSibling();
 	}
@@ -968,17 +905,17 @@ QStringList InputEngine::keyfacts_for_hold_command(const QString& className)
 {
         QStringList result;
 
-        for (int i=0; i<m_ieActions.size(); i++) {
-		TShortcutKey* ieaction = m_ieActions.at(i);
+//        for (int i=0; i<m_ieActions.size(); i++) {
+//		TShortcutKey* ieaction = m_ieActions.at(i);
 
-		foreach(TFunction* data, ieaction->objects) {
-			if (data->commandname == className) {
-				QString keyfact = ieaction->keyString;
-				TShortcutManager::makeShortcutKeyHumanReadable(keyfact);
-				result.append(keyfact);
-			}
-		}
-        }
+//		foreach(TFunction* data, ieaction->objects) {
+//			if (data->commandname == className) {
+//				QString keyfact = ieaction->keyString;
+//				TShortcutManager::makeShortcutKeyHumanReadable(keyfact);
+//				result.append(keyfact);
+//			}
+//		}
+//        }
         result.removeDuplicates();
 
         return result;
@@ -1084,7 +1021,7 @@ TCommand * InputEngine::get_holding_command() const
         return m_holdingCommand;
 }
 
-TShortcutKey::~ TShortcutKey()
+TShortcut::~ TShortcut()
 {
 	foreach(TFunction* data, objects) {
 		delete data;

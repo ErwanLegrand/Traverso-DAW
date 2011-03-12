@@ -1133,37 +1133,26 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 	QMap<QString, QList<TFunction*>* > submenus;
 	
 	for (int i=0; i<list.size(); ++i) {
-		TFunction* data = list.at(i);
-		
-//		 Merge entries with equal actions, but different key facts.
-//		for (int j=i+1; j<list.size(); ++j) {
-//			if (list.at(j).description == data.description && list.at(j).submenu == data.submenu) {
-//				QString mergestring = list.at(j).keysequence;
-//				data.keysequence = create_keyfact_string(data.keysequence, data.modifierkeys) +
-//						" ,  " +
-//						create_keyfact_string(mergestring, list.at(j).modifierkeys);
-//				list.removeAt(j);
-//			}
-//		}
+		TFunction* function = list.at(i);
 		
 		// If this MenuData item is a submenu, add to the 
 		// list of submenus, which will be processed lateron
 		// Else, add the MenuData item as action in the Menu
-		if ( ! data->submenu.isEmpty() ) {
+		if ( ! function->submenu.isEmpty() ) {
 			QList<TFunction*>* list;
-			if ( ! submenus.contains(data->submenu)) {
-				submenus.insert(data->submenu, new QList<TFunction*>());
+			if ( ! submenus.contains(function->submenu)) {
+				submenus.insert(function->submenu, new QList<TFunction*>());
 			}
-			list = submenus.value(data->submenu);
-			list->append(data);
+			list = submenus.value(function->submenu);
+			list->append(function);
 		} else {
 			QAction* action = new QAction(this);
-			action->setText(data->description);
-			QString sequence = data->getKeySequence();
+			action->setText(function->description);
+			QString sequence = function->getKeySequence();
 			ie().filter_unknown_sequence(sequence);
 			action->setShortcut(sequence);
 			QStringList strings;
-			strings << data->getKeySequence() << data->description;
+			strings << function->getKeySequence() << function->description;
 			action->setData(strings);
 			menu->addAction(action);
 		}
@@ -1187,14 +1176,14 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 		
                 QAction* action = menu->insertMenu(0, subMenu);
                 action->setText(TMenuTranslator::instance()->get_translation_for(key));
-		foreach(TFunction* data, *list) {
+		foreach(TFunction* function, *list) {
                         QAction* action = new QAction(subMenu);
-			action->setText(data->description);
-			QString sequence = data->getKeySequence();
+			action->setText(function->description);
+			QString sequence = function->getKeySequence();
 			ie().filter_unknown_sequence(sequence);
 			action->setShortcut(sequence);
 			QStringList strings;
-			strings << data->getKeySequence() << data->description;
+			strings << function->getKeySequence() << function->description;
 			action->setData(strings);
 			subMenu->addAction(action);
 		}

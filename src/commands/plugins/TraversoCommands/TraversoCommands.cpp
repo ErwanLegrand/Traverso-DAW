@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <float.h>
 #include <QInputDialog>
 #include "TMenuTranslator.h"
-
+#include "TShortcutManager.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -114,11 +114,7 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("ClipSelectionSelectAll", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionAdd", ClipSelectionCommand);
 	m_dict.insert("ClipSelectionRemove", ClipSelectionCommand);
-        m_dict.insert("MoveClip", MoveClipCommand);
         m_dict.insert("MoveTrack", MoveTrackCommand);
-        m_dict.insert("FoldSheet", MoveClipCommand);
-	m_dict.insert("FoldTrack", MoveClipCommand);
-	m_dict.insert("FoldMarkers", MoveClipCommand);
         m_dict.insert("MoveEdge", MoveEdgeCommand);
 	m_dict.insert("MoveClipOrEdge", MoveClipOrEdgeCommand);
 	m_dict.insert("CopyClip", MoveClipCommand);
@@ -134,10 +130,124 @@ TraversoCommands::TraversoCommands()
 	m_dict.insert("Scroll", ScrollCommand);
         m_dict.insert("Shuttle", ShuttleCommand);
         m_dict.insert("NormalizeClip", NormalizeClipCommand);
-        m_dict.insert("ArrowKeyBrowser", ArrowKeyBrowserCommand);
-        m_dict.insert("WorkCursorMove", WorkCursorMoveCommand);
+	m_dict.insert("ArrowKeyBrowser::Up", ArrowKeyBrowserCommand);
+	m_dict.insert("ArrowKeyBrowser::Down", ArrowKeyBrowserCommand);
+	m_dict.insert("ArrowKeyBrowser::Left", ArrowKeyBrowserCommand);
+	m_dict.insert("ArrowKeyBrowser::Right", ArrowKeyBrowserCommand);
+	m_dict.insert("WorkCursorMove", WorkCursorMoveCommand);
         m_dict.insert("PlayHeadMove", PlayHeadMoveCommand);
 	m_dict.insert("MoveCurveNodes", MoveCurveNodesCommand);
+
+	TFunction* function;
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->description = tr("Arrow Key Browser: Up");
+	function->addDefaultKeyString("UARROW");
+	function->commandName = "ArrowKeyBrowser:Up";
+	function->submenu = "Navigate";
+	function->pluginname = "TraversoCommands";
+	function->arguments << 1 << 100;
+	addFunction(function, ArrowKeyBrowserCommand);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->description = tr("Arrow Key Browser: Down");
+	function->addDefaultKeyString("DARROW");
+	function->commandName = "ArrowKeyBrowser:Down";
+	function->submenu = "Navigate";
+	function->pluginname = "TraversoCommands";
+	function->arguments << 2 << 100;
+	addFunction(function, ArrowKeyBrowserCommand);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->description = tr("Arrow Key Browser: Left");
+	function->addDefaultKeyString("LARROW");
+	function->commandName = "ArrowKeyBrowser:Left";
+	function->submenu = "Navigate";
+	function->pluginname = "TraversoCommands";
+	function->arguments << 3 << 100;
+	addFunction(function, ArrowKeyBrowserCommand);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->description = tr("Arrow Key Browser: Right");
+	function->addDefaultKeyString("RARROW");
+	function->commandName = "ArrowKeyBrowser:Right";
+	function->submenu = "Navigate";
+	function->arguments << 4 << 100;
+	addFunction(function, ArrowKeyBrowserCommand);
+
+	function = new TFunction();
+	function->object = "AudioTrack";
+	function->description = tr("Import Audio");
+	function->addDefaultKeyString("I");
+	function->commandName = "ImportAudio";
+	addFunction(function, ImportAudioCommand);
+
+	function = new TFunction();
+	function->object = "AudioTrackView";
+	function->description = tr("Fold Track");
+	function->addDefaultKeyString("D;MouseButtonLeft");
+	function->commandName = "FoldTrack";
+	function->useX = true;
+	function->modifierkeys << Qt::Key_Control << Qt::Key_Shift;
+	function->arguments << "fold_track";
+	addFunction(function, MoveClipCommand);
+
+
+	function = new TFunction();
+	function->object = "AudioClipView";
+	function->description = tr("Move Clip");
+	function->addDefaultKeyString("D;MouseButtonLeft");
+	function->commandName = "MoveClip";
+	function->useX = function->useY = true;
+	function->arguments << "move";
+	addFunction(function, MoveClipCommand);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->description = tr("Fold Sheet");
+	function->addDefaultKeyString("D;MouseButtonLeft");
+	function->commandName = "FoldSheet";
+	function->useX = function->useY = true;
+	function->modifierkeys << Qt::Key_Shift;
+	function->arguments << "fold_sheet";
+	addFunction(function, MoveClipCommand);
+
+	function = new TFunction();
+	function->object = "TimeLineView";
+	function->description = tr("Fold Markers");
+	function->addDefaultKeyString("D;MouseButtonLeft");
+	function->commandName = "FoldMarkers";
+	function->useX = true;
+	function->modifierkeys << Qt::Key_Shift;
+	function->arguments << "fold_markers";
+	addFunction(function, MoveClipCommand);
+
+	function = new TFunction();
+	function->object = "TrackView";
+	function->description = tr("Move Up/Down");
+	function->addDefaultKeyString("D;MouseButtonLeft");
+	function->commandName = "MoveTrack";
+	function->useY = true;
+	addFunction(function, MoveTrackCommand);
+
+	function = new TFunction();
+	function->object = "CurveView";
+	function->description = tr("Move Curve Node(s)");
+	function->addDefaultKeyString("D;MouseButtonLeft");
+	function->commandName = "MoveCurveNodes";
+	function->useX = function->useY = true;
+	addFunction(function, MoveCurveNodesCommand);
+}
+
+void TraversoCommands::addFunction(TFunction *function, int command)
+{
+	function->pluginname = "TraversoCommands";
+	m_dict.insert(function->commandName, command);
+	tShortCutManager().addFunction(function);
 }
 
 void TraversoCommands::create_menu_translations()
@@ -148,7 +258,6 @@ void TraversoCommands::create_menu_translations()
         translator->add_entry("TraversoCommands::ResetGain", tr("Gain: Reset"));
         translator->add_entry("TraversoCommands::TrackPan", tr("Panorama"));
         translator->add_entry("TraversoCommands::ResetTrackPan", tr("Panorama: Reset"));
-        translator->add_entry("TraversoCommands::ImportAudio", tr("Import Audio"));
         translator->add_entry("TraversoCommands::InsertSilence", tr("Insert Silence"));
         translator->add_entry("TraversoCommands::CopyClip", tr("Copy Clip"));
         translator->add_entry("TraversoCommands::AddNewAudioTrack", tr("New Track"));
@@ -157,17 +266,12 @@ void TraversoCommands::create_menu_translations()
         translator->add_entry("TraversoCommands::AudioClipExternalProcessing", tr("External Processing"));
         translator->add_entry("TraversoCommands::ClipSelectionSelect", tr("(De)Select"));
         translator->add_entry("TraversoCommands::ClipSelectionSelectAll", tr("(De)Select All"));
-        translator->add_entry("TraversoCommands::MoveClip", tr("Move Clip"));
-        translator->add_entry("TraversoCommands::MoveTrack", tr("Move Up/Down"));
         translator->add_entry("TraversoCommands::MoveEdge", tr("Move Edge"));
         translator->add_entry("TraversoCommands::MoveClipOrEdge", tr("Move Or Resize Clip"));
         translator->add_entry("TraversoCommands::SplitClip", tr("Split"));
         translator->add_entry("TraversoCommands::CropClip", tr("Magnetic Cut"));
         translator->add_entry("TraversoCommands::ArmTracks", tr("Arm Tracks"));
-        translator->add_entry("TraversoCommands::FoldSheet", tr("Fold Sheet"));
-        translator->add_entry("TraversoCommands::FoldTrack", tr("Fold Track"));
-        translator->add_entry("TraversoCommands::FoldMarkers", tr("Fold Markers"));
-        translator->add_entry("TraversoCommands::VZoomIn", tr("Vertical In"));
+	translator->add_entry("TraversoCommands::VZoomIn", tr("Vertical In"));
         translator->add_entry("TraversoCommands::HZoomOut", tr("Horizontal Out"));
         translator->add_entry("TraversoCommands::HZoomIn", tr("Horizontal In"));
         translator->add_entry("TraversoCommands::VZoomOut", tr("Vertical Out"));
@@ -178,10 +282,8 @@ void TraversoCommands::create_menu_translations()
         translator->add_entry("TraversoCommands::ScrollDownHold", tr("Down"));
         translator->add_entry("TraversoCommands::Shuttle", tr("Shuttle"));
         translator->add_entry("TraversoCommands::NormalizeClip", tr("Normalize"));
-        translator->add_entry("TraversoCommands::ArrowKeyBrowser", tr("Arrow Key Browser"));
         translator->add_entry("TraversoCommands::WorkCursorMove", tr("Move Work Cursor"));
         translator->add_entry("TraversoCommands::PlayHeadMove", tr("Set Play Position"));
-	translator->add_entry("TraversoCommands::MoveCurveNodes", tr("Move Curve Node(s)"));
 }
 
 

@@ -27,8 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStringList>
 
 
-struct TFunction {
+class TFunction {
 
+public:
 	static bool smaller(const TFunction* left, const TFunction* right )
 	{
 		return left->sortorder < right->sortorder;
@@ -46,42 +47,51 @@ struct TFunction {
 		autorepeatStartDelay = 200;
 	}
 
+	void addDefaultKeyString(const QString& keyString);
+
 	QString getKeySequence();
+	QStringList getKeyStrings() const;
 
 	QStringList modes;
 	QVariantList arguments;
 	QList<int > modifierkeys;
-	QString classname;
+	QString object;
 	QString slotsignature;
 	QString pluginname;
-	QString commandname;
+	QString commandName;
 	QString submenu;
 	QString description;
-	QString	keyString;
 	bool useX;
 	bool useY;
 	int sortorder;
 	int autorepeatInterval;
 	int autorepeatStartDelay;
+
+private:
+	QString	m_keyString;
+	QStringList m_defaultKeyStrings;
+
+	friend class TShortcutManager;
 };
 
-struct TShortcutKey
+struct TShortcut
 {
-	TShortcutKey(int keyValue)
+	TShortcut(int keyValue)
 	{
 		keyvalue = keyValue;
 	}
 
-	~TShortcutKey();
+	QList<TFunction*> getFunctionsForObject(const QString& objectName);
+
+	~TShortcut();
 
 	QHash<QString, TFunction*> objects;
 
-	int type;
-	int keyvalue;
-	int autorepeatInterval;
-	int autorepeatStartDelay;
-	bool isInstantaneous;
-	QString keyString;
+	int		type;
+	QString		keyString;
+	int		keyvalue;
+	int		autorepeatInterval;
+	int		autorepeatStartDelay;
 };
 
 
@@ -90,19 +100,20 @@ class TShortcutManager : public QObject
 	Q_OBJECT
 public:
 
-	void addFunction(const QString& function, TFunction* data);
-	TFunction* getFunctionshortcut(const QString& function) const;
+	void addFunction(TFunction* function);
+	TFunction* getFunction(const QString& function) const;
 
 	QList<TFunction* > getFunctionsFor(QObject* item);
-	void getFunctionsForMetaobject(const QMetaObject* mo, QList<TFunction* >& list) const;
-	TShortcutKey* getShortcutFor(const QString& key);
+	QList<TFunction* > getFunctionsForMetaobject(const QMetaObject* mo) const;
+	TShortcut* getShortcut(const QString& key);
+	TShortcut* getShortcut(int key);
 
 	void loadFunctions();
 	static void makeShortcutKeyHumanReadable(QString& key);
 
 private:
 	QHash<QString, TFunction*>	m_functions;
-	QHash<int, TShortcutKey*>	m_shortcutKeys;
+	QHash<int, TShortcut*>	m_shortcuts;
 
 	TShortcutManager();
 	TShortcutManager(const TShortcutManager&) : QObject() {}
