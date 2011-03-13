@@ -358,7 +358,9 @@ QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> meta
 		return "";
 	}
 
-	QString holdKeyFact = ie().keyfacts_for_hold_command(metas.first()->className()).join(" , ");
+
+	// FIXME ?
+	QString holdKeyFact = "";// ie().keyfacts_for_hold_command(metas.first()->className()).join(" , ");
 
 
 	QString name = get_translation_for(QString(metas.first()->className()).remove(("View")));

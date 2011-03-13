@@ -61,7 +61,6 @@ public:
 	bool is_holding();
 
 	TCommand* get_holding_command() const;
-        QStringList keyfacts_for_hold_command(const QString& className);
 	void filter_unknown_sequence(QString& sequence);
 
 	int broadcast_action_from_contextmenu(const QString& name);

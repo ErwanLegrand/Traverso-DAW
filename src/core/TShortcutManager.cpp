@@ -190,7 +190,6 @@ TShortcut* TShortcutManager::getShortcut(const QString &keyString)
 	{
 		printf("Adding key %s to shortcut keys\n", keyString.toAscii().data());
 		shortcut = new TShortcut(keyValue);
-		shortcut->keyString = keyString;
 		m_shortcuts.insert(keyValue, shortcut);
 
 	}

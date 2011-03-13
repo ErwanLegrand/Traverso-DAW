@@ -157,8 +157,6 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 {
 	PENTER2;
 
-	PMESG("Trying to find TFunction for key sequence %s", QS_C(shortCut->keyString));
-
         TCommand* k = 0;
 	QObject* item = 0;
 
@@ -208,7 +206,7 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 						PMESG("found match in objectUsingModierKeys");
 						break;
 					} else {
-						PMESG("m_activeModifierKeys doesn't contain code %d", shortCut->keyvalue);
+						PMESG("m_activeModifierKeys doesn't contain code %d", shortCut->getKeyValue());
 					}
 				}
 				else
@@ -229,7 +227,7 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 				QString currentmode = m_modes.key(cpointer().get_current_mode());
 				QString allmodes = m_modes.key(0);
 				if ( function->modes.size() && (! function->modes.contains(currentmode)) && (! function->modes.contains(allmodes))) {
-					PMESG("%s on %s is not valid for mode %s", QS_C(shortCut->keyString), item->metaObject()->className(), QS_C(currentmode));
+					PMESG("%s on %s is not valid for mode %s", QS_C(function->getKeySequence()), item->metaObject()->className(), QS_C(currentmode));
 					continue;
 				}
 
@@ -293,10 +291,12 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 		// Either the plugins didn't have a match, or we are holding.
 		if ( ! k )
 		{
+			// FIXME shortCut->getFunctionsForObject() returns a list,
+			// we need to iterate over the list for a match or what ?
 			QString delegatedobject;
 			
                         if (m_holdingCommand) {
-				function = shortCut->objects.value("HoldCommand");
+				function = shortCut->getFunctionsForObject("HoldCommand").first();
 				delegatedobject = "HoldCommand";
 			} else {
                                 delegatedobject = metaobject->className();
@@ -304,9 +304,9 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 					//FIXME: objects has values inserted with insertMulti()
 					// do we have to use values(delegatedobject) instead of value(delegatedobject)
 					// here too?
-					function = shortCut->objects.value(delegatedobject);
+					function = shortCut->getFunctionsForObject(delegatedobject).first();
 				} else {
-					function = shortCut->objects.value(delegatedobject);
+					function = shortCut->getFunctionsForObject(delegatedobject).first();
 				}
 				PMESG("delegatedobject is %s", QS_C(delegatedobject));
 			}
@@ -392,7 +392,7 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 				k->set_cursor_shape(function->useX, function->useY);
                                 m_holdingCommand = k;
 				m_isHolding = true;
-				m_holdEventCode = shortCut->keyvalue;
+				m_holdEventCode = shortCut->getKeyValue();
 				set_jogging(true);
 			} else {
 				PERROR("hold action begin_hold() failed!");
@@ -900,27 +900,6 @@ int InputEngine::init_map(const QString& keymap)
 
 	return 1;
 }
-
-QStringList InputEngine::keyfacts_for_hold_command(const QString& className)
-{
-        QStringList result;
-
-//        for (int i=0; i<m_ieActions.size(); i++) {
-//		TShortcutKey* ieaction = m_ieActions.at(i);
-
-//		foreach(TFunction* data, ieaction->objects) {
-//			if (data->commandname == className) {
-//				QString keyfact = ieaction->keyString;
-//				TShortcutManager::makeShortcutKeyHumanReadable(keyfact);
-//				result.append(keyfact);
-//			}
-//		}
-//        }
-        result.removeDuplicates();
-
-        return result;
-}
-
 
 void InputEngine::filter_unknown_sequence(QString& sequence)
 {

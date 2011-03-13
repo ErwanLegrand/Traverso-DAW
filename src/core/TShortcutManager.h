@@ -74,24 +74,28 @@ private:
 	friend class TShortcutManager;
 };
 
-struct TShortcut
+class TShortcut
 {
+public:
 	TShortcut(int keyValue)
 	{
-		keyvalue = keyValue;
+		m_keyValue = keyValue;
 	}
+	~TShortcut();
+
+	int getKeyValue() const {return m_keyValue;}
 
 	QList<TFunction*> getFunctionsForObject(const QString& objectName);
 
-	~TShortcut();
-
-	QHash<QString, TFunction*> objects;
-
-	int		type;
-	QString		keyString;
-	int		keyvalue;
 	int		autorepeatInterval;
 	int		autorepeatStartDelay;
+
+private:
+	QHash<QString, TFunction*> objects;
+
+	int		m_keyValue;
+
+	friend class TShortcutManager;
 };
 
 
