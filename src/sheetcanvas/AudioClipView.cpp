@@ -120,9 +120,9 @@ void AudioClipView::paint(QPainter* painter, const QStyleOptionGraphicsItem *opt
 
 //        printf("AudioClipView:: %s PAINT :: exposed rect is: x=%f, y=%f,? w=%f, h=%f\n", QS_C(m_clip->get_name()), option->exposedRect.x(), option->exposedRect.y(), option->exposedRect.width(), option->exposedRect.height());
 
-	printf("x, w %f, %f\n", option->exposedRect.x(), option->exposedRect.width());
-	qreal xstart = qRound(option->exposedRect.x());
-	qreal pixelcount = qRound(option->exposedRect.width());
+//	printf("x, w %f, %f\n", option->exposedRect.x(), option->exposedRect.width());
+	qreal xstart = option->exposedRect.x();
+	qreal pixelcount = option->exposedRect.width();
 	if (pixelcount < 0.5) {
                 PWARN("AudioClipView::paint : Exposed rectangle has 0 width ????");
                 return;
