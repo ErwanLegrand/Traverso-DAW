@@ -94,8 +94,8 @@ QStringList TFunction::getKeys() const
 
 void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
 {
-	keyfact.replace(QString("MOUSESCROLLVERTICALUP"), tr("Scroll Wheel"));
-	keyfact.replace(QString("MOUSESCROLLVERTICALDOWN"), tr("Scroll Wheel"));
+	keyfact.replace(QString("MOUSESCROLLVERTICALUP"), tr("Scroll Up"));
+	keyfact.replace(QString("MOUSESCROLLVERTICALDOWN"), tr("Scroll Down"));
 	keyfact.replace(QString("MOUSEBUTTONRIGHT"), tr("Right MB"));
 	keyfact.replace(QString("MOUSEBUTTONLEFT"), tr("Left MB"));
 	keyfact.replace(QString("MOUSEBUTTONMIDDLE"), tr("Center MB"));
