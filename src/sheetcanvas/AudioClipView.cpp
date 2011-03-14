@@ -251,7 +251,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 	mixAudioClipCurveData |= m_gainCurveView->has_nodes();
 	mixTrackAutomationData |= trackAutomationView->has_nodes();
 
-	int offset = (int)(clipstartoffset / m_sv->timeref_scalefactor);
+	double offset = double(clipstartoffset / m_sv->timeref_scalefactor);
 
 	if (!mixAudioClipCurveData && !mixTrackAutomationData) {
                 curveDefaultValue = m_gainCurveView->get_default_value();
@@ -261,14 +261,14 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
         float curvemixdown[peakdatacount];
 
 	if (mixAudioClipCurveData) {
-		mixAudioClipCurveData |= m_gainCurveView->get_vector(qRound(xstart) + offset, peakdatacount, curvemixdown);
+		mixAudioClipCurveData |= m_gainCurveView->get_vector(xstart + offset, peakdatacount, curvemixdown);
 		mixCurveData |= mixAudioClipCurveData;
 	}
 
 	if (mixTrackAutomationData) {
 		if (mixAudioClipCurveData) {
 			float trackmixdown[peakdatacount];
-			int trackCurveMix = trackAutomationView->get_vector(qRound(xstart) + pos().x(), peakdatacount, trackmixdown);
+			int trackCurveMix = trackAutomationView->get_vector(xstart + pos().x(), peakdatacount, trackmixdown);
 			if (trackCurveMix) {
 				for (int j=0; j<peakdatacount; ++j) {
 					curvemixdown[j] *= trackmixdown[j];
@@ -276,7 +276,7 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
 				mixCurveData |= trackCurveMix;
 			}
 		} else {
-			mixTrackAutomationData |= trackAutomationView->get_vector(qRound(xstart) + pos().x(), peakdatacount, curvemixdown);
+			mixTrackAutomationData |= trackAutomationView->get_vector(xstart + pos().x(), peakdatacount, curvemixdown);
 			mixCurveData |= mixTrackAutomationData;
 		}
 	}
@@ -287,9 +287,9 @@ void AudioClipView::draw_peaks(QPainter* p, qreal xstart, int pixelcount)
                 int fademix = 0;
 
 		if (mixCurveData) {
-                        fademix = view->get_vector(qRound(xstart), peakdatacount, fademixdown);
+			fademix = view->get_vector(xstart, peakdatacount, fademixdown);
                 } else {
-                        fademix = view->get_vector(qRound(xstart), peakdatacount, curvemixdown);
+			fademix = view->get_vector(xstart, peakdatacount, curvemixdown);
                 }
 
 		if (mixCurveData && fademix) {

@@ -39,7 +39,7 @@ public:
 	~CurveView();
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	int get_vector(int xstart, int pixelcount, float *arg);
+	int get_vector(qreal xstart, qreal pixelcount, float *arg);
 	bool has_nodes() const;
 	float get_default_value();
 	void calculate_bounding_rect();

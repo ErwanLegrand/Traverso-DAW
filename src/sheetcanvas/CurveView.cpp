@@ -194,7 +194,7 @@ void CurveView::paint( QPainter * painter, const QStyleOptionGraphicsItem * opti
 	painter->restore();
 }
 
-int CurveView::get_vector(int xstart, int pixelcount, float* arg)
+int CurveView::get_vector(qreal xstart, qreal pixelcount, float* arg)
 {
 	if (m_guicurve->get_nodes().size() == 1 && ((CurveNode*)m_guicurve->get_nodes().first())->value == 1.0) {
 		return 0;
