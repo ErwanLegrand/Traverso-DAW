@@ -43,7 +43,17 @@ QString TFunction::getKeySequence()
 {
 	QString sequence;
 	QStringList sequenceList;
-	QString modifiersString = getModifierKeys().join("+");
+	QString modifiersString;
+	QStringList modifierStringList = getModifierKeys();
+	foreach(QString key, modifierStringList)
+	{
+		modifiersString = key + "+";
+	}
+
+	if (modifierStringList.size())
+	{
+		modifiersString += " ";
+	}
 
 	foreach(QString keyString, m_keys)
 	{
@@ -84,15 +94,15 @@ QStringList TFunction::getKeys() const
 
 void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
 {
-	keyfact.replace(QString("MouseScrollVerticalUp"), tr("Scroll Wheel"));
-	keyfact.replace(QString("MouseScrollVerticalDown"), tr("Scroll Wheel"));
-	keyfact.replace(QString("MouseButtonRight"), tr("Right MB"));
-	keyfact.replace(QString("MouseButtonLeft"), tr("Left MB"));
-	keyfact.replace(QString("MouseButtonMiddle"), tr("Center MB"));
-	keyfact.replace(QString("UpArrow"), tr("Up Arrow"));
-	keyfact.replace(QString("DownArrow"), tr("Down Arrow"));
-	keyfact.replace(QString("LeftArrow"), tr("Left Arrow"));
-	keyfact.replace(QString("RightArrow"), tr("Right Arrow"));
+	keyfact.replace(QString("MOUSESCROLLVERTICALUP"), tr("Scroll Wheel"));
+	keyfact.replace(QString("MOUSESCROLLVERTICALDOWN"), tr("Scroll Wheel"));
+	keyfact.replace(QString("MOUSEBUTTONRIGHT"), tr("Right MB"));
+	keyfact.replace(QString("MOUSEBUTTONLEFT"), tr("Left MB"));
+	keyfact.replace(QString("MOUSEBUTTONMIDDLE"), tr("Center MB"));
+	keyfact.replace(QString("UPARROW"), tr("Up Arrow"));
+	keyfact.replace(QString("DOWNARROW"), tr("Down Arrow"));
+	keyfact.replace(QString("LEFTARROW"), tr("Left Arrow"));
+	keyfact.replace(QString("RIGHTARROW"), tr("Right Arrow"));
 	keyfact.replace(QString("DELETE"), tr("Delete"));
 	keyfact.replace(QString("MINUS"), QString("-"));
 	keyfact.replace(QString("PLUS"), QString("+"));
@@ -267,38 +277,193 @@ void TShortcutManager::loadFunctions()
 	function = new TFunction();
 	function->object = "MoveCommand";
 	function->slotsignature = "move_right";
+	function->description = tr("Move Right");
 	function->commandName = "MoveCommandRight";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "MoveCommand";
 	function->slotsignature = "move_left";
+	function->description = tr("Move Left");
 	function->commandName = "MoveCommandLeft";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "MoveCommand";
 	function->slotsignature = "move_up";
+	function->description = tr("Move Up");
 	function->commandName = "MoveCommandUp";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "MoveCommand";
 	function->slotsignature = "move_down";
+	function->description = tr("Move Down");
 	function->commandName = "MoveCommandDown";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "MoveCommand";
 	function->slotsignature = "move_faster";
+	function->description = tr("Move Faster");
 	function->commandName = "MoveCommandFaster";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "MoveCommand";
 	function->slotsignature = "move_slower";
+	function->description = tr("Move Slower");
 	function->commandName = "MoveCommandSlower";
 	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TMainWindow";
+	function->slotsignature = "quick_start";
+	function->description = tr("Show Help");
+	function->commandName = "ShowHelp";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Track";
+	function->slotsignature = "toggle_show_track_volume_automation";
+	function->description = tr("Show/Hide Volume Automation");
+	function->commandName = "Track_ShowVolumeAutomation";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TMainWindow";
+	function->slotsignature = "full_screen";
+	function->description = tr("Full Screen");
+	function->commandName = "MainWindow_ShowFullScreen";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TMainWindow";
+	function->slotsignature = "export_keymap";
+	function->description = tr("Export keymap");
+	function->commandName = "ExportShortcutMap";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TrackView";
+	function->slotsignature = "add_new_plugin";
+	function->description = tr("Add new Plugin");
+	function->commandName = "Track_AddPlugin";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TPanKnobView";
+	function->slotsignature = "pan_left";
+	function->description = tr("Pan to Left");
+	function->commandName = "PanKnobPanLeft";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TPanKnobView";
+	function->slotsignature = "pan_right";
+	function->description = tr("Pan to Right");
+	function->commandName = "PanKnobPanRight";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Zoom";
+	function->slotsignature = "hzoom_out";
+	function->description = tr("Zoom Horizontal Out");
+	function->commandName = "ZoomCommandOut";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Zoom";
+	function->slotsignature = "hzoom_in";
+	function->description = tr("Zoom Horizontal In");
+	function->commandName = "ZoomCommandIn";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TrackPan";
+	function->slotsignature = "pan_left";
+	function->description = tr("Pan to Left");
+	function->commandName = "TrackPanLeft";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TrackPan";
+	function->slotsignature = "pan_right";
+	function->description = tr("Pan to Right");
+	function->commandName = "TrackPanRight";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Gain";
+	function->slotsignature = "increase_gain";
+	function->description = tr("Increase");
+	function->commandName = "GainIncrease";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Gain";
+	function->slotsignature = "decrease_gain";
+	function->description = tr("Decrease");
+	function->commandName = "GainDecrease";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveTrack";
+	function->slotsignature = "move_up";
+	function->slotsignature = tr("Move Up");
+	function->commandName = "MoveTrackUp";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveTrack";
+	function->slotsignature = "move_down";
+	function->description = tr("Move Down");
+	function->commandName = "MoveTrackDown";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->slotsignature = "scroll_up";
+	function->description =tr("Up");
+	function->commandName = "ViewScrollUp";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->slotsignature = "scroll_down";
+	function->description = tr("Down");
+	function->commandName = "ViewScrollDown";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Zoom";
+	function->slotsignature = "track_vzoom_out";
+	function->description = tr("Track Vertical Zoom Out");
+	function->commandName = "ZoomTrackVerticalOut";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Zoom";
+	function->slotsignature = "track_vzoom_in";
+	function->description = tr("Track Vertical Zoom In");
+	function->commandName = "ZoomTrackVerticalIn";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->slotsignature = "to_upper_context_level";
+	function->description = tr("One Layer Up");
+	function->commandName = "NavigateToUpperContext";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->slotsignature = "to_lower_context_level";
+	function->description = tr("One Layer Down");
+	function->commandName = "NavigateToLowerContext";
+	addFunction(function);
+
+
 }
 
 void TShortcutManager::saveFunction(TFunction *function)

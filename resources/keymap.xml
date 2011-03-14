@@ -1,105 +1,9 @@
-<keymap>
-	<KeymapInfo version="2.0" author="R. Sijrier"
-	    		description="The default keymap supplied by Traverso. It provides both the 'point and click'
-			Interface, which most users are used too, and the more powerfull contextual Interface,
-			where mouse and keyboard are used together." />
-	<ModifierKeys>
-		<key key="CTRL" />
-		<key key="ALT" />
-                <key key="SHIFT" />
-		<key key="META" />
-	</ModifierKeys>
-	<Modes>
-		<mode name="All" id="0" />
-		<mode name="Edit" id="1" />
-		<mode name="Effects" id="2" />
-	</Modes>
-	<Keyfacts>
-		<keyfact key="F1" >
-
-				<Object objectname="TMainWindow" slotsignature="quick_start" sortorder="52" />
-
-		</keyfact>
-		<keyfact key="F3" >
-
-				<Object objectname="Track" slotsignature="toggle_show_track_volume_automation" sortorder="53" />
-
-                </keyfact>
-		<keyfact key="F11" >
-				<Object objectname="TMainWindow" slotsignature="full_screen" />
-		</keyfact>
-		<keyfact key="F12" >
-
-				<Object objectname="TMainWindow" slotsignature="export_keymap" />
-
-		</keyfact>
-		<keyfact key="F5" >
-
-				<Object objectname="TrackView" slotsignature="add_new_plugin" sortorder="13" />
-
-		</keyfact>
-		<keyfact key="LARROW" >
-
-				<Object objectname="TPanKnobView" slotsignature="pan_left" sortorder="1" />
-				<Object objectname="Zoom" slotsignature="hzoom_out" autorepeatinterval="80" autorepeatstartdelay="240" sortorder="4" />
-				<Object objectname="MoveCommand" slotsignature="move_left" autorepeatinterval="50" autorepeatstartdelay="200" sortorder="5" />
-				<Object objectname="TrackPan" slotsignature="pan_left" sortorder="1" />
-				<Object objectname="SheetView" sortorder="6" submenu="Navigate" pluginname="TraversoCommands" commandname="ArrowKeyBrowser" arguments="3;100" />
-
-		</keyfact>
-		<keyfact key="RARROW" >
-
-				<Object objectname="TPanKnobView" slotsignature="pan_right" sortorder="2" />
-				<Object objectname="Zoom" slotsignature="hzoom_in" autorepeatinterval="80" autorepeatstartdelay="240" sortorder="5" />
-				<Object objectname="MoveCommand" slotsignature="move_right" autorepeatinterval="50" autorepeatstartdelay="200" sortorder="4" />
-				<Object objectname="TrackPan" slotsignature="pan_right" sortorder="1" />
-				<Object objectname="SheetView" sortorder="6" submenu="Navigate" pluginname="TraversoCommands" commandname="ArrowKeyBrowser" arguments="4;100" />
-
-		</keyfact>
 		<keyfact key="UARROW" >
-
-				<Object objectname="Gain" slotsignature="increase_gain" />
-				<Object objectname="MoveTrack" slotsignature="move_up" sortorder="1" />
-				<Object objectname="MoveCommand" slotsignature="move_up" sortorder="3" />
-				<Object objectname="SheetView" slotsignature="scroll_up" sortorder="4" submenu="Scroll" />
-				<Object objectname="Zoom" slotsignature="track_vzoom_out" sortorder="1" />
-				<Object objectname="TMainWindow" slotsignature="browse_to_first_track_in_active_sheet" sortorder="10" />
-				<Object objectname="SheetView" slotsignature="to_upper_context_level" modifierkeys="SHIFT" sortorder="8" submenu="Navigate" />
-				<Object objectname="SheetView" sortorder="6" submenu="Navigate" pluginname="TraversoCommands" commandname="ArrowKeyBrowser" arguments="1;100" />
-
+			<Object objectname="TMainWindow" slotsignature="browse_to_first_track_in_active_sheet" sortorder="10" />
 		</keyfact>
 		<keyfact key="DARROW" >
-
-				<Object objectname="Gain" slotsignature="decrease_gain" />
-				<Object objectname="MoveTrack" slotsignature="move_down" sortorder="2" />
-				<Object objectname="MoveCommand" slotsignature="move_down" sortorder="4" />
-				<Object objectname="SheetView" slotsignature="scroll_down" sortorder="4" submenu="Scroll" />
-				<Object objectname="Zoom" slotsignature="track_vzoom_in" sortorder="2" />
-				<Object objectname="SheetView" slotsignature="browse_to_context_item_below" sortorder="5" submenu="Navigate" />
-				<Object objectname="TMainWindow" slotsignature="browse_to_last_track_in_active_sheet" sortorder="10"/>
-				<Object objectname="SheetView" sortorder="6" submenu="Navigate" pluginname="TraversoCommands" commandname="ArrowKeyBrowser" arguments="2;100" />
-
+			<Object objectname="TMainWindow" slotsignature="browse_to_last_track_in_active_sheet" sortorder="10"/>
 		</keyfact>
-		<keyfact key="PAGEUP" >
-
-				<Object objectname="MoveCommand" slotsignature="move_faster" sortorder="7" />
-
-                </keyfact>
-		<keyfact key="PAGEDOWN" >
-
-				<Object objectname="MoveCommand" slotsignature="move_slower" sortorder="7" />
-
-                </keyfact>
-		<keyfact key="PLUS" >
-
-				<Object objectname="MoveCommand" slotsignature="move_faster" sortorder="7" />
-
-                </keyfact>
-		<keyfact key="MINUS" >
-
-				<Object objectname="MoveCommand" slotsignature="move_slower" sortorder="7" />
-
-                </keyfact>
 		<keyfact key="V">
 
 				<Object objectname="SheetView" slotsignature="touch_play_cursor" modifierkeys="CTRL" sortorder="2" submenu="Playhead" />
@@ -268,25 +172,13 @@
 		</keyfact>
 		<keyfact key="MouseScrollVerticalUp" >
 
-				<Object objectname="MoveCommand" slotsignature="move_up"/>
-				<Object objectname="SheetView" slotsignature="scroll_up" sortorder="1" submenu="Scroll" />
-				<Object objectname="Gain" slotsignature="increase_gain" />
-				<Object objectname="TPanKnobView" slotsignature="pan_right" sortorder="1" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_increment" sortorder="1" />
-				<Object objectname="Zoom" slotsignature="track_vzoom_out" sortorder="7" />
-				<Object objectname="TrackPan" slotsignature="pan_right" sortorder="2" />
 				<Object objectname="CropClip" slotsignature="adjust_left" />
 
 		</keyfact>
 		<keyfact key="MouseScrollVerticalDown" >
 
-				<Object objectname="MoveCommand" slotsignature="move_down"/>
-				<Object objectname="SheetView" slotsignature="scroll_down" sortorder="4" submenu="Scroll" />
-				<Object objectname="Gain" slotsignature="decrease_gain" />
-				<Object objectname="TPanKnobView" slotsignature="pan_left" sortorder="2" />
 				<Object objectname="TrackPanelGain" slotsignature="gain_decrement" sortorder="2" />
-				<Object objectname="Zoom" slotsignature="track_vzoom_in" sortorder="8" />
-				<Object objectname="TrackPan" slotsignature="pan_left" sortorder="1" />
 				<Object objectname="CropClip" slotsignature="adjust_right" />
 
 		</keyfact>
@@ -335,13 +227,6 @@
 				<Object objectname="SheetView" mousehint="LR" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="Zoom" arguments="HJogZoom;1.2;0.2" />
 				<Object objectname="TrackView" mousehint="LR" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="Zoom" arguments="HJogZoom;1.2;0.2" />
 				<Object objectname="MoveClip" slotsignature="start_zoom" sortorder="11" isholdmodifier="1"/>
-
-		</keyfact>
-		<keyfact key="G" >
-
-				<Object objectname="AudioClipView" sortorder="5" pluginname="TraversoCommands" commandname="Gain" />
-				<Object objectname="TrackView" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
-				<Object objectname="Sheet" sortorder="7" pluginname="TraversoCommands" commandname="Gain" />
 
 		</keyfact>
 		<keyfact key="P" sortorder="16" >

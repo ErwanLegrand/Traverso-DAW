@@ -227,6 +227,12 @@ TraversoCommands::TraversoCommands()
 	function->commandName = "MoveCurveNodes";
 	function->useX = function->useY = true;
 	addFunction(function, MoveCurveNodesCommand);
+
+	function = new TFunction();
+	function->object = "ProcessingData";
+	function->description = tr("Gain");
+	function->commandName = "Gain";
+	addFunction(function, GainCommand);
 }
 
 void TraversoCommands::addFunction(TFunction *function, int command)
@@ -287,9 +293,8 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 				item = view->get_context();
                         } else if (TrackView* view = qobject_cast<TrackView*>(item)) {
 				item = view->get_context();
-                        } else if (SheetView* view = qobject_cast<SheetView*>(item)) {
-				item = view->get_context();
 			}
+
 				
 			if (!item) {
 				PERROR("TraversoCommands: Supplied QObject was not a ContextItem, "
