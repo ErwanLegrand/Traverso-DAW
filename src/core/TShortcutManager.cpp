@@ -410,7 +410,7 @@ void TShortcutManager::loadFunctions()
 	function = new TFunction();
 	function->object = "MoveTrack";
 	function->slotsignature = "move_up";
-	function->slotsignature = tr("Move Up");
+	function->description = tr("Move Up");
 	function->commandName = "MoveTrackUp";
 	addFunction(function);
 
