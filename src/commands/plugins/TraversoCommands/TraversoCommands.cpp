@@ -192,10 +192,18 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "AudioClipView";
-	function->description = tr("Move Clip");
+	function->description = tr("Move");
 	function->commandName = "MoveClip";
 	function->useX = function->useY = true;
 	function->arguments << "move";
+	addFunction(function, MoveClipCommand);
+
+	function = new TFunction();
+	function->object = "AudioClipView";
+	function->description = tr("Copy");
+	function->commandName = "CopyClip";
+	function->useX = function->useY = true;
+	function->arguments << "copy";
 	addFunction(function, MoveClipCommand);
 
 	function = new TFunction();
@@ -233,6 +241,15 @@ TraversoCommands::TraversoCommands()
 	function->description = tr("Gain");
 	function->commandName = "Gain";
 	addFunction(function, GainCommand);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->description = tr("Zoom");
+	function->commandName = "Zoom";
+	function->useX = true;
+	function->arguments << "HJogZoom" << "1.2" << "0.2";
+	addFunction(function, ZoomCommand);
+
 }
 
 void TraversoCommands::addFunction(TFunction *function, int command)
@@ -252,7 +269,6 @@ void TraversoCommands::create_menu_translations()
         translator->add_entry("TraversoCommands::TrackPan", tr("Panorama"));
         translator->add_entry("TraversoCommands::ResetTrackPan", tr("Panorama: Reset"));
         translator->add_entry("TraversoCommands::InsertSilence", tr("Insert Silence"));
-        translator->add_entry("TraversoCommands::CopyClip", tr("Copy Clip"));
         translator->add_entry("TraversoCommands::AddNewAudioTrack", tr("New Track"));
         translator->add_entry("TraversoCommands::RemoveClip", tr("Remove Clip"));
         translator->add_entry("TraversoCommands::RemoveTrack", tr("Remove"));
@@ -537,14 +553,9 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 		{
 			SheetView* view = qobject_cast<SheetView*>(obj);
 			if (!view) {
-                                TrackView* tv = qobject_cast<TrackView*>(obj);
-                                if (!tv) {
-                                        PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
-                                                        "ZoomCommand needs an SheetView as argument");
-                                        return 0;
-                                } else {
-                                        return new Zoom(tv, arguments);
-                                }
+				PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
+						"ZoomCommand needs an SheetView as argument");
+				return 0;
 
 			}
 			return new Zoom(view, arguments);

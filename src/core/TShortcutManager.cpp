@@ -96,9 +96,9 @@ void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
 {
 	keyfact.replace(QString("MOUSESCROLLVERTICALUP"), tr("Scroll Up"));
 	keyfact.replace(QString("MOUSESCROLLVERTICALDOWN"), tr("Scroll Down"));
-	keyfact.replace(QString("MOUSEBUTTONRIGHT"), tr("Right MB"));
-	keyfact.replace(QString("MOUSEBUTTONLEFT"), tr("Left MB"));
-	keyfact.replace(QString("MOUSEBUTTONMIDDLE"), tr("Center MB"));
+	keyfact.replace(QString("MOUSEBUTTONRIGHT"), tr("Right Button"));
+	keyfact.replace(QString("MOUSEBUTTONLEFT"), tr("Left Button"));
+	keyfact.replace(QString("MOUSEBUTTONMIDDLE"), tr("Center Button"));
 	keyfact.replace(QString("UPARROW"), tr("Up Arrow"));
 	keyfact.replace(QString("DOWNARROW"), tr("Down Arrow"));
 	keyfact.replace(QString("LEFTARROW"), tr("Left Arrow"));
@@ -368,15 +368,15 @@ void TShortcutManager::loadFunctions()
 	function = new TFunction();
 	function->object = "Zoom";
 	function->slotsignature = "hzoom_out";
-	function->description = tr("Zoom Horizontal Out");
-	function->commandName = "ZoomCommandOut";
+	function->description = tr("Out");
+	function->commandName = "ZoomOut";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "Zoom";
 	function->slotsignature = "hzoom_in";
-	function->description = tr("Zoom Horizontal In");
-	function->commandName = "ZoomCommandIn";
+	function->description = tr("In");
+	function->commandName = "ZoomIn";
 	addFunction(function);
 
 	function = new TFunction();
@@ -463,7 +463,12 @@ void TShortcutManager::loadFunctions()
 	function->commandName = "NavigateToLowerContext";
 	addFunction(function);
 
-
+	function = new TFunction();
+	function->object = "AudioClipView";
+	function->slotsignature = "fade_range";
+	function->description = tr("Closest: Adjust Length");
+	function->commandName = "AudioClip_FadeLength";
+	addFunction(function);
 }
 
 void TShortcutManager::saveFunction(TFunction *function)
@@ -500,9 +505,12 @@ void TShortcutManager::loadShortcuts()
 		QStringList modifiers = settings.value("modifiers").toString().toUpper().split(";", QString::SkipEmptyParts);
 		QString autorepeatinterval = settings.value("autorepeatinterval").toString();
 		QString autorepeatstartdelay = settings.value("autorepeatstartdelay").toString();
+		QString submenu = settings.value("submenu").toString();
+		QString sortorder = settings.value("sortorder").toString();
 		settings.endGroup();
 
 		function->m_keys << keys;
+		function->submenu = submenu;
 
 		foreach(QString string, modifiers)
 		{
@@ -524,6 +532,12 @@ void TShortcutManager::loadShortcuts()
 		if (ok)
 		{
 			function->autorepeatStartDelay = startdelay;
+		}
+
+		int order = sortorder.toInt(&ok);
+		if (ok)
+		{
+			function->sortorder = order;
 		}
 
 		foreach(QString keyString, function->getKeys()) {

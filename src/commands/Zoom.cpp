@@ -34,16 +34,11 @@
 // in case we run with memory leak detection enabled!
 #include "Debugger.h"
 
-Zoom::Zoom(TrackView* view, QVariantList args)
-        : TCommand("Zoom")
-{
-        init(view->get_sheetview(), view, args);
-}
-
 Zoom::Zoom(SheetView* sv, QVariantList args)
 	: TCommand("Zoom")
 {
-        init(sv, 0, args);
+	TrackView* tv = sv->get_trackview_under(cpointer().scene_pos());
+	init(sv, tv, args);
 }
 
 void Zoom::init(SheetView *sv, TrackView *tv, QVariantList args)

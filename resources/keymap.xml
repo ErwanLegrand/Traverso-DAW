@@ -154,8 +154,6 @@
 				<Object objectname="TrackPanelView" slotsignature="TrackView::edit_properties" sortorder="11" />
 				<Object objectname="AudioClipView" slotsignature="set_audio_file" sortorder="80" />
 				<Object objectname="CurveView" modifierkeys="CTRL" slotsignature="add_node" />
-				<Object objectname="AudioClipView" mousehint="LRUD" sortorder="9" modifierkeys="CTRL" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
-				<Object objectname="AudioClipView" mousehint="LRUD" pluginname="TraversoCommands" commandname="MoveClip" arguments="move" />
 				<Object objectname="CurveView" mousehint="LRUD" sortorder="3" pluginname="TraversoCommands" commandname="MoveCurveNodes" />
 				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" sortorder="3" />
 				<Object objectname="TrackView" mousehint="UD" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack"/>
@@ -189,7 +187,6 @@
 				<Object objectname="MoveMarker" slotsignature="next_snap_pos" autorepeatinterval="120" autorepeatstartdelay="200" sortorder="1" />
 				<Object objectname="WorkCursorMove" slotsignature="next_snap_pos" sortorder="1" />
 				<Object objectname="PlayHeadMove" slotsignature="next_snap_pos" autorepeatinterval="100" autorepeatstartdelay="200" sortorder="1" />
-				<Object objectname="AudioClipView" mousehint="LR" slotsignature="fade_range" sortorder="30" submenu="Fade" />
 
 		</keyfact>
 		<keyfact key="T" >
@@ -233,11 +230,6 @@
 
 				<Object objectname="Track" mousehint="LR"  sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 				<Object objectname="FadeCurveView" slotsignature="select_fade_shape"  sortorder="1"/>
-
-		</keyfact>
-		<keyfact key="C" >
-
-				<Object objectname="AudioClipView" mousehint="LRUD" sortorder="9" pluginname="TraversoCommands" commandname="CopyClip"  arguments="copy" />
 
 		</keyfact>
 		<keyfact key="D" >
