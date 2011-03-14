@@ -305,23 +305,23 @@ bool t_KeyStringToKeyValue(int &variable, const QString &text)
 							variable = Qt::Key_F1 + (x/3);
 						} else if (text=="SPACE") {
 							variable = Qt::Key_Space;
-						} else if (text == "MouseButtonLeft") {
+						} else if (text == "MOUSEBUTTONLEFT") {
 							variable = Qt::LeftButton;
-						} else if (text == "MouseButtonRight") {
+						} else if (text == "MOUSEBUTTONRIGHT") {
 							variable = Qt::RightButton;
-						} else if (text == "MouseButtonMiddle") {
+						} else if (text == "MOUSEBUTTONMIDDLE") {
 							variable = Qt::MidButton;
-						} else if (text == "MouseButtonX1") {
+						} else if (text == "MOUSEBUTTONX1") {
 							variable = Qt::XButton1;
-						} else if (text == "MouseButtonX2") {
+						} else if (text == "MOUSEBUTTONX2") {
 							variable = Qt::XButton2;
-						} else if (text == "MouseScrollHorizontalLeft") {
+						} else if (text == "MOUSESCROLLHORIZONTALLEFT") {
 							variable = MouseScrollHorizontalLeft;
-						} else if (text =="MouseScrollHorizontalRight") {
+						} else if (text =="MOUSESCROLLHORIZONTALRIGHT") {
 							variable = MouseScrollHorizontalRight;
-						} else if (text == "MouseScrollVerticalUp") {
+						} else if (text == "MOUSESCROLLVERTICALUP") {
 							variable = MouseScrollVerticalUp;
-						} else if( text == "MouseScrollVerticalDown") {
+						} else if( text == "MOUSESCROLLVERTICALDOWN") {
 							variable = MouseScrollVerticalDown;
 						} else if( text == "/") {
 							variable = Qt::Key_Slash;
