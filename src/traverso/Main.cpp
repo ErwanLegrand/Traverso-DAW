@@ -60,10 +60,7 @@ void catch_signal(int sig_num)
 }
 #endif
 
-#if defined (STATIC_BUILD)
-Q_IMPORT_PLUGIN(tcp_traversocommands);
-#endif
-		
+
 int main( int argc, char **argv )
 {
 	TRACE_OFF();

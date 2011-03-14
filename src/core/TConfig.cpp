@@ -21,9 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TConfig.h"
 #include "../config.h"
-#include "InputEngine.h"
 #include "AudioDevice.h"
 #include "Utils.h"
+#include "TShortcutManager.h"
 
 #include <QSettings>
 #include <QString>
@@ -48,7 +48,7 @@ TConfig::~ TConfig( )
 
 void TConfig::load_configuration()
 {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso-DAW", "Traverso");
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Traverso");
 	
 	QStringList keys = settings.allKeys();
 	
@@ -57,11 +57,13 @@ void TConfig::load_configuration()
 	}
 	
 	set_audiodevice_driver_properties();
+	tShortCutManager().loadFunctions();
+	tShortCutManager().loadShortcuts();
 }
 
 void TConfig::reset_settings( )
 {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso-DAW", "Traverso");
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Traverso");
 	
 	settings.clear();
 
@@ -76,8 +78,6 @@ void TConfig::reset_settings( )
 
 void TConfig::check_and_load_configuration( )
 {
-        QSettings::setPath (QSettings::IniFormat, QSettings::UserScope, QDir::homePath () + "/.traverso");
-
         load_configuration();
 
 	// Detect if the config file versions match, if not, there has been most likely 
@@ -87,17 +87,9 @@ void TConfig::check_and_load_configuration( )
 	}
 }
 
-void TConfig::init_input_engine( )
-{
-	ie().init_map(config().get_property("CCE", "keymap", "default").toString());
-        ie().create_menu_translations();
-}
-
-
-
 void TConfig::save( )
 {
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso-DAW", "Traverso");
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Traverso");
 	
 	QHash<QString, QVariant>::const_iterator i = m_configs.constBegin();
 	

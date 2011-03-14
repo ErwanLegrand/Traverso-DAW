@@ -961,7 +961,7 @@ void TMainWindow::process_context_menu_action( QAction * action )
 {
 	QStringList strings = action->data().toStringList();
 	QString name = strings.first();
-	ie().broadcast_action_from_contextmenu(name);
+	ie().dispatch_shortcut_from_contextmenu(name);
 }
 
 TCommand * TMainWindow::show_context_menu( )

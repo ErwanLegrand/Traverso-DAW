@@ -24,18 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextPointer.h"
 #include "Information.h"
 #include "TCommand.h"
-#include <CommandPlugin.h>
+#include "CommandPlugin.h"
 #include "Utils.h"
 #include "TShortcutManager.h"
 
-#include <QTime>
-#include <QFile>
-#include <QTextStream>
-#include <QDomDocument>
 #include <QMetaMethod>
-#include <QCoreApplication>
-#include <QPluginLoader>
-#include <QDir>
 #include <QKeyEvent>
 #include <QWheelEvent>
 
@@ -101,45 +94,13 @@ InputEngine::InputEngine()
         m_sCollectedNumber = "";
 
         connect(&m_holdKeyRepeatTimer, SIGNAL(timeout()), this, SLOT(process_hold_modifier_keys()));
-
-
-//#define profile
-
-#if defined (profile)
-	trav_time_t starttime = get_microseconds();
-#endif
-	
-	foreach (QObject* obj, QPluginLoader::staticInstances()) {
-		CommandPlugin* plug = qobject_cast<CommandPlugin*>(obj);
-                m_commandplugins.insert(plug->metaObject()->className(), plug);
-	}
-	
-#if !defined (STATIC_BUILD)
-	QDir pluginsDir("lib/commandplugins");
-	foreach (const QString &fileName, pluginsDir.entryList(QDir::Files)) {
-		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-		CommandPlugin* plug = qobject_cast<CommandPlugin*>(loader.instance());
-		if (plug) {
-                        m_commandplugins.insert(plug->metaObject()->className(), plug);
-			printf("InputEngine:: Succesfully loaded plugin: %s\n", plug->metaObject()->className());
-		} else {
-			printf("InputEngine:: Plugin load failed with %s\n", QS_C(loader.errorString()));
-		}
-	}
-	
-#endif
-
-#if defined (profile)
-	int processtime = (int) (get_microseconds() - starttime);
-	printf("InputEngine::Plugin load time: %d useconds\n\n", processtime);
-#endif
 }
 
 InputEngine::~ InputEngine( )
 {
 }
 
-int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
+int InputEngine::dispatch_shortcut_from_contextmenu(const QString& keySequence)
 {
 	PENTER2;
 	TShortcut* action = tShortCutManager().getShortcut(keySequence);
@@ -149,14 +110,15 @@ int InputEngine::broadcast_action_from_contextmenu(const QString& keySequence)
 		return -1;
 	}
 	
-	return broadcast_action(action, false, true);
+	return dispatch_shortcut(action, false, true);
 }
 
 
-int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fromContextMenu)
+int InputEngine::dispatch_shortcut(TShortcut* shortCut, bool autorepeat, bool fromContextMenu)
 {
 	PENTER2;
 
+	PMESG("Dispatching key %d", shortCut->getKeyValue());
         TCommand* k = 0;
 	QObject* item = 0;
 
@@ -176,7 +138,7 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 	
 	for (int i=0; i < list.size(); ++i) {
 		k = 0;
-		m_broadcastResult = 0;
+		m_dispatchResult = 0;
 		
 		item = list.at(i);
 		
@@ -253,6 +215,7 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 		QString commandname = function->commandName;
 
                 if (item == m_holdingCommand) {
+			PMESG("Dispatching to holdcommand");
 			if (QMetaObject::invokeMethod(item, QS_C(slotsignature), Qt::DirectConnection, Q_ARG(bool, autorepeat))) {
                                 PMESG("HIT, invoking %s::%s", m_holdingCommand->metaObject()->className(), QS_C(slotsignature));
                                 // only now we know which object this hold modifier key was dispatched on.
@@ -270,7 +233,7 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
                 if ( ! m_holdingCommand ) {
 			
 			if ( ! pluginname.isEmpty() ) {
-				CommandPlugin* plug = m_commandplugins.value(pluginname);
+				CommandPlugin* plug = tShortCutManager().getCommandPlugin(pluginname);
 				if (!plug)
 				{
 					info().critical(tr("Command Plugin %1 not found!").arg(pluginname));
@@ -294,9 +257,10 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 			// FIXME shortCut->getFunctionsForObject() returns a list,
 			// we need to iterate over the list for a match or what ?
 			QString delegatedobject;
+			QList<TFunction*> objectFunctions;
 			
                         if (m_holdingCommand) {
-				function = shortCut->getFunctionsForObject("HoldCommand").first();
+				objectFunctions = shortCut->getFunctionsForObject("HoldCommand");
 				delegatedobject = "HoldCommand";
 			} else {
                                 delegatedobject = metaobject->className();
@@ -304,11 +268,17 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 					//FIXME: objects has values inserted with insertMulti()
 					// do we have to use values(delegatedobject) instead of value(delegatedobject)
 					// here too?
-					function = shortCut->getFunctionsForObject(delegatedobject).first();
+					objectFunctions = shortCut->getFunctionsForObject(delegatedobject);
 				} else {
-					function = shortCut->getFunctionsForObject(delegatedobject).first();
+					objectFunctions = shortCut->getFunctionsForObject(delegatedobject);
 				}
 				PMESG("delegatedobject is %s", QS_C(delegatedobject));
+			}
+
+			if (objectFunctions.size()) {
+				function = objectFunctions.first();
+			} else {
+				function = 0;
 			}
 				
 			if ( ! function) {
@@ -367,18 +337,18 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 		// but no command object needed to be returned, the action was not succesfull, and we 
 		// don't want to try lower level context items or the action was succesfull but we'd like 
 		// to give a lower level object precedence over the current one.
-		if (m_broadcastResult) {
-			if (m_broadcastResult == SUCCES) {
+		if (m_dispatchResult) {
+			if (m_dispatchResult == SUCCES) {
 				PMESG("Broadcast Result indicates succes, but no returned Command object");
 				conclusion();
 				return 1;
 			}
-			if (m_broadcastResult == FAILURE) {
+			if (m_dispatchResult == FAILURE) {
 				PMESG("Broadcast Result indicates failure, and doesn't want lower level items to be processed");
 				conclusion();
 				return 0;
 			}
-			if (m_broadcastResult == DIDNOTIMPLEMENT) {
+			if (m_dispatchResult == DIDNOTIMPLEMENT) {
 				PMESG("Broadcast Result indicates succes, but didn't want to perform it's action,"
 						 "so we continue traversing the objects list");
 				continue;
@@ -412,19 +382,19 @@ int InputEngine::broadcast_action(TShortcut* shortCut, bool autorepeat, bool fro
 
 TCommand* InputEngine::succes()
 {
-	m_broadcastResult = SUCCES;
+	m_dispatchResult = SUCCES;
 	return 0;
 }
 
 TCommand* InputEngine::failure()
 {
-	m_broadcastResult = FAILURE;
+	m_dispatchResult = FAILURE;
 	return 0;
 }
 
 TCommand* InputEngine::did_not_implement()
 {
-	m_broadcastResult = DIDNOTIMPLEMENT;
+	m_dispatchResult = DIDNOTIMPLEMENT;
 	return 0;
 }
 
@@ -619,7 +589,7 @@ void InputEngine::process_press_event(int keyValue)
 	{
 		cpointer().inputengine_first_input_event();
 
-		broadcast_action(shortCut);
+		dispatch_shortcut(shortCut);
 		return;
 	}
 }
@@ -661,7 +631,7 @@ void InputEngine::process_hold_modifier_keys()
         foreach(HoldModifierKey* hmk, m_holdModifierKeys) {
                 if (!hmk->wasExecuted) {
                         hmk->wasExecuted = true;
-			broadcast_action(hmk->shortcut);
+			dispatch_shortcut(hmk->shortcut);
 			hmk->lastTimeExecuted = get_microseconds() + hmk->shortcut->autorepeatStartDelay * 1000;
                         continue;
                 }
@@ -671,7 +641,7 @@ void InputEngine::process_hold_modifier_keys()
                 // else the next interval might be too long between the previous one.
 		if ((timeDiff + 2 * 1000) >= hmk->shortcut->autorepeatInterval * 1000) {
                         hmk->lastTimeExecuted = get_microseconds();
-			broadcast_action(hmk->shortcut, true);
+			dispatch_shortcut(hmk->shortcut, true);
                 }
         }
 }
@@ -751,156 +721,6 @@ void InputEngine::conclusion()
 }
 
 
-int InputEngine::init_map(const QString& keymap)
-{
-	PENTER;
-	
-	QString filename = ":/keymaps/" + keymap + ".xml";
-	if ( ! QFile::exists(filename)) {
-		filename = QDir::homePath() + "/.traverso/keymaps/" + keymap + ".xml";
-	}
-	
-	QDomDocument doc("keymap");
-	QFile file(filename);
-	if (!file.open(QIODevice::ReadOnly))
-		return -1;
-	if (!doc.setContent(&file)) {
-		file.close();
-		return -1;
-	}
-	file.close();
-
-	PMESG("Using keymap: %s", QS_C(keymap));
-	
-//	foreach(TShortcutKey* action, m_ieActions) {
-//		delete action;
-//	}
-	
-//	m_ieActions.clear();
-	m_modifierKeys.clear();
-	m_modes.clear();
-	
-	
-	QDomElement root = doc.documentElement();
-	
-	
-	QDomNode modifierKeysNode = root.firstChildElement("ModifierKeys");
-	QDomNode modifierKeyNode = modifierKeysNode.firstChild();
-	
-	int keycode;
-	QString key;
-	
-	while( !modifierKeyNode.isNull() ) {
-		QDomElement e = modifierKeyNode.toElement();
-		
-		key = e.attribute( "key", "");
-		
-		if (!t_KeyStringToKeyValue(keycode, key)) {
-                        info().warning(tr("Input Engine: Loaded keymap has this unrecognized key: %1").arg(key));
-                }
-		m_modifierKeys.append(keycode);
-		
-		modifierKeyNode = modifierKeyNode.nextSibling();
-	}
-		
-	
-	
-	QDomNode modesNode = root.firstChildElement("Modes");
-	QDomNode modeNode = modesNode.firstChild();
-	
-	int id;
-	QString modename;
-	
-	while( !modeNode.isNull() ) {
-		QDomElement e = modeNode.toElement();
-		
-		modename = e.attribute("name", "");
-		id = e.attribute("id", "-1").toInt();
-		
-		m_modes.insert(modename, id);
-		
-		modeNode = modeNode.nextSibling();
-	}
-	
-	
-	
-	
-	QDomNode keyfactsNode = root.firstChildElement("Keyfacts");
-	QDomNode keyfactNode = keyfactsNode.firstChild();
-	
-	QString mouseHint, modifierKeys;
-	TFunction* function;
-	
-	while( !keyfactNode.isNull() ) {
-		QDomElement e = keyfactNode.toElement();
-		
-		if( e.isNull() ) {
-			continue;
-		}
-			
-		if( ! (e.tagName() == "keyfact" ) ) {
-			PERROR("Detected wrong tagname, misspelled: keyfact !!");
-			continue;
-		}
-		
-		key = e.attribute("key", "");
-
-		QDomNode objectNode = e.firstChild();
-	
-		while(!objectNode.isNull()) {
-
-			QDomElement e = objectNode.toElement();
-
-			function = new TFunction;
-
-			function->modes = e.attribute("modes", "All").split(";");
-			function->submenu = e.attribute("submenu", "");
-			function->sortorder = e.attribute( "sortorder", "0").toInt();
-			function->autorepeatInterval = e.attribute("autorepeatinterval", "40").toInt();
-			function->autorepeatStartDelay = e.attribute("autorepeatstartdelay", "100").toInt();
-			mouseHint = e.attribute( "mousehint", "" );
-			QString args = e.attribute("arguments", "");
-			modifierKeys = e.attribute("modifierkeys", "");
-			
-			if ( ! args.isEmpty() )
-			{
-				QStringList arglist = args.split(";");
-				for (int i=0; i<arglist.size(); ++i)
-				{
-					function->arguments.append(arglist.at(i));
-				}
-			}
-			
-			if (! modifierKeys.isEmpty())
-			{
-				QStringList modifierlist = modifierKeys.split(";");
-				for (int i=0; i<modifierlist.size(); ++i)
-				{
-					int keycode;
-					t_KeyStringToKeyValue(keycode, modifierlist.at(i));
-					function->modifierkeys.append(keycode);
-				}
-			}
-			
-			if (mouseHint == "LR") {
-				function->useX = true;
-			}
-			if (mouseHint == "UD") {
-				function->useY = true;
-			}
-			if (mouseHint == "LRUD") {
-				function->useX = function->useY = true;
-			}
-			
-			objectNode = objectNode.nextSibling();
-		}
-		
-		keyfactNode = keyfactNode.nextSibling();
-	}
-
-	return 1;
-}
-
 void InputEngine::filter_unknown_sequence(QString& sequence)
 {
 	sequence.replace(tr("Up Arrow"), "Up");
@@ -912,13 +732,6 @@ void InputEngine::filter_unknown_sequence(QString& sequence)
 	sequence.replace(QString("+"), "Plus");
 //	sequence.replace(tr("Page Down"));
 //	sequence.replace(tr("Page Up"));
-}
-
-void InputEngine::create_menu_translations()
-{
-        foreach(CommandPlugin* plug, m_commandplugins) {
-                plug->create_menu_translations();
-        }
 }
 
 

@@ -143,8 +143,7 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "SheetView";
 	function->description = tr("Arrow Key Browser: Up");
-	function->addDefaultKeyString("UARROW");
-	function->commandName = "ArrowKeyBrowser:Up";
+	function->commandName = "ArrowKeyBrowserUp";
 	function->submenu = "Navigate";
 	function->pluginname = "TraversoCommands";
 	function->arguments << 1 << 100;
@@ -153,8 +152,7 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "SheetView";
 	function->description = tr("Arrow Key Browser: Down");
-	function->addDefaultKeyString("DARROW");
-	function->commandName = "ArrowKeyBrowser:Down";
+	function->commandName = "ArrowKeyBrowserDown";
 	function->submenu = "Navigate";
 	function->pluginname = "TraversoCommands";
 	function->arguments << 2 << 100;
@@ -163,8 +161,7 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "SheetView";
 	function->description = tr("Arrow Key Browser: Left");
-	function->addDefaultKeyString("LARROW");
-	function->commandName = "ArrowKeyBrowser:Left";
+	function->commandName = "ArrowKeyBrowserLeft";
 	function->submenu = "Navigate";
 	function->pluginname = "TraversoCommands";
 	function->arguments << 3 << 100;
@@ -173,8 +170,7 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "SheetView";
 	function->description = tr("Arrow Key Browser: Right");
-	function->addDefaultKeyString("RARROW");
-	function->commandName = "ArrowKeyBrowser:Right";
+	function->commandName = "ArrowKeyBrowserRight";
 	function->submenu = "Navigate";
 	function->arguments << 4 << 100;
 	addFunction(function, ArrowKeyBrowserCommand);
@@ -182,17 +178,14 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "AudioTrack";
 	function->description = tr("Import Audio");
-	function->addDefaultKeyString("I");
 	function->commandName = "ImportAudio";
 	addFunction(function, ImportAudioCommand);
 
 	function = new TFunction();
 	function->object = "AudioTrackView";
 	function->description = tr("Fold Track");
-	function->addDefaultKeyString("D;MouseButtonLeft");
 	function->commandName = "FoldTrack";
 	function->useX = true;
-	function->modifierkeys << Qt::Key_Control << Qt::Key_Shift;
 	function->arguments << "fold_track";
 	addFunction(function, MoveClipCommand);
 
@@ -200,7 +193,6 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "AudioClipView";
 	function->description = tr("Move Clip");
-	function->addDefaultKeyString("D;MouseButtonLeft");
 	function->commandName = "MoveClip";
 	function->useX = function->useY = true;
 	function->arguments << "move";
@@ -209,27 +201,22 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "SheetView";
 	function->description = tr("Fold Sheet");
-	function->addDefaultKeyString("D;MouseButtonLeft");
 	function->commandName = "FoldSheet";
 	function->useX = function->useY = true;
-	function->modifierkeys << Qt::Key_Shift;
 	function->arguments << "fold_sheet";
 	addFunction(function, MoveClipCommand);
 
 	function = new TFunction();
 	function->object = "TimeLineView";
 	function->description = tr("Fold Markers");
-	function->addDefaultKeyString("D;MouseButtonLeft");
 	function->commandName = "FoldMarkers";
 	function->useX = true;
-	function->modifierkeys << Qt::Key_Shift;
 	function->arguments << "fold_markers";
 	addFunction(function, MoveClipCommand);
 
 	function = new TFunction();
 	function->object = "TrackView";
 	function->description = tr("Move Up/Down");
-	function->addDefaultKeyString("D;MouseButtonLeft");
 	function->commandName = "MoveTrack";
 	function->useY = true;
 	addFunction(function, MoveTrackCommand);
@@ -237,7 +224,6 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "CurveView";
 	function->description = tr("Move Curve Node(s)");
-	function->addDefaultKeyString("D;MouseButtonLeft");
 	function->commandName = "MoveCurveNodes";
 	function->useX = function->useY = true;
 	addFunction(function, MoveCurveNodesCommand);
@@ -246,6 +232,7 @@ TraversoCommands::TraversoCommands()
 void TraversoCommands::addFunction(TFunction *function, int command)
 {
 	function->pluginname = "TraversoCommands";
+	function->commandName.prepend("TCP_");
 	m_dict.insert(function->commandName, command);
 	tShortCutManager().addFunction(function);
 }

@@ -37,8 +37,6 @@ public:
 	void check_and_load_configuration();
 	void reset_settings( );
 	
-	void init_input_engine();
-
 	void save();
 
 signals:

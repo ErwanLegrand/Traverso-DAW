@@ -155,8 +155,6 @@ public:
 	void reset_default_config();
 
 private slots:
-	void keymap_index_changed(const QString& keymap);
-	void update_keymap_combo();
 	void on_exportButton_clicked();
 	void on_printButton_clicked();
 };

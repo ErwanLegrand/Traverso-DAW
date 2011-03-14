@@ -95,7 +95,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 Traverso::Traverso(int &argc, char **argv )
 	: QApplication ( argc, argv )
 {
-	QCoreApplication::setOrganizationName("Traverso-DAW");
+	QCoreApplication::setOrganizationName("Traverso");
 	QCoreApplication::setApplicationName("Traverso");
 	QCoreApplication::setOrganizationDomain("traverso-daw.org");
 		
@@ -126,8 +126,6 @@ void Traverso::create_interface( )
         TMainWindow* tMainWindow = TMainWindow::instance();
         tMainWindow->show();
 
-        config().init_input_engine();
-	
 	QString projectToLoad = "";
 	
 	foreach(QString string, QCoreApplication::arguments ()) {

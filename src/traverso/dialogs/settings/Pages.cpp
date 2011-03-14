@@ -819,23 +819,15 @@ KeyboardConfigPage::KeyboardConfigPage(QWidget * parent)
 	: ConfigPage(parent)
 {
 	setupUi(this);
-        connect(keymapComboBox, SIGNAL(activated(const QString)),
-		this, SLOT(keymap_index_changed(const QString)));
-	
+
 	load_config();
-	
-	update_keymap_combo();
 }
 
 void KeyboardConfigPage::load_config()
 {
-        int doubleFactTimeout = config().get_property("CCE", "doublefactTimeout", 220).toInt();
-        int holdTimeout = config().get_property("CCE", "holdTimeout", 180).toInt();
         int jogByPassDistance = config().get_property("CCE", "jobbypassdistance", 70).toInt();
         int mouseClickTakesOverKeyboardNavigation = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
 	
-	doubleFactTimeoutSpinBox->setValue(doubleFactTimeout);
-	holdTimeoutSpinBox->setValue(holdTimeout);
         mouseTreshHoldSpinBox->setValue(jogByPassDistance);
 
         if (mouseClickTakesOverKeyboardNavigation) {
@@ -843,82 +835,22 @@ void KeyboardConfigPage::load_config()
         } else {
                 mouseMoveRadioButton->setChecked(true);
         }
-	
-	QString defaultkeymap = config().get_property("CCE", "keymap", "default").toString();
-	int index = keymapComboBox->findText(defaultkeymap);
-	if (index >= 0) {
-		keymapComboBox->setCurrentIndex(index);
-	}
 }
 
 void KeyboardConfigPage::save_config()
 {
-	QString currentkeymap = config().get_property("CCE", "keymap", "default").toString();
-	QString newkeymap = keymapComboBox->currentText();
-	
-	config().set_property("CCE", "doublefactTimeout", doubleFactTimeoutSpinBox->value());
-	config().set_property("CCE", "holdTimeout", holdTimeoutSpinBox->value());
-	config().set_property("CCE", "keymap", newkeymap);
         config().set_property("CCE", "jobbypassdistance", mouseTreshHoldSpinBox->value());
         config().set_property("CCE", "mouseclicktakesoverkeyboardnavigation", leftMouseClickRadioButton->isChecked());
 
         cpointer().set_jog_bypass_distance(mouseTreshHoldSpinBox->value());
         cpointer().set_left_mouse_click_bypasses_jog(leftMouseClickRadioButton->isChecked());
-
-	if (currentkeymap != newkeymap) {
-		ie().init_map(newkeymap);
-	}
 }
 
 void KeyboardConfigPage::reset_default_config()
 {
-        config().set_property("CCE", "doublefactTimeout", 220);
-        config().set_property("CCE", "holdTimeout", 180);
-	config().set_property("CCE", "keymap", "default");
         config().set_property("CCE", "jobbypassdistance", 70);
         config().set_property("CCE", "mouseclicktakesoverkeyboardnavigation", false);
         load_config();
-}
-
-
-void KeyboardConfigPage::keymap_index_changed(const QString& keymap)
-{
-	QString filename = ":/keymaps/" + keymap + ".xml";
-	if ( ! QFile::exists(filename)) {
-		filename = QDir::homePath() + "/.traverso/keymaps/" + keymap + ".xml";
-	}
-	
-	QDomDocument doc("keymap");
-	QFile file(filename);
-	if (!file.open(QIODevice::ReadOnly))
-		return;
-	if (!doc.setContent(&file)) {
-		file.close();
-		return;
-	}
-	file.close();
-
-	QDomElement root = doc.documentElement();
-	QDomNode mapinfo = root.firstChildElement("KeymapInfo");
-	QDomElement e = mapinfo.toElement();
-	QString description = e.attribute("description", tr("No description set for this keymap"));
-	
-	descriptionTextEdit->setHtml(description);
-}
-
-void KeyboardConfigPage::update_keymap_combo()
-{
-	keymapComboBox->clear();
-	
-	QDir keymapdir(":/keymaps");
-	foreach (QString filename, keymapdir.entryList(QDir::Files)) {
-		keymapComboBox->insertItem(0, filename.remove(".xml"));
-	}
-	
-	keymapdir.setPath(QDir::homePath() + "/.traverso/keymaps");
-	foreach (QString filename, keymapdir.entryList(QDir::Files)) {
-		keymapComboBox->insertItem(0, filename.remove(".xml"));
-	}
 }
 
 void KeyboardConfigPage::on_exportButton_clicked()

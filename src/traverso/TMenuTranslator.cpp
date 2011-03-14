@@ -369,7 +369,7 @@ QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> meta
 	QString html = QString("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
 	      "<style type=\"text/css\">\n"
 	      "table {font-size: 11px;}\n"
-	      ".object {background-color: %1; font-size: 12px;}\n"
+	      ".object {background-color: %1; font-size: 11px;}\n"
 	      ".description {background-color: %2; font-size: 11px; font-weight: bold;}\n"
 	      "</style>\n"
 	      "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
@@ -379,7 +379,7 @@ QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> meta
 		html += "<table><tr class=\"object\">\n<td width=220 align=\"center\">" + pc->text() + "</td></tr>\n";
 	} else {
 		html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\"><b>" + name + "</b><font style=\"font-size: 11px;\">&nbsp;&nbsp;&nbsp;" + holdKeyFact + "</font></td></tr>\n";
-		html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Key Sequence") + "</td></tr>\n";
+		html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Shortcut") + "</td></tr>\n";
 	}
 
 	QStringList result;

@@ -287,8 +287,8 @@ bool t_KeyStringToKeyValue(int &variable, const QString &text)
 			if (x>=0)
 				variable = Qt::Key_Escape + (x/9);
 			else {
-				s="|HOME    |END     |LARROW  |UARROW  |RARROW  "
-				"|DARROW  |PRIOR   |NEXT    ";
+				s="|HOME    |END     |LEFTARROW  |UPARROW  |RIGHTARROW  "
+				"|DOWNARROW  |PRIOR   |NEXT    ";
 				x = s.indexOf("|" + text);
 				if (x>=0)
 					variable = Qt::Key_Home + (x/9);

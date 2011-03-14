@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QVariantList>
 #include <QStringList>
 
+class CommandPlugin;
 
 class TFunction {
 
@@ -47,10 +48,9 @@ public:
 		autorepeatStartDelay = 200;
 	}
 
-	void addDefaultKeyString(const QString& keyString);
-
 	QString getKeySequence();
-	QStringList getKeyStrings() const;
+	QStringList getModifierKeys();
+	QStringList getKeys() const;
 
 	QStringList modes;
 	QVariantList arguments;
@@ -68,8 +68,7 @@ public:
 	int autorepeatStartDelay;
 
 private:
-	QString	m_keyString;
-	QStringList m_defaultKeyStrings;
+	QStringList m_keys;
 
 	friend class TShortcutManager;
 };
@@ -111,13 +110,17 @@ public:
 	QList<TFunction* > getFunctionsForMetaobject(const QMetaObject* mo) const;
 	TShortcut* getShortcut(const QString& key);
 	TShortcut* getShortcut(int key);
+	CommandPlugin* getCommandPlugin(const QString& pluginName);
 
 	void loadFunctions();
+	void saveFunction(TFunction* function);
+	void loadShortcuts();
 	static void makeShortcutKeyHumanReadable(QString& key);
 
 private:
+	QHash<QString, CommandPlugin*>	m_commandPlugins;
 	QHash<QString, TFunction*>	m_functions;
-	QHash<int, TShortcut*>	m_shortcuts;
+	QHash<int, TShortcut*>		m_shortcuts;
 
 	TShortcutManager();
 	TShortcutManager(const TShortcutManager&) : QObject() {}

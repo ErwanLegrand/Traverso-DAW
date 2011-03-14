@@ -17,8 +17,8 @@
         <file alias="lock">images/lock.png</file>
         <file alias="traverso">images/traverso.xpm</file>
         <file alias="windowicon">images/windowicon.xpm</file>
-        <file alias="keymaps/default.xml">keymap.xml</file>
-        <file alias="fadeshapes">fadeshapes.xml</file>
+	<file alias="Traverso/shortcuts.ini">shortcuts.ini</file>
+	<file alias="fadeshapes">fadeshapes.xml</file>
         <file alias="themes/Traverso Light">themes/traversolight.xml</file>
         <file alias="themes/Ubuntu">themes/ubuntu.xml</file>
         <file alias="themes/Medium Contrast">themes/medium-contrast.xml</file>

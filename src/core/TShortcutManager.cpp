@@ -21,10 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TShortcutManager.h"
 
+#include <QPluginLoader>
+#include <QSettings>
+#include <QCoreApplication>
+
 #include "ContextItem.h"
 #include "InputEngine.h"
 #include "Information.h"
 #include "Utils.h"
+#include "TConfig.h"
+#include "CommandPlugin.h"
 
 #include "Debugger.h"
 
@@ -37,21 +43,9 @@ QString TFunction::getKeySequence()
 {
 	QString sequence;
 	QStringList sequenceList;
-	QString modifiersString;
+	QString modifiersString = getModifierKeys().join("+");
 
-	foreach(int modifier, modifierkeys) {
-		if (modifier == Qt::Key_Alt) {
-			modifiersString += "Alt+";
-		} else if (modifier == Qt::Key_Control) {
-			modifiersString += "Ctrl+";
-		} else if (modifier == Qt::Key_Shift) {
-			modifiersString += "Shift+";
-		} else if (modifier == Qt::Key_Meta) {
-			modifiersString += "Meta+";
-		}
-	}
-
-	foreach(QString keyString, m_defaultKeyStrings)
+	foreach(QString keyString, m_keys)
 	{
 
 		sequenceList << (modifiersString + keyString);
@@ -64,14 +58,28 @@ QString TFunction::getKeySequence()
 	return sequence;
 }
 
-QStringList TFunction::getKeyStrings() const
+QStringList TFunction::getModifierKeys()
 {
-	return m_defaultKeyStrings;
+	QStringList list;
+
+	foreach(int modifier, modifierkeys) {
+		if (modifier == Qt::Key_Alt) {
+			list << "Alt";
+		} else if (modifier == Qt::Key_Control) {
+			list << "Ctrl";
+		} else if (modifier == Qt::Key_Shift) {
+			list << "Shift";
+		} else if (modifier == Qt::Key_Meta) {
+			list << "Meta";
+		}
+	}
+
+	return list;
 }
 
-void TFunction::addDefaultKeyString(const QString &keyString)
+QStringList TFunction::getKeys() const
 {
-	m_defaultKeyStrings << keyString.split(";");
+	return m_keys;
 }
 
 void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
@@ -81,10 +89,10 @@ void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
 	keyfact.replace(QString("MouseButtonRight"), tr("Right MB"));
 	keyfact.replace(QString("MouseButtonLeft"), tr("Left MB"));
 	keyfact.replace(QString("MouseButtonMiddle"), tr("Center MB"));
-	keyfact.replace(QString("UARROW"), tr("Up Arrow"));
-	keyfact.replace(QString("DARROW"), tr("Down Arrow"));
-	keyfact.replace(QString("LARROW"), tr("Left Arrow"));
-	keyfact.replace(QString("RARROW"), tr("Right Arrow"));
+	keyfact.replace(QString("UpArrow"), tr("Up Arrow"));
+	keyfact.replace(QString("DownArrow"), tr("Down Arrow"));
+	keyfact.replace(QString("LeftArrow"), tr("Left Arrow"));
+	keyfact.replace(QString("RightArrow"), tr("Right Arrow"));
 	keyfact.replace(QString("DELETE"), tr("Delete"));
 	keyfact.replace(QString("MINUS"), QString("-"));
 	keyfact.replace(QString("PLUS"), QString("+"));
@@ -101,7 +109,6 @@ TShortcutManager& tShortCutManager()
 
 TShortcutManager::TShortcutManager()
 {
-	loadFunctions();
 }
 
 void TShortcutManager::addFunction(TFunction *function)
@@ -113,15 +120,6 @@ void TShortcutManager::addFunction(TFunction *function)
 	}
 
 	m_functions.insert(function->commandName, function);
-
-	QStringList keyStrings = function->getKeyStrings();
-	foreach(QString keyString, keyStrings) {
-		TShortcut* shortcut = getShortcut(keyString);
-		if (shortcut)
-		{
-			shortcut->objects.insertMulti(function->object, function);
-		}
-	}
 }
 
 TFunction* TShortcutManager::getFunction(const QString &functionName) const
@@ -203,15 +201,24 @@ TShortcut* TShortcutManager::getShortcut(int key)
 	return shortcut;
 }
 
+CommandPlugin* TShortcutManager::getCommandPlugin(const QString &pluginName)
+{
+	return m_commandPlugins.value(pluginName);
+}
+
 void TShortcutManager::loadFunctions()
 {
-	foreach(TFunction* function, m_functions.values())
-	{
-		delete function;
+#if defined (STATIC_BUILD)
+	Q_IMPORT_PLUGIN(tcp_traversocommands);
+#endif
+
+	foreach (QObject* obj, QPluginLoader::staticInstances()) {
+		CommandPlugin* plug = qobject_cast<CommandPlugin*>(obj);
+		if (plug)
+		{
+			m_commandPlugins.insert(plug->metaObject()->className(), plug);
+		}
 	}
-
-	m_functions.clear();
-
 
 	TFunction* function;
 
@@ -219,47 +226,147 @@ void TShortcutManager::loadFunctions()
 	function->object = "AudioTrack";
 	function->slotsignature = "toggle_show_clip_volume_automation";
 	function->description = tr("Show/Hide Clip Volume Automation");
-	function->addDefaultKeyString("F2");
-	function->commandName = "AudioTrack:ShowClipVolumeAutomation";
+	function->commandName = "AudioTrack_ShowClipVolumeAutomation";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "AudioTrack";
 	function->slotsignature = "toggle_arm";
 	function->description = tr("Record: On/Off");
-	function->addDefaultKeyString("R");
-	function->commandName = "AudioTrack:ToggleRecord";
+	function->commandName = "AudioTrack_ToggleRecord";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "AudioTrack";
 	function->slotsignature = "silence_others";
 	function->description = tr("Silence other tracks");
-	function->addDefaultKeyString("A");
-	function->commandName = "AudioTrack:SilenceOthers";
+	function->commandName = "AudioTrack_SilenceOthers";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "FadeCurve";
 	function->slotsignature = "set_mode";
 	function->description = tr("Cycle Shape");
-	function->addDefaultKeyString("H");
-	function->commandName = "FadeCurve:CycleShape";
+	function->commandName = "FadeCurve_CycleShape";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "TMainWindow";
 	function->slotsignature = "show_context_menu";
 	function->description = tr("Show Context Menu");
-	function->addDefaultKeyString("MouseButtonRight");
-	function->commandName = "TMainWindow:ShowContextMenu";
+	function->commandName = "TMainWindow_ShowContextMenu";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "HoldCommand";
 	function->slotsignature = "show_context_menu";
 	function->description = tr("Show Context Menu");
-	function->addDefaultKeyString("MouseButtonRight");
-	function->commandName = "HoldCommand:ShowContextMenu";
+	function->commandName = "HoldCommand_ShowContextMenu";
 	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveCommand";
+	function->slotsignature = "move_right";
+	function->commandName = "MoveCommandRight";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveCommand";
+	function->slotsignature = "move_left";
+	function->commandName = "MoveCommandLeft";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveCommand";
+	function->slotsignature = "move_up";
+	function->commandName = "MoveCommandUp";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveCommand";
+	function->slotsignature = "move_down";
+	function->commandName = "MoveCommandDown";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveCommand";
+	function->slotsignature = "move_faster";
+	function->commandName = "MoveCommandFaster";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveCommand";
+	function->slotsignature = "move_slower";
+	function->commandName = "MoveCommandSlower";
+	addFunction(function);
+}
+
+void TShortcutManager::saveFunction(TFunction *function)
+{
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Shortcuts");
+
+	QStringList groups = settings.childGroups();
+	if (groups.contains("HoldCommand_ShowContextMenu"))
+	{
+		printf("settings contains %s\n", "HoldCommand_ShowContextMenu");
+	}
+
+	settings.beginGroup(function->commandName);
+	settings.setValue("keys", function->getKeys().join(";"));
+	settings.setValue("modifiers", function->getModifierKeys().join(";"));
+	settings.endGroup();
+}
+
+void TShortcutManager::loadShortcuts()
+{
+	QSettings::setPath (QSettings::IniFormat, QSettings::UserScope, ":/");
+	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "shortcuts");
+
+	QStringList groups = settings.childGroups();
+	foreach(TFunction* function, m_functions)
+	{
+		if (!groups.contains(function->commandName))
+		{
+			continue;
+		}
+
+		settings.beginGroup(function->commandName);
+		QStringList keys = settings.value("keys").toString().toUpper().split(";", QString::SkipEmptyParts);
+		QStringList modifiers = settings.value("modifiers").toString().toUpper().split(";", QString::SkipEmptyParts);
+		QString autorepeatinterval = settings.value("autorepeatinterval").toString();
+		QString autorepeatstartdelay = settings.value("autorepeatstartdelay").toString();
+		settings.endGroup();
+
+		function->m_keys << keys;
+
+		foreach(QString string, modifiers)
+		{
+			int modifier;
+			if (t_KeyStringToKeyValue(modifier, string))
+			{
+				function->modifierkeys << modifier;
+			}
+		}
+
+		bool ok;
+		int interval = autorepeatinterval.toInt(&ok);
+		if (ok)
+		{
+			function->autorepeatInterval = interval;
+		}
+
+		int startdelay = autorepeatstartdelay.toInt(&ok);
+		if (ok)
+		{
+			function->autorepeatStartDelay = startdelay;
+		}
+
+		foreach(QString keyString, function->getKeys()) {
+			TShortcut* shortcut = getShortcut(keyString);
+			if (shortcut)
+			{
+				shortcut->objects.insertMulti(function->object, function);
+			}
+		}
+	}
 }

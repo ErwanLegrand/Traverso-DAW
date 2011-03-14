@@ -63,7 +63,7 @@ public:
 	TCommand* get_holding_command() const;
 	void filter_unknown_sequence(QString& sequence);
 
-	int broadcast_action_from_contextmenu(const QString& name);
+	int dispatch_shortcut_from_contextmenu(const QString& name);
 
         void jog();
         void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=50);
@@ -73,12 +73,6 @@ public:
 	TCommand* succes();
 	TCommand* failure();
 	TCommand* did_not_implement();
-
-
-        int init_map(const QString& mapFilename);
-
-        void create_menu_translations();
-
 
 private:
         InputEngine();
@@ -101,7 +95,6 @@ private:
 	QList<int>		m_modifierKeys;
 	QList<int>		m_activeModifierKeys;
         QHash<int, HoldModifierKey*>  m_holdModifierKeys;
-	QHash<QString, CommandPlugin*> m_commandplugins;
 	QHash<QString, int>	m_modes;
         TCommand* 		m_holdingCommand;
         QString			m_sCollectedNumber;
@@ -115,7 +108,7 @@ private:
 	bool			m_bypassJog;
 
         int 			m_collectedNumber;
-	int			m_broadcastResult;
+	int			m_dispatchResult;
 	int			m_unbypassJogDistance;
         int                     m_holdEventCode;
 
@@ -125,7 +118,7 @@ private:
         bool 			check_number_collection(int eventcode);
 
         //! call the slot that handler a given action
-	int broadcast_action(TShortcut* action, bool autorepeat=false, bool fromContextMenu=false);
+	int dispatch_shortcut(TShortcut* shortCut, bool autorepeat=false, bool fromContextMenu=false);
 
         void set_jogging(bool jog);
         void set_numerical_input(const QString& number);
