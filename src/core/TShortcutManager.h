@@ -111,6 +111,7 @@ public:
 	TShortcut* getShortcut(const QString& key);
 	TShortcut* getShortcut(int key);
 	CommandPlugin* getCommandPlugin(const QString& pluginName);
+	void setFunctionKeys(TFunction* function, QStringList keys);
 
 	void loadFunctions();
 	void saveFunction(TFunction* function);

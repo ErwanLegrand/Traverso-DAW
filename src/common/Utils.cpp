@@ -75,19 +75,19 @@ QString coefficient_to_dbstring ( float coeff, int decimals)
 
 	QString gainIndB;
 
-        if (fabs(db) < (1/::pow(10, decimals))) {
-                db = 0.0f;
-        }
+	if (fabs(db) < (1/::pow(10, decimals))) {
+		db = 0.0f;
+	}
 
-        if ( db < -99 )
+	if ( db < -99 )
 		gainIndB = "- INF";
 	else if ( db < 0 )
-                gainIndB = "- " + QByteArray::number ( ( -1 * db ), 'f', decimals ) + " dB";
-        else if ( db > 0 )
-                gainIndB = "+ " + QByteArray::number ( db, 'f', decimals ) + " dB";
-        else {
-                gainIndB = "  " + QByteArray::number ( db, 'f', decimals ) + " dB";
-        }
+		gainIndB = "- " + QByteArray::number ( ( -1 * db ), 'f', decimals ) + " dB";
+	else if ( db > 0 )
+		gainIndB = "+ " + QByteArray::number ( db, 'f', decimals ) + " dB";
+	else {
+		gainIndB = "  " + QByteArray::number ( db, 'f', decimals ) + " dB";
+	}
 
 	return gainIndB;
 }
@@ -130,7 +130,7 @@ QString timeref_to_hms(const TimeRef& ref)
 	int hours, mins, secs;
 
 	qint64 universalframe = ref.universal_frame();
-	
+
 	hours = (int) (universalframe / ONE_HOUR_UNIVERSAL_SAMPLE_RATE);
 	remainder = qint64(universalframe - (hours * ONE_HOUR_UNIVERSAL_SAMPLE_RATE));
 	mins = (int) (remainder / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE ));
@@ -145,7 +145,7 @@ QString timeref_to_ms(const TimeRef& ref)
 	int mins, secs;
 
 	qint64 universalframe = ref.universal_frame();
-	
+
 	mins = (int) (universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE ));
 	remainder = (long unsigned int) (universalframe - (mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE));
 	secs = (int) (remainder / UNIVERSAL_SAMPLE_RATE);
@@ -158,7 +158,7 @@ QString timeref_to_ms_2 (const TimeRef& ref)
 	QString spos;
 	qint64 remainder;
 	int mins, secs, frames;
-	
+
 	qint64 universalframe = ref.universal_frame();
 
 	mins = universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
@@ -177,7 +177,7 @@ QString timeref_to_ms_3(const TimeRef& ref)
 	QString spos;
 	qint64 remainder;
 	int mins, secs, frames;
-	
+
 	qint64 universalframe = ref.universal_frame();
 
 	mins = universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
@@ -196,9 +196,9 @@ QString timeref_to_cd (const TimeRef& ref)
 	QString spos;
 	qint64 remainder;
 	int mins, secs, frames;
-	
+
 	qint64 universalframe = ref.universal_frame();
-	
+
 	mins = universalframe / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
 	remainder = universalframe - ( mins * ONE_MINUTE_UNIVERSAL_SAMPLE_RATE );
 	secs = remainder / UNIVERSAL_SAMPLE_RATE;
@@ -215,9 +215,9 @@ QString timeref_to_cd_including_hours (const TimeRef& ref)
 	QString spos;
 	qint64 remainder;
 	int hours, mins, secs, frames;
-	
+
 	qint64 universalframe = ref.universal_frame();
-	
+
 	hours = int(universalframe / ONE_HOUR_UNIVERSAL_SAMPLE_RATE);
 	remainder = qint64(universalframe - (hours * ONE_HOUR_UNIVERSAL_SAMPLE_RATE));
 	mins = (int) (remainder / ( ONE_MINUTE_UNIVERSAL_SAMPLE_RATE ));
@@ -272,6 +272,11 @@ bool t_MetaobjectInheritsClass(const QMetaObject *mo, const QString& className)
 
 bool t_KeyStringToKeyValue(int &variable, const QString &text)
 {
+	if (text == "NUMERICAL")
+	{
+		return true;
+	}
+
 	variable = 0;
 	QString s;
 	int x  = 0;
@@ -340,7 +345,7 @@ bool t_KeyStringToKeyValue(int &variable, const QString &text)
 						} else if (text == "PLUS") {
 							variable = Qt::Key_Plus;
 						} else {
-							printf("KeyStringToValue: No value found for key %s", QS_C(text));
+							printf("KeyStringToValue: No value found for key %s\n", QS_C(text));
 							return false;
 						}
 					}

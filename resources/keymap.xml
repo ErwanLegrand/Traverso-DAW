@@ -25,7 +25,7 @@
 				<Object objectname="PlayHeadMove" slotsignature="move_to_work_cursor" sortorder="10" isholdmodifier="1" />
 				<Object objectname="SheetView" mousehint="LR" sortorder="14" submenu="WorkCursor" pluginname="TraversoCommands" commandname="WorkCursorMove" />
 
-                </keyfact>
+		</keyfact>
 		<keyfact key="HOME" >
 
 				<Object objectname="SheetView" slotsignature="goto_begin" modifierkeys="CTRL" sortorder="5" submenu="WorkCursor" />
@@ -49,13 +49,6 @@
 				<Object objectname="CurveView" slotsignature="select_lazy_selected_node" />
 				<Object objectname="FadeCurveView" mousehint="LR" slotsignature="strength" sortorder="4" />
 				<Object objectname="SheetView" sortorder="4" modifierkeys="SHIFT" submenu="Scroll"  pluginname="TraversoCommands" commandname="Scroll" />
-
-		</keyfact>
-		<keyfact key="SPACE" >
-
-				<Object objectname="TMainWindow" slotsignature="start_transport" sortorder="1" />
-				<Object objectname="TMainWindow" slotsignature="set_recordable_and_start_transport" modifierkeys="CTRL" sortorder="2" />
-				<Object objectname="TSession" slotsignature="start_transport" sortorder="1" />
 
 		</keyfact>
 		<keyfact key="A" >
@@ -94,13 +87,7 @@
 		</keyfact>
 		<keyfact key="E" >
 
-				<Object objectname="TrackView" slotsignature="edit_properties" sortorder="11" />
-				<Object objectname="PluginView" slotsignature="edit_properties" />
-				<Object objectname="SpectralMeterView" slotsignature="edit_properties" />
-				<Object objectname="AudioClipView" slotsignature="edit_properties" sortorder="11" />
 				<Object objectname="TimeLineView" slotsignature="TMainWindow::show_marker_dialog" />
-				<Object objectname="Zoom" sortorder="1" slotsignature="toggle_expand_all_tracks" />
-				<Object objectname="SheetView" slotsignature="edit_properties" sortorder="11" modifierkeys="SHIFT" />
 				<Object objectname="AudioClip" modifierkeys="CTRL" sortorder="18" pluginname="TraversoCommands" commandname="AudioClipExternalProcessing" />
 				<Object objectname="AudioClipView" mousehint="LR" sortorder="8" pluginname="TraversoCommands" commandname="MoveEdge" arguments="false" />
 
@@ -150,12 +137,8 @@
 		</keyfact>
 		<keyfact key="MouseButtonLeft" >
 
-				<Object objectname="TrackPanelLed" slotsignature="toggle" sortorder="1" />
-				<Object objectname="TrackPanelView" slotsignature="TrackView::edit_properties" sortorder="11" />
 				<Object objectname="AudioClipView" slotsignature="set_audio_file" sortorder="80" />
-				<Object objectname="CurveView" modifierkeys="CTRL" slotsignature="add_node" />
 				<Object objectname="CurveView" mousehint="LRUD" sortorder="3" pluginname="TraversoCommands" commandname="MoveCurveNodes" />
-				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" sortorder="3" />
 				<Object objectname="TrackView" mousehint="UD" sortorder="20" pluginname="TraversoCommands" commandname="MoveTrack"/>
 				<Object objectname="TPanKnobView" sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
 
@@ -194,58 +177,10 @@
 				<Object objectname="TMainWindow" sortorder="22" slotsignature="show_newtrack_dialog" modifierkeys="CTRL" />
 				<Object objectname="SheetView" sortorder="23" slotsignature="browse_to_time_line"  submenu="Navigate"/>
 
-                </keyfact>
+		</keyfact>
 		<keyfact key="K" >
 
 				<Object objectname="TMainWindow" sortorder="5" slotsignature="show_track_finder" />
-
-                </keyfact>
-		<keyfact key="DELETE" >
-
-				<Object objectname="AudioClip" sortorder="50" pluginname="TraversoCommands" commandname="RemoveClip" />
-				<Object objectname="Track" sortorder="50" pluginname="TraversoCommands" commandname="RemoveTrack" />
-				<Object objectname="CurveView" slotsignature="remove_node" />
-				<Object objectname="PluginView" slotsignature="remove_plugin" />
-				<Object objectname="TimeLineView" slotsignature="remove_marker" />
-
-                </keyfact>
-
-                <keyfact>
-
-				<Object objectname="MoveCommand" slotsignature="numerical_input" sortorder="100" />
-				<Object objectname="Gain" slotsignature="numerical_input" sortorder="100" />
-				<Object objectname="Zoom" slotsignature="numerical_input" sortorder="100" />
-
-                </keyfact>
-
-		
-		<keyfact key="Z" sortorder="35" >
-
-				<Object objectname="SheetView" mousehint="LR" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="Zoom" arguments="HJogZoom;1.2;0.2" />
-				<Object objectname="TrackView" mousehint="LR" sortorder="1" submenu="Zoom" pluginname="TraversoCommands" commandname="Zoom" arguments="HJogZoom;1.2;0.2" />
-				<Object objectname="MoveClip" slotsignature="start_zoom" sortorder="11" isholdmodifier="1"/>
-
-		</keyfact>
-		<keyfact key="P" sortorder="16" >
-
-				<Object objectname="Track" mousehint="LR"  sortorder="8" pluginname="TraversoCommands" commandname="TrackPan" />
-				<Object objectname="FadeCurveView" slotsignature="select_fade_shape"  sortorder="1"/>
-
-		</keyfact>
-		<keyfact key="D" >
-
-
-				<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" sortorder="3" />
-				<Object objectname="MarkerView" mousehint="LR" slotsignature="drag_marker" sortorder="3" />
-		</keyfact>
-		<keyfact key="TAB" >
-
-				<Object objectname="SheetView" mousehint="LR" sortorder="6" pluginname="TraversoCommands" commandname="Shuttle" />
-
-		</keyfact>
-		<keyfact key="X" >
-
-				<Object objectname="AudioClipView" sortorder="15" pluginname="TraversoCommands" commandname="SplitClip" />
 
 		</keyfact>
 	</Keyfacts>

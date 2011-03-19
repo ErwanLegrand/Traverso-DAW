@@ -188,7 +188,7 @@ TMenuTranslator::TMenuTranslator()
 //	add_entry("CurveView::toggle_select_all_nodes", tr("Select All Nodes"));
 //	add_entry("FadeCurveView::bend", tr("Adjust Bend"));
 //        add_entry("FadeCurveView::strength", tr("Adjust Strength"));
-//        add_entry("FadeCurveView::select_fade_shape", tr("Select Preset"));
+//        add_entry("FadeCurveView::select_fade_shape", );
 //        add_entry("PluginView::edit_properties", tr("Edit..."));
 //        add_entry("PluginView::remove_plugin", tr("Remove"));
 //        add_entry("Project::select", tr("Type Number then:\nSelect View"));

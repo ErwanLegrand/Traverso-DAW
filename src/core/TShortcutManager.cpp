@@ -198,10 +198,8 @@ TShortcut* TShortcutManager::getShortcut(const QString &keyString)
 
 	if (!shortcut)
 	{
-		printf("Adding key %s to shortcut keys\n", keyString.toAscii().data());
 		shortcut = new TShortcut(keyValue);
 		m_shortcuts.insert(keyValue, shortcut);
-
 	}
 
 	return shortcut;
@@ -233,6 +231,11 @@ void TShortcutManager::loadFunctions()
 	}
 
 	TFunction* function;
+
+	function = new TFunction();
+	function->description = tr("Remove");
+	function->commandName = "Delete";
+	addFunction(function);
 
 	function = new TFunction();
 	function->object = "AudioTrack";
@@ -568,6 +571,19 @@ void TShortcutManager::loadFunctions()
 	function->description = tr("Track Height");
 	function->commandName = "ZoomNumericalInput";
 	addFunction(function);
+
+	function = new TFunction();
+	function->object = "FadeCurveView";
+	function->slotsignature = "select_fade_shape";
+	function->description = tr("Select Preset");
+	function->commandName = "FadeSelectPreset";
+	addFunction(function);
+
+
+
+//	<Object objectname="CurveView" slotsignature="remove_node" />
+//	<Object objectname="PluginView" slotsignature="remove_plugin" />
+//	<Object objectname="TimeLineView" slotsignature="remove_marker" />
 }
 
 void TShortcutManager::saveFunction(TFunction *function)
@@ -592,6 +608,8 @@ void TShortcutManager::loadShortcuts()
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "shortcuts");
 
 	QStringList groups = settings.childGroups();
+	QMap<QString, TFunction*> functionsThatInherit;
+
 	foreach(TFunction* function, m_functions)
 	{
 		if (!groups.contains(function->commandName))
@@ -600,15 +618,16 @@ void TShortcutManager::loadShortcuts()
 		}
 
 		settings.beginGroup(function->commandName);
-		QStringList keys = settings.value("keys").toString().toUpper().split(";", QString::SkipEmptyParts);
+		QString keyString = settings.value("keys").toString();
+		QStringList keys = keyString.toUpper().split(";", QString::SkipEmptyParts);
 		QStringList modifiers = settings.value("modifiers").toString().toUpper().split(";", QString::SkipEmptyParts);
 		QString autorepeatinterval = settings.value("autorepeatinterval").toString();
 		QString autorepeatstartdelay = settings.value("autorepeatstartdelay").toString();
 		QString submenu = settings.value("submenu").toString();
 		QString sortorder = settings.value("sortorder").toString();
+		QString inherits = settings.value("inherits").toString();
 		settings.endGroup();
 
-		function->m_keys << keys;
 		function->submenu = submenu;
 
 		foreach(QString string, modifiers)
@@ -639,12 +658,38 @@ void TShortcutManager::loadShortcuts()
 			function->sortorder = order;
 		}
 
-		foreach(QString keyString, function->getKeys()) {
-			TShortcut* shortcut = getShortcut(keyString);
-			if (shortcut)
-			{
-				shortcut->objects.insertMulti(function->object, function);
-			}
+		if (inherits.isEmpty())
+		{
+			setFunctionKeys(function, keys);
+		}
+		else
+		{
+			functionsThatInherit.insertMulti(inherits, function);
+		}
+	}
+
+	foreach(TFunction* function, functionsThatInherit)
+	{
+		QString inheritedFunction = functionsThatInherit.key(function);
+		TFunction* source = getFunction(inheritedFunction);
+		if (source)
+		{
+			setFunctionKeys(function, source->m_keys);
+		}
+
+	}
+}
+
+void TShortcutManager::setFunctionKeys(TFunction *function, QStringList keys)
+{
+	function->m_keys.clear();
+
+	foreach(QString key, keys) {
+		function->m_keys << key;
+		TShortcut* shortcut = getShortcut(key);
+		if (shortcut)
+		{
+			shortcut->objects.insertMulti(function->object, function);
 		}
 	}
 }

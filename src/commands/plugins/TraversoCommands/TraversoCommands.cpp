@@ -234,10 +234,24 @@ TraversoCommands::TraversoCommands()
 	function->useX = true;
 	addFunction(function, MoveMarkerCommand);
 
-//	<Object objectname="TimeLineView" mousehint="LR" slotsignature="drag_marker" sortorder="3" />
-//	<Object objectname="MarkerView" mousehint="LR" slotsignature="drag_marker" sortorder="3" />
+	function = new TFunction();
+	function->object = "Track";
+	function->description = tr("Track Panorama");
+	function->commandName = "TrackPan";
+	function->useX = true;
+	addFunction(function, TrackPanCommand);
 
+	function = new TFunction();
+	function->object = "AudioClip";
+	function->description = tr("Remove");
+	function->commandName = "RemoveClip";
+	addFunction(function, RemoveClipCommand);
 
+	function = new TFunction();
+	function->object = "Track";
+	function->description = tr("Remove");
+	function->commandName = "RemoveTrack";
+	addFunction(function, RemoveTrackCommand);
 
 	// TODO:
 	//<Object objectname="SheetView" mousehint="LR" sortorder="6" pluginname="TraversoCommands" commandname="Shuttle" />
@@ -262,7 +276,6 @@ void TraversoCommands::create_menu_translations()
 	translator->add_entry("TraversoCommands::ResetTrackPan", tr("Panorama: Reset"));
 	translator->add_entry("TraversoCommands::InsertSilence", tr("Insert Silence"));
 	translator->add_entry("TraversoCommands::AddNewAudioTrack", tr("New Track"));
-	translator->add_entry("TraversoCommands::RemoveClip", tr("Remove Clip"));
 	translator->add_entry("TraversoCommands::RemoveTrack", tr("Remove"));
 	translator->add_entry("TraversoCommands::AudioClipExternalProcessing", tr("External Processing"));
 	translator->add_entry("TraversoCommands::ClipSelectionSelect", tr("(De)Select"));
