@@ -108,6 +108,8 @@ void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
 	keyfact.replace(QString("PLUS"), QString("+"));
 	keyfact.replace(QString("PAGEDOWN"), tr("Page Down"));
 	keyfact.replace(QString("PAGEUP"), tr("Page Up"));
+	keyfact.replace(QString("ESC"), tr("Esc"));
+	keyfact.replace(QString("NUMERICAL"), tr("0, 1, ... 9"));
 }
 
 
@@ -468,6 +470,103 @@ void TShortcutManager::loadFunctions()
 	function->slotsignature = "fade_range";
 	function->description = tr("Closest: Adjust Length");
 	function->commandName = "AudioClip_FadeLength";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TMainWindow";
+	function->slotsignature = "start_transport";
+	function->description = tr("Play (Start/Stop)");
+	function->commandName = "PlayStartStop";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TMainWindow";
+	function->slotsignature = "set_recordable_and_start_transport";
+	function->description = tr("Start Recording");
+	function->commandName = "SetRecordingPlayStart";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TrackView";
+	function->slotsignature = "edit_properties";
+	function->description = tr("Edit Properties");
+	function->commandName = "EditTrackProperties";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->slotsignature = "edit_properties";
+	function->description = tr("Edit Properties");
+	function->commandName = "EditSongProperties";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "PluginView";
+	function->slotsignature = "edit_properties";
+	function->description = tr("Edit Properties");
+	function->commandName = "EditPluginProperties";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "SpectralMeterView";
+	function->slotsignature = "edit_properties";
+	function->description = tr("Edit Properties");
+	function->commandName = "EditSpectralMeterProperties";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "AudioClipView";
+	function->slotsignature = "edit_properties";
+	function->description = tr("Edit Properties");
+	function->commandName = "EditAudioClipProperties";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Zoom";
+	function->slotsignature = "toggle_expand_all_tracks";
+	function->description = tr("Expand/Collapse Tracks");
+	function->commandName = "ZoomToggleExpandAllTracks";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TrackPanelLed";
+	function->slotsignature = "toggle";
+	function->description = tr("Toggle On/Off");
+	function->commandName = "PanelLedToggle";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "CurveView";
+	function->slotsignature = "add_node";
+	function->description = tr("New Node");
+	function->commandName = "AddCurveNode";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "MoveCommand";
+	function->slotsignature = "numerical_input";
+	function->description = tr("Moving Speed");
+	function->commandName = "MoveCommandSpeed";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TCommand";
+	function->description = tr("Abort");
+	function->commandName = "AbortHoldCommand";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Gain";
+	function->slotsignature = "numerical_input";
+	function->description = tr("Input dB value");
+	function->commandName = "GainNumericalInput";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "Zoom";
+	function->slotsignature = "numerical_input";
+	function->description = tr("Track Height");
+	function->commandName = "ZoomNumericalInput";
 	addFunction(function);
 }
 

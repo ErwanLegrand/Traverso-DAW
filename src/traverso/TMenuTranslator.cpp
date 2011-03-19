@@ -34,82 +34,82 @@ TMenuTranslator* TMenuTranslator::m_instance = 0;
 
 TMenuTranslator* TMenuTranslator::instance()
 {
-        if (m_instance == 0) {
-                m_instance = new TMenuTranslator();
-        }
+	if (m_instance == 0) {
+		m_instance = new TMenuTranslator();
+	}
 
-        return m_instance;
+	return m_instance;
 }
 
 void TMenuTranslator::add_meta_object(const QMetaObject* mo)
 {
-        QString classname = QString(mo->className()).remove("View");
-        QList<const QMetaObject*> list = m_objects.value(classname);
-        list.append(mo);
-        m_objects.insert(classname, list);
+	QString classname = QString(mo->className()).remove("View");
+	QList<const QMetaObject*> list = m_objects.value(classname);
+	list.append(mo);
+	m_objects.insert(classname, list);
 }
 
 QList<const QMetaObject*> TMenuTranslator::get_metaobjects_for_class(const QString &className)
 {
-        return m_objects.value(className);
+	return m_objects.value(className);
 }
 
 TMenuTranslator::TMenuTranslator()
 {
-        add_meta_object(&Sheet::staticMetaObject);
-        add_meta_object(&SheetView::staticMetaObject);
-        add_meta_object(&AudioTrack::staticMetaObject);
-        add_meta_object(&AudioTrackView::staticMetaObject);
-        add_meta_object(&TBusTrack::staticMetaObject);
-        add_meta_object(&TBusTrackView::staticMetaObject);
-        add_meta_object(&AudioClip::staticMetaObject);
-        add_meta_object(&AudioClipView::staticMetaObject);
-        add_meta_object(&Curve::staticMetaObject);
-        add_meta_object(&CurveView::staticMetaObject);
-        add_meta_object(&TimeLine::staticMetaObject);
-        add_meta_object(&TimeLineView::staticMetaObject);
-        add_meta_object(&Plugin::staticMetaObject);
-        add_meta_object(&PluginView::staticMetaObject);
-        add_meta_object(&FadeCurve::staticMetaObject);
-        add_meta_object(&FadeCurveView::staticMetaObject);
-        add_meta_object(&TMainWindow::staticMetaObject);
-        add_meta_object(&Project::staticMetaObject);
-        add_meta_object(&ProjectManager::staticMetaObject);
-        add_meta_object(&Gain::staticMetaObject);
-        add_meta_object(&MoveTrack::staticMetaObject);
-        add_meta_object(&MoveClip::staticMetaObject);
-        add_meta_object(&MoveCurveNode::staticMetaObject);
-        add_meta_object(&Zoom::staticMetaObject);
-        add_meta_object(&TrackPan::staticMetaObject);
-        add_meta_object(&MoveMarker::staticMetaObject);
-        add_meta_object(&WorkCursorMove::staticMetaObject);
-        add_meta_object(&PlayHeadMove::staticMetaObject);
-        add_meta_object(&MoveEdge::staticMetaObject);
-        add_meta_object(&CropClip::staticMetaObject);
-        add_meta_object(&FadeRange::staticMetaObject);
-        add_meta_object(&Shuttle::staticMetaObject);
-        add_meta_object(&SplitClip::staticMetaObject);
+	add_meta_object(&Sheet::staticMetaObject);
+	add_meta_object(&SheetView::staticMetaObject);
+	add_meta_object(&AudioTrack::staticMetaObject);
+	add_meta_object(&AudioTrackView::staticMetaObject);
+	add_meta_object(&TBusTrack::staticMetaObject);
+	add_meta_object(&TBusTrackView::staticMetaObject);
+	add_meta_object(&AudioClip::staticMetaObject);
+	add_meta_object(&AudioClipView::staticMetaObject);
+	add_meta_object(&Curve::staticMetaObject);
+	add_meta_object(&CurveView::staticMetaObject);
+	add_meta_object(&TimeLine::staticMetaObject);
+	add_meta_object(&TimeLineView::staticMetaObject);
+	add_meta_object(&Plugin::staticMetaObject);
+	add_meta_object(&PluginView::staticMetaObject);
+	add_meta_object(&FadeCurve::staticMetaObject);
+	add_meta_object(&FadeCurveView::staticMetaObject);
+	add_meta_object(&TMainWindow::staticMetaObject);
+	add_meta_object(&Project::staticMetaObject);
+	add_meta_object(&ProjectManager::staticMetaObject);
+	add_meta_object(&Gain::staticMetaObject);
+	add_meta_object(&MoveTrack::staticMetaObject);
+	add_meta_object(&MoveClip::staticMetaObject);
+	add_meta_object(&MoveCurveNode::staticMetaObject);
+	add_meta_object(&Zoom::staticMetaObject);
+	add_meta_object(&TrackPan::staticMetaObject);
+	add_meta_object(&MoveMarker::staticMetaObject);
+	add_meta_object(&WorkCursorMove::staticMetaObject);
+	add_meta_object(&PlayHeadMove::staticMetaObject);
+	add_meta_object(&MoveEdge::staticMetaObject);
+	add_meta_object(&CropClip::staticMetaObject);
+	add_meta_object(&FadeRange::staticMetaObject);
+	add_meta_object(&Shuttle::staticMetaObject);
+	add_meta_object(&SplitClip::staticMetaObject);
 	add_meta_object(&TPanKnobView::staticMetaObject);
 
-        add_entry("ArrowKeyBrowser", tr("Arrow Key Browser"));
-        add_entry("ArmTracks", tr("Arm Tracks"));
-        add_entry("CropClip", tr("Cut Clip (Magnetic)"));
-        add_entry("Fade", tr("Fade"));
-        add_entry("Gain", tr("Gain"));
-        add_entry("MoveClip", tr("Move Clip"));
-        add_entry("MoveCurveNode", tr("Move Node"));
-        add_entry("MoveEdge", tr("Move Clip Edge"));
-        add_entry("MoveMarker", tr("Move Marker"));
-        add_entry("MoveTrack", tr("Move Track"));
-        add_entry("PlayHeadMove", tr("Move Play Head"));
-        add_entry("Shuttle", tr("Shuttle"));
-        add_entry("SplitClip", tr("Split Clip"));
-        add_entry("TrackPan", tr("Track Panorama"));
+	add_entry("ArrowKeyBrowser", tr("Arrow Key Browser"));
+	add_entry("ArmTracks", tr("Arm Tracks"));
+	add_entry("CropClip", tr("Cut Clip (Magnetic)"));
+	add_entry("Fade", tr("Fade"));
+	add_entry("Gain", tr("Gain"));
+	add_entry("MoveClip", tr("Move Clip"));
+	add_entry("MoveCurveNode", tr("Move Node"));
+	add_entry("MoveEdge", tr("Move Clip Edge"));
+	add_entry("MoveMarker", tr("Move Marker"));
+	add_entry("MoveTrack", tr("Move Track"));
+	add_entry("PlayHeadMove", tr("Move Play Head"));
+	add_entry("Shuttle", tr("Shuttle"));
+	add_entry("SplitClip", tr("Split Clip"));
+	add_entry("TrackPan", tr("Track Panorama"));
 	add_entry("TPanKnob", tr("Pan Knob"));
 	add_entry("TPanKnobView", tr("Pan Knob"));
 
-        add_entry("WorkCursorMove", tr("Move Work Cursor"));
-        add_entry("Zoom", tr("Zoom"));
+	add_entry("WorkCursorMove", tr("Move Work Cursor"));
+	add_entry("Zoom", tr("Zoom"));
 
 	add_entry("AudioClip",tr("Audio Clip"));
 	add_entry("AudioTrack", tr("Audio Track"));
@@ -157,7 +157,7 @@ TMenuTranslator::TMenuTranslator()
 //        add_entry("FadeCurve::reset", tr("Remove Fade"));
 //        add_entry("FadeCurve::toggle_raster", tr("Toggle Raster"));
 //        add_entry("ProcessingData::mute", tr("Mute"));
-//        add_entry("TSession::start_transport", tr("Play (Start/Stop)"));
+//        add_entry("TSession::start_transport", "));
 //        add_entry("Sheet::set_recordable_and_start_transport", tr("Record"));
 //        add_entry("Sheet::work_next_edge", tr("Workcursor: To next edge"));
 //        add_entry("Sheet::work_previous_edge", tr("Workcursor: To previous edge"));
@@ -177,10 +177,10 @@ TMenuTranslator::TMenuTranslator()
 //        add_entry("AudioClipView::select_fade_out_shape", tr("Out: Select Preset"));
 //        add_entry("AudioClipView::reset_fade", tr("Closest: Delete"));
 //        add_entry("AudioClipView::set_audio_file", tr("Reset Audio File"));
-//        add_entry("AudioClipView::edit_properties", tr("Edit Properties"));
+//        add_entry("AudioClipView::edit_properties", );
 //        add_entry("AudioTrackView::insert_silence", tr("Insert Silence"));
 //        add_entry("AudioTrackView::show_track_gain_curve", tr("Show Track Gain Curve"));
-//	add_entry("CurveView::add_node", tr("New Node"));
+//	add_entry("CurveView::add_node", );
 //	add_entry("CurveView::remove_node", tr("Remove Node(s)"));
 //        add_entry("CurveView::remove_all_nodes", tr("Remove all Nodes"));
 //	add_entry("CurveView::drag_node", tr("Move Node"));
@@ -212,7 +212,7 @@ TMenuTranslator::TMenuTranslator()
 //        add_entry("SheetView::workcursor_to_playhead", tr("To Playhead"));
 //        add_entry("SheetView::center_playhead", tr("Center"));
 //        add_entry("SheetView::add_track", tr("Add Track"));
-//        add_entry("SheetView::toggle_expand_all_tracks", tr("Expand/Collapse Tracks"));
+//        add_entry("SheetView::toggle_expand_all_tracks", );
 //        add_entry("SheetView::activate_previous_track", tr("To Previous Track"));
 //        add_entry("SheetView::activate_next_track", tr("To Next Track"));
 //	add_entry("SheetView::to_upper_context_level", );
@@ -223,7 +223,7 @@ TMenuTranslator::TMenuTranslator()
 //        add_entry("TimeLineView::add_marker_at_playhead", tr("Add Marker at Playhead"));
 //        add_entry("TimeLineView::add_marker_at_work_cursor", tr("Add Marker at Work Cursor"));
 //        add_entry("TimeLineView::remove_marker", tr("Remove Marker"));
-//        add_entry("TimeLineView::drag_marker", tr("Drag Marker"));
+//        add_entry("TimeLineView::drag_marker", );
 //        add_entry("TimeLineView::clear_markers", tr("Clear all Markers"));
 //        add_entry("TimeLineView::playhead_to_marker", tr("Playhead to Marker"));
 //        add_entry("TimeLineView::TMainWindow::show_marker_dialog", tr("Edit Markers"));
@@ -231,7 +231,7 @@ TMenuTranslator::TMenuTranslator()
 //	add_entry("TrackView::add_new_plugin", );
 //        add_entry("TrackView::select_bus", tr("Select Bus"));
 //        add_entry("TrackPanelView::TrackView::edit_properties", tr("Edit properties"));
-//        add_entry("TrackPanelLed::toggle", tr("Toggle On/Off"));
+//        add_entry("TrackPanelLed::toggle", );
 //        add_entry("TMainWindow::show_export_widget", tr("Show Export Dialog"));
 //        add_entry("TMainWindow::show_export_widget", tr("Show Export Dialog"));
 //        add_entry("TMainWindow::about_traverso", tr("About Traverso"));
@@ -333,16 +333,16 @@ TMenuTranslator::TMenuTranslator()
 
 void TMenuTranslator::add_entry(const QString &signature, const QString &translation)
 {
-        m_dict.insert(signature, translation);
+	m_dict.insert(signature, translation);
 }
 
 
 QString TMenuTranslator::get_translation_for(const QString &entry)
 {
-        if (!m_dict.contains(entry)) {
-                return QString("TMenuTranslator: %1 not found!").arg(entry);
-        }
-        return m_dict.value(entry);
+	if (!m_dict.contains(entry)) {
+		return QString("TMenuTranslator: %1 not found!").arg(entry);
+	}
+	return m_dict.value(entry);
 }
 
 QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> metas, QObject* object)

@@ -34,35 +34,36 @@ class TraversoCommands : public CommandPlugin
 public:
 	TraversoCommands();
 	TCommand* create(QObject* obj, const QString& command, QVariantList arguments);
-        void create_menu_translations();
+	void create_menu_translations();
 
 private:
 	enum Commands {
 		GainCommand,
-  		TrackPanCommand,
-    		ImportAudioCommand,
-    		InsertSilenceCommand,
-                AddNewAudioTrackCommand,
-  		RemoveClipCommand,
-                RemoveTrackCommand,
+		TrackPanCommand,
+		ImportAudioCommand,
+		InsertSilenceCommand,
+		AddNewAudioTrackCommand,
+		RemoveClipCommand,
+		RemoveTrackCommand,
 		AudioClipExternalProcessingCommand,
-  		ClipSelectionCommand,
-    		MoveClipCommand,
-                MoveTrackCommand,
-    		MoveClipOrEdgeCommand,
-      		SplitClipCommand,
-                CropClipCommand,
+		ClipSelectionCommand,
+		MoveClipCommand,
+		MoveTrackCommand,
+		MoveClipOrEdgeCommand,
+		SplitClipCommand,
+		CropClipCommand,
 		ArmTracksCommand,
-  		ZoomCommand,
-                ScrollCommand,
-                ShuttleCommand,
-                NormalizeClipCommand,
-                ArrowKeyBrowserCommand,
-                WorkCursorMoveCommand,
-                PlayHeadMoveCommand,
-                MoveEdgeCommand,
-		MoveCurveNodesCommand
-        };
+		ZoomCommand,
+		ScrollCommand,
+		ShuttleCommand,
+		NormalizeClipCommand,
+		ArrowKeyBrowserCommand,
+		WorkCursorMoveCommand,
+		PlayHeadMoveCommand,
+		MoveEdgeCommand,
+		MoveCurveNodesCommand,
+		MoveMarkerCommand
+	};
 
 private:
 	void addFunction(TFunction* function, int command);

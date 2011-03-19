@@ -35,7 +35,6 @@ class Zoom : public TCommand
 
 public :
         Zoom(SheetView* sv, QVariantList args);
-        Zoom(TrackView* view, QVariantList args);
         ~Zoom() {}
 
         int begin_hold();
