@@ -39,62 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 	With this plugin, the InputEngine is able to dispatch key actions by directly
 	asking this Plugin for the needed Command object.
-
-	Dispatching key events to a specific object to create a Command object is accomplished by creating
-	entries in the keymap.xml file, which has the following syntax:
-
-	\code
-	<Object objectname="" mousehint="" modes="" sortorder="" pluginname="" commandname="" arguments="" />
-	\endcode
-
-	\code
-	objectname: 	The class name of the object that we want to dispatch the key action on
-	mousehint 	Used to set the mouse cursor. Use "LR" for horizontal suggestion, "UD" for vertical suggestion, or "RLUD" for omnidirectional suggestion.
-	modes:		Modes for which this command can be used, like All, Edit or Effects. Modes are to be defined in the keymap itself!
-	sortorder:	The order of where the key action should show up in the ContextMenu of 'objectname'
-	plugniname:	The plugin to ask the Command for, the only one available right now is TraversoCommands
-	commandname:	The Command to be created, which by convention tries to be the same name as the actuall class implementing the Command
-	arguments:	One, or more values (seperated by semicolons), each Command explains which (list of) values it can understand
-	\endcode
-
-
-	Available Command classes, their required Object (to operate on) and arguments are:
-
-
-	\code
-	MoveClip: Move or Copy-move an AudioClip.
-
-	objectname:	AudioClipView
-	arguments:	First entry, either one of the following: "move", "copy", "move_to_end", "move_to_start"
-			Second (optional) entry: Move vertical only: "true" for vertical moving only, "false" for omnidirectional moving (the default if none is given)
-	commandname:	MoveClip
-	\endcode
-
-
-	\code
-	Gain: Change (jog), or reset the Gain of audio processing items
-	objectname:	SheetView, TrackView, AudioClipView
-	arguments:	No argument: Move Mouse vertically. Argument "horizontal": Move Mouse horizontally
-	commandname:	Gain
-	\endcode
-
-	\code
-	ResetGain: Set Gain value to a pre-defined value (by means of the supplied argument).
-
-	objectname:	SheetView, TrackView, AudioClipView
-	arguments:	a floating point value, eg: "0.5"
-	commandname:	ResetGain
-	\endcode
-
-	TODO document all remaining Commands
-	\code
-	?: ?
-
-	Objects(s):
-	arguments:
-	commandname:
-	\endcode
-
  */
 
 
@@ -104,7 +48,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->description = tr("Arrow Key Browser: Up");
+	function->setDescription(tr("Arrow Key Browser: Up"));
 	function->commandName = "ArrowKeyBrowserUp";
 	function->submenu = "Navigate";
 	function->pluginname = "TraversoCommands";
@@ -113,7 +57,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->description = tr("Arrow Key Browser: Down");
+	function->setDescription(tr("Arrow Key Browser: Down"));
 	function->commandName = "ArrowKeyBrowserDown";
 	function->submenu = "Navigate";
 	function->pluginname = "TraversoCommands";
@@ -122,7 +66,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->description = tr("Arrow Key Browser: Left");
+	function->setDescription(tr("Arrow Key Browser: Left"));
 	function->commandName = "ArrowKeyBrowserLeft";
 	function->submenu = "Navigate";
 	function->pluginname = "TraversoCommands";
@@ -131,7 +75,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->description = tr("Arrow Key Browser: Right");
+	function->setDescription(tr("Arrow Key Browser: Right"));
 	function->commandName = "ArrowKeyBrowserRight";
 	function->submenu = "Navigate";
 	function->arguments << 4 << 100;
@@ -139,13 +83,13 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "AudioTrack";
-	function->description = tr("Import Audio");
+	function->setDescription(tr("Import Audio"));
 	function->commandName = "ImportAudio";
 	addFunction(function, ImportAudioCommand);
 
 	function = new TFunction();
 	function->object = "AudioTrackView";
-	function->description = tr("Fold Track");
+	function->setDescription(tr("Fold Track"));
 	function->commandName = "FoldTrack";
 	function->useX = true;
 	function->arguments << "fold_track";
@@ -154,7 +98,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "AudioClipView";
-	function->description = tr("Move");
+	function->setDescription(tr("Move"));
 	function->commandName = "MoveClip";
 	function->useX = function->useY = true;
 	function->arguments << "move";
@@ -162,7 +106,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "AudioClipView";
-	function->description = tr("Copy");
+	function->setDescription(tr("Copy"));
 	function->commandName = "CopyClip";
 	function->useX = function->useY = true;
 	function->arguments << "copy";
@@ -170,7 +114,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->description = tr("Fold Sheet");
+	function->setDescription(tr("Fold Sheet"));
 	function->commandName = "FoldSheet";
 	function->useX = function->useY = true;
 	function->arguments << "fold_sheet";
@@ -178,7 +122,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "TimeLineView";
-	function->description = tr("Fold Markers");
+	function->setDescription(tr("Fold Markers"));
 	function->commandName = "FoldMarkers";
 	function->useX = true;
 	function->arguments << "fold_markers";
@@ -186,27 +130,27 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "TrackView";
-	function->description = tr("Move Up/Down");
+	function->setDescription(tr("Move Up/Down"));
 	function->commandName = "MoveTrack";
 	function->useY = true;
 	addFunction(function, MoveTrackCommand);
 
 	function = new TFunction();
 	function->object = "CurveView";
-	function->description = tr("Move Curve Node(s)");
+	function->setDescription(tr("Move Curve Node(s)"));
 	function->commandName = "MoveCurveNodes";
 	function->useX = function->useY = true;
 	addFunction(function, MoveCurveNodesCommand);
 
 	function = new TFunction();
 	function->object = "ProcessingData";
-	function->description = tr("Gain");
+	function->setDescription(tr("Gain"));
 	function->commandName = "Gain";
 	addFunction(function, GainCommand);
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->description = tr("Zoom");
+	function->setDescription(tr("Zoom"));
 	function->commandName = "Zoom";
 	function->useX = true;
 	function->arguments << "HJogZoom" << "1.2" << "0.2";
@@ -214,7 +158,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "AudioClipView";
-	function->description = tr("Split");
+	function->setDescription(tr("Split"));
 	function->commandName = "SplitClip";
 	function->useX = true;
 	addFunction(function, SplitClipCommand);
@@ -222,40 +166,97 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "TimeLineView";
-	function->description = tr("Drag Marker");
+	function->setDescription(tr("Drag Marker"));
 	function->commandName = "TimeLineMoveMarker";
 	function->useX = true;
 	addFunction(function, MoveMarkerCommand);
 
 	function = new TFunction();
 	function->object = "MarkerView";
-	function->description = tr("Drag Marker");
+	function->setDescription(tr("Drag Marker"));
 	function->commandName = "MoveMarker";
 	function->useX = true;
 	addFunction(function, MoveMarkerCommand);
 
 	function = new TFunction();
 	function->object = "Track";
-	function->description = tr("Track Panorama");
+	function->setDescription(tr("Track Panorama"));
 	function->commandName = "TrackPan";
-	function->useX = true;
 	addFunction(function, TrackPanCommand);
 
 	function = new TFunction();
 	function->object = "AudioClip";
-	function->description = tr("Remove");
 	function->commandName = "RemoveClip";
+	function->inherits = "Delete";
 	addFunction(function, RemoveClipCommand);
 
 	function = new TFunction();
 	function->object = "Track";
-	function->description = tr("Remove");
 	function->commandName = "RemoveTrack";
+	function->inherits = "Delete";
 	addFunction(function, RemoveTrackCommand);
 
-	// TODO:
-	//<Object objectname="SheetView" mousehint="LR" sortorder="6" pluginname="TraversoCommands" commandname="Shuttle" />
+	function = new TFunction();
+	function->object = "TPanKnobView";
+	function->setDescription(tr("Panorama"));
+	function->commandName = "PanKnobPanorama";
+	addFunction(function, TrackPanCommand);
 
+	function = new TFunction();
+	function->object = "AudioClipView";
+	function->setDescription(tr("Magnetic Cut"));
+	function->commandName = "CropClip";
+	addFunction(function, CropClipCommand);
+
+	function = new TFunction();
+	function->object = "AudioClip";
+	function->setDescription(tr("External Processing"));
+	function->commandName = "AudioClipExternalProcessing";
+	addFunction(function, AudioClipExternalProcessingCommand);
+
+	function = new TFunction();
+	function->object = "AudioClipView";
+	function->setDescription(tr("Move Edge"));
+	function->commandName = "MoveClipEdge";
+	function->arguments << "false";
+	addFunction(function, MoveEdgeCommand);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->setDescription(tr("Move Work Cursor"));
+	function->commandName = "WorkCursorMove";
+	addFunction(function, WorkCursorMoveCommand);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->setDescription(tr("Scroll"));
+	function->commandName = "Scroll";
+	addFunction(function, ScrollCommand);
+
+	function = new TFunction();
+	function->object = "AudioClip";
+	function->setDescription(tr("(De)Select"));
+	function->commandName = "ClipSelectionSelect";
+	function->arguments << "toggle_selected";
+	addFunction(function, ClipSelectionCommand);
+
+	function = new TFunction();
+	function->object = "AudioClip";
+	function->setDescription(tr("(De)Select"));
+	function->commandName = "ClipSelectionSelect";
+	function->arguments << "toggle_selected";
+	addFunction(function, ClipSelectionCommand);
+
+	function = new TFunction();
+	function->object = "SheetView";
+	function->setDescription(tr("Set Play Position"));
+	function->commandName = "PlayHeadMove";
+	function->useX = true;
+	addFunction(function, PlayHeadMoveCommand);
+
+// TODO:
+	// <Object objectname="SheetView" mousehint="LR" sortorder="6" pluginname="TraversoCommands" commandname="Shuttle" />
+	// <Object objectname="SheetView" mousehint="UD" sortorder="7" pluginname="TraversoCommands" commandname="ArmTracks"  arguments="" />
 }
 
 void TraversoCommands::addFunction(TFunction *function, int command)
@@ -265,40 +266,6 @@ void TraversoCommands::addFunction(TFunction *function, int command)
 	m_dict.insert(function->commandName, command);
 	tShortCutManager().addFunction(function);
 }
-
-void TraversoCommands::create_menu_translations()
-{
-	TMenuTranslator* translator = TMenuTranslator::instance();
-
-	translator->add_entry("TraversoCommands::Gain", tr("Gain"));
-	translator->add_entry("TraversoCommands::ResetGain", tr("Gain: Reset"));
-	translator->add_entry("TraversoCommands::TrackPan", tr("Panorama"));
-	translator->add_entry("TraversoCommands::ResetTrackPan", tr("Panorama: Reset"));
-	translator->add_entry("TraversoCommands::InsertSilence", tr("Insert Silence"));
-	translator->add_entry("TraversoCommands::AddNewAudioTrack", tr("New Track"));
-	translator->add_entry("TraversoCommands::RemoveTrack", tr("Remove"));
-	translator->add_entry("TraversoCommands::AudioClipExternalProcessing", tr("External Processing"));
-	translator->add_entry("TraversoCommands::ClipSelectionSelect", tr("(De)Select"));
-	translator->add_entry("TraversoCommands::ClipSelectionSelectAll", tr("(De)Select All"));
-	translator->add_entry("TraversoCommands::MoveEdge", tr("Move Edge"));
-	translator->add_entry("TraversoCommands::MoveClipOrEdge", tr("Move Or Resize Clip"));
-	translator->add_entry("TraversoCommands::CropClip", tr("Magnetic Cut"));
-	translator->add_entry("TraversoCommands::ArmTracks", tr("Arm Tracks"));
-	translator->add_entry("TraversoCommands::VZoomIn", tr("Vertical In"));
-	translator->add_entry("TraversoCommands::HZoomOut", tr("Horizontal Out"));
-	translator->add_entry("TraversoCommands::HZoomIn", tr("Horizontal In"));
-	translator->add_entry("TraversoCommands::VZoomOut", tr("Vertical Out"));
-	translator->add_entry("TraversoCommands::Zoom", tr("Zoom"));
-	translator->add_entry("TraversoCommands::ScrollRightHold", tr("Right"));
-	translator->add_entry("TraversoCommands::ScrollLeftHold", tr("Left"));
-	translator->add_entry("TraversoCommands::ScrollUpHold", tr("Up"));
-	translator->add_entry("TraversoCommands::ScrollDownHold", tr("Down"));
-	translator->add_entry("TraversoCommands::Shuttle", tr("Shuttle"));
-	translator->add_entry("TraversoCommands::NormalizeClip", tr("Normalize"));
-	translator->add_entry("TraversoCommands::WorkCursorMove", tr("Move Work Cursor"));
-	translator->add_entry("TraversoCommands::PlayHeadMove", tr("Set Play Position"));
-}
-
 
 TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVariantList arguments)
 {

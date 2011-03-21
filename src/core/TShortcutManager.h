@@ -41,34 +41,47 @@ public:
 	}
 
 	TFunction() {
+		m_inheritedFunction = 0;
 		useX = false;
 		useY = false;
 		sortorder = 0;
-		autorepeatInterval = 120;
-		autorepeatStartDelay = 200;
+		m_autorepeatInterval = 120;
+		m_autorepeatStartDelay = 200;
 	}
 
 	QString getKeySequence();
-	QStringList getModifierKeys();
+	QString getSlotSignature() const;
+	QString getDescription() const;
+	QList<int> getModifierKeys();
 	QStringList getKeys() const;
+
+	int getAutoRepeatInterval() const;
+	int getAutoRepeatStartDelay() const;
+
+	void setDescription(const QString& des);
 
 	QStringList modes;
 	QVariantList arguments;
-	QList<int > modifierkeys;
 	QString object;
-	QString slotsignature;
 	QString pluginname;
 	QString commandName;
 	QString submenu;
-	QString description;
+	QString inherits;
 	bool useX;
 	bool useY;
 	int sortorder;
-	int autorepeatInterval;
-	int autorepeatStartDelay;
 
 private:
-	QStringList m_keys;
+	QStringList	m_keys;
+	QString		slotsignature;
+	QString		m_description;
+	TFunction*	m_inheritedFunction;
+	QList<int >	m_modifierkeys;
+	int		m_autorepeatInterval;
+	int		m_autorepeatStartDelay;
+
+	void setInheritedFunction(TFunction* inherited);
+
 
 	friend class TShortcutManager;
 };
@@ -90,9 +103,9 @@ public:
 	int		autorepeatStartDelay;
 
 private:
-	QHash<QString, TFunction*> objects;
-
+	QMultiHash<QString, TFunction*> objects;
 	int		m_keyValue;
+
 
 	friend class TShortcutManager;
 };
@@ -111,7 +124,7 @@ public:
 	TShortcut* getShortcut(const QString& key);
 	TShortcut* getShortcut(int key);
 	CommandPlugin* getCommandPlugin(const QString& pluginName);
-	void setFunctionKeys(TFunction* function, QStringList keys);
+	void modifyFunctionKeys(TFunction* function, QStringList keys);
 
 	void loadFunctions();
 	void saveFunction(TFunction* function);

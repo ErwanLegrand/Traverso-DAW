@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2007 Remon Sijrier 
+Copyright (C) 2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -42,7 +42,7 @@ Q_DECLARE_INTERFACE(CommandInterface, "org.traversodaw.Command.CommandInterface/
 /**
  * \class CommandPlugin
  * \brief An abstract class to create new Command's which can be loaded dynamically
- *	
+ *
  */
 
 class CommandPlugin : public QObject, public CommandInterface
@@ -53,7 +53,7 @@ class CommandPlugin : public QObject, public CommandInterface
 public:
 	virtual ~CommandPlugin() {}
 /**
-	 * 	Create a Command object, based on the command string. 
+	 * 	Create a Command object, based on the command string.
 
 	 * @param obj The Context Item object for which the Command has to be made
 	 * @param command The name of the Command to be created
@@ -61,16 +61,15 @@ public:
 	 * @return On success a Command object, the caller takes authorship, or 0 on failure.
  */
 	virtual TCommand* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
-        virtual void create_menu_translations() = 0;
 
 	virtual QStringList commands() const {
 		return QStringList(m_dict.keys());
 	}
-	
+
 	virtual bool implements(const QString& command) const {
 		return m_dict.contains(command);
 	}
-	
+
 protected:
 	QHash<QString, int> m_dict;
 };

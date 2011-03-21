@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2007 Remon Sijrier 
+Copyright (C) 2005-2007 Remon Sijrier
 
 This file is part of Traverso
 
@@ -92,10 +92,10 @@ class HistoryWidget : public QUndoView
 {
 public:
 	HistoryWidget(QUndoGroup* group, QWidget* parent)
-		: QUndoView(group, parent) 
+		: QUndoView(group, parent)
 	{
 	}
-	
+
 protected:
 	QSize sizeHint() const {
 		return QSize(120, 140);
@@ -112,170 +112,170 @@ TMainWindow* TMainWindow::m_instance = 0;
 TMainWindow* TMainWindow::instance()
 {
 	if (m_instance == 0) {
-                m_instance = new TMainWindow();
+		m_instance = new TMainWindow();
 	}
 
 	return m_instance;
 }
 
 TMainWindow::TMainWindow()
-        : QMainWindow()
+	: QMainWindow()
 {
 	PENTERCONS;
 
-        m_instance = this;
+	m_instance = this;
 
 	setWindowTitle("Traverso");
-        setMinimumSize(400, 300);
+	setMinimumSize(400, 300);
 	setWindowIcon(QPixmap (":/windowicon") );
 
-        // Track finder and related
-        m_trackFinder = new QLineEdit(this);
-        m_trackFinder->setMinimumWidth(100);
-        m_trackFinder->installEventFilter(this);
-        m_trackFinderCompleter = new QCompleter;
-        m_trackFinder->setCompleter(m_trackFinderCompleter);
-        m_trackFinderModel = new QStandardItemModel();
-        m_trackFinderCompleter->setModel(m_trackFinderModel);
-        m_trackFinderCompleter->setCaseSensitivity(Qt::CaseInsensitive);
-        m_trackFinder->setCompleter(m_trackFinderCompleter);
-        connect(m_trackFinderCompleter, SIGNAL(activated(const QModelIndex&)),
-                this, SLOT(track_finder_model_index_changed(const QModelIndex&)));
-        connect(m_trackFinder, SIGNAL(returnPressed()), this, SLOT(track_finder_return_pressed()));
+	// Track finder and related
+	m_trackFinder = new QLineEdit(this);
+	m_trackFinder->setMinimumWidth(100);
+	m_trackFinder->installEventFilter(this);
+	m_trackFinderCompleter = new QCompleter;
+	m_trackFinder->setCompleter(m_trackFinderCompleter);
+	m_trackFinderModel = new QStandardItemModel();
+	m_trackFinderCompleter->setModel(m_trackFinderModel);
+	m_trackFinderCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+	m_trackFinder->setCompleter(m_trackFinderCompleter);
+	connect(m_trackFinderCompleter, SIGNAL(activated(const QModelIndex&)),
+		this, SLOT(track_finder_model_index_changed(const QModelIndex&)));
+	connect(m_trackFinder, SIGNAL(returnPressed()), this, SLOT(track_finder_return_pressed()));
 
-        m_trackFinderTreeView = new QTreeView;
-        m_trackFinderTreeView->setMinimumWidth(250);
-        m_trackFinderCompleter->setPopup(m_trackFinderTreeView);
-        m_trackFinderTreeView->setRootIsDecorated(false);
-        m_trackFinderTreeView->header()->hide();
-        m_trackFinderTreeView->header()->setStretchLastSection(false);
+	m_trackFinderTreeView = new QTreeView;
+	m_trackFinderTreeView->setMinimumWidth(250);
+	m_trackFinderCompleter->setPopup(m_trackFinderTreeView);
+	m_trackFinderTreeView->setRootIsDecorated(false);
+	m_trackFinderTreeView->header()->hide();
+	m_trackFinderTreeView->header()->setStretchLastSection(false);
 
-        // CenterAreaWidget
+	// CenterAreaWidget
 //        QWidget* mainWidget = new QWidget(this);
 //        m_mainLayout = new QGridLayout(this);
 //        mainWidget->setLayout(m_mainLayout);
 //        setCentralWidget(mainWidget);
-        m_centerAreaWidget = new QStackedWidget(this);
+	m_centerAreaWidget = new QStackedWidget(this);
 //        m_mainLayout->addWidget(m_centerAreaWidget, 0, 0);
-        setCentralWidget(m_centerAreaWidget);
+	setCentralWidget(m_centerAreaWidget);
 
-	// HistoryView 
-        m_historyDW = new QDockWidget(tr("History"), this);
-        m_historyDW->setObjectName("HistoryDockWidget");
-        m_historyWidget = new HistoryWidget(pm().get_undogroup(), m_historyDW);
-        m_historyWidget->setFocusPolicy(Qt::NoFocus);
-        m_historyDW->setWidget(m_historyWidget);
-        addDockWidget(Qt::RightDockWidgetArea, m_historyDW);
-	
+	// HistoryView
+	m_historyDW = new QDockWidget(tr("History"), this);
+	m_historyDW->setObjectName("HistoryDockWidget");
+	m_historyWidget = new HistoryWidget(pm().get_undogroup(), m_historyDW);
+	m_historyWidget->setFocusPolicy(Qt::NoFocus);
+	m_historyDW->setWidget(m_historyWidget);
+	addDockWidget(Qt::RightDockWidgetArea, m_historyDW);
+
 	// AudioSources View
-        m_audioSourcesDW = new QDockWidget(tr("Resources Bin"), this);
-        m_audioSourcesDW->setObjectName("AudioSourcesDockWidget");
-        m_audiosourcesview = new ResourcesWidget(m_audioSourcesDW);
-        m_audiosourcesview->setFocusPolicy(Qt::NoFocus);
-        m_audioSourcesDW->setWidget(m_audiosourcesview);
-        addDockWidget(Qt::TopDockWidgetArea, m_audioSourcesDW);
-        m_audioSourcesDW->hide();
-	
-	// Meter Widgets
-        m_correlationMeterDW = new QDockWidget(tr("Correlation Meter"), this);
-        m_correlationMeterDW->setObjectName("CorrelationMeterDockWidget");
-        m_correlationMeter = new CorrelationMeterWidget(m_correlationMeterDW);
-        m_correlationMeter->setFocusPolicy(Qt::NoFocus);
-        m_correlationMeterDW->setWidget(m_correlationMeter);
-        addDockWidget(Qt::TopDockWidgetArea, m_correlationMeterDW);
-        m_correlationMeterDW->hide();
+	m_audioSourcesDW = new QDockWidget(tr("Resources Bin"), this);
+	m_audioSourcesDW->setObjectName("AudioSourcesDockWidget");
+	m_audiosourcesview = new ResourcesWidget(m_audioSourcesDW);
+	m_audiosourcesview->setFocusPolicy(Qt::NoFocus);
+	m_audioSourcesDW->setWidget(m_audiosourcesview);
+	addDockWidget(Qt::TopDockWidgetArea, m_audioSourcesDW);
+	m_audioSourcesDW->hide();
 
-        m_spectralMeterDW = new QDockWidget(tr("FFT Spectrum"), this);
-        m_spectralMeterDW->setObjectName("SpectralMeterDockWidget");
-        m_spectralMeter = new SpectralMeterWidget(m_spectralMeterDW);
-        m_spectralMeter->setFocusPolicy(Qt::NoFocus);
-        m_spectralMeterDW->setWidget(m_spectralMeter);
-        addDockWidget(Qt::TopDockWidgetArea, m_spectralMeterDW);
-        m_spectralMeterDW->hide();
+	// Meter Widgets
+	m_correlationMeterDW = new QDockWidget(tr("Correlation Meter"), this);
+	m_correlationMeterDW->setObjectName("CorrelationMeterDockWidget");
+	m_correlationMeter = new CorrelationMeterWidget(m_correlationMeterDW);
+	m_correlationMeter->setFocusPolicy(Qt::NoFocus);
+	m_correlationMeterDW->setWidget(m_correlationMeter);
+	addDockWidget(Qt::TopDockWidgetArea, m_correlationMeterDW);
+	m_correlationMeterDW->hide();
+
+	m_spectralMeterDW = new QDockWidget(tr("FFT Spectrum"), this);
+	m_spectralMeterDW->setObjectName("SpectralMeterDockWidget");
+	m_spectralMeter = new SpectralMeterWidget(m_spectralMeterDW);
+	m_spectralMeter->setFocusPolicy(Qt::NoFocus);
+	m_spectralMeterDW->setWidget(m_spectralMeter);
+	addDockWidget(Qt::TopDockWidgetArea, m_spectralMeterDW);
+	m_spectralMeterDW->hide();
 
 	// BusMonitor
-        m_busMonitorDW = new QDockWidget(tr("VU Meters"), this);
-        m_busMonitorDW->setObjectName(tr("VU Meters"));
+	m_busMonitorDW = new QDockWidget(tr("VU Meters"), this);
+	m_busMonitorDW->setObjectName(tr("VU Meters"));
 
-        busMonitor = new BusMonitor(m_busMonitorDW);
-        m_busMonitorDW->setWidget(busMonitor);
-        addDockWidget(Qt::RightDockWidgetArea, m_busMonitorDW);
+	busMonitor = new BusMonitor(m_busMonitorDW);
+	m_busMonitorDW->setWidget(busMonitor);
+	addDockWidget(Qt::RightDockWidgetArea, m_busMonitorDW);
 
-        m_contextHelpDW = new QDockWidget(tr("Context Help"), this);
-        m_contextHelpDW->setObjectName("ContextHelpWidget");
-        TContextHelpWidget* helpWidget = new TContextHelpWidget(m_contextHelpDW);
-        helpWidget->setFocusPolicy(Qt::NoFocus);
-        m_contextHelpDW->setWidget(helpWidget);
-        addDockWidget(Qt::LeftDockWidgetArea, m_contextHelpDW);
+	m_contextHelpDW = new QDockWidget(tr("Context Help"), this);
+	m_contextHelpDW->setObjectName("ContextHelpWidget");
+	TContextHelpWidget* helpWidget = new TContextHelpWidget(m_contextHelpDW);
+	helpWidget->setFocusPolicy(Qt::NoFocus);
+	m_contextHelpDW->setWidget(helpWidget);
+	addDockWidget(Qt::LeftDockWidgetArea, m_contextHelpDW);
 
-	
+
 	m_sysinfo = new SysInfoToolBar(this);
 	m_sysinfo->setObjectName("System Info Toolbar");
 	addToolBar(Qt::BottomToolBarArea, m_sysinfo);
-	
+
 	m_progressBar = new ProgressToolBar(this);
 	m_progressBar->setObjectName("Progress Toolbar");
 	addToolBar(Qt::BottomToolBarArea, m_progressBar);
 	m_progressBar->hide();
 
 
-        m_mainMenuToolBar = new QToolBar(this);
-        m_mainMenuToolBar->setObjectName(tr("MainToolBar"));
-        m_mainMenuToolBar->toggleViewAction()->setText("Main Tool Bar");
+	m_mainMenuToolBar = new QToolBar(this);
+	m_mainMenuToolBar->setObjectName(tr("MainToolBar"));
+	m_mainMenuToolBar->toggleViewAction()->setText("Main Tool Bar");
 //        m_mainMenuToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
-        m_mainMenuToolBar->setMovable(false);
+	m_mainMenuToolBar->setMovable(false);
 
 #if defined (Q_WS_MAC)  // OS X is a lot pickier about menu bars. If we don't use
-                        // QMainWindow::menuBar(), the menus won't be shown at all.
-                        // If possible, I would recommend using the same solution
-                        // on other platforms as well, to reduce platform-specific
-                        // code. (ND)
-        m_mainMenuBar = menuBar();
+			// QMainWindow::menuBar(), the menus won't be shown at all.
+			// If possible, I would recommend using the same solution
+			// on other platforms as well, to reduce platform-specific
+			// code. (ND)
+	m_mainMenuBar = menuBar();
 #else
-        m_mainMenuBar = new QMenuBar(m_mainMenuToolBar);
-        m_mainMenuToolBar->addWidget(m_mainMenuBar);
+	m_mainMenuBar = new QMenuBar(m_mainMenuToolBar);
+	m_mainMenuToolBar->addWidget(m_mainMenuBar);
 #endif
-        QLabel* webAddressLabel = new QLabel(m_mainMenuToolBar);
-        webAddressLabel->setText("<a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
-        webAddressLabel->setOpenExternalLinks(true);
+	QLabel* webAddressLabel = new QLabel(m_mainMenuToolBar);
+	webAddressLabel->setText("<a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
+	webAddressLabel->setOpenExternalLinks(true);
 
-        m_mainMenuToolBar->addWidget(webAddressLabel);
-        addToolBar(Qt::TopToolBarArea, m_mainMenuToolBar);
+	m_mainMenuToolBar->addWidget(webAddressLabel);
+	addToolBar(Qt::TopToolBarArea, m_mainMenuToolBar);
 
 #if !defined (Q_WS_MAC)
 		// why do that? Anyway, it just doesn't look good on OS X. (ND)
-        addToolBarBreak();
+	addToolBarBreak();
 #endif
 
 	m_projectToolBar = new QToolBar(this);
 	m_projectToolBar->setObjectName("Project Toolbar");
 	m_projectToolBar->toggleViewAction()->setText(tr("Project Tool Bar"));
-        addToolBar(Qt::TopToolBarArea, m_projectToolBar);
-	
+	addToolBar(Qt::TopToolBarArea, m_projectToolBar);
+
 	m_editToolBar = new QToolBar(this);
 	m_editToolBar->setObjectName("Edit Toolbar");
 	m_editToolBar->toggleViewAction()->setText(tr("Edit Tool Bar"));
-        addToolBar(Qt::TopToolBarArea, m_editToolBar);
+	addToolBar(Qt::TopToolBarArea, m_editToolBar);
 
-        m_transportConsole = new TransportConsoleWidget(this);
-        m_transportConsole->setObjectName("Transport Console");
+	m_transportConsole = new TransportConsoleWidget(this);
+	m_transportConsole->setObjectName("Transport Console");
 
 #if defined (Q_WS_MAC)
-        // this is important only when setUnifiedTitleAndToolBarOnMac() is true,
-        // because in that case the toolbars in the TopToolBarArea can't be moved
-        // and buttons outside the window area are not accessible at all.
-        // And if set to true, it will mess up the session tab toolbar, too! (ND)
-		
-        bool unifiedTaTB = false;
-        setUnifiedTitleAndToolBarOnMac(unifiedTaTB);
-        if (unifiedTaTB) {
-                addToolBar(Qt::BottomToolBarArea, m_transportConsole);
-        } else {
-                addToolBar(Qt::TopToolBarArea, m_transportConsole);
-        }
-        addToolBar(Qt::BottomToolBarArea, m_transportConsole);
+	// this is important only when setUnifiedTitleAndToolBarOnMac() is true,
+	// because in that case the toolbars in the TopToolBarArea can't be moved
+	// and buttons outside the window area are not accessible at all.
+	// And if set to true, it will mess up the session tab toolbar, too! (ND)
+
+	bool unifiedTaTB = false;
+	setUnifiedTitleAndToolBarOnMac(unifiedTaTB);
+	if (unifiedTaTB) {
+		addToolBar(Qt::BottomToolBarArea, m_transportConsole);
+	} else {
+		addToolBar(Qt::TopToolBarArea, m_transportConsole);
+	}
+	addToolBar(Qt::BottomToolBarArea, m_transportConsole);
 #else
-        addToolBar(Qt::TopToolBarArea, m_transportConsole);
+	addToolBar(Qt::TopToolBarArea, m_transportConsole);
 #endif
 
 	if (config().get_property("Themer", "textundericons", false).toBool()) {
@@ -288,25 +288,25 @@ TMainWindow::TMainWindow()
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 
 
-        addToolBarBreak();
+	addToolBarBreak();
 
-        m_sessionTabsToolbar = new QToolBar(this);
-        m_sessionTabsToolbar->setObjectName("Sheet Tabs");
-        m_sessionTabsToolbar->toggleViewAction()->setText("Sheet Tabs");
-        addToolBar(Qt::TopToolBarArea, m_sessionTabsToolbar);
-        if (m_sessionTabsToolbar->layout()) {
-                m_sessionTabsToolbar->layout()->setSpacing(6);
-        }
+	m_sessionTabsToolbar = new QToolBar(this);
+	m_sessionTabsToolbar->setObjectName("Sheet Tabs");
+	m_sessionTabsToolbar->toggleViewAction()->setText("Sheet Tabs");
+	addToolBar(Qt::TopToolBarArea, m_sessionTabsToolbar);
+	if (m_sessionTabsToolbar->layout()) {
+		m_sessionTabsToolbar->layout()->setSpacing(6);
+	}
 
-        m_welcomeWidget = new WelcomeWidget(this);
-        m_welcomeWidget->show();
-        m_centerAreaWidget->addWidget(m_welcomeWidget/*, tr("&0: Welcome")*/);
-        m_welcomeWidget->setFocus(Qt::MouseFocusReason);
+	m_welcomeWidget = new WelcomeWidget(this);
+	m_welcomeWidget->show();
+	m_centerAreaWidget->addWidget(m_welcomeWidget/*, tr("&0: Welcome")*/);
+	m_welcomeWidget->setFocus(Qt::MouseFocusReason);
 
 	// Some default values.
-        m_project = 0;
-        m_previousCenterAreaWidgetIndex = 0;
-        m_currentSheetWidget = 0;
+	m_project = 0;
+	m_previousCenterAreaWidgetIndex = 0;
+	m_currentSheetWidget = 0;
 	m_exportDialog = 0;
 	m_cdWritingDialog = 0;
 	m_settingsdialog = 0;
@@ -318,24 +318,24 @@ TMainWindow::TMainWindow()
 	m_newTrackDialog = 0;
 	m_quickStart = 0;
 	m_restoreProjectBackupDialog = 0;
-        m_vuLevelUpdateFrequency = 40;
-	
+	m_vuLevelUpdateFrequency = 40;
+
 	create_menus();
-	
+
 	/** Read in the Interface settings and apply them
-         */
-        QSize mainScreenSize = config().get_property("Interface", "size", QSize(0, 0)).toSize();
-        if (mainScreenSize.height()) {
-                resize(mainScreenSize);
-                move(config().get_property("Interface", "pos", QPoint(200, 200)).toPoint());
-                restoreState(config().get_property("Interface", "windowstate", "").toByteArray());
-        } else {
-                showMaximized();
-        }
+	 */
+	QSize mainScreenSize = config().get_property("Interface", "size", QSize(0, 0)).toSize();
+	if (mainScreenSize.height()) {
+		resize(mainScreenSize);
+		move(config().get_property("Interface", "pos", QPoint(200, 200)).toPoint());
+		restoreState(config().get_property("Interface", "windowstate", "").toByteArray());
+	} else {
+		showMaximized();
+	}
 
 	// Connections to core:
 	connect(&pm(), SIGNAL(projectLoaded(Project*)), this, SLOT(set_project(Project*)));
-	connect(&pm(), SIGNAL(unsupportedProjectDirChangeDetected()), this, SLOT(project_dir_change_detected()));	
+	connect(&pm(), SIGNAL(unsupportedProjectDirChangeDetected()), this, SLOT(project_dir_change_detected()));
 	connect(&pm(), SIGNAL(projectLoadFailed(QString,QString)), this, SLOT(project_load_failed(QString,QString)));
 	connect(&pm(), SIGNAL(projectFileVersionMismatch(QString,QString)), this, SLOT(project_file_mismatch(QString,QString)), Qt::QueuedConnection);
 
@@ -347,18 +347,18 @@ TMainWindow::TMainWindow()
 
 //	setUnifiedTitleAndToolBarOnMac(true);
 
-        m_vuLevelUpdateTimer.start(m_vuLevelUpdateFrequency, this);
-        m_vuLevelPeakholdTimer.start(1000, this);
+	m_vuLevelUpdateTimer.start(m_vuLevelUpdateFrequency, this);
+	m_vuLevelPeakholdTimer.start(1000, this);
 }
 
 TMainWindow::~TMainWindow()
 {
 	PENTERDES;
-	
+
 	if (m_exportDialog) {
 		delete m_exportDialog;
 	}
-	
+
 	config().set_property("Interface", "size", size());
 	config().set_property("Interface", "fullScreen", isFullScreen());
 	config().set_property("Interface", "pos", pos());
@@ -368,136 +368,136 @@ TMainWindow::~TMainWindow()
 
 void TMainWindow::set_project(Project* project)
 {
-        PENTER;
-	
-        foreach(SheetWidget* sw, m_sheetWidgets) {
-                remove_session(sw->get_sheet());
-        }
+	PENTER;
 
-        m_project = project;
+	foreach(SheetWidget* sw, m_sheetWidgets) {
+		remove_session(sw->get_sheet());
+	}
 
-        m_trackFinderModel->clear();
-        track_finder_show_initial_text();
+	m_project = project;
 
-        if ( m_project ) {
-                connect(m_project, SIGNAL(projectLoadFinished()), this, SLOT(project_load_finished()));
-                connect(m_project, SIGNAL(projectLoadStarted()), this, SLOT(project_load_started()));
+	m_trackFinderModel->clear();
+	track_finder_show_initial_text();
+
+	if ( m_project ) {
+		connect(m_project, SIGNAL(projectLoadFinished()), this, SLOT(project_load_finished()));
+		connect(m_project, SIGNAL(projectLoadStarted()), this, SLOT(project_load_started()));
 
 		setWindowTitle(project->get_title() + " - Traverso");
-                set_project_actions_enabled(true);
+		set_project_actions_enabled(true);
 
 	} else {
-                m_welcomeWidget->setFocus(Qt::MouseFocusReason);
-                setWindowTitle("Traverso");
-                set_project_actions_enabled(false);
-                show_welcome_page();
+		m_welcomeWidget->setFocus(Qt::MouseFocusReason);
+		setWindowTitle("Traverso");
+		set_project_actions_enabled(false);
+		show_welcome_page();
 	}
 }
 
 void TMainWindow::project_load_started()
 {
-        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
 
 void TMainWindow::project_load_finished()
 {
-        PENTER;
-        if (!m_project) {
-                return;
-        }
+	PENTER;
+	if (!m_project) {
+		return;
+	}
 
-        connect(m_project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(show_session(TSession*)));
-        connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(add_sheetwidget(Sheet*)));
-        connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(remove_sheetwidget(Sheet*)));
+	connect(m_project, SIGNAL(currentSessionChanged(TSession*)), this, SLOT(show_session(TSession*)));
+	connect(m_project, SIGNAL(sheetAdded(Sheet*)), this, SLOT(add_sheetwidget(Sheet*)));
+	connect(m_project, SIGNAL(sheetRemoved(Sheet*)), this, SLOT(remove_sheetwidget(Sheet*)));
 
-        add_session(m_project);
-        foreach(TSession* session, m_project->get_child_sessions()) {
-                add_session(session);
-        }
+	add_session(m_project);
+	foreach(TSession* session, m_project->get_child_sessions()) {
+		add_session(session);
+	}
 
-        foreach(Sheet* sheet, m_project->get_sheets()) {
-                add_session(sheet);
-                foreach(TSession* session, sheet->get_child_sessions()) {
-                        add_session(session);
-                }
-        }
+	foreach(Sheet* sheet, m_project->get_sheets()) {
+		add_session(sheet);
+		foreach(TSession* session, sheet->get_child_sessions()) {
+			add_session(session);
+		}
+	}
 
-        show_session(m_project->get_current_session());
+	show_session(m_project->get_current_session());
 
-        QApplication::restoreOverrideCursor();
+	QApplication::restoreOverrideCursor();
 }
 
 void TMainWindow::remove_sheetwidget(Sheet* sheet)
 {
-        remove_session(sheet);
+	remove_session(sheet);
 }
 
 void TMainWindow::add_sheetwidget(Sheet* sheet)
 {
-        add_session(sheet);
+	add_session(sheet);
 }
 
 void TMainWindow::add_session(TSession *session)
 {
-        if ( ! session->is_child_session()) {
-                TSessionTabWidget* tabWidget = new TSessionTabWidget(m_sessionTabsToolbar, session);
-                m_sessionTabsToolbar->addWidget(tabWidget);
-                m_sessionTabWidgets.insert(session, tabWidget);
-        }
+	if ( ! session->is_child_session()) {
+		TSessionTabWidget* tabWidget = new TSessionTabWidget(m_sessionTabsToolbar, session);
+		m_sessionTabsToolbar->addWidget(tabWidget);
+		m_sessionTabWidgets.insert(session, tabWidget);
+	}
 
-        SheetWidget* sheetWidget = new SheetWidget(session, m_centerAreaWidget);
-        m_sheetWidgets.insert(session, sheetWidget);
-        m_centerAreaWidget->addWidget(sheetWidget);
+	SheetWidget* sheetWidget = new SheetWidget(session, m_centerAreaWidget);
+	m_sheetWidgets.insert(session, sheetWidget);
+	m_centerAreaWidget->addWidget(sheetWidget);
 
-        connect(session, SIGNAL(transportStopped()), this, SLOT(update_follow_state()));
-        connect(session, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
-        connect(session, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
+	connect(session, SIGNAL(transportStopped()), this, SLOT(update_follow_state()));
+	connect(session, SIGNAL(modeChanged()), this, SLOT(update_effects_state()));
+	connect(session, SIGNAL(tempFollowChanged(bool)), this, SLOT(update_temp_follow_state(bool)));
 
-        Sheet* sheet = qobject_cast<Sheet*>(session);
-        if (sheet) {
-                connect(session, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
-                connect(session, SIGNAL(sessionAdded(TSession*)), this, SLOT(add_session(TSession*)));
-                connect(session, SIGNAL(sessionRemoved(TSession*)), this, SLOT(remove_session(TSession*)));
-        }
+	Sheet* sheet = qobject_cast<Sheet*>(session);
+	if (sheet) {
+		connect(session, SIGNAL(snapChanged()), this, SLOT(update_snap_state()));
+		connect(session, SIGNAL(sessionAdded(TSession*)), this, SLOT(add_session(TSession*)));
+		connect(session, SIGNAL(sessionRemoved(TSession*)), this, SLOT(remove_session(TSession*)));
+	}
 }
 
 void TMainWindow::remove_session(TSession* session)
 {
-        SheetWidget* sw = m_sheetWidgets.value(session);
-        if (sw) {
-                m_sheetWidgets.remove(session);
-                m_centerAreaWidget->removeWidget(sw);
-                if (m_currentSheetWidget == sw) {
-                        m_currentSheetWidget = 0;
-                }
-                delete sw;
+	SheetWidget* sw = m_sheetWidgets.value(session);
+	if (sw) {
+		m_sheetWidgets.remove(session);
+		m_centerAreaWidget->removeWidget(sw);
+		if (m_currentSheetWidget == sw) {
+			m_currentSheetWidget = 0;
+		}
+		delete sw;
 
-                TSessionTabWidget* tabWidget = m_sessionTabWidgets.take(session);
-                if (tabWidget) {
-                        delete tabWidget;
-                }
-        }
+		TSessionTabWidget* tabWidget = m_sessionTabWidgets.take(session);
+		if (tabWidget) {
+			delete tabWidget;
+		}
+	}
 }
 
 
 void TMainWindow::show_session(TSession* session)
 {
 	PENTER;
-	
+
 	SheetWidget* sheetWidget = 0;
-	
-        if (!session) {
+
+	if (!session) {
 		m_snapAction->setEnabled(false);
 		m_effectAction->setEnabled(false);
 		m_followAction->setEnabled(false);
 
-                return;
+		return;
 
 	} else {
-                sheetWidget = m_sheetWidgets.value(session);
-                if (!sheetWidget) {
-                        return;
-                }
+		sheetWidget = m_sheetWidgets.value(session);
+		if (!sheetWidget) {
+			return;
+		}
 
 		update_snap_state();
 		update_effects_state();
@@ -506,26 +506,26 @@ void TMainWindow::show_session(TSession* session)
 		m_followAction->setEnabled(true);
 	}
 
-        if (m_currentSheetWidget && m_project && m_project->sheets_are_track_folder()) {
-                sheetWidget->get_sheet()->set_hzoom(m_currentSheetWidget->get_sheet()->get_hzoom());
-                sheetWidget->get_sheetview()->set_hscrollbar_value(m_currentSheetWidget->get_sheetview()->hscrollbar_value());
-        }
+	if (m_currentSheetWidget && m_project && m_project->sheets_are_track_folder()) {
+		sheetWidget->get_sheet()->set_hzoom(m_currentSheetWidget->get_sheet()->get_hzoom());
+		sheetWidget->get_sheetview()->set_hscrollbar_value(m_currentSheetWidget->get_sheetview()->hscrollbar_value());
+	}
 
-        m_currentSheetWidget = sheetWidget;
-        m_currentSheetWidget->setFocus(Qt::MouseFocusReason);
+	m_currentSheetWidget = sheetWidget;
+	m_currentSheetWidget->setFocus(Qt::MouseFocusReason);
 
-        m_centerAreaWidget->setCurrentWidget(m_currentSheetWidget);
+	m_centerAreaWidget->setCurrentWidget(m_currentSheetWidget);
 
-        if (session) {
-                pm().get_undogroup()->setActiveStack(session->get_history_stack());
+	if (session) {
+		pm().get_undogroup()->setActiveStack(session->get_history_stack());
 //                setWindowTitle(m_project->get_title() + ": Sheet " + session->get_name() + " - Traverso");
-        }
+	}
 }
 
 TCommand* TMainWindow::about_traverso()
 {
 	PENTER;
-	QString text(tr("Traverso %1 (built with Qt %2)\n\n" 
+	QString text(tr("Traverso %1 (built with Qt %2)\n\n"
 			"A multitrack audio recording and editing program.\n\n"
 			"Look in the Help menu for more info.\n\n"
 			"Traverso is brought to you by R. Sijrier and others,\n"
@@ -534,21 +534,21 @@ TCommand* TMainWindow::about_traverso()
 			"Traverso is based (Gcc, Qt, Xorg, Linux, and so on)" ).arg(VERSION).arg(QT_VERSION_STR));
 	QMessageBox::about ( this, tr("About Traverso"), text);
 
-        return (TCommand*) 0;
+	return (TCommand*) 0;
 }
 
 TCommand* TMainWindow::quick_start()
 {
 	PENTER;
-	
+
 	if (m_quickStart == 0) {
 		m_quickStart = new QDialog();
 		Ui_QuickStartDialog *qsd = new Ui_QuickStartDialog();
 		qsd->setupUi(m_quickStart);
 	}
 	m_quickStart->show();
-	
-        return (TCommand*) 0;
+
+	return (TCommand*) 0;
 }
 
 TCommand* TMainWindow::full_screen()
@@ -557,53 +557,53 @@ TCommand* TMainWindow::full_screen()
 		showNormal();
 	else
 		showFullScreen();
-        return (TCommand*) 0;
+	return (TCommand*) 0;
 }
 
 TCommand* TMainWindow::show_fft_meter_only()
 {
-        if (m_centerAreaWidget->isHidden()) {
-                m_centerAreaWidget->show();
-                restoreState(m_windowState);
-        } else {
-                m_windowState = saveState();
-                m_spectralMeterDW->show();
+	if (m_centerAreaWidget->isHidden()) {
+		m_centerAreaWidget->show();
+		restoreState(m_windowState);
+	} else {
+		m_windowState = saveState();
+		m_spectralMeterDW->show();
 
-                m_busMonitorDW->hide();
-                m_correlationMeterDW->hide();
-                m_historyDW->hide();
-                m_audioSourcesDW->hide();
-                m_contextHelpDW->hide();
-                m_projectToolBar->hide();
-                m_editToolBar->hide();
-                m_sessionTabsToolbar->hide();
-                m_transportConsole->hide();
-                m_centerAreaWidget->hide();
-        }
-        return 0;
+		m_busMonitorDW->hide();
+		m_correlationMeterDW->hide();
+		m_historyDW->hide();
+		m_audioSourcesDW->hide();
+		m_contextHelpDW->hide();
+		m_projectToolBar->hide();
+		m_editToolBar->hide();
+		m_sessionTabsToolbar->hide();
+		m_transportConsole->hide();
+		m_centerAreaWidget->hide();
+	}
+	return 0;
 }
 
 void TMainWindow::timerEvent(QTimerEvent *event)
 {
-        if (event->timerId() == m_vuLevelUpdateTimer.timerId()) {
-                update_vu_levels_peak();
-        }
-        if (event->timerId() == m_vuLevelPeakholdTimer.timerId()) {
-                reset_vu_levels_peak_hold_value();
-        }
+	if (event->timerId() == m_vuLevelUpdateTimer.timerId()) {
+		update_vu_levels_peak();
+	}
+	if (event->timerId() == m_vuLevelPeakholdTimer.timerId()) {
+		reset_vu_levels_peak_hold_value();
+	}
 }
 
 void TMainWindow::keyPressEvent( QKeyEvent * e)
 {
-        if (m_trackFinder->hasFocus()) {
-                if (e->key() == Qt::Key_Escape) {
-                        track_finder_show_initial_text();
-                        if (m_currentSheetWidget) {
-                                m_currentSheetWidget->setFocus();
-                        }
-                }
-                return;
-        }
+	if (m_trackFinder->hasFocus()) {
+		if (e->key() == Qt::Key_Escape) {
+			track_finder_show_initial_text();
+			if (m_currentSheetWidget) {
+				m_currentSheetWidget->setFocus();
+			}
+		}
+		return;
+	}
 	ie().catch_key_press(e);
 	e->ignore();
 }
@@ -616,16 +616,16 @@ void TMainWindow::keyReleaseEvent( QKeyEvent * e)
 
 bool TMainWindow::eventFilter(QObject * obj, QEvent * event)
 {
-        if (event->type() == QEvent::MouseButtonPress && obj == m_trackFinder) {
-                show_track_finder();
-                return true;
-        }
+	if (event->type() == QEvent::MouseButtonPress && obj == m_trackFinder) {
+		show_track_finder();
+		return true;
+	}
 
 	QMenu* menu = qobject_cast<QMenu*>(obj);
-	
+
 	// If the installed filter was for a QMenu, we need to
-	// delegate key releases to the InputEngine, e.g. a hold 
-	// action would never finish if we release the hold key 
+	// delegate key releases to the InputEngine, e.g. a hold
+	// action would never finish if we release the hold key
 	// on the open Menu, resulting in weird behavior!
 	if (menu) {
 		if (event->type() == QEvent::KeyRelease) {
@@ -633,7 +633,7 @@ bool TMainWindow::eventFilter(QObject * obj, QEvent * event)
 			ie().catch_key_release(keyEvent);
 			return true;
 		} else if (event->type() == QEvent::MouseMove) {
-                        // FIXME: Seems no longer to be the case??
+			// FIXME: Seems no longer to be the case??
 			// Also send mouse move events to the current viewport
 			// so in case we close the Menu, and _do_not_move_the_mouse
 			// and perform an action, it could be delegated to the wrong ViewItem!
@@ -644,11 +644,11 @@ bool TMainWindow::eventFilter(QObject * obj, QEvent * event)
 //			if (vp && !ie().is_holding()) {
 //				vp->mouseMoveEvent(mouseEvent);
 //			}
-                } else {
+		} else {
 			return false;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -660,11 +660,11 @@ void TMainWindow::changeEvent(QEvent *event)
 		case QEvent::WindowStateChange:
 			// clean up the ie after Alt-Tab
 			// if problems remain, maybe ie().reset() will help...
-                        ie().abort_current_hold_actions();
+			ie().abort_current_hold_actions();
 		default:
 			break;
 	}
-	
+
 	// pass the event on to the parent class
 	QMainWindow::changeEvent(event);
 }
@@ -674,16 +674,16 @@ TCommand * TMainWindow::show_export_widget( )
 	if (m_cdWritingDialog && !m_cdWritingDialog->isHidden()) {
 		return 0;
 	}
-	
+
 	if (! m_exportDialog) {
 		m_exportDialog = new ExportDialog(this);
 	}
-	
+
 	if (m_exportDialog->isHidden()) {
 		m_exportDialog->show();
 	}
-	
-        return (TCommand*) 0;
+
+	return (TCommand*) 0;
 }
 
 TCommand * TMainWindow::show_cd_writing_dialog( )
@@ -691,130 +691,130 @@ TCommand * TMainWindow::show_cd_writing_dialog( )
 	if (m_exportDialog && !m_exportDialog->isHidden()) {
 		return 0;
 	}
-	
+
 	if (! m_cdWritingDialog) {
 		m_cdWritingDialog = new CDWritingDialog(this);
 	}
-	
+
 	if (m_cdWritingDialog->isHidden()) {
 		m_cdWritingDialog->show();
 	}
-	
-        return (TCommand*) 0;
+
+	return (TCommand*) 0;
 }
 
 void TMainWindow::create_menus( )
 {
 	QAction* action;
-        QList<QKeySequence> list;
+	QList<QKeySequence> list;
 
-        QMenu* menu = m_mainMenuBar->addMenu(tr("&File"));
-        menu->installEventFilter(this);
+	QMenu* menu = m_mainMenuBar->addMenu(tr("&File"));
+	menu->installEventFilter(this);
 
-        action = menu->addAction(tr("&New..."));
-        action->setIcon(find_pixmap(":/new"));
-        action->setShortcuts(QKeySequence::New);
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
+	action = menu->addAction(tr("&New..."));
+	action->setIcon(find_pixmap(":/new"));
+	action->setShortcuts(QKeySequence::New);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_newproject_dialog()));
 
-        action = menu->addAction(tr("&Open..."));
-        action->setIcon(QIcon(":/open"));
-        action->setShortcuts(QKeySequence::Open);
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(show_welcome_page()));
+	action = menu->addAction(tr("&Open..."));
+	action->setIcon(QIcon(":/open"));
+	action->setShortcuts(QKeySequence::Open);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_welcome_page()));
 
-        menu->addSeparator();
+	menu->addSeparator();
 
-        action = menu->addAction(tr("&Save"));
-        m_projectMenuToolbarActions.append(action);
-        action->setShortcuts(QKeySequence::Save);
-        action->setIcon(QIcon(":/save"));
-        connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
+	action = menu->addAction(tr("&Save"));
+	m_projectMenuToolbarActions.append(action);
+	action->setShortcuts(QKeySequence::Save);
+	action->setIcon(QIcon(":/save"));
+	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(save_project()));
 
-        menu->addSeparator();
+	menu->addSeparator();
 
-        action = menu->addAction(tr("&Close Project"));
-        m_projectMenuToolbarActions.append(action);
-        action->setShortcuts(QKeySequence::Cut);
-        action->setIcon(QIcon(":/exit"));
-        connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(close_current_project()));
+	action = menu->addAction(tr("&Close Project"));
+	m_projectMenuToolbarActions.append(action);
+	action->setShortcuts(QKeySequence::Cut);
+	action->setIcon(QIcon(":/exit"));
+	connect(action, SIGNAL(triggered(bool)), &pm(), SLOT(close_current_project()));
 
-        menu->addSeparator();
+	menu->addSeparator();
 
-        action = menu->addAction(tr("&Manage Project..."));
-        m_projectMenuToolbarActions.append(action);
-        list.clear();
+	action = menu->addAction(tr("&Manage Project..."));
+	m_projectMenuToolbarActions.append(action);
+	list.clear();
 	list.append(QKeySequence("F4"));
 	action->setShortcuts(list);
 	action->setIcon(QIcon(":/projectmanager"));
 	menu->addAction(action);
-        m_projectToolBar->addAction(action);
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
+	m_projectToolBar->addAction(action);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_project_manager_dialog()));
 
 	action = menu->addAction(tr("&Export..."));
-        m_projectMenuToolbarActions.append(action);
-        list.clear();
+	m_projectMenuToolbarActions.append(action);
+	list.clear();
 	list.append(QKeySequence("F9"));
 	action->setShortcuts(list);
 	action->setIcon(QIcon(":/export"));
 	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_export_widget()));
-	
+
 	action = menu->addAction(tr("&CD Writing..."));
-        m_projectMenuToolbarActions.append(action);
-        list.clear();
+	m_projectMenuToolbarActions.append(action);
+	list.clear();
 	list.append(QKeySequence("F8"));
 	action->setShortcuts(list);
 	action->setIcon(QIcon(":/write-cd"));
 	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_cd_writing_dialog()));
-	
+
 	action = menu->addAction(tr("&Restore Backup..."));
-        m_projectMenuToolbarActions.append(action);
-        list.clear();
+	m_projectMenuToolbarActions.append(action);
+	list.clear();
 	list.append(QKeySequence("F10"));
 	action->setShortcuts(list);
 	action->setIcon(QIcon(":/restore"));
 	m_projectToolBar->addAction(action);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_restore_project_backup_dialog()));
 
-        menu->addSeparator();
+	menu->addSeparator();
 
-        action = menu->addAction(tr("&Quit"));
-        list.clear();
-        list.append(QKeySequence("CTRL+Q"));
-        action->setShortcuts(list);
-        action->setIcon(QIcon(":/exit"));
-        connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
+	action = menu->addAction(tr("&Quit"));
+	list.clear();
+	list.append(QKeySequence("CTRL+Q"));
+	action->setShortcuts(list);
+	action->setIcon(QIcon(":/exit"));
+	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(exit()));
 
 
-        menu = m_mainMenuBar->addMenu(tr("&Edit"));
-        menu->installEventFilter(this);
+	menu = m_mainMenuBar->addMenu(tr("&Edit"));
+	menu->installEventFilter(this);
 
-        action = menu->addAction(tr("Undo"));
-        m_projectMenuToolbarActions.append(action);
-        action->setIcon(QIcon(":/undo"));
+	action = menu->addAction(tr("Undo"));
+	m_projectMenuToolbarActions.append(action);
+	action->setIcon(QIcon(":/undo"));
 	action->setShortcuts(QKeySequence::Undo);
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(undo()));
 
 	action = menu->addAction(tr("Redo"));
-        m_projectMenuToolbarActions.append(action);
-        action->setIcon(QIcon(":/redo"));
+	m_projectMenuToolbarActions.append(action);
+	action->setIcon(QIcon(":/redo"));
 	action->setShortcuts(QKeySequence::Redo);
 	m_editToolBar->addAction(action);
-	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));	
+	connect(action, SIGNAL(triggered( bool )), &pm(), SLOT(redo()));
 
 	menu->addSeparator();
 	m_editToolBar->addSeparator();
 
 	action = menu->addAction(tr("Import &Audio..."));
-        m_projectMenuToolbarActions.append(action);
-        action->setIcon(QIcon(":/import-audio"));
+	m_projectMenuToolbarActions.append(action);
+	action->setIcon(QIcon(":/import-audio"));
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered()), this, SLOT(import_audio()));
 
 	action = menu->addAction(tr("Insert Si&lence..."));
-        m_projectMenuToolbarActions.append(action);
-        action->setIcon(QIcon(":/import-silence"));
+	m_projectMenuToolbarActions.append(action);
+	action->setIcon(QIcon(":/import-silence"));
 	m_editToolBar->addAction(action);
 	connect(action, SIGNAL(triggered()), this, SLOT(show_insertsilence_dialog()));
 
@@ -822,59 +822,59 @@ void TMainWindow::create_menus( )
 	m_editToolBar->addSeparator();
 
 	m_snapAction = menu->addAction(tr("&Snap"));
-        m_projectMenuToolbarActions.append(m_snapAction);
-        m_snapAction->setIcon(QIcon(":/snap"));
+	m_projectMenuToolbarActions.append(m_snapAction);
+	m_snapAction->setIcon(QIcon(":/snap"));
 	m_snapAction->setCheckable(true);
 	m_snapAction->setToolTip(tr("Snap items to edges of other items while dragging."));
 	m_editToolBar->addAction(m_snapAction);
 	connect(m_snapAction, SIGNAL(triggered(bool)), this, SLOT(snap_state_changed(bool)));
 
-        m_followAction = menu->addAction(tr("S&croll Playback"));
-        m_projectMenuToolbarActions.append(m_followAction);
+	m_followAction = menu->addAction(tr("S&croll Playback"));
+	m_projectMenuToolbarActions.append(m_followAction);
 	m_followAction->setIcon(QIcon(":/follow"));
 	m_followAction->setCheckable(true);
 	m_followAction->setToolTip(tr("Keep play cursor in view while playing or recording."));
 	m_editToolBar->addAction(m_followAction);
 	connect(m_followAction, SIGNAL(triggered(bool)), this, SLOT(follow_state_changed(bool)));
 
-        m_effectAction = menu->addAction(tr("&Show Effects"));
-        m_projectMenuToolbarActions.append(m_effectAction);
-        m_effectAction->setIcon(QIcon(":/effects"));
+	m_effectAction = menu->addAction(tr("&Show Effects"));
+	m_projectMenuToolbarActions.append(m_effectAction);
+	m_effectAction->setIcon(QIcon(":/effects"));
 	m_effectAction->setCheckable(true);
 	m_effectAction->setToolTip(tr("Show effect plugins and automation curves on tracks"));
 	m_editToolBar->addAction(m_effectAction);
 	connect(m_effectAction, SIGNAL(triggered(bool)), this, SLOT(effect_state_changed(bool)));
 
 	menu = m_mainMenuBar->addMenu(tr("&View"));
-        menu->installEventFilter(this);
+	menu->installEventFilter(this);
 
-        menu->addAction(m_historyDW->toggleViewAction());
-        menu->addAction(m_busMonitorDW->toggleViewAction());
-        menu->addAction(m_audioSourcesDW->toggleViewAction());
-        menu->addAction(m_contextHelpDW->toggleViewAction());
+	menu->addAction(m_historyDW->toggleViewAction());
+	menu->addAction(m_busMonitorDW->toggleViewAction());
+	menu->addAction(m_audioSourcesDW->toggleViewAction());
+	menu->addAction(m_contextHelpDW->toggleViewAction());
 
-        action = menu->addAction(tr("Marker Editor..."));
-        m_projectMenuToolbarActions.append(action);
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
+	action = menu->addAction(tr("Marker Editor..."));
+	m_projectMenuToolbarActions.append(action);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(show_marker_dialog()));
 
-        action = menu->addAction(tr("Toggle Full Screen"));
-        connect(action, SIGNAL(triggered()), this, SLOT(full_screen()));
+	action = menu->addAction(tr("Toggle Full Screen"));
+	connect(action, SIGNAL(triggered()), this, SLOT(full_screen()));
 
-        action = menu->addAction(tr("Toggle FFT Only"));
-        connect(action, SIGNAL(triggered()), this, SLOT(show_fft_meter_only()));
-
-        menu->addSeparator();
-	
-        menu->addAction(m_correlationMeterDW->toggleViewAction());
-        menu->addAction(m_spectralMeterDW->toggleViewAction());
+	action = menu->addAction(tr("Toggle FFT Only"));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_fft_meter_only()));
 
 	menu->addSeparator();
-        action = menu->addAction(tr("ToolBars"));
-        action->setEnabled(false);
+
+	menu->addAction(m_correlationMeterDW->toggleViewAction());
+	menu->addAction(m_spectralMeterDW->toggleViewAction());
+
 	menu->addSeparator();
-	
-        menu->addAction(m_transportConsole->toggleViewAction());
-        m_transportConsole->toggleViewAction()->setText(tr("Transport Console"));
+	action = menu->addAction(tr("ToolBars"));
+	action->setEnabled(false);
+	menu->addSeparator();
+
+	menu->addAction(m_transportConsole->toggleViewAction());
+	m_transportConsole->toggleViewAction()->setText(tr("Transport Console"));
 
 	// if unifiedTitleAndToolBarOnMac == true we don't want the main toolbars
 	// to be hidden. thus only add the menu entries on systems != OS X
@@ -886,73 +886,73 @@ void TMainWindow::create_menus( )
 	m_editToolBar->toggleViewAction()->setText(tr("Edit"));
 #endif
 
-        menu->addAction(m_mainMenuToolBar->toggleViewAction());
-        menu->addAction(m_sessionTabsToolbar->toggleViewAction());
+	menu->addAction(m_mainMenuToolBar->toggleViewAction());
+	menu->addAction(m_sessionTabsToolbar->toggleViewAction());
 
-        menu->addAction(m_sysinfo->toggleViewAction());
+	menu->addAction(m_sysinfo->toggleViewAction());
 	m_sysinfo->toggleViewAction()->setText(tr("System Information"));
 
 	menu->addSeparator();
-	
-        menu = m_mainMenuBar->addMenu(tr("&Settings"));
-        menu->installEventFilter(this);
-	
-        m_encodingMenu = menu->addMenu(tr("&Recording File Format"));
-	
-        action = m_encodingMenu->addAction("WAVE");
+
+	menu = m_mainMenuBar->addMenu(tr("&Settings"));
+	menu->installEventFilter(this);
+
+	m_encodingMenu = menu->addMenu(tr("&Recording File Format"));
+
+	action = m_encodingMenu->addAction("WAVE");
 	action->setData("wav");
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_recording_format_to_wav()));
-        action = m_encodingMenu->addAction("WavPack");
+	action = m_encodingMenu->addAction("WavPack");
 	action->setData("wavpack");
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wavpack()));
-        action = m_encodingMenu->addAction("WAVE-64");
+	action = m_encodingMenu->addAction("WAVE-64");
 	action->setData("w64");
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
-	
-        m_resampleQualityMenu = menu->addMenu(tr("&Resample Quality"));
-        action = m_resampleQualityMenu->addAction(tr("Best"));
-        action->setData(0);
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
-        action = m_resampleQualityMenu->addAction(tr("High"));
-        action->setData(1);
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_high()));
-        action = m_resampleQualityMenu->addAction(tr("Medium"));
-        action->setData(2);
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_medium()));
-        action = m_resampleQualityMenu->addAction(tr("Fast"));
-        action->setData(3);
-        connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_fast()));
+
+	m_resampleQualityMenu = menu->addMenu(tr("&Resample Quality"));
+	action = m_resampleQualityMenu->addAction(tr("Best"));
+	action->setData(0);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
+	action = m_resampleQualityMenu->addAction(tr("High"));
+	action->setData(1);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_high()));
+	action = m_resampleQualityMenu->addAction(tr("Medium"));
+	action->setData(2);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_medium()));
+	action = m_resampleQualityMenu->addAction(tr("Fast"));
+	action->setData(3);
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_fast()));
 
 	// fake a config changed 'signal-slot' action, to set the encoding menu icons
 	config_changed();
-	
+
 	menu->addSeparator();
-	
+
 	action = menu->addAction(tr("&Preferences..."));
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
-	
-	
-        menu = m_mainMenuBar->addMenu(tr("&Help"));
-        menu->installEventFilter(this);
+
+
+	menu = m_mainMenuBar->addMenu(tr("&Help"));
+	menu->installEventFilter(this);
 
 	action = menu->addAction(tr("&Getting Started"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(quick_start()));
-	
+
 	action = menu->addAction(tr("&User Manual"));
 	action->setIcon(style()->standardIcon(QStyle::SP_DialogHelpButton));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(open_help_browser()));
-	
+
 	action = menu->addAction(tr("&About Traverso"));
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(about_traverso()));
 
-        set_project_actions_enabled(false);
+	set_project_actions_enabled(false);
 }
 
 void TMainWindow::set_project_actions_enabled(bool enable)
 {
-        foreach(QAction* action, m_projectMenuToolbarActions) {
-                action->setEnabled(enable);
-        }
+	foreach(QAction* action, m_projectMenuToolbarActions) {
+		action->setEnabled(enable);
+	}
 
 }
 
@@ -967,18 +967,18 @@ void TMainWindow::process_context_menu_action( QAction * action )
 TCommand * TMainWindow::show_context_menu( )
 {
 	QList<QObject* > items;
-	
+
 	// In case of a holding action, show the menu for the holding command!
-	// If not, show the menu for the topmost context item, and it's 
+	// If not, show the menu for the topmost context item, and it's
 	// siblings as submenus
 	if (ie().is_holding()) {
-                TCommand* holding = ie().get_holding_command();
+		TCommand* holding = ie().get_holding_command();
 		if (holding) {
 			items.append(holding);
 		}
 	} else {
 		items = cpointer().get_context_items();
-		
+
 		// Filter out classes that don't need to show up in the menu
 		foreach(QObject* item, items) {
 			QString className = item->metaObject()->className();
@@ -987,37 +987,37 @@ TCommand * TMainWindow::show_context_menu( )
 			}
 		}
 	}
-	
+
 	if (items.isEmpty()) {
 		printf("Interface:: No items under mouse to show context menu for!\n");
 		return 0;
 	}
-	
+
 	// 'Store' the contextitems under the mouse cursor, so the InputEngine
 	// dispatches the 'keyfact' from the menu to the 'pointed' objects!
 	cpointer().set_contextmenu_items(cpointer().get_context_items());
 
 	QMenu* toplevelmenu = 0;
 	QAction* action = 0;
-			
+
 	for (int i=0; i<items.size(); ++i) {
 		QObject* item = items.at(i);
-		
+
 		QString className = item->metaObject()->className();
-		
+
 		if (i==0) {
 			toplevelmenu = m_contextMenus.value(className);
-		
+
 			if ( ! toplevelmenu ) {
 				printf("Interface: No menu for %s, creating new one\n", QS_C(className));
 				toplevelmenu = create_context_menu(item);
 				if (! toplevelmenu ) {
 					if (items.size() > 1) {
-                                                toplevelmenu = new QMenu(this);
+						toplevelmenu = new QMenu(this);
 					} else {
 						return 0;
 					}
-						
+
 				}
 				m_contextMenus.insert(className, toplevelmenu);
 				connect(toplevelmenu, SIGNAL(triggered(QAction*)), this, SLOT(process_context_menu_action(QAction*)));
@@ -1032,22 +1032,22 @@ TCommand * TMainWindow::show_context_menu( )
 				continue;
 			}
 			action = toplevelmenu->insertMenu(action, menu);
-                        QString name = TMenuTranslator::instance()->get_translation_for(className.remove("View"));
+			QString name = TMenuTranslator::instance()->get_translation_for(className.remove("View"));
 
-                        action->setText(name);
+			action->setText(name);
 		}
 	}
 
 	// It's impossible there is NO toplevelmenu, but oh well...
 	if (toplevelmenu) {
-                // using toplevelmenu->exec() continues on the event loop
-                // when the hold action finishes, input engine clears hold items
-                // which could be referenced again in inputengine, causing a segfault.
-                // so showing it will be sufficient. In fact, using exec() is
-                // considered bad practice due this very issue.
+		// using toplevelmenu->exec() continues on the event loop
+		// when the hold action finishes, input engine clears hold items
+		// which could be referenced again in inputengine, causing a segfault.
+		// so showing it will be sufficient. In fact, using exec() is
+		// considered bad practice due this very issue.
 		toplevelmenu->popup(QCursor::pos());
-        }
-	
+	}
+
 	return 0;
 }
 
@@ -1062,7 +1062,7 @@ TCommand * TMainWindow::export_keymap()
 	}
 
 	QString str;
-        (TCommand *) get_keymap(str);
+	(TCommand *) get_keymap(str);
 	out << str;
 
 	data.close();
@@ -1071,30 +1071,30 @@ TCommand * TMainWindow::export_keymap()
 
 TCommand * TMainWindow::get_keymap(QString &str)
 {
-        TMenuTranslator* translator = TMenuTranslator::instance();
+	TMenuTranslator* translator = TMenuTranslator::instance();
 
-        QHash<QString, QList<const QMetaObject*> > metas = translator->get_meta_objects();
-        QMap<QString, QList<const QMetaObject*> > objects;
-        foreach(QList<const QMetaObject*> value, metas.values()) {
-                objects.insert(metas.key(value), value);
-        }
+	QHash<QString, QList<const QMetaObject*> > metas = translator->get_meta_objects();
+	QMap<QString, QList<const QMetaObject*> > objects;
+	foreach(QList<const QMetaObject*> value, metas.values()) {
+		objects.insert(metas.key(value), value);
+	}
 
-        str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
-              "<style type=\"text/css\">\n"
-              "H1 {text-align: left; font-size: 20px;}\n"
-              "table {font-size: 12px; border: solid; border-width: 1px; width: 600px;}\n"
-              ".object {background-color: #ccc; font-size: 16px; font-weight: bold;}\n"
-              ".description {background-color: #ddd; width: 300px; padding: 2px; font-size: 12px; font-weight: bold;}\n"
-              "</style>\n"
-              "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
-	
+	str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
+	      "<style type=\"text/css\">\n"
+	      "H1 {text-align: left; font-size: 20px;}\n"
+	      "table {font-size: 12px; border: solid; border-width: 1px; width: 600px;}\n"
+	      ".object {background-color: #ccc; font-size: 16px; font-weight: bold;}\n"
+	      ".description {background-color: #ddd; width: 300px; padding: 2px; font-size: 12px; font-weight: bold;}\n"
+	      "</style>\n"
+	      "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
+
 	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
 		str += translator->createHtmlForMetaObects(objectlist);
-                str += "<p></p><p></p>\n";
-        }
-	
-        str += "</body>\n</html>";
-	
+		str += "<p></p><p></p>\n";
+	}
+
+	str += "</body>\n</html>";
+
 	return 0;
 }
 
@@ -1106,36 +1106,36 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 	} else {
 		list = *menulist;
 	}
-	
+
 	if (list.size() == 0) {
 		// Empty menu!
 		return 0;
 	}
-	
+
 	qSort(list.begin(), list.end(), TFunction::smaller);
 
 	QString name;
 	if (item) {
-                name = TMenuTranslator::instance()->get_translation_for(QString(item->metaObject()->className()).remove("View"));
+		name = TMenuTranslator::instance()->get_translation_for(QString(item->metaObject()->className()).remove("View"));
 	}
 
 	QMenu* menu = new QMenu(this);
 	menu->installEventFilter(this);
-	
-        QAction* menuAction = menu->addAction(name);
+
+	QAction* menuAction = menu->addAction(name);
 	QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 	font.setBold(true);
 	menuAction->setFont(font);
 	menuAction->setEnabled(false);
 	menu->addSeparator();
 	menu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
-	
+
 	QMap<QString, QList<TFunction*>* > submenus;
-	
+
 	for (int i=0; i<list.size(); ++i) {
 		TFunction* function = list.at(i);
-		
-		// If this MenuData item is a submenu, add to the 
+
+		// If this MenuData item is a submenu, add to the
 		// list of submenus, which will be processed lateron
 		// Else, add the MenuData item as action in the Menu
 		if ( ! function->submenu.isEmpty() ) {
@@ -1147,50 +1147,50 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 			list->append(function);
 		} else {
 			QAction* action = new QAction(this);
-			action->setText(function->description);
+			action->setText(function->getDescription());
 			QString sequence = function->getKeySequence();
 			ie().filter_unknown_sequence(sequence);
 			action->setShortcut(sequence);
 			QStringList strings;
-			strings << function->getKeySequence() << function->description;
+			strings << function->getKeySequence() << function->getDescription();
 			action->setData(strings);
 			menu->addAction(action);
 		}
 	}
-	
+
 	// For all submenus, create the Menu, and add
-	// actions, a little code duplication here, adding action to the 
+	// actions, a little code duplication here, adding action to the
 	// menu is also done ~10 lines up ...
 	QList<QString> keys = submenus.keys();
 	foreach(const QString &key, keys) {
 		QList<TFunction*>* list = submenus.value(key);
-		
+
 		qSort(list->begin(), list->end(), TFunction::smaller);
 
-                QMenu* subMenu = new QMenu(this);
-                subMenu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
-		
+		QMenu* subMenu = new QMenu(this);
+		subMenu->setFont(themer()->get_font("ContextMenu:fontscale:actions"));
+
 		QFont font(themer()->get_font("ContextMenu:fontscale:actions"));
 		font.setBold(true);
-                subMenu->menuAction()->setFont(font);
-		
-                QAction* action = menu->insertMenu(0, subMenu);
-                action->setText(TMenuTranslator::instance()->get_translation_for(key));
+		subMenu->menuAction()->setFont(font);
+
+		QAction* action = menu->insertMenu(0, subMenu);
+		action->setText(TMenuTranslator::instance()->get_translation_for(key));
 		foreach(TFunction* function, *list) {
-                        QAction* action = new QAction(subMenu);
-			action->setText(function->description);
+			QAction* action = new QAction(subMenu);
+			action->setText(function->getDescription());
 			QString sequence = function->getKeySequence();
 			ie().filter_unknown_sequence(sequence);
 			action->setShortcut(sequence);
 			QStringList strings;
-			strings << function->getKeySequence() << function->description;
+			strings << function->getKeySequence() << function->getDescription();
 			action->setData(strings);
 			subMenu->addAction(action);
 		}
-		
+
 		delete list;
 	}
-	
+
 	return menu;
 }
 
@@ -1204,26 +1204,26 @@ void TMainWindow::set_insertsilence_track(AudioTrack* track)
 void TMainWindow::select_fade_in_shape( )
 {
 	QMenu* menu = m_contextMenus.value("fadeInSelector");
-	
+
 	if (!menu) {
 		menu = create_fade_selector_menu("fadeInSelector");
 		connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(set_fade_in_shape(QAction*)));
 	}
-		
-	
+
+
 	menu->exec(QCursor::pos());
 }
 
 void TMainWindow::select_fade_out_shape( )
 {
 	QMenu* menu = m_contextMenus.value("fadeOutSelector");
-	
+
 	if (!menu) {
 		menu = create_fade_selector_menu("fadeOutSelector");
 		connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(set_fade_out_shape(QAction*)));
 	}
-		
-	
+
+
 	menu->exec(QCursor::pos());
 }
 
@@ -1261,15 +1261,15 @@ void TMainWindow::set_fade_out_shape( QAction * action )
 
 QMenu* TMainWindow::create_fade_selector_menu(const QString& fadeTypeName)
 {
-        QMenu* menu = new QMenu(this);
-	
+	QMenu* menu = new QMenu(this);
+
 	foreach(QString name, FadeCurve::defaultShapes) {
 		QAction* action = menu->addAction(name);
 		action->setData(name);
 	}
-	
+
 	m_contextMenus.insert(fadeTypeName, menu);
-	
+
 	return menu;
 }
 
@@ -1277,7 +1277,7 @@ void TMainWindow::config_changed()
 {
 	QString encoding = config().get_property("Recording", "FileFormat", "wav").toString();
 	QList<QAction* > actions = m_encodingMenu->actions();
-	
+
 	foreach(QAction* action, actions) {
 		if (action->data().toString() == encoding) {
 			action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
@@ -1285,10 +1285,10 @@ void TMainWindow::config_changed()
 			action->setIcon(QIcon());
 		}
 	}
-	
+
 	int quality = config().get_property("Conversion", "RTResamplingConverterType", DEFAULT_RESAMPLE_QUALITY).toInt();
 	actions = m_resampleQualityMenu->actions();
-	
+
 	bool useResampling = config().get_property("Conversion", "DynamicResampling", true).toBool();
 	if (useResampling) {
 		m_resampleQualityMenu->setEnabled(true);
@@ -1296,7 +1296,7 @@ void TMainWindow::config_changed()
 		m_resampleQualityMenu->setEnabled(false);
 	}
 
-	
+
 	foreach(QAction* action, actions) {
 		if (action->data().toInt() == quality) {
 			action->setIcon(style()->standardIcon(QStyle::SP_DialogApplyButton));
@@ -1332,31 +1332,31 @@ void TMainWindow::config_changed()
 	m_editToolBar->setIconSize(QSize(iconsize, iconsize));
 
 	int transportconsolesize = config().get_property("Themer", "transportconsolesize", "22").toInt();
-        m_transportConsole->setIconSize(QSize(transportconsolesize, transportconsolesize));
-        m_transportConsole->resize(m_transportConsole->sizeHint());
+	m_transportConsole->setIconSize(QSize(transportconsolesize, transportconsolesize));
+	m_transportConsole->resize(m_transportConsole->sizeHint());
 }
 
 void TMainWindow::import_audio()
 {
-        Project* project = pm().get_project();
-        if (!project) {
-                return;
-        }
-
-        Sheet* sheet = qobject_cast<Sheet*>(m_currentSheetWidget->get_sheet());
-        if (!sheet || !sheet->get_numtracks()) {
+	Project* project = pm().get_project();
+	if (!project) {
 		return;
 	}
 
-        QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Audio Files"),
-                        project->get_import_dir(),
+	Sheet* sheet = qobject_cast<Sheet*>(m_currentSheetWidget->get_sheet());
+	if (!sheet || !sheet->get_numtracks()) {
+		return;
+	}
+
+	QStringList files = QFileDialog::getOpenFileNames(this, tr("Open Audio Files"),
+			project->get_import_dir(),
 			tr("Audio files (*.wav *.flac *.ogg *.mp3 *.wv *.w64)"));
 
-        if (files.isEmpty()) {
-                return;
-        }
+	if (files.isEmpty()) {
+		return;
+	}
 
-        QList<AudioTrack*> tracks = sheet->get_audio_tracks();
+	QList<AudioTrack*> tracks = sheet->get_audio_tracks();
 	AudioTrack*	track = tracks.first();
 	bool markers = false;
 
@@ -1380,7 +1380,7 @@ void TMainWindow::import_audio()
 		position = (track->get_cliplist().last())->get_track_end_location();
 	}
 
-        TimeLine* tl = sheet->get_timeline();
+	TimeLine* tl = sheet->get_timeline();
 	int n = tl->get_markers().size() + 1;
 	if (tl->has_end_marker()) {
 		n -= 1;
@@ -1398,8 +1398,8 @@ void TMainWindow::import_audio()
 
 		if (import->create_readsource() != -1) {
 			position += import->readsource()->get_length();
-                        TCommand::process_command(import);
-                        TCommand::process_command(tl->add_marker(m, true));
+			TCommand::process_command(import);
+			TCommand::process_command(tl->add_marker(m, true));
 		}
 		++n;
 	}
@@ -1409,7 +1409,7 @@ void TMainWindow::import_audio()
 		m->set_when(position);
 	} else {
 		Marker* m = new Marker(tl, position, Marker::ENDMARKER);
-                TCommand::process_command(tl->add_marker(m, true));
+		TCommand::process_command(tl->add_marker(m, true));
 	}
 
 	delete importClips;
@@ -1421,7 +1421,7 @@ void TMainWindow::show_settings_dialog()
 	if (!m_settingsdialog) {
 		m_settingsdialog = new SettingsDialog(this);
 	}
-	
+
 	m_settingsdialog->show();
 }
 
@@ -1460,10 +1460,10 @@ TCommand * TMainWindow::show_newproject_dialog()
 {
 	if (! m_newProjectDialog ) {
 		m_newProjectDialog = new NewProjectDialog(this);
-                AudioFileCopyConvert* converter = m_newProjectDialog->get_converter();
-                connect(converter, SIGNAL(taskStarted(QString)), m_progressBar, SLOT(set_label(QString)));
-                connect(converter, SIGNAL(progress(int)), m_progressBar, SLOT(set_progress(int)));
-                connect(m_newProjectDialog, SIGNAL(numberOfFiles(int)), m_progressBar, SLOT(set_num_files(int)));
+		AudioFileCopyConvert* converter = m_newProjectDialog->get_converter();
+		connect(converter, SIGNAL(taskStarted(QString)), m_progressBar, SLOT(set_label(QString)));
+		connect(converter, SIGNAL(progress(int)), m_progressBar, SLOT(set_progress(int)));
+		connect(m_newProjectDialog, SIGNAL(numberOfFiles(int)), m_progressBar, SLOT(set_num_files(int)));
 	}
 	m_newProjectDialog->show();
 	return 0;
@@ -1474,55 +1474,55 @@ TCommand * TMainWindow::show_insertsilence_dialog()
 	if (! m_insertSilenceDialog) {
 		m_insertSilenceDialog = new InsertSilenceDialog(this);
 	}
-	
+
 	m_insertSilenceDialog->setTrack(0);
 	m_insertSilenceDialog->focusInput();
 	m_insertSilenceDialog->show();
-	
+
 	return 0;
 }
 
 
 TCommand * TMainWindow::show_marker_dialog()
 {
-        MarkerDialog* markerDialog = new MarkerDialog(this);
+	MarkerDialog* markerDialog = new MarkerDialog(this);
 
-        markerDialog->exec();
-        delete markerDialog;
+	markerDialog->exec();
+	delete markerDialog;
 
 	return 0;
 }
 
 TCommand* TMainWindow::show_add_child_session_dialog()
 {
-        if (!m_project) {
-                return 0;
-        }
+	if (!m_project) {
+		return 0;
+	}
 
-        Sheet* activeSheet = m_project->get_active_sheet();
-        TSession* activeSession = m_project->get_current_session();
-        TSession* parentSession = 0;
+	Sheet* activeSheet = m_project->get_active_sheet();
+	TSession* activeSession = m_project->get_current_session();
+	TSession* parentSession = 0;
 
-        if (activeSession->is_project_session()) {
-                parentSession = activeSession;
-        } else if (activeSheet) {
-                parentSession = activeSheet;
-        } else {
-                info().information(tr("No Sheet active to add child view to"));
-                return 0;
-        }
+	if (activeSession->is_project_session()) {
+		parentSession = activeSession;
+	} else if (activeSheet) {
+		parentSession = activeSheet;
+	} else {
+		info().information(tr("No Sheet active to add child view to"));
+		return 0;
+	}
 
-        TSession* session = new TSession(parentSession);
+	TSession* session = new TSession(parentSession);
 
-        TTrackSelector selector(this, parentSession, session);
-        if (selector.exec() == QDialog::Accepted) {
-                parentSession->add_child_session(session);
-                m_project->set_current_session(session->get_id());
-        } else {
-                delete session;
-        }
+	TTrackSelector selector(this, parentSession, session);
+	if (selector.exec() == QDialog::Accepted) {
+		parentSession->add_child_session(session);
+		m_project->set_current_session(session->get_id());
+	} else {
+		delete session;
+	}
 
-        return 0;
+	return 0;
 }
 
 
@@ -1536,41 +1536,41 @@ TCommand* TMainWindow::show_newsheet_dialog()
 	if (! m_newSheetDialog) {
 		m_newSheetDialog = new NewSheetDialog(this);
 	}
-	
+
 	m_newSheetDialog->show();
-	
+
 	return 0;
 }
 
 TCommand* TMainWindow::show_newtrack_dialog()
 {
-        if (!m_project) {
-                return 0;
-        }
+	if (!m_project) {
+		return 0;
+	}
 
-        TSession* activeSession = m_project->get_current_session();
-        Sheet* sheet = qobject_cast<Sheet*>(activeSession);
-        Project* project = qobject_cast<Project*>(activeSession);
+	TSession* activeSession = m_project->get_current_session();
+	Sheet* sheet = qobject_cast<Sheet*>(activeSession);
+	Project* project = qobject_cast<Project*>(activeSession);
 
-        if (sheet || project) {
-                if (! m_newTrackDialog) {
-                        m_newTrackDialog = new NewTrackDialog(this);
-                }
+	if (sheet || project) {
+		if (! m_newTrackDialog) {
+			m_newTrackDialog = new NewTrackDialog(this);
+		}
 
-                m_newTrackDialog->show();
-        } else {
-                if (!activeSession) {
-                        return 0;
-                }
+		m_newTrackDialog->show();
+	} else {
+		if (!activeSession) {
+			return 0;
+		}
 
-                if (activeSession->get_parent_session()) {
-                        TTrackSelector selector(this, activeSession->get_parent_session(), activeSession);
-                        selector.exec();
-                        return 0;
-                }
-        }
+		if (activeSession->get_parent_session()) {
+			TTrackSelector selector(this, activeSession->get_parent_session(), activeSession);
+			selector.exec();
+			return 0;
+		}
+	}
 
-	
+
 	return 0;
 }
 
@@ -1583,11 +1583,11 @@ void TMainWindow::open_help_browser()
 
 void TMainWindow::project_dir_change_detected()
 {
-	QMessageBox::critical(this, tr("Traverso - Important"), 
+	QMessageBox::critical(this, tr("Traverso - Important"),
 			      tr("A Project directory changed outside of Traverso. \n\n"
 			      "This is NOT supported! Please undo this change now!\n\n"
 			      "If you want to rename a Project, use the Project Manager instead!"),
-	   			QMessageBox::Ok);
+				QMessageBox::Ok);
 }
 
 TCommand * TMainWindow::show_restore_project_backup_dialog(QString projectname)
@@ -1595,33 +1595,33 @@ TCommand * TMainWindow::show_restore_project_backup_dialog(QString projectname)
 	if (! m_restoreProjectBackupDialog) {
 		m_restoreProjectBackupDialog = new RestoreProjectBackupDialog(this);
 	}
-	
+
 	m_restoreProjectBackupDialog->set_project_name(projectname);
 	m_restoreProjectBackupDialog->show();
-	
-	
+
+
 	return 0;
 }
 
 void TMainWindow::show_restore_project_backup_dialog()
 {
 	Project* project = pm().get_project();
-	
+
 	if (! project ) {
 		return;
 	}
-	
+
 	show_restore_project_backup_dialog(project->get_title());
 }
 
 void TMainWindow::project_load_failed(QString project, QString reason)
 {
-	QMessageBox::critical(	this, tr("Traverso - Project load failed"), 
+	QMessageBox::critical(	this, tr("Traverso - Project load failed"),
 				tr("The requested Project `%1` \ncould not be loaded for the following reason:\n\n'%2'"
-			      	"\n\nYou will now be given a list of available backups (if any) \n"
+				"\n\nYou will now be given a list of available backups (if any) \n"
 				"to restore the Project from.").arg(project).arg(reason),
 				QMessageBox::Ok);
-	
+
 	show_restore_project_backup_dialog(project);
 }
 
@@ -1689,24 +1689,24 @@ TCommand * TMainWindow::start_transport()
 {
 	Project* project = pm().get_project();
 	if (project) {
-                TSession* session = project->get_current_session();
-                if (session) {
-                        return session->start_transport();
+		TSession* session = project->get_current_session();
+		if (session) {
+			return session->start_transport();
 		}
 	}
-	
+
 	return 0;
 }
 
 TCommand * TMainWindow::set_recordable_and_start_transport()
 {
 	if (m_project) {
-                Sheet* sheet = m_project->get_active_sheet();
+		Sheet* sheet = m_project->get_active_sheet();
 		if (sheet) {
 			return sheet->set_recordable_and_start_transport();
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -1724,7 +1724,7 @@ void TMainWindow::snap_state_changed(bool state)
 void TMainWindow::update_snap_state()
 {
 	if (m_project) {
-                bool snapping = m_project->get_current_session()->is_snap_on();
+		bool snapping = m_project->get_current_session()->is_snap_on();
 		m_snapAction->setChecked(snapping);
 	}
 }
@@ -1738,19 +1738,19 @@ void TMainWindow::update_follow_state()
 
 void TMainWindow::update_temp_follow_state(bool state)
 {
-        if (m_project->get_current_session()->is_transport_rolling() && m_isFollowing) {
+	if (m_project->get_current_session()->is_transport_rolling() && m_isFollowing) {
 		m_followAction->setChecked(state);
 	}
 }
 
 void TMainWindow::follow_state_changed(bool state)
 {
-        Sheet* sheet = qobject_cast<Sheet*>(m_project->get_current_session());
+	Sheet* sheet = qobject_cast<Sheet*>(m_project->get_current_session());
 
 	if (!sheet) {
 		return;
 	}
-	
+
 	if (!sheet->is_transport_rolling() || !m_isFollowing) {
 		m_isFollowing = state;
 		config().set_property("PlayHead", "Follow", state);
@@ -1766,24 +1766,24 @@ void TMainWindow::follow_state_changed(bool state)
 // the view mode is a sheet property and should be stored in the sheet
 void TMainWindow::effect_state_changed(bool state)
 {
-        TSession* session = m_project->get_current_session();
+	TSession* session = m_project->get_current_session();
 
 	if (state) {
-                session->set_effects_mode();
+		session->set_effects_mode();
 	} else {
-                session->set_editing_mode();
+		session->set_editing_mode();
 	}
 }
 
 void TMainWindow::update_effects_state()
 {
-        TSession* session = m_project->get_current_session();
+	TSession* session = m_project->get_current_session();
 
-        if (!session) {
+	if (!session) {
 		return;
 	}
-	
-        if (session->get_mode() == Sheet::EDIT) {
+
+	if (session->get_mode() == Sheet::EDIT) {
 		m_effectAction->setChecked(false);
 	} else {
 		m_effectAction->setChecked(true);
@@ -1792,163 +1792,163 @@ void TMainWindow::update_effects_state()
 
 TCommand* TMainWindow::show_welcome_page()
 {
-        m_previousCenterAreaWidgetIndex = m_centerAreaWidget->currentIndex();
-        m_centerAreaWidget->setCurrentIndex(0);
+	m_previousCenterAreaWidgetIndex = m_centerAreaWidget->currentIndex();
+	m_centerAreaWidget->setCurrentIndex(0);
 
-        return 0;
+	return 0;
 }
 
 TCommand* TMainWindow::show_current_sheet()
 {
-        m_centerAreaWidget->setCurrentIndex(m_previousCenterAreaWidgetIndex);
-        return 0;
+	m_centerAreaWidget->setCurrentIndex(m_previousCenterAreaWidgetIndex);
+	return 0;
 }
 
 
 TCommand* TMainWindow::show_track_finder()
 {
-        if (!m_project) {
-                return 0;
-        }
+	if (!m_project) {
+		return 0;
+	}
 
-        m_trackFinder->setStyleSheet("color: blue;"
-                                 "background-color: yellow;"
-                                 "selection-color: yellow;"
-                                 "selection-background-color: blue;");
+	m_trackFinder->setStyleSheet("color: blue;"
+				 "background-color: yellow;"
+				 "selection-color: yellow;"
+				 "selection-background-color: blue;");
 
-        m_trackFinder->setText("Type to locate");
-        m_trackFinder->selectAll();
+	m_trackFinder->setText("Type to locate");
+	m_trackFinder->selectAll();
 
-        m_trackFinderModel->clear();
+	m_trackFinderModel->clear();
 
-        QList<Sheet*> sheets = m_project->get_sheets();
+	QList<Sheet*> sheets = m_project->get_sheets();
 
-        foreach(Sheet* sheet, sheets) {
-                QList<Track*> tracks = sheet->get_tracks();
-                tracks.append(sheet->get_master_out());
-                tracks.append(m_project->get_master_out());
-                foreach(Track* track, tracks) {
-                        QStandardItem* sItem = new QStandardItem(track->get_name());
-                        sItem->setData(track->get_id(), Qt::UserRole);
-                        QList<QStandardItem*> items;
-                        items.append(sItem);
-                        sItem = new QStandardItem(sheet->get_name());
-                        items.append(sItem);
-                        m_trackFinderModel->appendRow(items);
-                }
-        }
+	foreach(Sheet* sheet, sheets) {
+		QList<Track*> tracks = sheet->get_tracks();
+		tracks.append(sheet->get_master_out());
+		tracks.append(m_project->get_master_out());
+		foreach(Track* track, tracks) {
+			QStandardItem* sItem = new QStandardItem(track->get_name());
+			sItem->setData(track->get_id(), Qt::UserRole);
+			QList<QStandardItem*> items;
+			items.append(sItem);
+			sItem = new QStandardItem(sheet->get_name());
+			items.append(sItem);
+			m_trackFinderModel->appendRow(items);
+		}
+	}
 
-        m_trackFinderTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
-        m_trackFinderTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+	m_trackFinderTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
+	m_trackFinderTreeView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
 
-        m_trackFinder->setFocus();
+	m_trackFinder->setFocus();
 
-        return 0;
+	return 0;
 }
 
 
 void TMainWindow::track_finder_model_index_changed(const QModelIndex& index)
 {
-        qlonglong id = index.data(Qt::UserRole).toLongLong();
+	qlonglong id = index.data(Qt::UserRole).toLongLong();
 
-        foreach(SheetWidget* sw, m_sheetWidgets) {
-                Sheet* sheet = qobject_cast<Sheet*>(sw->get_sheet());
-                if (!sheet) return;
-                Track* track = sheet->get_track(id);
-                if (track) {
-                        show_session(sheet);
-                        sw->setFocus();
-                        sw->get_sheetview()->browse_to_track(track);
-                        break;
-                }
-        }
-        track_finder_show_initial_text();
+	foreach(SheetWidget* sw, m_sheetWidgets) {
+		Sheet* sheet = qobject_cast<Sheet*>(sw->get_sheet());
+		if (!sheet) return;
+		Track* track = sheet->get_track(id);
+		if (track) {
+			show_session(sheet);
+			sw->setFocus();
+			sw->get_sheetview()->browse_to_track(track);
+			break;
+		}
+	}
+	track_finder_show_initial_text();
 }
 
 void TMainWindow::track_finder_return_pressed()
 {
-        if (!m_project) {
-                return;
-        }
+	if (!m_project) {
+		return;
+	}
 
-        QString name = m_trackFinder->text();
-        QList<QStandardItem*> items = m_trackFinderModel->findItems(name, Qt::MatchStartsWith);
-        if (items.size()) {
-                track_finder_model_index_changed(m_trackFinderModel->indexFromItem(items.at(0)));
-                return;
-        }
+	QString name = m_trackFinder->text();
+	QList<QStandardItem*> items = m_trackFinderModel->findItems(name, Qt::MatchStartsWith);
+	if (items.size()) {
+		track_finder_model_index_changed(m_trackFinderModel->indexFromItem(items.at(0)));
+		return;
+	}
 }
 
 
 void TMainWindow::track_finder_show_initial_text()
 {
-        m_trackFinder->setStyleSheet("color: gray; background-color: white");
-        m_trackFinder->setText(tr("Track Finder"));
+	m_trackFinder->setStyleSheet("color: gray; background-color: white");
+	m_trackFinder->setText(tr("Track Finder"));
 }
 
 
 TCommand* TMainWindow::browse_to_first_track_in_active_sheet()
 {
-        if (m_currentSheetWidget) {
-                SheetView* sv = m_currentSheetWidget->get_sheetview();
-                QList<TrackView*> tracks = sv->get_track_views();
-                if (tracks.size()) {
-                        sv->browse_to_track(tracks.first()->get_track());
-                }
-        }
+	if (m_currentSheetWidget) {
+		SheetView* sv = m_currentSheetWidget->get_sheetview();
+		QList<TrackView*> tracks = sv->get_track_views();
+		if (tracks.size()) {
+			sv->browse_to_track(tracks.first()->get_track());
+		}
+	}
 
-        return 0;
+	return 0;
 }
 
 TCommand* TMainWindow::browse_to_last_track_in_active_sheet()
 {
-        if (m_currentSheetWidget) {
-                SheetView* sv = m_currentSheetWidget->get_sheetview();
-                QList<TrackView*> tracks = sv->get_track_views();
-                if (tracks.size()) {
-                        sv->browse_to_track(tracks.last()->get_track());
-                }
-        }
+	if (m_currentSheetWidget) {
+		SheetView* sv = m_currentSheetWidget->get_sheetview();
+		QList<TrackView*> tracks = sv->get_track_views();
+		if (tracks.size()) {
+			sv->browse_to_track(tracks.last()->get_track());
+		}
+	}
 
-        return 0;
+	return 0;
 }
 
 void TMainWindow::register_vumeter_level(AbstractVUMeterLevel *level)
 {
-        m_vuLevels.append(level);
+	m_vuLevels.append(level);
 }
 
 void TMainWindow::unregister_vumeter_level(AbstractVUMeterLevel *level)
 {
-        m_vuLevels.removeAll(level);
+	m_vuLevels.removeAll(level);
 }
 
 void TMainWindow::update_vu_levels_peak()
 {
-        if (!m_project) {
-                return;
-        }
+	if (!m_project) {
+		return;
+	}
 
 
-        for(int i=0; i<m_vuLevels.size(); i++) {
-                m_vuLevels.at(i)->update_peak();
-        }
+	for(int i=0; i<m_vuLevels.size(); i++) {
+		m_vuLevels.at(i)->update_peak();
+	}
 
-        QList<Track*> tracks = m_project->get_sheet_tracks();
-        tracks.append(m_project->get_tracks());
-        tracks.append(m_project->get_master_out());
-        for(int i = 0; i< tracks.size(); i++) {
-                VUMonitors monitors = tracks.at(i)->get_vumonitors();
-                for (int j=0; j<monitors.size(); ++j) {
-                        monitors.at(j)->set_read();
-                }
-        }
+	QList<Track*> tracks = m_project->get_sheet_tracks();
+	tracks.append(m_project->get_tracks());
+	tracks.append(m_project->get_master_out());
+	for(int i = 0; i< tracks.size(); i++) {
+		VUMonitors monitors = tracks.at(i)->get_vumonitors();
+		for (int j=0; j<monitors.size(); ++j) {
+			monitors.at(j)->set_read();
+		}
+	}
 }
 
 
 void TMainWindow::reset_vu_levels_peak_hold_value()
 {
-        for(int i=0; i<m_vuLevels.size(); i++) {
-                m_vuLevels.at(i)->reset_peak_hold_value();
-        }
+	for(int i=0; i<m_vuLevels.size(); i++) {
+		m_vuLevels.at(i)->reset_peak_hold_value();
+	}
 }

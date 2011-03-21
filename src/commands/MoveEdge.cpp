@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2005-2009 Remon Sijrier 
+Copyright (C) 2005-2009 Remon Sijrier
 
 This file is part of Traverso
 
@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 // FIXME: MoveEdge::jog() continuously calls Snaplist::mark_dirty()
 
 MoveEdge::MoveEdge(AudioClipView* cv, SheetView* sv, QByteArray whichEdge)
-        : MoveCommand(cv->get_clip(), tr("Move Clip Edge"))
+	: MoveCommand(cv->get_clip(), tr("Move Clip Edge"))
 {
 	m_sv = sv;
 	m_clip = cv->get_clip();
@@ -50,12 +50,12 @@ MoveEdge::~MoveEdge()
 int MoveEdge::prepare_actions()
 {
 	PENTER;
-	
+
 	if (m_newPos == m_originalPos) {
 		// Nothing happened!
 		return -1;
 	}
-	
+
 	return 1;
 }
 
@@ -102,7 +102,7 @@ int MoveEdge::do_action()
 	if (m_edge == "set_left_edge") {
 		m_clip->set_left_edge(m_newPos);
 	}
-	
+
 	return 1;
 }
 
@@ -116,7 +116,7 @@ int MoveEdge::undo_action()
 	if (m_edge == "set_left_edge") {
 		m_clip->set_left_edge(m_originalPos);
 	}
-	
+
 	return 1;
 }
 
@@ -125,7 +125,7 @@ int MoveEdge::jog()
 {
 	m_newPos = TimeRef(cpointer().scene_x() * m_sv->timeref_scalefactor);
 
-        if (m_sv->get_sheet()->is_snap_on()) {
+	if (m_sv->get_sheet()->is_snap_on()) {
 		SnapList* slist = m_sv->get_sheet()->get_snap_list();
 		m_newPos = slist->get_snap_value(m_newPos);
 	}
@@ -142,36 +142,44 @@ int MoveEdge::jog()
 }
 
 
-void MoveEdge::move_left(bool )
+void MoveEdge::move_left(bool autorepeat)
 {
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        m_newPos = m_newPos - (m_sv->timeref_scalefactor * m_speed);
-        do_action();
+	if (m_doSnap)
+	{
+		return prev_snap_pos(autorepeat);
+	}
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	m_newPos = m_newPos - (m_sv->timeref_scalefactor * m_speed);
+	do_action();
 }
 
-void MoveEdge::move_right(bool )
+void MoveEdge::move_right(bool autorepeat)
 {
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        m_newPos = m_newPos + (m_sv->timeref_scalefactor * m_speed);
-        do_action();
+	if (m_doSnap)
+	{
+		return next_snap_pos(autorepeat);
+	}
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	m_newPos = m_newPos + (m_sv->timeref_scalefactor * m_speed);
+	do_action();
 }
 
 void MoveEdge::next_snap_pos(bool autorepeat)
 {
-        Q_UNUSED(autorepeat);
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        SnapList* slist = m_sv->get_sheet()->get_snap_list();
-        m_newPos = slist->next_snap_pos(m_newPos);
-        do_action();
+	Q_UNUSED(autorepeat);
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	SnapList* slist = m_sv->get_sheet()->get_snap_list();
+	m_newPos = slist->next_snap_pos(m_newPos);
+	do_action();
 }
 
 void MoveEdge::prev_snap_pos(bool autorepeat)
 {
-        Q_UNUSED(autorepeat);
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        SnapList* slist = m_sv->get_sheet()->get_snap_list();
-        m_newPos = slist->prev_snap_pos(m_newPos);
-        do_action();
+	Q_UNUSED(autorepeat);
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	SnapList* slist = m_sv->get_sheet()->get_snap_list();
+	m_newPos = slist->prev_snap_pos(m_newPos);
+	do_action();
 }
 
 // eof

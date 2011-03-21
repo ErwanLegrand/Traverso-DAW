@@ -34,7 +34,6 @@ class TraversoCommands : public CommandPlugin
 public:
 	TraversoCommands();
 	TCommand* create(QObject* obj, const QString& command, QVariantList arguments);
-	void create_menu_translations();
 
 private:
 	enum Commands {
