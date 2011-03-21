@@ -302,8 +302,8 @@ void ViewPort::reset_cursor( )
 	m_holdcursor->reset();
         m_holdCursorActive = false;
 
-        QPoint pos = mapToGlobal(mapFromScene(m_holdcursor->get_scene_pos()));
-        QCursor::setPos(pos);
+//        QPoint pos = mapToGlobal(mapFromScene(m_holdcursor->get_scene_pos()));
+//        QCursor::setPos(pos);
 }
 
 void ViewPort::set_cursor_shape(const QString &cursor)

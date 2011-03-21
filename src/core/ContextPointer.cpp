@@ -35,10 +35,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 /**
  * \class ContextPointer
  * \brief ContextPointer forms the bridge between the ViewPort (GUI) and the InputEngine (core)
- *	
+ *
 	Use it in classes that inherit ViewPort to discover ViewItems under <br />
 	the mouse cursor on the first input event x/y coordinates.<br />
-	
+
 	Also provides convenience functions to get ViewPort x/y coordinates<br />
 	as well as scene x/y coordinates, which can be used for example in the <br />
 	jog() implementation of Command classes.
@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 
 /**
- * 	
+ *
  * @return A reference to the singleton (static) ContextPointer object
  */
 ContextPointer& cpointer()
@@ -68,21 +68,21 @@ ContextPointer::ContextPointer()
 	m_x = 0;
 	m_y = 0;
 	m_jogEvent = false;
-        m_port = 0;
-        m_currentContext = 0;
-        m_keyboardOnlyInput = false;
+	m_port = 0;
+	m_currentContext = 0;
+	m_keyboardOnlyInput = false;
 
-        m_mouseLeftClickBypassesJog = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
-	
+	m_mouseLeftClickBypassesJog = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
+
 	connect(&m_jogTimer, SIGNAL(timeout()), this, SLOT(update_jog()));
-        connect(&ie(), SIGNAL(jogStarted()), this, SLOT(jog_start()));
-        connect(&ie(), SIGNAL(jogFinished()), this, SLOT(jog_finished()));
+	connect(&ie(), SIGNAL(jogStarted()), this, SLOT(jog_start()));
+	connect(&ie(), SIGNAL(jogFinished()), this, SLOT(jog_finished()));
 }
 
 /**
  *  	Returns a list of all 'soft selected' ContextItems.
-	
-	To be able to also dispatch key facts to objects that 
+
+	To be able to also dispatch key facts to objects that
 	don't inherit from ContextItem, but do inherit from
 	QObject, the returned list holds QObjects.
 
@@ -96,15 +96,15 @@ QList< QObject * > ContextPointer::get_context_items( )
 	ContextItem* item;
 	ContextItem*  nextItem;
 
-        QList<ContextItem*> activeItems;
-        if (m_keyboardOnlyInput) {
-                activeItems = m_activeContextItems;
-        } else {
-                activeItems = m_onFirstInputEventActiveContextItems;
-        }
-	
-        for (int i=0; i < activeItems.size(); ++i) {
-                item = activeItems.at(i);
+	QList<ContextItem*> activeItems;
+	if (m_keyboardOnlyInput) {
+		activeItems = m_activeContextItems;
+	} else {
+		activeItems = m_onFirstInputEventActiveContextItems;
+	}
+
+	for (int i=0; i < activeItems.size(); ++i) {
+		item = activeItems.at(i);
 		contextItems.append(item);
 		while ((nextItem = item->get_context())) {
 			contextItems.append(nextItem);
@@ -112,8 +112,8 @@ QList< QObject * > ContextPointer::get_context_items( )
 		}
 	}
 
-        for (int i=0; i < m_contextItemsList.size(); ++i) {
-                contextItems.append(m_contextItemsList.at(i));
+	for (int i=0; i < m_contextItemsList.size(); ++i) {
+		contextItems.append(m_contextItemsList.at(i));
 	}
 
 
@@ -133,20 +133,20 @@ QList< QObject * > ContextPointer::get_context_items( )
  */
 void ContextPointer::add_contextitem( QObject * item )
 {
-        if (! m_contextItemsList.contains(item))
-                m_contextItemsList.append(item);
+	if (! m_contextItemsList.contains(item))
+		m_contextItemsList.append(item);
 }
 
 void ContextPointer::remove_contextitem(QObject* item)
 {
-        int index = m_contextItemsList.indexOf(item);
-        m_contextItemsList.removeAt(index);
+	int index = m_contextItemsList.indexOf(item);
+	m_contextItemsList.removeAt(index);
 }
 
 void ContextPointer::jog_start()
 {
-        if (m_port) {
-                m_port->grab_mouse();
+	if (m_port) {
+		m_port->grab_mouse();
 	}
 	m_jogEvent = true;
 	int interval = config().get_property("CCE", "jogupdateinterval", 33).toInt();
@@ -155,8 +155,8 @@ void ContextPointer::jog_start()
 
 void ContextPointer::jog_finished()
 {
-        if (m_port) {
-                m_port->release_mouse();
+	if (m_port) {
+		m_port->release_mouse();
 	}
 	m_jogTimer.stop();
 }
@@ -169,40 +169,41 @@ void ContextPointer::jog_finished()
  */
 void ContextPointer::reset_cursor( )
 {
-        if (!m_port) {
-                return;
-        }
+	if (!m_port) {
+		return;
+	}
 
-        if (keyboard_only_input()) {
-                m_port->update_holdcursor_shape();
-        } else {
-                m_port->reset_cursor();
-        }
+	if (keyboard_only_input()) {
+		m_port->update_holdcursor_shape();
+	} else {
+		m_port->reset_cursor();
+	}
 }
 
 void ContextPointer::move_hardware_mouse_cursor_to(QPoint pos)
 {
-        QCursor::setPos(pos);
-        m_globalMousePos = pos;
-        ie().update_jog_bypass_pos();
-        m_jogEvent = false;
+	PENTER;
+	QCursor::setPos(pos);
+	m_globalMousePos = pos;
+	ie().update_jog_bypass_pos();
+	m_jogEvent = false;
 }
 
 void ContextPointer::set_jog_bypass_distance(int distance)
 {
-        m_jogBypassDistance = distance;
+	m_jogBypassDistance = distance;
 }
 
 void ContextPointer::set_left_mouse_click_bypasses_jog(bool bypassOnLeftMouseClick)
 {
-        m_mouseLeftClickBypassesJog = bypassOnLeftMouseClick;
+	m_mouseLeftClickBypassesJog = bypassOnLeftMouseClick;
 }
 
 void ContextPointer::mouse_button_left_pressed()
 {
-        if (m_mouseLeftClickBypassesJog) {
-                set_keyboard_only_input(false);
-        }
+	if (m_mouseLeftClickBypassesJog) {
+		set_keyboard_only_input(false);
+	}
 }
 
 QList< QObject * > ContextPointer::get_contextmenu_items() const
@@ -217,11 +218,11 @@ void ContextPointer::set_contextmenu_items(QList< QObject * > list)
 
 void ContextPointer::update_jog()
 {
-        if (m_keyboardOnlyInput) {
-                // no need or desire to call the current's
-                // Hold Command::jog() function, were moving by keyboard now!
-                return;
-        }
+	if (m_keyboardOnlyInput) {
+		// no need or desire to call the current's
+		// Hold Command::jog() function, were moving by keyboard now!
+		return;
+	}
 
 	if (m_jogEvent) {
 		ie().jog();
@@ -231,109 +232,110 @@ void ContextPointer::update_jog()
 
 void ContextPointer::set_current_viewport(AbstractViewPort *vp)
 {
-        PENTER;
-        m_port = vp;
-        if (!m_port) {
-                QList<ContextItem *> items;
-                set_active_context_items(items);
-        }
+	PENTER;
+	m_port = vp;
+	if (!m_port) {
+		QList<ContextItem *> items;
+		set_active_context_items(items);
+	}
 }
 
 void ContextPointer::set_edit_point_position(int x, int y)
 {
-        m_x = x;
-        m_y = y;
+	m_x = x;
+	m_y = y;
 }
 
 void ContextPointer::set_mouse_cursor_position(int x, int y)
 {
-        m_x = x;
-        m_y = y;
-        m_jogEvent = true;
+	m_x = x;
+	m_y = y;
+	m_jogEvent = true;
 
-        if (m_keyboardOnlyInput && !m_mouseLeftClickBypassesJog) {
-                QPoint diff = m_globalMousePos - QCursor::pos();
-                if (diff.manhattanLength() > m_jogBypassDistance) {
-                        set_keyboard_only_input(false);
-                } else {
-                        return;
-                }
-        }
+	if (m_keyboardOnlyInput && !m_mouseLeftClickBypassesJog) {
+		QPoint diff = m_globalMousePos - QCursor::pos();
+		if (diff.manhattanLength() > m_jogBypassDistance) {
+			set_keyboard_only_input(false);
+		} else {
+			return;
+		}
+	}
 }
 
 void ContextPointer::set_active_context_items_by_mouse_movement(const QList<ContextItem *> &items)
 {
-        set_active_context_items(items);
+	set_active_context_items(items);
 }
 
 void ContextPointer::set_active_context_items_by_keyboard_input(const QList<ContextItem *> &items)
 {
-        set_keyboard_only_input(true);
-        m_globalMousePos = QCursor::pos();
+	set_keyboard_only_input(true);
+	m_globalMousePos = QCursor::pos();
 
-        set_active_context_items(items);
+	set_active_context_items(items);
 }
 
 void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
 {
-        foreach(ContextItem* oldItem, m_activeContextItems) {
-                if (!items.contains(oldItem)) {
-                        oldItem->set_has_active_context(false);
-                }
-        }
+	foreach(ContextItem* oldItem, m_activeContextItems) {
+		if (!items.contains(oldItem)) {
+			oldItem->set_has_active_context(false);
+		}
+	}
 
-        m_activeContextItems.clear();
+	m_activeContextItems.clear();
 
-        foreach(ContextItem* item, items) {
-                m_activeContextItems.append(item);
-                item->set_has_active_context(true);
-        }
+	foreach(ContextItem* item, items) {
+		m_activeContextItems.append(item);
+		item->set_has_active_context(true);
+	}
 
-        if (m_port) {
+	if (m_port) {
 //                m_port->update_holdcursor_shape();
-        }
+	}
 
-        if (m_activeContextItems.isEmpty()) {
-                if (m_currentContext) {
-                        m_currentContext = 0;
-                        emit contextChanged();
-                }
-        } else if (m_activeContextItems.first() != m_currentContext) {
-                m_currentContext = m_activeContextItems.first();
-                emit contextChanged();
-        }
+	if (m_activeContextItems.isEmpty()) {
+		if (m_currentContext) {
+			m_currentContext = 0;
+			emit contextChanged();
+		}
+	} else if (m_activeContextItems.first() != m_currentContext) {
+		m_currentContext = m_activeContextItems.first();
+		emit contextChanged();
+	}
 }
 
 void ContextPointer::remove_from_active_context_list(ContextItem *item)
 {
-        m_activeContextItems.removeAll(item);
-        item->set_has_active_context(false);
+	m_activeContextItems.removeAll(item);
+	item->set_has_active_context(false);
 }
 
 void ContextPointer::about_to_delete(ContextItem *item)
 {
-        m_activeContextItems.removeAll(item);
-        m_onFirstInputEventActiveContextItems.removeAll(item);
+	m_activeContextItems.removeAll(item);
+	m_onFirstInputEventActiveContextItems.removeAll(item);
 }
 
 void ContextPointer::set_keyboard_only_input(bool keyboardOnly)
 {
-        if (m_keyboardOnlyInput == keyboardOnly) {
-                return;
-        }
+	PENTER;
+	if (m_keyboardOnlyInput == keyboardOnly) {
+		return;
+	}
 
-        m_keyboardOnlyInput = keyboardOnly;
+	m_keyboardOnlyInput = keyboardOnly;
 
-        // Mouse cursor is taking over, let it look like it started
-        // from the edit point :)
-        if (!keyboardOnly) {
-                QCursor::setPos(m_globalMousePos);
-                if (m_port) {
-                        m_port->reset_cursor();
-                }
-        }  else {
-                if (m_port) {
-                        m_port->hide_mouse_cursor();
-                }
-        }
+	// Mouse cursor is taking over, let it look like it started
+	// from the edit point :)
+	if (!keyboardOnly) {
+		QCursor::setPos(m_globalMousePos);
+		if (m_port) {
+			m_port->reset_cursor();
+		}
+	}  else {
+		if (m_port) {
+			m_port->hide_mouse_cursor();
+		}
+	}
 }

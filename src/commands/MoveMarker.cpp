@@ -33,122 +33,122 @@
 #include "Debugger.h"
 
 MoveMarker::MoveMarker(MarkerView* mview, qint64 scalefactor, const QString& des)
-        : MoveCommand(mview->get_marker(), des)
+	: MoveCommand(mview->get_marker(), des)
 {
-        d = new Data;
-        d->view = mview;
-        m_marker= d->view->get_marker();
-        d->scalefactor = scalefactor;
+	d = new Data;
+	d->view = mview;
+	m_marker= d->view->get_marker();
+	d->scalefactor = scalefactor;
 }
 
 int MoveMarker::prepare_actions()
 {
-        return 1;
+	return 1;
 }
 
 int MoveMarker::begin_hold()
 {
-        m_origWhen = m_newWhen = m_marker->get_when();
-        m_marker->set_snappable(false);
-        d->view->get_sheetview()->start_shuttle(true, true);
-        d->view->set_dragging(true);
-        return 1;
+	m_origWhen = m_newWhen = m_marker->get_when();
+	m_marker->set_snappable(false);
+	d->view->get_sheetview()->start_shuttle(true, true);
+	d->view->set_dragging(true);
+	return 1;
 }
 
 int MoveMarker::finish_hold()
 {
-        d->view->get_sheetview()->start_shuttle(false);
-        d->view->set_dragging(false);
-        delete d;
+	d->view->get_sheetview()->start_shuttle(false);
+	d->view->set_dragging(false);
+	delete d;
 
-        return 1;
+	return 1;
 }
 
 int MoveMarker::do_action()
 {
-        m_marker->set_when(m_newWhen);
-        m_marker->set_snappable(true);
-        return 1;
+	m_marker->set_when(m_newWhen);
+	m_marker->set_snappable(true);
+	return 1;
 }
 
 int MoveMarker::undo_action()
 {
-        PENTER;
-        m_marker->set_when(m_origWhen);
-        m_marker->set_snappable(true);
-        return 1;
+	PENTER;
+	m_marker->set_when(m_origWhen);
+	m_marker->set_snappable(true);
+	return 1;
 }
 
 void MoveMarker::cancel_action()
 {
-        finish_hold();
-        undo_action();
+	finish_hold();
+	undo_action();
 }
 
 void MoveMarker::move_left(bool autorepeat)
 {
-        if (m_doSnap) {
-                return prev_snap_pos(autorepeat);
-        }
+	if (m_doSnap) {
+		return prev_snap_pos(autorepeat);
+	}
 
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        // Move 1 pixel to the left
-        TimeRef newpos = TimeRef(m_newWhen - (d->scalefactor * m_speed));
-        if (newpos < TimeRef()) {
-                newpos = TimeRef();
-        }
-        m_newWhen = newpos;
-        m_marker->set_when(m_newWhen);
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	// Move 1 pixel to the left
+	TimeRef newpos = TimeRef(m_newWhen - (d->scalefactor * m_speed));
+	if (newpos < TimeRef()) {
+		newpos = TimeRef();
+	}
+	m_newWhen = newpos;
+	m_marker->set_when(m_newWhen);
 }
 
 void MoveMarker::move_right(bool autorepeat)
 {
-        if (m_doSnap) {
-                return next_snap_pos(autorepeat);
-        }
+	if (m_doSnap) {
+		return next_snap_pos(autorepeat);
+	}
 
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        // Move 1 pixel to the right
-        m_newWhen = m_newWhen + (d->scalefactor * m_speed);
-        m_marker->set_when(m_newWhen);
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	// Move 1 pixel to the right
+	m_newWhen = m_newWhen + (d->scalefactor * m_speed);
+	m_marker->set_when(m_newWhen);
 }
 
 void MoveMarker::next_snap_pos(bool autorepeat)
 {
-        Q_UNUSED(autorepeat);
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
-        m_newWhen = slist->next_snap_pos(m_newWhen);
-        m_marker->set_when(m_newWhen);
+	Q_UNUSED(autorepeat);
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
+	m_newWhen = slist->next_snap_pos(m_newWhen);
+	m_marker->set_when(m_newWhen);
 }
 
 void MoveMarker::prev_snap_pos(bool autorepeat)
 {
-        Q_UNUSED(autorepeat);
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
-        SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
-        m_newWhen = slist->prev_snap_pos(m_newWhen);
-        m_marker->set_when(m_newWhen);
+	Q_UNUSED(autorepeat);
+	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
+	m_newWhen = slist->prev_snap_pos(m_newWhen);
+	m_marker->set_when(m_newWhen);
 }
 
 
 int MoveMarker::jog()
 {
-        TimeRef newpos = TimeRef(cpointer().scene_x() * d->scalefactor);
+	TimeRef newpos = TimeRef(cpointer().scene_x() * d->scalefactor);
 
-        if (m_marker->get_timeline()->get_sheet()->is_snap_on() || m_doSnap) {
-                SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
-                newpos = slist->get_snap_value(newpos);
-        }
+	if (m_doSnap) {
+		SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
+		newpos = slist->get_snap_value(newpos);
+	}
 
-        if (newpos < TimeRef()) {
-                newpos = TimeRef();
-        }
+	if (newpos < TimeRef()) {
+		newpos = TimeRef();
+	}
 
-        m_newWhen = newpos;
-        d->view->set_position(int(m_newWhen / d->scalefactor));
+	m_newWhen = newpos;
+	d->view->set_position(int(m_newWhen / d->scalefactor));
 
-        d->view->get_sheetview()->update_shuttle_factor();
+	d->view->get_sheetview()->update_shuttle_factor();
 
-        return 1;
+	return 1;
 }
