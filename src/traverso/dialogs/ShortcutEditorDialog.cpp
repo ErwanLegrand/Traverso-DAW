@@ -26,7 +26,7 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 	{
 		keys << "F" + QString::number(i);
 	}
-	keys << "Left Button" << "Right Button" << "MouseScrollWheel";
+	keys << "Left Button" << "Right Button" << "Scroll Up" << "Scroll Down";
 	keys << "Enter" << "Home" << "End" << "Delete" << "PageUp" << "PageDown";
 	keys << "/" << "\\" << "[" << "]" << "," << "." << ";" << "'";
 	ui->keyComboBox1->addItems(keys);
@@ -49,7 +49,7 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 	ui->shortcutsTreeWidget->header()->resizeSection(0, 280);
 
 	connect(ui->objectsComboBox, SIGNAL(activated(int)), this, SLOT(objects_combo_box_activated(int)));
-	connect(ui->shortcutsTreeWidget, SIGNAL(itemActivated(QTreeWidgetItem*,int)), this, SLOT(shortcut_tree_widget_item_activated(QTreeWidgetItem*,int)));
+	connect(ui->shortcutsTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(shortcut_tree_widget_item_activated()));
 
 	objects_combo_box_activated(0);
 }
@@ -83,11 +83,32 @@ void ShortcutEditorDialog::objects_combo_box_activated(int index)
 		item->setData(0, Qt::UserRole, v);
 		ui->shortcutsTreeWidget->addTopLevelItem(item);
 	}
+
+	QTreeWidgetItem* item = ui->shortcutsTreeWidget->topLevelItem(0);
+	if (item)
+	{
+		ui->shortcutsTreeWidget->setCurrentItem(item);
+	}
 }
 
-void ShortcutEditorDialog::shortcut_tree_widget_item_activated(QTreeWidgetItem *item, int)
+void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 {
+	QList<QTreeWidgetItem*> items = ui->shortcutsTreeWidget->selectedItems();
+	if (!items.size())
+	{
+		return;
+	}
+	QTreeWidgetItem *item = items.first();
+
 	TFunction* function = (TFunction*) item->data(0, Qt::UserRole).value<void*>();
+
+	bool isHoldFunction = false;
+	int index = ui->objectsComboBox->currentIndex();
+	if (index >=0)
+	{
+		QString objectClassName = ui->objectsComboBox->itemData(index).toString();
+		isHoldFunction = TMenuTranslator::instance()->classInherits(objectClassName, "TCommand");
+	}
 
 	ui->keyComboBox1->setCurrentIndex(0);
 	ui->keyComboBox2->setCurrentIndex(0);
@@ -112,18 +133,34 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated(QTreeWidgetItem *
 		ui->keyComboBox2->setCurrentIndex(index);
 	}
 
-	QList<int> modifierKeys = function->getModifierKeys();
-	if (modifierKeys.contains(Qt::Key_Shift)) {
-		ui->shiftCheckBox->setChecked(true);
-	}
-	if (modifierKeys.contains(Qt::Key_Control)) {
-		ui->ctrlCheckBox->setChecked(true);
-	}
-	if (modifierKeys.contains(Qt::Key_Alt))	{
-		ui->altCheckBox->setChecked(true);
-	}
-	if (modifierKeys.contains(Qt::Key_Meta)) {
-		ui->metaCheckBox->setChecked(true);
+	if (isHoldFunction)
+	{
+		ui->modifiersGroupBox->hide();
+		if (function->getAutoRepeatInterval() || function->getAutoRepeatStartDelay())
+		{
+			ui->autorepeatGroupBox->show();
+			ui->startDelaySpinBox->setValue(function->getAutoRepeatStartDelay());
+			ui->repeatIntervalSpinBox->setValue(function->getAutoRepeatInterval());
+		}
+
+	} else
+	{
+		ui->modifiersGroupBox->show();
+		ui->autorepeatGroupBox->hide();
+
+		QList<int> modifierKeys = function->getModifierKeys();
+		if (modifierKeys.contains(Qt::Key_Shift)) {
+			ui->shiftCheckBox->setChecked(true);
+		}
+		if (modifierKeys.contains(Qt::Key_Control)) {
+			ui->ctrlCheckBox->setChecked(true);
+		}
+		if (modifierKeys.contains(Qt::Key_Alt))	{
+			ui->altCheckBox->setChecked(true);
+		}
+		if (modifierKeys.contains(Qt::Key_Meta)) {
+			ui->metaCheckBox->setChecked(true);
+		}
 	}
 }
 

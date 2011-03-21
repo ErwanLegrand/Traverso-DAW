@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>754</width>
-    <height>390</height>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,13 +34,22 @@
           <widget class="QFrame" name="">
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <widget class="QComboBox" name="keyComboBox1"/>
+             <widget class="QGroupBox" name="groupBox_3">
+              <property name="title">
+               <string>Shortcuts</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <item>
+                <widget class="QComboBox" name="keyComboBox1"/>
+               </item>
+               <item>
+                <widget class="QComboBox" name="keyComboBox2"/>
+               </item>
+              </layout>
+             </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="keyComboBox2"/>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_2">
+             <widget class="QGroupBox" name="modifiersGroupBox">
               <property name="title">
                <string>Modifiers</string>
               </property>
@@ -77,7 +86,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox">
+             <widget class="QGroupBox" name="autorepeatGroupBox">
               <property name="title">
                <string>Autorepeat</string>
               </property>
@@ -90,7 +99,14 @@
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox"/>
+                <widget class="QSpinBox" name="startDelaySpinBox">
+                 <property name="minimum">
+                  <number>10</number>
+                 </property>
+                 <property name="maximum">
+                  <number>500</number>
+                 </property>
+                </widget>
                </item>
                <item>
                 <widget class="QLabel" name="label_2">
@@ -100,7 +116,14 @@
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="spinBox_2"/>
+                <widget class="QSpinBox" name="repeatIntervalSpinBox">
+                 <property name="minimum">
+                  <number>10</number>
+                 </property>
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>

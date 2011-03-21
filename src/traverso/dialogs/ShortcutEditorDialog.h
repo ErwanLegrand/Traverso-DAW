@@ -3,7 +3,6 @@
 
 #include <QDialog>
 
-class QTreeWidgetItem;
 
 namespace Ui {
 	class ShortcutEditorDialog;
@@ -25,7 +24,7 @@ private:
 
 private slots:
 	void objects_combo_box_activated(int index);
-	void shortcut_tree_widget_item_activated(QTreeWidgetItem*,int);
+	void shortcut_tree_widget_item_activated();
 };
 
 #endif // SHORTCUTEDITORDIALOG_H

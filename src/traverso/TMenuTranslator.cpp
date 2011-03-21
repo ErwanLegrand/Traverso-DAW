@@ -267,3 +267,20 @@ QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> meta
 
 	return html;
 }
+
+bool TMenuTranslator::classInherits(const QString& className, const QString &inherited)
+{
+	QList<const QMetaObject*> metas = TMenuTranslator::instance()->get_metaobjects_for_class(className);
+
+	foreach(const QMetaObject* mo, metas) {
+		while (mo) {
+			if (mo->className() == inherited)
+			{
+				return true;
+			}
+			mo = mo->superClass();
+		}
+	}
+
+	return false;
+}

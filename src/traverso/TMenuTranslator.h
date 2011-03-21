@@ -40,6 +40,7 @@ public:
 	QString createHtmlForMetaObects(QList<const QMetaObject*> metas, QObject* obj=0);
 	QList<const QMetaObject*> get_metaobjects_for_class(const QString& className);
         QHash<QString, QList<const QMetaObject*> > get_meta_objects() const {return m_objects;}
+	bool classInherits(const QString& className, const QString &inherited);
 
 
 private:
