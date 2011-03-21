@@ -32,7 +32,7 @@ MoveCommand::MoveCommand(const QString &description)
 	: TCommand(description)
 {
 	QString collected = ie().get_collected_number();
-	if (!(collected.isEmpty() || collected.isNull())) {
+	if (!collected.isEmpty()) {
 		set_collected_number(collected);
 	} else {
 		m_speed = pm().get_project()->get_keyboard_arrow_key_navigation_speed();
