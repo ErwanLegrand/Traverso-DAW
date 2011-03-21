@@ -76,6 +76,7 @@ class RestoreProjectBackupDialog;
 class ProgressToolBar;
 class WelcomeWidget;
 class TSessionTabWidget;
+class ShortcutEditorDialog;
 struct TFunction;
 
 class AbstractVUMeterLevel
@@ -229,6 +230,7 @@ public slots :
         TCommand* show_newtrack_dialog();
         TCommand* show_newproject_dialog();
         TCommand* show_add_child_session_dialog();
+	TCommand* show_shortcuts_edit_dialog();
         TCommand* show_welcome_page();
         TCommand* show_current_sheet();
         TCommand* start_transport();

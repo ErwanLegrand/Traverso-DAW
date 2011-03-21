@@ -82,6 +82,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/CDWritingDialog.h"
 #include "dialogs/project/ImportClipsDialog.h"
 #include "dialogs/TTrackSelector.h"
+#include "dialogs/ShortcutEditorDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -909,7 +910,7 @@ void TMainWindow::create_menus( )
 	action->setData("w64");
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(change_recording_format_to_wav64()));
 
-	m_resampleQualityMenu = menu->addMenu(tr("&Resample Quality"));
+	m_resampleQualityMenu = menu->addMenu(tr("Resample &Quality"));
 	action = m_resampleQualityMenu->addAction(tr("Best"));
 	action->setData(0);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(change_resample_quality_to_best()));
@@ -927,6 +928,9 @@ void TMainWindow::create_menus( )
 	config_changed();
 
 	menu->addSeparator();
+
+	action = menu->addAction(tr("&Shortcut Configuration"));
+	connect(action, SIGNAL(triggered()), this, SLOT(show_shortcuts_edit_dialog()));
 
 	action = menu->addAction(tr("&Preferences..."));
 	connect(action, SIGNAL(triggered( bool )), this, SLOT(show_settings_dialog()));
@@ -1574,6 +1578,12 @@ TCommand* TMainWindow::show_newtrack_dialog()
 	return 0;
 }
 
+TCommand* TMainWindow::show_shortcuts_edit_dialog()
+{
+	ShortcutEditorDialog edit(this);
+	edit.exec();
+	return 0;
+}
 
 void TMainWindow::open_help_browser()
 {
