@@ -90,6 +90,7 @@ void TConfig::check_and_load_configuration( )
 void TConfig::save( )
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Traverso");
+	printf("Saving config to %s\n", settings.fileName().toAscii().data());
 	
 	QHash<QString, QVariant>::const_iterator i = m_configs.constBegin();
 	

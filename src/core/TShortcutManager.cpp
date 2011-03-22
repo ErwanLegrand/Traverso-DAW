@@ -1017,8 +1017,7 @@ void TShortcutManager::saveFunction(TFunction *function)
 
 void TShortcutManager::loadShortcuts()
 {
-	QSettings::setPath (QSettings::IniFormat, QSettings::UserScope, ":/");
-	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "shortcuts");
+	QSettings settings(":/Traverso/shortcuts.ini", QSettings::IniFormat);
 
 	QStringList groups = settings.childGroups();
 	QList<TFunction*> functionsThatInherit;
