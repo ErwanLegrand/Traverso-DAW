@@ -202,8 +202,8 @@ TMainWindow::TMainWindow()
 	m_busMonitorDW->setWidget(busMonitor);
 	addDockWidget(Qt::RightDockWidgetArea, m_busMonitorDW);
 
-	m_contextHelpDW = new QDockWidget(tr("Context Help"), this);
-	m_contextHelpDW->setObjectName("ContextHelpWidget");
+	m_contextHelpDW = new QDockWidget(tr("Shortcuts Help"), this);
+	m_contextHelpDW->setObjectName("ShortcutsHelpDockWidget");
 	TContextHelpWidget* helpWidget = new TContextHelpWidget(m_contextHelpDW);
 	helpWidget->setFocusPolicy(Qt::NoFocus);
 	m_contextHelpDW->setWidget(helpWidget);

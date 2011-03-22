@@ -51,8 +51,8 @@ TraversoCommands::TraversoCommands()
 	function->setDescription(tr("Arrow Key Browser: Up"));
 	function->commandName = "ArrowKeyBrowserUp";
 	function->submenu = "Navigate";
-	function->pluginname = "TraversoCommands";
 	function->arguments << 1 << 100;
+	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
@@ -60,8 +60,8 @@ TraversoCommands::TraversoCommands()
 	function->setDescription(tr("Arrow Key Browser: Down"));
 	function->commandName = "ArrowKeyBrowserDown";
 	function->submenu = "Navigate";
-	function->pluginname = "TraversoCommands";
 	function->arguments << 2 << 100;
+	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
@@ -69,8 +69,8 @@ TraversoCommands::TraversoCommands()
 	function->setDescription(tr("Arrow Key Browser: Left"));
 	function->commandName = "ArrowKeyBrowserLeft";
 	function->submenu = "Navigate";
-	function->pluginname = "TraversoCommands";
 	function->arguments << 3 << 100;
+	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
@@ -79,6 +79,7 @@ TraversoCommands::TraversoCommands()
 	function->commandName = "ArrowKeyBrowserRight";
 	function->submenu = "Navigate";
 	function->arguments << 4 << 100;
+	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();

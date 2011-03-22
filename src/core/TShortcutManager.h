@@ -45,6 +45,7 @@ public:
 		useX = false;
 		useY = false;
 		sortorder = 0;
+		m_usesAutoRepeat = false;
 		m_autorepeatInterval = 120;
 		m_autorepeatStartDelay = 200;
 	}
@@ -58,7 +59,10 @@ public:
 	int getAutoRepeatInterval() const;
 	int getAutoRepeatStartDelay() const;
 
+	bool usesAutoRepeat() const {return m_usesAutoRepeat;}
+
 	void setDescription(const QString& des);
+	void setUsesAutoRepeat(bool b) {m_usesAutoRepeat = b;}
 
 	QStringList modes;
 	QVariantList arguments;
@@ -79,6 +83,7 @@ private:
 	QList<int >	m_modifierkeys;
 	int		m_autorepeatInterval;
 	int		m_autorepeatStartDelay;
+	bool		m_usesAutoRepeat;
 
 	void setInheritedFunction(TFunction* inherited);
 

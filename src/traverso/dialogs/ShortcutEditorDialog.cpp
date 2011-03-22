@@ -27,8 +27,8 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 		keys << "F" + QString::number(i);
 	}
 	keys << "Left Button" << "Right Button" << "Scroll Up" << "Scroll Down";
-	keys << "Enter" << "Home" << "End" << "Delete" << "PageUp" << "PageDown";
-	keys << "/" << "\\" << "[" << "]" << "," << "." << ";" << "'";
+	keys << "Enter" << "Home" << "End" << "Delete" << "Page Up" << "Page Down";
+	keys << "+" << "-" << "/" << "\\" << "[" << "]" << "," << "." << ";" << "'";
 	ui->keyComboBox1->addItems(keys);
 	ui->keyComboBox2->addItems(keys);
 
@@ -136,11 +136,15 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 	if (isHoldFunction)
 	{
 		ui->modifiersGroupBox->hide();
-		if (function->getAutoRepeatInterval() || function->getAutoRepeatStartDelay())
+		if (function->usesAutoRepeat())
 		{
 			ui->autorepeatGroupBox->show();
 			ui->startDelaySpinBox->setValue(function->getAutoRepeatStartDelay());
 			ui->repeatIntervalSpinBox->setValue(function->getAutoRepeatInterval());
+		}
+		else
+		{
+			ui->autorepeatGroupBox->hide();
 		}
 
 	} else

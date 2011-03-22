@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 TContextHelpWidget::TContextHelpWidget(QWidget* parent)
         : QWidget(parent)
 {
-	setObjectName("ContextHelpWidget");
+	setObjectName("ShortcutsHelpWidget");
 
         m_comboBox = new QComboBox(parent);
         m_textEdit = new QTextEdit(parent);
@@ -52,27 +52,17 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
         mainLayout->addWidget(m_textEdit);
         setLayout(mainLayout);
 
-        m_comboBox->addItem(tr("Keybindings Explained"));
-        m_comboBox->addItem(tr("Active Context"));
+	m_comboBox->addItem(tr("Shortcuts Explained"));
+	m_comboBox->addItem(tr("Current Context"));
 
         TMenuTranslator* translator = TMenuTranslator::instance();
 
         m_helpIntroduction = ("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body>"
-                "Traverso uses a powerful keybinding concept with which you can control the program using the mouse "
+		"Traverso uses a powerful shortcuts system with which you can control the program using the mouse "
                 "or the keyboard + mouse or just the keyboard!"
                 "<p>"
-                "To show the keybindings for the object under the cursor, use the right mouse button, or "
+		"To show the shortcuts for the item below the cursor, use the right mouse button, or "
                 "select <u>%1</u> in the dropdown menu to auto update this help, or select an entry in the dropdown menu"
-                "<p>"
-                "<b>Keybinding Legenda</b>"
-                "<p>"
-                "<table>"
-                "<tr><td><b> < K > </b>    </td><td>Press and release the key, like a click</td></tr>"
-                "<tr><td><b> << K >> </b>  </td><td>Press and release the key two times, like a double click</td></tr>"
-                "<tr><td><b> [ K ]   </b>  </td><td>Press the key and keep it pressed. You can move the mouse or use the arrow buttons to change the position or value</td></tr>"
-                "<tr><td><b> < KL >  </td> <td>Press and release the K and L keys at the same time, like < K > but with 2 keys together</td></tr>"
-                "<tr><td><b>[ KL ]   </td> <td>Same as [ K ] but now with 2 keys together</td></tr>"
-                "</table>"
                 "<p>"
                 "<b>Advice</b>"
                 "<p>"
@@ -81,19 +71,14 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
                 "<b>Examples</b>"
                 "<p>"
                 "<table>"
-                "<tr><td><b> &lsaquo; I &rsaquo; </b></td><td>Hover mouse over an %2, type I (from Import) and select the file(s) to import</td></tr>"
-                "<tr><td><b> [ G ] </b></td><td>Hover mouse over the %3, press G (from Gain) and keep it pressed. Now move mouse up/down to change gain, or use scroll wheel or up/down arrow key or just type in the gain value. <br />Works on all objects with a Gain value</td></tr>"
-                "<tr><td><b> [ D ] </b></td><td>Hover mouse over an %3, press D (from Drag, left mouse button works too) and move the mouse to move the %3<br />Works on all objects that can be moved</td></tr>"
-                "<tr><td><b> [ Z ] </b></td><td>Press Z and move mouse left/right: Zoom In/Out</td></tr>"
+		"<tr><td width=20 align=center><b>I</b></td><td>Hover mouse over an %2, type I (from Import) and select the file(s) to import</td></tr>"
+		"<tr><td width=20 align=center><b>G</b></td><td>Hover mouse over the %3, press G (from Gain) and keep it pressed. Now move mouse up/down to change gain, or use scroll wheel or up/down arrow key or just type in the gain value. <br />Works on all objects with a Gain value</td></tr>"
+		"<tr><td width=20 align=center><b>D</b></td><td>Hover mouse over an %3, press D (from Drag, left mouse button works too) and move the mouse to move the %3<br />Works on all objects that can be moved</td></tr>"
+		"<tr><td width=20 align=center><b>Z</b></td><td>Press Z and move mouse left/right: Zoom In/Out</td></tr>"
                 "</table>"
                 "</body></html>");
 
-        m_helpIntroduction = m_helpIntroduction.arg(tr("Active Context")).arg(translator->get_translation_for("AudioTrack")).arg(translator->get_translation_for("AudioClip"));
-        m_helpIntroduction.replace(QString("<< K"), QString("&laquo; K"));
-        m_helpIntroduction.replace(QString("K >>"), QString("K &raquo;"));
-        m_helpIntroduction.replace(QString("< K"), QString("&lsaquo; K"));
-        m_helpIntroduction.replace(QString("K >"), QString("K &rsaquo;"));
-        m_helpIntroduction.replace(QString("KL >"), QString("KL &rsaquo;"));
+	m_helpIntroduction = m_helpIntroduction.arg(tr("Current Context")).arg(translator->get_translation_for("AudioTrack")).arg(translator->get_translation_for("AudioClip"));
 
         combobox_activated(0);
 
@@ -108,7 +93,7 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
                 m_comboBox->addItem(sorted.key(value), value);
         }
 
-        int index = config().get_property("Help", "DropDownIndex", 0).toInt();
+	int index = config().get_property("ShortcutsHelp", "DropDownIndex", 0).toInt();
         m_comboBox->setCurrentIndex(index);
 
         connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
@@ -119,7 +104,7 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 
 TContextHelpWidget::~TContextHelpWidget()
 {
-        config().set_property("Help", "DropDownIndex", m_comboBox->currentIndex());
+	config().set_property("ShortcutsHelp", "DropDownIndex", m_comboBox->currentIndex());
 }
 
 void TContextHelpWidget::context_changed()
