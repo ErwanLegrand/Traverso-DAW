@@ -39,6 +39,11 @@ QList<TFunction*> TShortcut::getFunctionsForObject(const QString &objectName)
 	return objects.values(objectName);
 }
 
+QList<TFunction*> TShortcut::getFunctions()
+{
+	return objects.values();
+}
+
 QString TFunction::getKeySequence()
 {
 	QString sequence;

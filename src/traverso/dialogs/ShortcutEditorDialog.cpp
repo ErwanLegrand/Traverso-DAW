@@ -44,12 +44,10 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 		ui->objectsComboBox->addItem(sorted.key(value), value);
 	}
 
-	ui->shortcutsTreeWidget->setColumnCount(2);
-	ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Description") << tr("Shortcut"));
-	ui->shortcutsTreeWidget->header()->resizeSection(0, 280);
-
 	connect(ui->objectsComboBox, SIGNAL(activated(int)), this, SLOT(objects_combo_box_activated(int)));
 	connect(ui->shortcutsTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(shortcut_tree_widget_item_activated()));
+	connect(ui->showfunctionsCheckBox, SIGNAL(clicked()), this, SLOT(show_functions_checkbox_clicked()));
+	connect(ui->keyComboBox1, SIGNAL(activated(int)), this, SLOT(key1_combo_box_activated(int)));
 
 	objects_combo_box_activated(0);
 }
@@ -89,6 +87,27 @@ void ShortcutEditorDialog::objects_combo_box_activated(int index)
 	{
 		ui->shortcutsTreeWidget->setCurrentItem(item);
 	}
+}
+
+void ShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
+{
+	if (!ui->showfunctionsCheckBox->isChecked())
+	{
+		return;
+	}
+
+	ui->shortcutsTreeWidget->clear();
+
+	TShortcut* shortCut = tShortCutManager().getShortcut(ui->keyComboBox1->currentText());
+
+	foreach(TFunction* function, shortCut->getFunctions())
+	{
+		QTreeWidgetItem* item;
+		QString translatedObjectName = TMenuTranslator::instance()->get_translation_for(function->object);
+		item = new QTreeWidgetItem(QStringList() << translatedObjectName << function->getDescription() << function->getKeySequence());
+		ui->shortcutsTreeWidget->addTopLevelItem(item);
+	}
+
 }
 
 void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
@@ -165,6 +184,30 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 		if (modifierKeys.contains(Qt::Key_Meta)) {
 			ui->metaCheckBox->setChecked(true);
 		}
+	}
+}
+
+void ShortcutEditorDialog::show_functions_checkbox_clicked()
+{
+	if (ui->showfunctionsCheckBox->isChecked())
+	{
+		ui->shortcutsTreeWidget->setColumnCount(3);
+		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Object") << tr("Description") << tr("Shortcut"));
+		ui->shortcutsTreeWidget->header()->resizeSection(0, 160);
+		ui->shortcutsTreeWidget->header()->resizeSection(1, 200);
+		ui->objectsComboBox->hide();
+		ui->modifiersGroupBox->hide();
+		ui->keyComboBox2->hide();
+		key1_combo_box_activated(ui->keyComboBox1->currentIndex());
+	}
+	else
+	{
+		ui->objectsComboBox->show();
+		ui->modifiersGroupBox->show();
+		ui->keyComboBox2->show();
+		ui->shortcutsTreeWidget->setColumnCount(2);
+		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Description") << tr("Shortcut"));
+		ui->shortcutsTreeWidget->header()->resizeSection(0, 280);
 	}
 }
 

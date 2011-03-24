@@ -1036,7 +1036,7 @@ TCommand * TMainWindow::show_context_menu( )
 				continue;
 			}
 			action = toplevelmenu->insertMenu(action, menu);
-			QString name = TMenuTranslator::instance()->get_translation_for(className.remove("View"));
+			QString name = TMenuTranslator::instance()->get_translation_for(className);
 
 			action->setText(name);
 		}
@@ -1120,7 +1120,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 
 	QString name;
 	if (item) {
-		name = TMenuTranslator::instance()->get_translation_for(QString(item->metaObject()->className()).remove("View"));
+		name = TMenuTranslator::instance()->get_translation_for(QString(item->metaObject()->className()));
 	}
 
 	QMenu* menu = new QMenu(this);

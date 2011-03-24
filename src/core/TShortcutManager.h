@@ -103,6 +103,7 @@ public:
 	int getKeyValue() const {return m_keyValue;}
 
 	QList<TFunction*> getFunctionsForObject(const QString& objectName);
+	QList<TFunction*> getFunctions();
 
 	int		autorepeatInterval;
 	int		autorepeatStartDelay;

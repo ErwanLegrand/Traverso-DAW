@@ -150,10 +150,12 @@ void TMenuTranslator::add_entry(const QString &signature, const QString &transla
 
 QString TMenuTranslator::get_translation_for(const QString &entry)
 {
-	if (!m_dict.contains(entry)) {
-		return QString("TMenuTranslator: %1 not found!").arg(entry);
+	QString key = entry;
+	key = key.remove("View");
+	if (!m_dict.contains(key)) {
+		return QString("TMenuTranslator: %1 not found!").arg(key);
 	}
-	return m_dict.value(entry);
+	return m_dict.value(key);
 }
 
 QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> metas, QObject* object)
@@ -167,7 +169,7 @@ QString TMenuTranslator::createHtmlForMetaObects(QList<const QMetaObject *> meta
 	QString holdKeyFact = "";// ie().keyfacts_for_hold_command(metas.first()->className()).join(" , ");
 
 
-	QString name = get_translation_for(QString(metas.first()->className()).remove(("View")));
+	QString name = get_translation_for(QString(metas.first()->className()));
 
 	QColor bgcolor = themer()->get_color("ResourcesBin:alternaterowcolor");
 	QString html = QString("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
