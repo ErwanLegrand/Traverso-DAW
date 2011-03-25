@@ -291,11 +291,17 @@ void TShortcutManager::loadFunctions()
 	TFunction* function;
 
 	function = new TFunction();
+	function->setDescription(tr("Gain"));
+	function->commandName = "GainBase";
+	addFunction(function);
+
+	function = new TFunction();
 	function->m_description = tr("Remove");
 	function->commandName = "Delete";
 	addFunction(function);
 
 	function = new TFunction();
+	function->object = "ToggleBypass";
 	function->slotsignature = "toggle_bypass";
 	function->setDescription(tr("Toggle Bypass"));
 	function->commandName = "ToggleBypass";
@@ -309,6 +315,7 @@ void TShortcutManager::loadFunctions()
 	addFunction(function);
 
 	function = new TFunction();
+	function->object = "EditProperties";
 	function->slotsignature = "edit_properties";
 	function->setDescription(tr("Edit Properties"));
 	function->commandName = "EditProperties";

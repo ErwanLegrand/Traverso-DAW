@@ -58,6 +58,7 @@ public:
 
 	int getAutoRepeatInterval() const;
 	int getAutoRepeatStartDelay() const;
+	TFunction* getInheritedFunction() const {return m_inheritedFunction;}
 
 	bool usesAutoRepeat() const {return m_usesAutoRepeat;}
 

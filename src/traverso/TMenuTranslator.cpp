@@ -140,6 +140,12 @@ TMenuTranslator::TMenuTranslator()
 	add_entry("WorkCursor", tr("Work Cursor"));
 	add_entry("CorrelationMeter", tr("Correlation Meter"));
 	add_entry("SpectralMeter", tr("Spectral Analyzer"));
+	add_entry("Track", tr("Track"));
+	add_entry("MoveCommand", tr("Move Command"));
+	add_entry("EditProperties", tr("Edit Properties"));
+	add_entry("ProcessingData", tr("Audio Processing Object"));
+	add_entry("ToggleBypass", tr("Toggle Bypass"));
+	add_entry("HoldCommand", tr("Hold Command"));
 }
 
 void TMenuTranslator::add_entry(const QString &signature, const QString &translation)

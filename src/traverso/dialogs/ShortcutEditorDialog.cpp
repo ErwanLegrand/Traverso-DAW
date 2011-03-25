@@ -13,7 +13,7 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 		ui(new Ui::ShortcutEditorDialog)
 {
 	ui->setupUi(this);
-	resize(700, 350);
+	resize(800, 455);
 
 	QStringList keys;
 	keys << "";
@@ -49,7 +49,9 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 	connect(ui->showfunctionsCheckBox, SIGNAL(clicked()), this, SLOT(show_functions_checkbox_clicked()));
 	connect(ui->keyComboBox1, SIGNAL(activated(int)), this, SLOT(key1_combo_box_activated(int)));
 
-	objects_combo_box_activated(0);
+	// teasing the dialog to get into the 'no functions selected' state
+	// and updating it accordingly.
+	show_functions_checkbox_clicked();
 }
 
 ShortcutEditorDialog::~ShortcutEditorDialog()
@@ -98,7 +100,13 @@ void ShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 
 	ui->shortcutsTreeWidget->clear();
 
-	TShortcut* shortCut = tShortCutManager().getShortcut(ui->keyComboBox1->currentText());
+	QString keyString = ui->keyComboBox1->currentText();
+	TShortcut* shortCut = tShortCutManager().getShortcut(keyString);
+
+	if (!shortCut)
+	{
+		return;
+	}
 
 	foreach(TFunction* function, shortCut->getFunctions())
 	{
@@ -112,10 +120,17 @@ void ShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 
 void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 {
+	if (ui->showfunctionsCheckBox->isChecked())
+	{
+		return;
+	}
+
 	QList<QTreeWidgetItem*> items = ui->shortcutsTreeWidget->selectedItems();
+
 	if (!items.size())
 	{
 		return;
+
 	}
 	QTreeWidgetItem *item = items.first();
 
@@ -152,9 +167,25 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 		ui->keyComboBox2->setCurrentIndex(index);
 	}
 
+	TFunction* inheritedFunction = function->getInheritedFunction();
+	if (inheritedFunction)
+	{
+		ui->baseFunctionGroupBox->setTitle(inheritedFunction->getDescription());
+		ui->baseFunctionShortCutLable->setText(inheritedFunction->getKeySequence());
+		ui->useBaseFunctionCheckBox->show();
+		ui->baseFunctionGroupBox->show();
+
+		ui->useBaseFunctionCheckBox->setChecked(true);
+	}
+	else
+	{
+		ui->baseFunctionGroupBox->hide();
+		ui->useBaseFunctionCheckBox->hide();
+	}
+
 	if (isHoldFunction)
 	{
-		ui->modifiersGroupBox->hide();
+		ui->modifiersGroupBox->setEnabled(false);
 		if (function->usesAutoRepeat())
 		{
 			ui->autorepeatGroupBox->show();
@@ -168,7 +199,6 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 
 	} else
 	{
-		ui->modifiersGroupBox->show();
 		ui->autorepeatGroupBox->hide();
 
 		QList<int> modifierKeys = function->getModifierKeys();
@@ -185,6 +215,23 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 			ui->metaCheckBox->setChecked(true);
 		}
 	}
+
+	if (isHoldFunction)
+	{
+		ui->shortCutGroupBox->setEnabled(true);
+		ui->modifiersGroupBox->setEnabled(false);
+	}
+	else if (inheritedFunction)
+	{
+		ui->shortCutGroupBox->setEnabled(false);
+		ui->modifiersGroupBox->setEnabled(false);
+	}
+	else
+	{
+		ui->shortCutGroupBox->setEnabled(true);
+		ui->modifiersGroupBox->setEnabled(true);
+	}
+
 }
 
 void ShortcutEditorDialog::show_functions_checkbox_clicked()
@@ -196,18 +243,26 @@ void ShortcutEditorDialog::show_functions_checkbox_clicked()
 		ui->shortcutsTreeWidget->header()->resizeSection(0, 160);
 		ui->shortcutsTreeWidget->header()->resizeSection(1, 200);
 		ui->objectsComboBox->hide();
-		ui->modifiersGroupBox->hide();
 		ui->keyComboBox2->hide();
+		ui->baseFunctionGroupBox->hide();
+		ui->useBaseFunctionCheckBox->hide();
 		key1_combo_box_activated(ui->keyComboBox1->currentIndex());
+		ui->shortCutGroupBox->setTitle(tr("Shortcut"));
+		ui->shortCutGroupBox->setEnabled(true);
+		ui->modifiersGroupBox->setEnabled(false);
 	}
 	else
 	{
 		ui->objectsComboBox->show();
 		ui->modifiersGroupBox->show();
+		ui->shortCutGroupBox->setEnabled(true);
+		ui->modifiersGroupBox->setEnabled(true);
 		ui->keyComboBox2->show();
 		ui->shortcutsTreeWidget->setColumnCount(2);
 		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Description") << tr("Shortcut"));
 		ui->shortcutsTreeWidget->header()->resizeSection(0, 280);
+		ui->shortCutGroupBox->setTitle(tr("Shortcuts"));
+		objects_combo_box_activated(ui->objectsComboBox->currentIndex());
 	}
 }
 

@@ -144,9 +144,24 @@ TraversoCommands::TraversoCommands()
 	addFunction(function, MoveCurveNodesCommand);
 
 	function = new TFunction();
-	function->object = "ProcessingData";
-	function->setDescription(tr("Gain"));
-	function->commandName = "Gain";
+	function->object = "AudioClip";
+	function->setDescription(tr("AudioClip Gain"));
+	function->commandName = "AudioClipGain";
+	function->inherits = "GainBase";
+	addFunction(function, GainCommand);
+
+	function = new TFunction();
+	function->object = "AudioTrack";
+	function->setDescription(tr("AudioTrack Gain"));
+	function->commandName = "AudioTrackGain";
+	function->inherits = "GainBase";
+	addFunction(function, GainCommand);
+
+	function = new TFunction();
+	function->object = "TBusTrack";
+	function->setDescription(tr("Bus Gain"));
+	function->commandName = "BusTrackGain";
+	function->inherits = "GainBase";
 	addFunction(function, GainCommand);
 
 	function = new TFunction();
