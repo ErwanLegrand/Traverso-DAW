@@ -70,6 +70,7 @@ Peak::Peak(AudioSource* source)
 		data->fileName = sourcename + "-ch" + QByteArray::number(chan) + ".peak";
 		data->fileName.prepend(path);
 		data->pd = 0;
+		data->peakreader = 0;
 		
 		m_channelData.append(data);
 	}
@@ -109,6 +110,9 @@ Peak::~Peak()
 		}
 #endif
 #endif
+		if (data->peakreader) {
+			delete data->peakreader;
+		}
 		delete data;
 	}
 }
