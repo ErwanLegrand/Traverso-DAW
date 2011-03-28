@@ -23,19 +23,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QPluginLoader>
 #include <QSettings>
-#include <QCoreApplication>
-#include <QMenu>
+#include <QApplication>
 #include <QMap>
+#include <QPalette>
 
-#include "libtraversocore.h"
-#include "commands.h"
+#include "PCommand.h"
 #include "ContextItem.h"
-#include "InputEngine.h"
 #include "Information.h"
 #include "Utils.h"
-#include "TConfig.h"
 #include "CommandPlugin.h"
-#include "Themer.h"
 
 #include "Debugger.h"
 
@@ -1204,7 +1200,7 @@ QString TShortcutManager::get_translation_for(const QString &entry)
 	}
 	return m_translations.value(key);
 }
-#include <QApplication>
+
 QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> metas, QObject* object)
 {
 	if (!metas.size()) {
@@ -1236,15 +1232,7 @@ QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> met
 
 	QStringList result;
 	int j=0;
-	QList<TFunction* > list;
-
-	foreach(const QMetaObject* mo, metas) {
-		while (mo) {
-			list << functionsForMetaobject(mo);
-			mo = mo->superClass();
-		}
-	}
-
+	QList<TFunction* > list = getFunctionsFor(metas.first()->className());
 	QMap<QString, QList<TFunction*> > functionsMap;
 
 	foreach(TFunction* function, list)
