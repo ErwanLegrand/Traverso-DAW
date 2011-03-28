@@ -72,7 +72,7 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 
 	foreach(QString className, commandClassNamesMap)
 	{
-		ui->objectsComboBox->addItem(commandClassNamesMap.key(className) + " " + tr("(Hold Command)"), className);
+		ui->objectsComboBox->addItem(commandClassNamesMap.key(className) + " " + tr("(Hold Function)"), className);
 	}
 
 	connect(ui->objectsComboBox, SIGNAL(activated(int)), this, SLOT(objects_combo_box_activated(int)));
@@ -107,15 +107,29 @@ void ShortcutEditorDialog::objects_combo_box_activated(int index)
 	}
 
 	QList<TFunction* > functionsList = tShortCutManager().getFunctionsFor(className);
+	QMap<QString, QList<TFunction*> > functionsMap;
 
-	for (int j=0; j<functionsList.size(); ++j)
+	foreach(TFunction* function, functionsList)
 	{
-		TFunction* function = functionsList.at(j);
-		QTreeWidgetItem* item;
-		item = new QTreeWidgetItem(QStringList() << function->getLongDescription() << function->getKeySequence());
-		QVariant v = qVariantFromValue((void*) function);
-		item->setData(0, Qt::UserRole, v);
-		ui->shortcutsTreeWidget->addTopLevelItem(item);
+		QList<TFunction*> listForKey = functionsMap.value(function->submenu);
+		listForKey.append(function);
+		functionsMap.insert(function->submenu, listForKey);
+	}
+
+	QStringList subMenus = functionsMap.keys();
+
+	foreach(QString submenu, subMenus)
+	{
+		QList<TFunction*> subMenuFunctionList = functionsMap.value(submenu);
+
+		foreach(TFunction* function, subMenuFunctionList)
+		{
+			QTreeWidgetItem* item;
+			item = new QTreeWidgetItem(QStringList() << function->getLongDescription() << function->getKeySequence());
+			QVariant v = qVariantFromValue((void*) function);
+			item->setData(0, Qt::UserRole, v);
+			ui->shortcutsTreeWidget->addTopLevelItem(item);
+		}
 	}
 
 	QTreeWidgetItem* item = ui->shortcutsTreeWidget->topLevelItem(0);
@@ -150,7 +164,8 @@ void ShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 		QString translatedObjectName = tShortCutManager().get_translation_for(function->object);
 		if (tShortCutManager().isCommandClass(function->object))
 		{
-			translatedObjectName = translatedObjectName + " " + tr("(Hold Command)");
+			// FIXME: doesn't work!
+			translatedObjectName = translatedObjectName + " " + tr("(Hold Function)");
 			holdCommandItemList.append(QStringList() << translatedObjectName << function->getDescription() << function->getKeySequence());
 		} else {
 			itemList.append(QStringList() << translatedObjectName << function->getLongDescription() << function->getKeySequence());

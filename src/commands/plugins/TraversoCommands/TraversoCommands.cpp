@@ -141,36 +141,32 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->setDescription(tr("Arrow Key Browser: Up"));
+	function->setDescription(tr("Up"));
 	function->commandName = "ArrowKeyBrowserUp";
-	function->submenu = "Navigate";
 	function->arguments << 1 << 100;
 	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->setDescription(tr("Arrow Key Browser: Down"));
+	function->setDescription(tr("Down"));
 	function->commandName = "ArrowKeyBrowserDown";
-	function->submenu = "Navigate";
 	function->arguments << 2 << 100;
 	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->setDescription(tr("Arrow Key Browser: Left"));
+	function->setDescription(tr("Left"));
 	function->commandName = "ArrowKeyBrowserLeft";
-	function->submenu = "Navigate";
 	function->arguments << 3 << 100;
 	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->setDescription(tr("Arrow Key Browser: Right"));
+	function->setDescription(tr("Right"));
 	function->commandName = "ArrowKeyBrowserRight";
-	function->submenu = "Navigate";
 	function->arguments << 4 << 100;
 	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
@@ -761,7 +757,7 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 			return 0;
 		}
 
-}
+	}
 
 	return 0;
 }
