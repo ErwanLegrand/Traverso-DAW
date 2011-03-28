@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QSettings>
 #include <QCoreApplication>
 #include <QMenu>
+#include <QMap>
 
 #include "libtraversocore.h"
 #include "commands.h"
@@ -1203,28 +1204,27 @@ QString TShortcutManager::get_translation_for(const QString &entry)
 	}
 	return m_translations.value(key);
 }
-
+#include <QApplication>
 QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> metas, QObject* object)
 {
 	if (!metas.size()) {
 		return "";
 	}
 
-
-	// FIXME ?
-	QString holdKeyFact = "";// ie().keyfacts_for_hold_command(metas.first()->className()).join(" , ");
-
+	QString holdKeyFact = "";
 
 	QString name = get_translation_for(QString(metas.first()->className()));
 
-	QColor bgcolor = themer()->get_color("ResourcesBin:alternaterowcolor");
+	QString baseColor = QApplication::palette().color(QPalette::Base).name();
+	QString alternateBaseColor = QApplication::palette().color(QPalette::AlternateBase).name();
+
 	QString html = QString("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
 	      "<style type=\"text/css\">\n"
 	      "table {font-size: 11px;}\n"
 	      ".object {background-color: %1; font-size: 11px;}\n"
-	      ".description {background-color: %2; font-size: 11px; font-weight: bold;}\n"
+	      ".description {background-color: %2; font-size: 10px; font-weight: bold;}\n"
 	      "</style>\n"
-	      "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
+	      "</head>\n<body>\n").arg(QApplication::palette().color(QPalette::AlternateBase).darker(105).name()).arg(alternateBaseColor);
 
 	if (object && object->inherits("PCommand")) {
 		PCommand* pc = static_cast<PCommand*>(object);
@@ -1236,8 +1236,6 @@ QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> met
 
 	QStringList result;
 	int j=0;
-	QString submenuhtml;
-	QList<QMenu* > menulist;
 	QList<TFunction* > list;
 
 	foreach(const QMetaObject* mo, metas) {
@@ -1247,66 +1245,48 @@ QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> met
 		}
 	}
 
-	QMenu* menu = 0;//TMainWindow::instance()->create_context_menu(0, &list);
-	if (menu) {
-		menulist.append(menu);
-		foreach(QAction* action, menu->actions()) {
-			if (action->menu()) {
-				menulist.append(action->menu());
+	QMap<QString, QList<TFunction*> > functionsMap;
+
+	foreach(TFunction* function, list)
+	{
+		QList<TFunction*> listForKey = functionsMap.value(function->submenu);
+		listForKey.append(function);
+		functionsMap.insert(function->submenu, listForKey);
+	}
+
+	QStringList subMenus = functionsMap.keys();
+
+	foreach(QString submenu, subMenus)
+	{
+		if (!submenu.isEmpty()) {
+			result += "<tr class=\"object\">\n<td colspan=\"2\" align=\"center\">"
+				      "<font style=\"font-size: 11px;\"><b>" + submenu + "</b></font></td></tr>\n";
+		}
+
+		QList<TFunction*> subMenuFunctionList = functionsMap.value(submenu);
+
+		foreach(TFunction* function, subMenuFunctionList)
+		{
+			QString keySequence = function->getKeySequence();
+			keySequence.replace(QString("Up Arrow"), QString("&uarr;"));
+			keySequence.replace(QString("Down Arrow"), QString("&darr;"));
+			keySequence.replace(QString("Left Arrow"), QString("&larr;"));
+			keySequence.replace(QString("Right Arrow"), QString("&rarr;"));
+			keySequence.replace(QString("-"), QString("&#45;"));
+			keySequence.replace(QString("+"), QString("&#43;"));
+			keySequence.replace(QString(" , "), QString("<br />"));
+
+
+			QString alternatingColor;
+			if ((j % 2) == 1) {
+				alternatingColor = QString("bgcolor=\"%1\"").arg(baseColor);
+			} else {
+				alternatingColor = QString("bgcolor=\"%1\"").arg(alternateBaseColor);
 			}
+			j += 1;
+
+			result += QString("<tr %1><td>").arg(alternatingColor) + function->getDescription() + "</td><td>" + keySequence + "</td></tr>\n";
 		}
-	}
-
-	QStringList submenushtml;
-
-	for (int i=0; i<menulist.size(); ++i) {
-		QMenu* somemenu = menulist.at(i);
-		submenuhtml = "";
-		if (i>0) {
-			submenuhtml = "<tr class=\"object\">\n<td colspan=\"2\" align=\"center\">"
-				      "<font style=\"font-size: 11px;\"><b>" + somemenu->menuAction()->text() + "</b></font></td></tr>\n";
-		}
-		foreach(QAction* action, somemenu->actions()) {
-			QStringList strings = action->data().toStringList();
-			if (strings.size() >= 2) {
-				QString keyfact = strings.at(0);
-
-				keyfact.replace(QString("Up Arrow"), QString("&uarr;"));
-				keyfact.replace(QString("Down Arrow"), QString("&darr;"));
-				keyfact.replace(QString("Left Arrow"), QString("&larr;"));
-				keyfact.replace(QString("Right Arrow"), QString("&rarr;"));
-				keyfact.replace(QString("-"), QString("&#45;"));
-				keyfact.replace(QString("+"), QString("&#43;"));
-				keyfact.replace(QString(" , "), QString("<br />"));
-
-
-				QString alternatingColor;
-				if ((j % 2) == 1) {
-					alternatingColor = QString("bgcolor=\"%1\"").arg(themer()->get_color("ResourcesBin:alternaterowcolor").name());
-				} else {
-					// FIXME
-//					alternatingColor = QString("bgcolor=\"%1\"").arg(TMainWindow::instance()->palette().color(QPalette::Base).name());
-				}
-				j += 1;
-
-				if (i>0) {
-					submenuhtml += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
-				} else {
-					result += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
-				}
-			}
-		}
-		if (!submenuhtml.isEmpty()) {
-			submenushtml.append(submenuhtml);
-		}
-	}
-
-	foreach(QString html, submenushtml) {
-		result += html;
-	}
-
-	foreach(QMenu* menu, menulist) {
-		delete menu;
 	}
 
 	result.removeDuplicates();

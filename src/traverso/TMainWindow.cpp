@@ -44,7 +44,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStandardItemModel>
 
 #include "TMainWindow.h"
-#include "TMenuTranslator.h"
 #include "ProjectManager.h"
 #include "ViewPort.h"
 #include "FadeCurve.h"
