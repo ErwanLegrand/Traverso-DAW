@@ -252,7 +252,7 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& devicename, co
 			}
 
                         /* they asked for playback, but we can't do it */
-                        device->driverSetupMessage(tr("Falling back to capture-only mode").arg(playback_pcm_name), AudioDevice::DRIVER_SETUP_WARNING);
+			device->driverSetupMessage(tr("Falling back to capture-only mode for device %1").arg(playback_pcm_name), AudioDevice::DRIVER_SETUP_WARNING);
 
                         playback = false;
 		}
@@ -268,7 +268,7 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& devicename, co
 			}
 
                         /* they asked for capture, but we can't do it */
-                        device->driverSetupMessage(tr("Falling back to playback-only mode").arg(playback_pcm_name), AudioDevice::DRIVER_SETUP_WARNING);
+			device->driverSetupMessage(tr("Falling back to playback-only mode for device %1").arg(playback_pcm_name), AudioDevice::DRIVER_SETUP_WARNING);
 
                         capture = false;
 		}
