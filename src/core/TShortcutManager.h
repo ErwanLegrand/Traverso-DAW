@@ -46,11 +46,12 @@ public:
 		useY = false;
 		sortorder = 0;
 		m_usesAutoRepeat = false;
-		m_autorepeatInterval = 120;
-		m_autorepeatStartDelay = 200;
+		m_autorepeatInterval = -1;
+		m_autorepeatStartDelay = -1;
 	}
 
 	QString getKeySequence();
+	QString getModifierSequence();
 	QString getSlotSignature() const;
 	QString getDescription() const;
 	QString getLongDescription() const;
@@ -65,6 +66,8 @@ public:
 
 	void setDescription(const QString& des);
 	void setUsesAutoRepeat(bool b) {m_usesAutoRepeat = b;}
+	void setAutoRepeatInterval(int interval) {m_autorepeatInterval = interval;}
+	void setAutoRepeatStartDelay(int delay) {m_autorepeatStartDelay = delay;}
 
 	QStringList modes;
 	QVariantList arguments;
@@ -131,7 +134,7 @@ public:
 	TShortcut* getShortcut(const QString& key);
 	TShortcut* getShortcut(int key);
 	CommandPlugin* getCommandPlugin(const QString& pluginName);
-	void modifyFunctionKeys(TFunction* function, QStringList keys);
+	void modifyFunctionKeys(TFunction* function, QStringList keys, QStringList modifiers);
 	void add_translation(const QString& signature, const QString& translation);
 	void add_meta_object(const QMetaObject* mo);
 	QString get_translation_for(const QString& entry);
@@ -161,6 +164,9 @@ private:
 	QList<TFunction* > functionsForMetaobject(const QMetaObject* mo) const;
 
 	friend TShortcutManager& tShortCutManager();
+
+signals:
+	void functionKeysChanged();
 };
 
 TShortcutManager& tShortCutManager();

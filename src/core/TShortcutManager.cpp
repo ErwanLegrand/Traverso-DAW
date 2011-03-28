@@ -45,10 +45,8 @@ QList<TFunction*> TShortcut::getFunctions()
 	return objects.values();
 }
 
-QString TFunction::getKeySequence()
+QString TFunction::getModifierSequence()
 {
-	QString sequence;
-	QStringList sequenceList;
 	QString modifiersString;
 
 	foreach(int modifier, getModifierKeys()) {
@@ -62,6 +60,14 @@ QString TFunction::getKeySequence()
 			modifiersString += "Meta+";
 		}
 	}
+	return modifiersString;
+}
+
+QString TFunction::getKeySequence()
+{
+	QString sequence;
+	QStringList sequenceList;
+	QString modifiersString = getModifierSequence();
 
 	if (getModifierKeys().size())
 	{
@@ -483,14 +489,16 @@ void TShortcutManager::loadFunctions()
 	function = new TFunction();
 	function->object = "Zoom";
 	function->slotsignature = "hzoom_out";
-	function->m_description = tr("Out");
+	function->setDescription(tr("Out"));
+	function->setUsesAutoRepeat(true);
 	function->commandName = "ZoomOut";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "Zoom";
 	function->slotsignature = "hzoom_in";
-	function->m_description = tr("In");
+	function->setDescription(tr("In"));
+	function->setUsesAutoRepeat(true);
 	function->commandName = "ZoomIn";
 	addFunction(function);
 
@@ -1050,40 +1058,55 @@ void TShortcutManager::saveFunction(TFunction *function)
 {
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Shortcuts");
 
-	QStringList groups = settings.childGroups();
-	if (groups.contains("HoldCommand_ShowContextMenu"))
-	{
-		printf("settings contains %s\n", "HoldCommand_ShowContextMenu");
-	}
-
 	settings.beginGroup(function->commandName);
 	settings.setValue("keys", function->getKeys().join(";"));
+	settings.setValue("modifiers", function->getModifierSequence().replace("+", ";"));
+	if (function->getAutoRepeatInterval() >= 0)
+	{
+		settings.setValue("autorepeatinterval", function->getAutoRepeatInterval());
+	}
+	if (function->getAutoRepeatStartDelay() >= 0)
+	{
+		settings.setValue("autorepeatstartdelay", function->getAutoRepeatStartDelay());
+	}
 	settings.endGroup();
 }
 
 void TShortcutManager::loadShortcuts()
 {
-	QSettings settings(":/Traverso/shortcuts.ini", QSettings::IniFormat);
+	QSettings defaultSettings(":/Traverso/shortcuts.ini", QSettings::IniFormat);
+	QSettings userSettings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Shortcuts");
+	QSettings* settings;
 
-	QStringList groups = settings.childGroups();
+	QStringList defaultGroups = defaultSettings.childGroups();
+	QStringList userGroups = userSettings.childGroups();
 	QList<TFunction*> functionsThatInherit;
 
 	foreach(TFunction* function, m_functions)
 	{
-		if (!groups.contains(function->commandName))
-		{
+		if (userGroups.contains(function->commandName))
+		{ // prefer user settings over default settings
+			settings = &userSettings;
+		}
+		else if (defaultGroups.contains(function->commandName))
+		{ // no user setting available, fallback to default
+			settings = &defaultSettings;
+		}
+		else
+		{ // huh ?
+			printf("No shortcut definition for function %s\n", QS_C(function->commandName));
 			continue;
 		}
 
-		settings.beginGroup(function->commandName);
-		QString keyString = settings.value("keys").toString();
+		settings->beginGroup(function->commandName);
+		QString keyString = settings->value("keys").toString();
 		QStringList keys = keyString.toUpper().split(";", QString::SkipEmptyParts);
-		QStringList modifiers = settings.value("modifiers").toString().toUpper().split(";", QString::SkipEmptyParts);
-		QString autorepeatinterval = settings.value("autorepeatinterval").toString();
-		QString autorepeatstartdelay = settings.value("autorepeatstartdelay").toString();
-		QString submenu = settings.value("submenu").toString();
-		QString sortorder = settings.value("sortorder").toString();
-		settings.endGroup();
+		QStringList modifiers = settings->value("modifiers").toString().toUpper().split(";", QString::SkipEmptyParts);
+		QString autorepeatinterval = settings->value("autorepeatinterval").toString();
+		QString autorepeatstartdelay = settings->value("autorepeatstartdelay").toString();
+		QString submenu = settings->value("submenu").toString();
+		QString sortorder = settings->value("sortorder").toString();
+		settings->endGroup();
 
 		function->submenu = submenu;
 
@@ -1152,13 +1175,23 @@ void TShortcutManager::loadShortcuts()
 	}
 }
 
-void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys)
+void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys, QStringList modifiers)
 {
 	function->m_keys.clear();
+	function->m_modifierkeys.clear();
 
 	foreach(TShortcut* shortcut, m_shortcuts)
 	{
 		shortcut->objects.remove(function->object, function);
+	}
+
+	foreach(QString string, modifiers)
+	{
+		int modifier;
+		if (t_KeyStringToKeyValue(modifier, string))
+		{
+			function->m_modifierkeys << modifier;
+		}
 	}
 
 	foreach(QString key, keys) {
@@ -1169,6 +1202,10 @@ void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys)
 			shortcut->objects.insertMulti(function->object, function);
 		}
 	}
+
+	saveFunction(function);
+
+	emit functionKeysChanged();
 }
 
 

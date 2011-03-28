@@ -42,11 +42,13 @@ private:
         QTextEdit*              m_textEdit;
         QComboBox*              m_comboBox;
         QString                 m_helpIntroduction;
+	QString			m_currentClassName;
 
 private slots:
         void context_changed();
         void jog_started();
         void combobox_activated(int);
+	void function_keys_changed();
 };
 
 #endif // TCONTEXTHELPWIDGET_H

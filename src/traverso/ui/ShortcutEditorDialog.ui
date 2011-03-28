@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>455</height>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,7 +47,7 @@
          <item>
           <widget class="QCheckBox" name="showfunctionsCheckBox">
            <property name="text">
-            <string>Functions for Shortcut</string>
+            <string>&amp;Functions for Shortcut</string>
            </property>
           </widget>
          </item>
@@ -102,28 +102,28 @@
               <item>
                <widget class="QCheckBox" name="ctrlCheckBox">
                 <property name="text">
-                 <string>Ctrl</string>
+                 <string>&amp;Ctrl</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="shiftCheckBox">
                 <property name="text">
-                 <string>Shift</string>
+                 <string>&amp;Shift</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="altCheckBox">
                 <property name="text">
-                 <string>Alt</string>
+                 <string>&amp;Alt</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="metaCheckBox">
                 <property name="text">
-                 <string>Meta</string>
+                 <string>&amp;Meta</string>
                 </property>
                </widget>
               </item>
@@ -204,7 +204,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
-               <widget class="QWidget" name="" native="true">
+               <widget class="QWidget" name="widget" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_4">
                  <item>
                   <widget class="QLabel" name="label_6">
@@ -217,7 +217,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QWidget" name="" native="true">
+               <widget class="QWidget" name="widget" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_8">
                  <item>
                   <widget class="QLabel" name="baseFunctionShortCutLable">

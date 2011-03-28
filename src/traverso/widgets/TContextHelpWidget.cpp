@@ -35,6 +35,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TShortcutManager.h"
 #include "Themer.h"
 
+#include "Debugger.h"
+
 TContextHelpWidget::TContextHelpWidget(QWidget* parent)
         : QWidget(parent)
 {
@@ -78,9 +80,7 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 
 	m_helpIntroduction = m_helpIntroduction.arg(tr("Current Context")).arg(tShortCutManager().get_translation_for("AudioTrack")).arg(tShortCutManager().get_translation_for("AudioClip"));
 
-        combobox_activated(0);
-
-        QMap<QString, QString> sorted;
+	QMap<QString, QString> sorted;
 	QHash<QString, QList<const QMetaObject*> > objects = tShortCutManager().get_meta_objects();
         foreach(QList<const QMetaObject*> value, objects.values()) {
                 if (value.size()) {
@@ -93,11 +93,13 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 
 	int index = config().get_property("ShortcutsHelp", "DropDownIndex", 0).toInt();
         m_comboBox->setCurrentIndex(index);
+	combobox_activated(0);
 
         connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
         connect(&ie(), SIGNAL(jogStarted()), this, SLOT(jog_started()));
         connect(&ie(), SIGNAL(jogFinished()), this, SLOT(context_changed()));
         connect(m_comboBox, SIGNAL(activated(int)), this, SLOT(combobox_activated(int)));
+	connect(&tShortCutManager(), SIGNAL(functionKeysChanged()), this, SLOT(function_keys_changed()));
 }
 
 TContextHelpWidget::~TContextHelpWidget()
@@ -119,6 +121,7 @@ void TContextHelpWidget::context_changed()
 
         if (items.size()) {
                 m_textEdit->setHtml(create_html_for_object(items.first()));
+		m_currentClassName = items.first()->metaObject()->className();
         }
 }
 
@@ -172,12 +175,22 @@ void TContextHelpWidget::combobox_activated(int index)
                 m_textEdit->setHtml(m_help.value(className));
                 return;
         }
+	else
+	{
+		QList<const QMetaObject*> metas = tShortCutManager().get_metaobjects_for_class(className);
+		QString html = tShortCutManager().createHtmlForMetaObects(metas);
+		m_help.insert(className, html);
+		m_textEdit->setHtml(html);
+	}
 
-	QList<const QMetaObject*> metas = tShortCutManager().get_metaobjects_for_class(className);
+	m_currentClassName = className;
+}
 
+void TContextHelpWidget::function_keys_changed()
+{
+	m_help.clear();
+	QList<const QMetaObject*> metas = tShortCutManager().get_metaobjects_for_class(m_currentClassName.remove("View"));
 	QString html = tShortCutManager().createHtmlForMetaObects(metas);
-
-        m_help.insert(className, html);
-
-        m_textEdit->setHtml(html);
+	m_help.insert(m_currentClassName, html);
+	m_textEdit->setHtml(html);
 }
