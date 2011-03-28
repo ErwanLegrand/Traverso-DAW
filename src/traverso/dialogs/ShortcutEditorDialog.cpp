@@ -1,7 +1,27 @@
+/*
+Copyright (C) 2011 Remon Sijrier
+
+This file is part of Traverso
+
+Traverso is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
+
+*/
+
 #include "ShortcutEditorDialog.h"
 #include "ui_ShortcutEditorDialog.h"
 
-#include "TMenuTranslator.h"
 #include "TShortcutManager.h"
 
 #include <QTreeWidgetItem>
@@ -32,16 +52,27 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 	ui->keyComboBox1->addItems(keys);
 	ui->keyComboBox2->addItems(keys);
 
-	TMenuTranslator* translator = TMenuTranslator::instance();
-	QMap<QString, QString> sorted;
-	QHash<QString, QList<const QMetaObject*> > objects = translator->get_meta_objects();
-	foreach(QList<const QMetaObject*> value, objects.values()) {
-		if (value.size()) {
-			sorted.insert(translator->get_translation_for(value.first()->className()), value.first()->className());
+	QMap<QString, QString> classNamesMap;
+	QMap<QString, QString> commandClassNamesMap;
+
+	foreach(QString className, tShortCutManager().getClassNames()) {
+		if (tShortCutManager().isCommandClass(className))
+		{
+			commandClassNamesMap.insert(tShortCutManager().get_translation_for(className), className);
+		}
+		else
+		{
+			classNamesMap.insert(tShortCutManager().get_translation_for(className), className);
 		}
 	}
-	foreach(QString value, sorted.values()) {
-		ui->objectsComboBox->addItem(sorted.key(value), value);
+
+	foreach(QString className, classNamesMap.values()) {
+		ui->objectsComboBox->addItem(classNamesMap.key(className), className);
+	}
+
+	foreach(QString className, commandClassNamesMap)
+	{
+		ui->objectsComboBox->addItem(commandClassNamesMap.key(className) + " " + tr("(Hold Command)"), className);
 	}
 
 	connect(ui->objectsComboBox, SIGNAL(activated(int)), this, SLOT(objects_combo_box_activated(int)));
@@ -64,21 +95,24 @@ void ShortcutEditorDialog::objects_combo_box_activated(int index)
 	ui->shortcutsTreeWidget->clear();
 
 	QString className = ui->objectsComboBox->itemData(index).toString();
-	QList<const QMetaObject*> metas = TMenuTranslator::instance()->get_metaobjects_for_class(className);
 
-	QList<TFunction* > functionsList;
-	foreach(const QMetaObject* mo, metas) {
-		while (mo) {
-			functionsList << tShortCutManager().getFunctionsForMetaobject(mo);
-			mo = mo->superClass();
-		}
+	if (tShortCutManager().isCommandClass(className))
+	{
+		ui->shortCutGroupBox->setTitle(tr("Modifier Key"));
+		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Function") << tr("Modifier Key"));
 	}
+	else {
+		ui->shortCutGroupBox->setTitle(tr("Shortcuts"));
+		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Function") << tr("Shortcut"));
+	}
+
+	QList<TFunction* > functionsList = tShortCutManager().getFunctionsFor(className);
 
 	for (int j=0; j<functionsList.size(); ++j)
 	{
 		TFunction* function = functionsList.at(j);
 		QTreeWidgetItem* item;
-		item = new QTreeWidgetItem(QStringList() << function->getDescription() << function->getKeySequence());
+		item = new QTreeWidgetItem(QStringList() << function->getLongDescription() << function->getKeySequence());
 		QVariant v = qVariantFromValue((void*) function);
 		item->setData(0, Qt::UserRole, v);
 		ui->shortcutsTreeWidget->addTopLevelItem(item);
@@ -108,11 +142,26 @@ void ShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 		return;
 	}
 
+	QList<QStringList> itemList;
+	QList<QStringList> holdCommandItemList;
+
 	foreach(TFunction* function, shortCut->getFunctions())
 	{
-		QTreeWidgetItem* item;
-		QString translatedObjectName = TMenuTranslator::instance()->get_translation_for(function->object);
-		item = new QTreeWidgetItem(QStringList() << translatedObjectName << function->getDescription() << function->getKeySequence());
+		QString translatedObjectName = tShortCutManager().get_translation_for(function->object);
+		if (tShortCutManager().isCommandClass(function->object))
+		{
+			translatedObjectName = translatedObjectName + " " + tr("(Hold Command)");
+			holdCommandItemList.append(QStringList() << translatedObjectName << function->getDescription() << function->getKeySequence());
+		} else {
+			itemList.append(QStringList() << translatedObjectName << function->getLongDescription() << function->getKeySequence());
+		}
+	}
+
+	itemList.append(holdCommandItemList);
+
+	foreach(QStringList stringlist, itemList)
+	{
+		QTreeWidgetItem* item = new QTreeWidgetItem(stringlist);
 		ui->shortcutsTreeWidget->addTopLevelItem(item);
 	}
 
@@ -141,7 +190,7 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 	if (index >=0)
 	{
 		QString objectClassName = ui->objectsComboBox->itemData(index).toString();
-		isHoldFunction = TMenuTranslator::instance()->classInherits(objectClassName, "TCommand");
+		isHoldFunction = tShortCutManager().classInherits(objectClassName, "TCommand");
 	}
 
 	ui->keyComboBox1->setCurrentIndex(0);
@@ -239,8 +288,8 @@ void ShortcutEditorDialog::show_functions_checkbox_clicked()
 	if (ui->showfunctionsCheckBox->isChecked())
 	{
 		ui->shortcutsTreeWidget->setColumnCount(3);
-		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Object") << tr("Description") << tr("Shortcut"));
-		ui->shortcutsTreeWidget->header()->resizeSection(0, 160);
+		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Item") << tr("Function") << tr("Shortcut"));
+		ui->shortcutsTreeWidget->header()->resizeSection(0, 200);
 		ui->shortcutsTreeWidget->header()->resizeSection(1, 200);
 		ui->objectsComboBox->hide();
 		ui->keyComboBox2->hide();
@@ -259,9 +308,7 @@ void ShortcutEditorDialog::show_functions_checkbox_clicked()
 		ui->modifiersGroupBox->setEnabled(true);
 		ui->keyComboBox2->show();
 		ui->shortcutsTreeWidget->setColumnCount(2);
-		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Description") << tr("Shortcut"));
 		ui->shortcutsTreeWidget->header()->resizeSection(0, 280);
-		ui->shortCutGroupBox->setTitle(tr("Shortcuts"));
 		objects_combo_box_activated(ui->objectsComboBox->currentIndex());
 	}
 }

@@ -1036,7 +1036,7 @@ TCommand * TMainWindow::show_context_menu( )
 				continue;
 			}
 			action = toplevelmenu->insertMenu(action, menu);
-			QString name = TMenuTranslator::instance()->get_translation_for(className);
+			QString name = tShortCutManager().get_translation_for(className);
 
 			action->setText(name);
 		}
@@ -1075,9 +1075,7 @@ TCommand * TMainWindow::export_keymap()
 
 TCommand * TMainWindow::get_keymap(QString &str)
 {
-	TMenuTranslator* translator = TMenuTranslator::instance();
-
-	QHash<QString, QList<const QMetaObject*> > metas = translator->get_meta_objects();
+	QHash<QString, QList<const QMetaObject*> > metas = tShortCutManager().get_meta_objects();
 	QMap<QString, QList<const QMetaObject*> > objects;
 	foreach(QList<const QMetaObject*> value, metas.values()) {
 		objects.insert(metas.key(value), value);
@@ -1093,7 +1091,7 @@ TCommand * TMainWindow::get_keymap(QString &str)
 	      "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
 
 	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
-		str += translator->createHtmlForMetaObects(objectlist);
+		str += tShortCutManager().createHtmlForMetaObects(objectlist);
 		str += "<p></p><p></p>\n";
 	}
 
@@ -1106,7 +1104,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 {
 	QList<TFunction* > list;
 	if (item) {
-		list = tShortCutManager().getFunctionsFor( item );
+		list = tShortCutManager().getFunctionsFor(item->metaObject()->className());
 	} else {
 		list = *menulist;
 	}
@@ -1120,7 +1118,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 
 	QString name;
 	if (item) {
-		name = TMenuTranslator::instance()->get_translation_for(QString(item->metaObject()->className()));
+		name = tShortCutManager().get_translation_for(QString(item->metaObject()->className()));
 	}
 
 	QMenu* menu = new QMenu(this);
@@ -1179,7 +1177,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 		subMenu->menuAction()->setFont(font);
 
 		QAction* action = menu->insertMenu(0, subMenu);
-		action->setText(TMenuTranslator::instance()->get_translation_for(key));
+		action->setText(tShortCutManager().get_translation_for(key));
 		foreach(TFunction* function, *list) {
 			QAction* action = new QAction(subMenu);
 			action->setText(function->getDescription());

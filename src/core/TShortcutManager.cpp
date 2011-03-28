@@ -24,13 +24,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QPluginLoader>
 #include <QSettings>
 #include <QCoreApplication>
+#include <QMenu>
 
+#include "libtraversocore.h"
+#include "commands.h"
 #include "ContextItem.h"
 #include "InputEngine.h"
 #include "Information.h"
 #include "Utils.h"
 #include "TConfig.h"
 #include "CommandPlugin.h"
+#include "Themer.h"
 
 #include "Debugger.h"
 
@@ -108,6 +112,16 @@ QString TFunction::getDescription() const
 	}
 
 	return m_description;
+}
+
+QString TFunction::getLongDescription() const
+{
+	QString description = getDescription();
+	if (!submenu.isEmpty())
+	{
+		description = submenu + " : " + description;
+	}
+	return description;
 }
 
 void TFunction::setDescription(const QString& description)
@@ -204,9 +218,13 @@ TFunction* TShortcutManager::getFunction(const QString &functionName) const
 }
 
 
-QList<TFunction* > TShortcutManager::getFunctionsForMetaobject(const QMetaObject * metaObject) const
+QList<TFunction* > TShortcutManager::functionsForMetaobject(const QMetaObject * metaObject) const
 {
 	QList<TFunction* > list;
+	if (!metaObject)
+	{
+		return list;
+	}
 	QString classname = metaObject->className();
 
 	foreach(TFunction* function, m_functions)
@@ -220,27 +238,19 @@ QList<TFunction* > TShortcutManager::getFunctionsForMetaobject(const QMetaObject
 	return list;
 }
 
-QList< TFunction* > TShortcutManager::getFunctionsFor(QObject* item)
+QList< TFunction* > TShortcutManager::getFunctionsFor(const QString &className)
 {
-	QList<TFunction* > list;
-	ContextItem* contextitem;
-
-	do {
-		const QMetaObject* mo = item->metaObject();
-
-		// traverse upwards till no more superclasses are found
-		// this supports inheritance on contextitems.
+	QList<TFunction* > functionsList;
+	QString coreClassName = className;
+	coreClassName = coreClassName.remove("View");
+	QList<const QMetaObject*> metas = get_metaobjects_for_class(coreClassName);
+	foreach(const QMetaObject* mo, metas) {
 		while (mo) {
-			list << getFunctionsForMetaobject(mo);
+			functionsList << functionsForMetaobject(mo);
 			mo = mo->superClass();
 		}
-
-		contextitem = qobject_cast<ContextItem*>(item);
 	}
-	while (contextitem && (item = contextitem->get_context()) );
-
-
-	return list;
+	return functionsList;
 }
 
 TShortcut* TShortcutManager::getShortcut(const QString &keyString)
@@ -273,6 +283,33 @@ CommandPlugin* TShortcutManager::getCommandPlugin(const QString &pluginName)
 {
 	return m_commandPlugins.value(pluginName);
 }
+
+
+bool TShortcutManager::isCommandClass(const QString &className)
+{
+	QList<const QMetaObject*> list = get_metaobjects_for_class(className);
+
+	// A Command class only has one metaobject, compared to a
+	// core + its view item which equals 2 metaobjects for just one 'object'
+	if (list.size() == 1)
+	{
+		return classInherits(list.at(0)->className(), "TCommand");
+	}
+
+	return false;
+}
+
+QList<QString> TShortcutManager::getClassNames() const
+{
+	QList<QString> names;
+	foreach(QList<const QMetaObject*> metaObjectsList, m_metaObjects.values())
+	{
+		names.append(metaObjectsList.first()->className());
+	}
+
+	return names;
+}
+
 
 void TShortcutManager::loadFunctions()
 {
@@ -555,7 +592,7 @@ void TShortcutManager::loadFunctions()
 	function = new TFunction();
 	function->object = "AudioClipView";
 	function->slotsignature = "fade_range";
-	function->m_description = tr("Closest: Adjust Length");
+	function->m_description = tr("Adjust Length");
 	function->commandName = "AudioClip_FadeLength";
 	addFunction(function);
 
@@ -1135,4 +1172,164 @@ void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys)
 			shortcut->objects.insertMulti(function->object, function);
 		}
 	}
+}
+
+
+void TShortcutManager::add_meta_object(const QMetaObject* mo)
+{
+	QString classname = QString(mo->className()).remove("View");
+	QList<const QMetaObject*> list = m_metaObjects.value(classname);
+	list.append(mo);
+	m_metaObjects.insert(classname, list);
+}
+
+QList<const QMetaObject*> TShortcutManager::get_metaobjects_for_class(const QString &className)
+{
+	return m_metaObjects.value(className);
+}
+
+void TShortcutManager::add_translation(const QString &signature, const QString &translation)
+{
+	m_translations.insert(signature, translation);
+}
+
+
+QString TShortcutManager::get_translation_for(const QString &entry)
+{
+	QString key = entry;
+	key = key.remove("View");
+	if (!m_translations.contains(key)) {
+		return QString("TShortcutManager: %1 not found!").arg(key);
+	}
+	return m_translations.value(key);
+}
+
+QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> metas, QObject* object)
+{
+	if (!metas.size()) {
+		return "";
+	}
+
+
+	// FIXME ?
+	QString holdKeyFact = "";// ie().keyfacts_for_hold_command(metas.first()->className()).join(" , ");
+
+
+	QString name = get_translation_for(QString(metas.first()->className()));
+
+	QColor bgcolor = themer()->get_color("ResourcesBin:alternaterowcolor");
+	QString html = QString("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
+	      "<style type=\"text/css\">\n"
+	      "table {font-size: 11px;}\n"
+	      ".object {background-color: %1; font-size: 11px;}\n"
+	      ".description {background-color: %2; font-size: 11px; font-weight: bold;}\n"
+	      "</style>\n"
+	      "</head>\n<body>\n").arg(bgcolor.darker(105).name()).arg(bgcolor.darker(103).name());
+
+	if (object && object->inherits("PCommand")) {
+		PCommand* pc = static_cast<PCommand*>(object);
+		html += "<table><tr class=\"object\">\n<td width=220 align=\"center\">" + pc->text() + "</td></tr>\n";
+	} else {
+		html += "<table><tr class=\"object\">\n<td colspan=\"2\" align=\"center\"><b>" + name + "</b><font style=\"font-size: 11px;\">&nbsp;&nbsp;&nbsp;" + holdKeyFact + "</font></td></tr>\n";
+		html += "<tr><td width=110 class=\"description\">" +tr("Description") + "</td><td width=110 class=\"description\">" + tr("Shortcut") + "</td></tr>\n";
+	}
+
+	QStringList result;
+	int j=0;
+	QString submenuhtml;
+	QList<QMenu* > menulist;
+	QList<TFunction* > list;
+
+	foreach(const QMetaObject* mo, metas) {
+		while (mo) {
+			list << functionsForMetaobject(mo);
+			mo = mo->superClass();
+		}
+	}
+
+	QMenu* menu = 0;//TMainWindow::instance()->create_context_menu(0, &list);
+	if (menu) {
+		menulist.append(menu);
+		foreach(QAction* action, menu->actions()) {
+			if (action->menu()) {
+				menulist.append(action->menu());
+			}
+		}
+	}
+
+	QStringList submenushtml;
+
+	for (int i=0; i<menulist.size(); ++i) {
+		QMenu* somemenu = menulist.at(i);
+		submenuhtml = "";
+		if (i>0) {
+			submenuhtml = "<tr class=\"object\">\n<td colspan=\"2\" align=\"center\">"
+				      "<font style=\"font-size: 11px;\"><b>" + somemenu->menuAction()->text() + "</b></font></td></tr>\n";
+		}
+		foreach(QAction* action, somemenu->actions()) {
+			QStringList strings = action->data().toStringList();
+			if (strings.size() >= 2) {
+				QString keyfact = strings.at(0);
+
+				keyfact.replace(QString("Up Arrow"), QString("&uarr;"));
+				keyfact.replace(QString("Down Arrow"), QString("&darr;"));
+				keyfact.replace(QString("Left Arrow"), QString("&larr;"));
+				keyfact.replace(QString("Right Arrow"), QString("&rarr;"));
+				keyfact.replace(QString("-"), QString("&#45;"));
+				keyfact.replace(QString("+"), QString("&#43;"));
+				keyfact.replace(QString(" , "), QString("<br />"));
+
+
+				QString alternatingColor;
+				if ((j % 2) == 1) {
+					alternatingColor = QString("bgcolor=\"%1\"").arg(themer()->get_color("ResourcesBin:alternaterowcolor").name());
+				} else {
+					// FIXME
+//					alternatingColor = QString("bgcolor=\"%1\"").arg(TMainWindow::instance()->palette().color(QPalette::Base).name());
+				}
+				j += 1;
+
+				if (i>0) {
+					submenuhtml += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
+				} else {
+					result += QString("<tr %1><td>").arg(alternatingColor) + strings.at(1) + "</td><td>" + keyfact + "</td></tr>\n";
+				}
+			}
+		}
+		if (!submenuhtml.isEmpty()) {
+			submenushtml.append(submenuhtml);
+		}
+	}
+
+	foreach(QString html, submenushtml) {
+		result += html;
+	}
+
+	foreach(QMenu* menu, menulist) {
+		delete menu;
+	}
+
+	result.removeDuplicates();
+	html += result.join("");
+	html += "</table>\n";
+	html += "</body>\n</html>";
+
+	return html;
+}
+
+bool TShortcutManager::classInherits(const QString& className, const QString &inherited)
+{
+	QList<const QMetaObject*> metas = get_metaobjects_for_class(className);
+
+	foreach(const QMetaObject* mo, metas) {
+		while (mo) {
+			if (mo->className() == inherited)
+			{
+				return true;
+			}
+			mo = mo->superClass();
+		}
+	}
+
+	return false;
 }

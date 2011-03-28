@@ -53,6 +53,7 @@ public:
 	QString getKeySequence();
 	QString getSlotSignature() const;
 	QString getDescription() const;
+	QString getLongDescription() const;
 	QList<int> getModifierKeys();
 	QStringList getKeys() const;
 
@@ -126,25 +127,38 @@ public:
 	void addFunction(TFunction* function);
 	TFunction* getFunction(const QString& function) const;
 
-	QList<TFunction* > getFunctionsFor(QObject* item);
-	QList<TFunction* > getFunctionsForMetaobject(const QMetaObject* mo) const;
+	QList<TFunction* > getFunctionsFor(const QString& className);
 	TShortcut* getShortcut(const QString& key);
 	TShortcut* getShortcut(int key);
 	CommandPlugin* getCommandPlugin(const QString& pluginName);
 	void modifyFunctionKeys(TFunction* function, QStringList keys);
+	void add_translation(const QString& signature, const QString& translation);
+	void add_meta_object(const QMetaObject* mo);
+	QString get_translation_for(const QString& entry);
+	QString createHtmlForMetaObects(QList<const QMetaObject*> metas, QObject* obj=0);
+	QList<const QMetaObject*> get_metaobjects_for_class(const QString& className);
+	QHash<QString, QList<const QMetaObject*> > get_meta_objects() const {return m_metaObjects;}
+	QList<QString> getClassNames() const;
+	bool classInherits(const QString& className, const QString &inherited);
 
 	void loadFunctions();
 	void saveFunction(TFunction* function);
 	void loadShortcuts();
 	static void makeShortcutKeyHumanReadable(QString& key);
 
+	bool isCommandClass(const QString& className);
+
 private:
 	QHash<QString, CommandPlugin*>	m_commandPlugins;
 	QHash<QString, TFunction*>	m_functions;
 	QHash<int, TShortcut*>		m_shortcuts;
+	QHash<QString, QString>		m_translations;
+	QHash<QString, QList<const QMetaObject*> > m_metaObjects;
 
 	TShortcutManager();
 	TShortcutManager(const TShortcutManager&) : QObject() {}
+
+	QList<TFunction* > functionsForMetaobject(const QMetaObject* mo) const;
 
 	friend TShortcutManager& tShortCutManager();
 };

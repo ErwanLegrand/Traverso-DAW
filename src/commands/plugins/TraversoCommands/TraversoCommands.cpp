@@ -21,12 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TraversoCommands.h"
 
-#include <libtraversocore.h>
-#include <libtraversosheetcanvas.h>
-#include <commands.h>
-#include <float.h>
 #include <QInputDialog>
-#include "TMenuTranslator.h"
+
+#include "libtraversocore.h"
+#include "libtraversosheetcanvas.h"
+#include "commands.h"
+#include <float.h>
+#include "TMainWindow.h"
 #include "TShortcutManager.h"
 
 // Always put me below _all_ includes, this is needed
@@ -44,6 +45,98 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 TraversoCommands::TraversoCommands()
 {
+
+	tShortCutManager().add_meta_object(&Sheet::staticMetaObject);
+	tShortCutManager().add_meta_object(&SheetView::staticMetaObject);
+	tShortCutManager().add_meta_object(&AudioTrack::staticMetaObject);
+	tShortCutManager().add_meta_object(&AudioTrackView::staticMetaObject);
+	tShortCutManager().add_meta_object(&TBusTrack::staticMetaObject);
+	tShortCutManager().add_meta_object(&TBusTrackView::staticMetaObject);
+	tShortCutManager().add_meta_object(&AudioClip::staticMetaObject);
+	tShortCutManager().add_meta_object(&AudioClipView::staticMetaObject);
+	tShortCutManager().add_meta_object(&Curve::staticMetaObject);
+	tShortCutManager().add_meta_object(&CurveView::staticMetaObject);
+	tShortCutManager().add_meta_object(&TimeLine::staticMetaObject);
+	tShortCutManager().add_meta_object(&TimeLineView::staticMetaObject);
+	tShortCutManager().add_meta_object(&Plugin::staticMetaObject);
+	tShortCutManager().add_meta_object(&PluginView::staticMetaObject);
+	tShortCutManager().add_meta_object(&FadeCurve::staticMetaObject);
+	tShortCutManager().add_meta_object(&FadeCurveView::staticMetaObject);
+	tShortCutManager().add_meta_object(&TMainWindow::staticMetaObject);
+	tShortCutManager().add_meta_object(&Project::staticMetaObject);
+	tShortCutManager().add_meta_object(&ProjectManager::staticMetaObject);
+	tShortCutManager().add_meta_object(&Gain::staticMetaObject);
+	tShortCutManager().add_meta_object(&MoveTrack::staticMetaObject);
+	tShortCutManager().add_meta_object(&MoveClip::staticMetaObject);
+	tShortCutManager().add_meta_object(&MoveCurveNode::staticMetaObject);
+	tShortCutManager().add_meta_object(&Zoom::staticMetaObject);
+	tShortCutManager().add_meta_object(&TrackPan::staticMetaObject);
+	tShortCutManager().add_meta_object(&MoveMarker::staticMetaObject);
+	tShortCutManager().add_meta_object(&WorkCursorMove::staticMetaObject);
+	tShortCutManager().add_meta_object(&PlayHeadMove::staticMetaObject);
+	tShortCutManager().add_meta_object(&MoveEdge::staticMetaObject);
+	tShortCutManager().add_meta_object(&CropClip::staticMetaObject);
+	tShortCutManager().add_meta_object(&FadeRange::staticMetaObject);
+	tShortCutManager().add_meta_object(&Shuttle::staticMetaObject);
+	tShortCutManager().add_meta_object(&SplitClip::staticMetaObject);
+	tShortCutManager().add_meta_object(&TPanKnobView::staticMetaObject);
+
+	tShortCutManager().add_translation("ArrowKeyBrowser", tr("Arrow Key Browser"));
+	tShortCutManager().add_translation("ArmTracks", tr("Arm Tracks"));
+	tShortCutManager().add_translation("CropClip", tr("Cut Clip (Magnetic)"));
+	tShortCutManager().add_translation("Fade", tr("Fade"));
+	tShortCutManager().add_translation("Gain", tr("Gain"));
+	tShortCutManager().add_translation("MoveClip", tr("Move Clip"));
+	tShortCutManager().add_translation("MoveCurveNode", tr("Move Node"));
+	tShortCutManager().add_translation("MoveEdge", tr("Move Clip Edge"));
+	tShortCutManager().add_translation("MoveMarker", tr("Move Marker"));
+	tShortCutManager().add_translation("MoveTrack", tr("Move Track"));
+	tShortCutManager().add_translation("PlayHeadMove", tr("Move Play Head"));
+	tShortCutManager().add_translation("Shuttle", tr("Shuttle"));
+	tShortCutManager().add_translation("SplitClip", tr("Split Clip"));
+	tShortCutManager().add_translation("TrackPan", tr("Track Pan"));
+	tShortCutManager().add_translation("TPanKnob", tr("Pan Knob"));
+	tShortCutManager().add_translation("TPanKnobView", tr("Pan Knob"));
+
+	tShortCutManager().add_translation("WorkCursorMove", tr("Move Work Cursor"));
+	tShortCutManager().add_translation("Zoom", tr("Zoom"));
+
+	tShortCutManager().add_translation("AudioClip",tr("Audio Clip"));
+	tShortCutManager().add_translation("AudioTrack", tr("Audio Track"));
+	tShortCutManager().add_translation("Curve",tr("Curve"));
+	tShortCutManager().add_translation("CurveNode",tr("Curve Node"));
+	tShortCutManager().add_translation("FadeCurve",tr("Fade Curve"));
+	tShortCutManager().add_translation("FadeRange", tr("Fade Length"));
+	tShortCutManager().add_translation("FadeBend", tr("Bend Factor"));
+	tShortCutManager().add_translation("FadeStrength", tr("Strength Factor"));
+	tShortCutManager().add_translation("Marker",tr("Marker"));
+	tShortCutManager().add_translation("Sheet",tr("Sheet"));
+	tShortCutManager().add_translation("TBusTrack",tr("Bus Track"));
+	tShortCutManager().add_translation("TimeLine",tr("Time Line"));
+	tShortCutManager().add_translation("TBusTrackPanel", tr("Bus Track"));
+	tShortCutManager().add_translation("TMainWindow", tr("Main Window"));
+	tShortCutManager().add_translation("Project", tr("Project"));
+	tShortCutManager().add_translation("ProjectManager", tr("Project Manager"));
+	tShortCutManager().add_translation("TrackPanelGain", tr("Gain"));
+	tShortCutManager().add_translation("TrackPanelPan", tr("Panorama"));
+	tShortCutManager().add_translation("TrackPanelLed", tr("Track Panel Button"));
+	tShortCutManager().add_translation("TrackPanelBus", tr("Routing Indicator"));
+	tShortCutManager().add_translation("VUMeterLevel", tr("VU Level"));
+	tShortCutManager().add_translation("VUMeter", tr("VU Level"));
+	tShortCutManager().add_translation("AudioTrackPanel",tr("Audio Track"));
+	tShortCutManager().add_translation("Plugin",tr("Plugin"));
+	tShortCutManager().add_translation("PlayHead", tr("Play Head"));
+	tShortCutManager().add_translation("PositionIndicator", tr("Position Indicator"));
+	tShortCutManager().add_translation("WorkCursor", tr("Work Cursor"));
+	tShortCutManager().add_translation("CorrelationMeter", tr("Correlation Meter"));
+	tShortCutManager().add_translation("SpectralMeter", tr("Spectral Analyzer"));
+	tShortCutManager().add_translation("Track", tr("Track"));
+	tShortCutManager().add_translation("MoveCommand", tr("Move Command"));
+	tShortCutManager().add_translation("EditProperties", tr("Edit Properties"));
+	tShortCutManager().add_translation("ProcessingData", tr("Audio Processing Object"));
+	tShortCutManager().add_translation("ToggleBypass", tr("Toggle Bypass"));
+	tShortCutManager().add_translation("HoldCommand", tr("Hold Command"));
+
 	TFunction* function;
 
 	function = new TFunction();
@@ -196,7 +289,7 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "Track";
-	function->setDescription(tr("Track Panorama"));
+	function->setDescription(tr("Track Pan"));
 	function->commandName = "TrackPan";
 	addFunction(function, TrackPanCommand);
 

@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TCommand.h"
 #include "PCommand.h"
 #include "TMainWindow.h"
-#include "TMenuTranslator.h"
+#include "TShortcutManager.h"
 #include "Themer.h"
 
 TContextHelpWidget::TContextHelpWidget(QWidget* parent)
@@ -55,8 +55,6 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 	m_comboBox->addItem(tr("Shortcuts Explained"));
 	m_comboBox->addItem(tr("Current Context"));
 
-        TMenuTranslator* translator = TMenuTranslator::instance();
-
         m_helpIntroduction = ("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body>"
 		"Traverso uses a powerful shortcuts system with which you can control the program using the mouse "
                 "or the keyboard + mouse or just the keyboard!"
@@ -78,15 +76,15 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
                 "</table>"
                 "</body></html>");
 
-	m_helpIntroduction = m_helpIntroduction.arg(tr("Current Context")).arg(translator->get_translation_for("AudioTrack")).arg(translator->get_translation_for("AudioClip"));
+	m_helpIntroduction = m_helpIntroduction.arg(tr("Current Context")).arg(tShortCutManager().get_translation_for("AudioTrack")).arg(tShortCutManager().get_translation_for("AudioClip"));
 
         combobox_activated(0);
 
         QMap<QString, QString> sorted;
-        QHash<QString, QList<const QMetaObject*> > objects = translator->get_meta_objects();
+	QHash<QString, QList<const QMetaObject*> > objects = tShortCutManager().get_meta_objects();
         foreach(QList<const QMetaObject*> value, objects.values()) {
                 if (value.size()) {
-                        sorted.insert(translator->get_translation_for(value.first()->className()), value.first()->className());
+			sorted.insert(tShortCutManager().get_translation_for(value.first()->className()), value.first()->className());
                 }
         }
         foreach(QString value, sorted.values()) {
@@ -138,7 +136,6 @@ void TContextHelpWidget::jog_started()
 
 QString TContextHelpWidget::create_html_for_object(QObject *obj)
 {
-        TMenuTranslator* translator = TMenuTranslator::instance();
         const QMetaObject* mo = obj->metaObject();
 
         if (m_help.contains(mo->className())) {
@@ -155,7 +152,7 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
 		ci = ci->get_context();
 	}
 
-        QString html = translator->createHtmlForMetaObects(metas, obj);
+	QString html = tShortCutManager().createHtmlForMetaObects(metas, obj);
 
         m_help.insert(mo->className(), html);
 
@@ -176,9 +173,9 @@ void TContextHelpWidget::combobox_activated(int index)
                 return;
         }
 
-        QList<const QMetaObject*> metas = TMenuTranslator::instance()->get_metaobjects_for_class(className);
+	QList<const QMetaObject*> metas = tShortCutManager().get_metaobjects_for_class(className);
 
-        QString html = TMenuTranslator::instance()->createHtmlForMetaObects(metas);
+	QString html = tShortCutManager().createHtmlForMetaObects(metas);
 
         m_help.insert(className, html);
 
