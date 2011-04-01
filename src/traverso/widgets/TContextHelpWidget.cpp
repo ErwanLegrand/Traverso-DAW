@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TConfig.h"
 #include "ContextPointer.h"
 #include "ContextItem.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "TCommand.h"
 #include "PCommand.h"
 #include "TMainWindow.h"
@@ -81,23 +81,20 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 	m_helpIntroduction = m_helpIntroduction.arg(tr("Current Context")).arg(tShortCutManager().get_translation_for("AudioTrack")).arg(tShortCutManager().get_translation_for("AudioClip"));
 
 	QMap<QString, QString> sorted;
-	QHash<QString, QList<const QMetaObject*> > objects = tShortCutManager().get_meta_objects();
-        foreach(QList<const QMetaObject*> value, objects.values()) {
-                if (value.size()) {
-			sorted.insert(tShortCutManager().get_translation_for(value.first()->className()), value.first()->className());
-                }
+	foreach(QString className, tShortCutManager().getClassNames()) {
+		sorted.insert(tShortCutManager().get_translation_for(className), className);
         }
-        foreach(QString value, sorted.values()) {
-                m_comboBox->addItem(sorted.key(value), value);
-        }
+	foreach(QString value, sorted.values()) {
+		m_comboBox->addItem(sorted.key(value), value);
+	}
 
 	int index = config().get_property("ShortcutsHelp", "DropDownIndex", 0).toInt();
         m_comboBox->setCurrentIndex(index);
 	combobox_activated(0);
 
         connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
-        connect(&ie(), SIGNAL(jogStarted()), this, SLOT(jog_started()));
-        connect(&ie(), SIGNAL(jogFinished()), this, SLOT(context_changed()));
+        connect(&ied(), SIGNAL(jogStarted()), this, SLOT(jog_started()));
+        connect(&ied(), SIGNAL(jogFinished()), this, SLOT(context_changed()));
         connect(m_comboBox, SIGNAL(activated(int)), this, SLOT(combobox_activated(int)));
 	connect(&tShortCutManager(), SIGNAL(functionKeysChanged()), this, SLOT(function_keys_changed()));
 }
@@ -131,7 +128,7 @@ void TContextHelpWidget::jog_started()
                 return;
         }
 
-        TCommand* hold = ie().get_holding_command();
+        TCommand* hold = ied().get_holding_command();
         if (hold) {
                 m_textEdit->setHtml(create_html_for_object(hold));
         }

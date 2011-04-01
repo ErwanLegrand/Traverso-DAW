@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 
 #include "TConfig.h"
 #include "Curve.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "Sheet.h"
 #include "AudioClip.h"
 #include "SnapList.h"
@@ -479,10 +479,10 @@ void SheetView::hscrollbar_value_changed(int value)
 	// itself for the changed viewport / mouse coordinates.
 	// FIXME This is NOT a solution to set hold-cursors at the correct
 	// position in the viewport when it's scrolled programatically !!!!!
-	if (ie().is_holding()) {
-		Shuttle* s = dynamic_cast<Shuttle*>(ie().get_holding_command());
+	if (ied().is_holding()) {
+		Shuttle* s = dynamic_cast<Shuttle*>(ied().get_holding_command());
 		if (!s) {
-			ie().jog();
+			ied().jog();
 		}
 	} else {
 		m_clipsViewPort->horizontalScrollBar()->setValue(value);
@@ -752,7 +752,7 @@ void SheetView::update_shuttle()
 	}
 
 	if (m_shuttleXfactor != 0 || m_shuttleYfactor != 0) {
-		ie().jog();
+		ied().jog();
 	}
 }
 
@@ -794,7 +794,7 @@ TimeLineViewPort* SheetView::get_timeline_viewport() const
 TCommand * SheetView::touch( )
 {
 	if (cpointer().get_viewport() == m_tpvp) {
-		return ie().did_not_implement();
+		return ied().did_not_implement();
 	}
 	int x;
 	if (!cpointer().get_viewport()) {
@@ -810,7 +810,7 @@ TCommand * SheetView::touch( )
 TCommand * SheetView::touch_play_cursor( )
 {
 	if (cpointer().get_viewport() == m_tpvp) {
-		return ie().did_not_implement();
+		return ied().did_not_implement();
 	}
 	int x;
 	if (!cpointer().get_viewport()) {

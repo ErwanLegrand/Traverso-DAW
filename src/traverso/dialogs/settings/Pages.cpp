@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TConfig.h"
 #include <Utils.h>
 #include <Themer.h>
-#include <InputEngine.h>
+#include "TInputEventDispatcher.h"
 #include "ContextPointer.h"
 #include "TMainWindow.h"
 #include <QDomDocument>

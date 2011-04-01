@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Plugin.h"
 #include "PluginManager.h"
 #include <Tsar.h>
-#include <InputEngine.h>
+#include "TInputEventDispatcher.h"
 #include <Sheet.h>
 #include <AddRemove.h>
 #include "AudioBus.h"

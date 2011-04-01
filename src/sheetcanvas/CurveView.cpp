@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <CurveNode.h>
 #include <ContextPointer.h>
 #include <Sheet.h>
-#include <InputEngine.h>
+#include "TInputEventDispatcher.h"
 
 #include <AddRemove.h>
 #include "CommandGroup.h"
@@ -255,7 +255,7 @@ void CurveView::active_context_changed()
         if (has_active_context()) {
                 m_blinkTimer.start(40);
         } else {
-                if (ie().is_holding()) {
+                if (ied().is_holding()) {
                         return;
                 }
 
@@ -289,7 +289,7 @@ void CurveView::mouse_hover_move_event()
 
 void CurveView::update_softselected_node(QPointF point)
 {
-        if (ie().is_holding()) {
+        if (ied().is_holding()) {
 		return;
 	}
 
@@ -383,7 +383,7 @@ TCommand* CurveView::remove_node()
 
 
 	if (!nodesToBeRemoved.size()) {
-		return ie().failure();
+		return ied().failure();
 	}
 
 	emit curveModified();
@@ -416,7 +416,7 @@ TCommand* CurveView::drag_node()
 	}
 
 	if (!selectedNodes.size()) {
-		return ie().failure();
+		return ied().failure();
 	}
 
 	TimeRef min(qint64(0));
@@ -558,12 +558,12 @@ TCommand* CurveView::select_lazy_selected_node()
 {
 	if (!m_blinkingNode)
 	{
-		return ie().failure();
+		return ied().failure();
 	}
 
 	m_blinkingNode->set_hard_selected(!m_blinkingNode->is_hard_selected());
 
-	return ie().succes();
+	return ied().succes();
 }
 
 TCommand* CurveView::toggle_select_all_nodes()
@@ -588,7 +588,7 @@ TCommand* CurveView::toggle_select_all_nodes()
 
 	update();
 
-	return ie().succes();
+	return ied().succes();
 }
 
 CurveNodeView* CurveView::get_node_view_before(TimeRef location) const

@@ -23,7 +23,7 @@
 
 #include "ContextPointer.h"
 #include "ContextItem.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "ClipsViewPort.h"
 #include "Marker.h"
 #include "Sheet.h"
@@ -169,7 +169,7 @@ void WorkCursorMove::prev_snap_pos(bool autorepeat)
 
 void WorkCursorMove::do_keyboard_move(TimeRef newLocation)
 {
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 
 	m_sv->move_edit_point_to(newLocation, m_holdCursorSceneY);
 }

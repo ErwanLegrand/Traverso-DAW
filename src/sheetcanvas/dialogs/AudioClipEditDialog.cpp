@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Mixer.h"
 #include "TCommand.h"
 #include "AudioClipExternalProcessing.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "AudioDevice.h"
 
 #define TIME_FORMAT "hh:mm:ss.zzz"
@@ -153,7 +153,7 @@ void AudioClipEditDialog::clip_position_changed()
 
 void AudioClipEditDialog::fadein_length_changed()
 {
-	if (ie().is_holding()) return;
+	if (ied().is_holding()) return;
 	if (locked) return;
 	
 	TimeRef ref(qint64(m_clip->get_fade_in()->get_range()));
@@ -176,7 +176,7 @@ void AudioClipEditDialog::fadein_edit_changed(const QTime& time)
 	// or moving the clip with the mouse! In the latter case this function
 	// causes trouble when moving the right edge with the mouse! 
 	// This 'fixes' it .....
-	if (ie().is_holding()) return;
+	if (ied().is_holding()) return;
 
 	locked = true;
 	double range = double(qtime_to_timeref(time).universal_frame());
@@ -190,7 +190,7 @@ void AudioClipEditDialog::fadein_edit_changed(const QTime& time)
 
 void AudioClipEditDialog::fadeout_edit_changed(const QTime& time)
 {
-	if (ie().is_holding()) return;
+	if (ied().is_holding()) return;
 
 	locked = true;
 	double range = double(qtime_to_timeref(time).universal_frame());
@@ -204,7 +204,7 @@ void AudioClipEditDialog::fadeout_edit_changed(const QTime& time)
 
 void AudioClipEditDialog::clip_length_edit_changed(const QTime& time)
 {
-	if (ie().is_holding()) return;
+	if (ied().is_holding()) return;
 
 	locked = true;
 	
@@ -223,7 +223,7 @@ void AudioClipEditDialog::clip_length_edit_changed(const QTime& time)
 
 void AudioClipEditDialog::clip_start_edit_changed(const QTime& time)
 {
-	if (ie().is_holding()) return;
+	if (ied().is_holding()) return;
 
 	locked = true;
 	m_clip->set_track_start_location(qtime_to_timeref(time));

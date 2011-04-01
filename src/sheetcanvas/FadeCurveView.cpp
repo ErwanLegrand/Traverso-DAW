@@ -30,7 +30,7 @@ $Id: FadeCurveView.cpp,v 1.2 2008/05/24 17:27:49 r_sijrier Exp $
 #include "TMainWindow.h"
 #include <Themer.h>
 #include <Fade.h>
-#include <InputEngine.h>
+#include "TInputEventDispatcher.h"
 #include <AddRemove.h>
 
 #include <Sheet.h>

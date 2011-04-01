@@ -19,8 +19,8 @@
 
 */
 
-#ifndef INPUTENGINE_H
-#define INPUTENGINE_H
+#ifndef INPUT_EVENT_DISPATCHER_H
+#define INPUT_EVENT_DISPATCHER_H
 
 
 
@@ -41,7 +41,7 @@ class QMouseEvent;
 struct TShortcut;
 
 
-class InputEngine : public QObject
+class TInputEventDispatcher : public QObject
 {
 	Q_OBJECT
 public:
@@ -75,9 +75,9 @@ public:
 	TCommand* did_not_implement();
 
 private:
-        InputEngine();
-        InputEngine(const InputEngine&) : QObject() {}
-        ~InputEngine();
+	TInputEventDispatcher();
+	TInputEventDispatcher(const TInputEventDispatcher&) : QObject() {}
+	~TInputEventDispatcher();
 
 	enum BroadcastResult {
 		SUCCES=1,
@@ -131,7 +131,7 @@ private:
 
 
         // allow this function to create one instance
-        friend InputEngine& ie();
+	friend TInputEventDispatcher& ied();
 
 private slots:
         void process_hold_modifier_keys();
@@ -143,7 +143,7 @@ signals:
 };
 
 // use this function to get the InputEngine object
-InputEngine& ie();
+TInputEventDispatcher& ied();
 
 
 #endif

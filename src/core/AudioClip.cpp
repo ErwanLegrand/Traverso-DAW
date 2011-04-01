@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TConfig.h"
 #include "PluginChain.h"
 #include "GainEnvelope.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 
 #include "AbstractAudioReader.h"
 
@@ -895,7 +895,7 @@ TCommand * AudioClip::normalize( )
         }
 
         if (!ok || (normfactor == get_gain())) {
-            return ie().failure();
+            return ied().failure();
         }
 
         return new PCommand(this, "set_gain", normfactor, get_gain(), tr("AudioClip: Normalize"));

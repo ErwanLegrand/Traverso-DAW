@@ -27,7 +27,7 @@
 #include "Sheet.h"
 #include "SheetView.h"
 #include "TimeLine.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 
 
 #include "Debugger.h"
@@ -91,7 +91,7 @@ void MoveMarker::move_left(bool autorepeat)
 		return prev_snap_pos(autorepeat);
 	}
 
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	// Move 1 pixel to the left
 	TimeRef newpos = TimeRef(m_newWhen - (d->scalefactor * m_speed));
 	if (newpos < TimeRef()) {
@@ -107,7 +107,7 @@ void MoveMarker::move_right(bool autorepeat)
 		return next_snap_pos(autorepeat);
 	}
 
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	// Move 1 pixel to the right
 	m_newWhen = m_newWhen + (d->scalefactor * m_speed);
 	m_marker->set_when(m_newWhen);
@@ -116,7 +116,7 @@ void MoveMarker::move_right(bool autorepeat)
 void MoveMarker::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
 	m_newWhen = slist->next_snap_pos(m_newWhen);
 	m_marker->set_when(m_newWhen);
@@ -125,7 +125,7 @@ void MoveMarker::next_snap_pos(bool autorepeat)
 void MoveMarker::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	SnapList* slist = m_marker->get_timeline()->get_sheet()->get_snap_list();
 	m_newWhen = slist->prev_snap_pos(m_newWhen);
 	m_marker->set_when(m_newWhen);

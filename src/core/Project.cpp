@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Sheet.h"
 #include "ProjectManager.h"
 #include "Information.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "ResourcesManager.h"
 #include "Export.h"
 #include "AudioDevice.h"
@@ -1419,7 +1419,7 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 
 TCommand* Project::select()
 {
-	int index = ie().collected_number();
+	int index = ied().collected_number();
         QList<TSession*> sessions = get_sessions();
         if (index < sessions.size() && index >= 0) {
                 set_current_session(sessions.at(index)->get_id());

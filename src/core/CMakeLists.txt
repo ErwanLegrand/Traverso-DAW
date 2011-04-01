@@ -35,7 +35,7 @@ Export.cpp
 FadeCurve.cpp
 FileHelpers.cpp
 Information.cpp
-InputEngine.cpp
+TInputEventDispatcher.cpp
 Peak.cpp
 Project.cpp
 ProjectManager.cpp
@@ -89,7 +89,7 @@ TCommand.h
 TShortcutManager.h
 WriteSource.h
 ContextItem.h
-InputEngine.h
+TInputEventDispatcher.h
 CommandPlugin.h
 )
 

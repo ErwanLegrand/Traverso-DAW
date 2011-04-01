@@ -168,7 +168,7 @@ void PlayHeadMove::prev_snap_pos(bool autorepeat)
 
 void PlayHeadMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
 {
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+        ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 
         if (newLocation < TimeRef()) {
                 newLocation = TimeRef();

@@ -27,7 +27,7 @@
 #include "Track.h"
 #include "ClipsViewPort.h"
 #include "ContextPointer.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include <QPoint>
 
 // Always put me below _all_ includes, this is needed
@@ -69,7 +69,7 @@ void Zoom::init(SheetView *sv, TrackView *tv, QVariantList args)
                 m_yScalefactor = 0;
         }
 
-        m_trackHeight = collected_number_to_track_height(ie().get_collected_number());
+        m_trackHeight = collected_number_to_track_height(ied().get_collected_number());
 }
 
 int Zoom::prepare_actions()

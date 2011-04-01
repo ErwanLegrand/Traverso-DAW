@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 
 #include "ContextPointer.h"
 #include "Information.h"
@@ -74,13 +74,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
 
-InputEngine& ie()
+TInputEventDispatcher& ied()
 {
-	static InputEngine inputengine;
+	static TInputEventDispatcher inputengine;
 	return inputengine;
 }
 
-InputEngine::InputEngine()
+TInputEventDispatcher::TInputEventDispatcher()
 {
 	PENTERCONS;
 	m_holdingCommand = 0;
@@ -98,11 +98,11 @@ InputEngine::InputEngine()
 	connect(&m_holdKeyRepeatTimer, SIGNAL(timeout()), this, SLOT(process_hold_modifier_keys()));
 }
 
-InputEngine::~ InputEngine( )
+TInputEventDispatcher::~ TInputEventDispatcher( )
 {
 }
 
-int InputEngine::dispatch_shortcut_from_contextmenu(const QString& keySequence)
+int TInputEventDispatcher::dispatch_shortcut_from_contextmenu(const QString& keySequence)
 {
 	PENTER2;
 	TShortcut* action = tShortCutManager().getShortcut(keySequence);
@@ -116,7 +116,7 @@ int InputEngine::dispatch_shortcut_from_contextmenu(const QString& keySequence)
 }
 
 
-int InputEngine::dispatch_shortcut(TShortcut* shortCut, bool autorepeat, bool fromContextMenu)
+int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepeat, bool fromContextMenu)
 {
 	PENTER2;
 
@@ -382,25 +382,25 @@ int InputEngine::dispatch_shortcut(TShortcut* shortCut, bool autorepeat, bool fr
 	return 1;
 }
 
-TCommand* InputEngine::succes()
+TCommand* TInputEventDispatcher::succes()
 {
 	m_dispatchResult = SUCCES;
 	return 0;
 }
 
-TCommand* InputEngine::failure()
+TCommand* TInputEventDispatcher::failure()
 {
 	m_dispatchResult = FAILURE;
 	return 0;
 }
 
-TCommand* InputEngine::did_not_implement()
+TCommand* TInputEventDispatcher::did_not_implement()
 {
 	m_dispatchResult = DIDNOTIMPLEMENT;
 	return 0;
 }
 
-void InputEngine::jog()
+void TInputEventDispatcher::jog()
 {
 	PENTER3;
 
@@ -422,7 +422,7 @@ void InputEngine::jog()
 	}
 }
 
-void InputEngine::bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length)
+void TInputEventDispatcher::bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length)
 {
 	m_unbypassJogDistance = length;
 	m_bypassJog = true;
@@ -432,12 +432,12 @@ void InputEngine::bypass_jog_until_mouse_movements_exceeded_manhattenlength(int 
 	}
 }
 
-void InputEngine::update_jog_bypass_pos()
+void TInputEventDispatcher::update_jog_bypass_pos()
 {
 	m_jogBypassPos = cpointer().pos();
 }
 
-void InputEngine::set_jogging(bool jog)
+void TInputEventDispatcher::set_jogging(bool jog)
 {
 	m_isJogging = jog;
 
@@ -448,12 +448,12 @@ void InputEngine::set_jogging(bool jog)
 	}
 }
 
-bool InputEngine::is_jogging()
+bool TInputEventDispatcher::is_jogging()
 {
 	return m_isJogging;
 }
 
-void InputEngine::reset()
+void TInputEventDispatcher::reset()
 {
 	PENTER3;
 	m_isHolding = false;
@@ -463,7 +463,7 @@ void InputEngine::reset()
 	set_numerical_input("");
 }
 
-void InputEngine::abort_current_hold_actions()
+void TInputEventDispatcher::abort_current_hold_actions()
 {
 	m_activeModifierKeys.clear();
 	clear_hold_modifier_keys();
@@ -474,7 +474,7 @@ void InputEngine::abort_current_hold_actions()
 	}
 }
 
-void InputEngine::catch_key_press(QKeyEvent * e )
+void TInputEventDispatcher::catch_key_press(QKeyEvent * e )
 {
 	if (e->isAutoRepeat()) {
 		return;
@@ -484,7 +484,7 @@ void InputEngine::catch_key_press(QKeyEvent * e )
 	process_press_event(e->key());
 }
 
-void InputEngine::catch_key_release( QKeyEvent * e)
+void TInputEventDispatcher::catch_key_release( QKeyEvent * e)
 {
 	if (e->isAutoRepeat()) {
 		return;
@@ -493,7 +493,7 @@ void InputEngine::catch_key_release( QKeyEvent * e)
 	process_release_event(e->key());
 }
 
-void InputEngine::catch_mousebutton_press( QMouseEvent * e )
+void TInputEventDispatcher::catch_mousebutton_press( QMouseEvent * e )
 {
 	if (e->button() == Qt::LeftButton) {
 		cpointer().mouse_button_left_pressed();
@@ -501,12 +501,12 @@ void InputEngine::catch_mousebutton_press( QMouseEvent * e )
 	process_press_event(e->button());
 }
 
-void InputEngine::catch_mousebutton_release( QMouseEvent * e )
+void TInputEventDispatcher::catch_mousebutton_release( QMouseEvent * e )
 {
 	process_release_event(e->button());
 }
 
-void InputEngine::catch_mousebutton_doubleclick( QMouseEvent * e )
+void TInputEventDispatcher::catch_mousebutton_doubleclick( QMouseEvent * e )
 {
 	process_press_event(e->button());
 	process_release_event(e->button());
@@ -515,7 +515,7 @@ void InputEngine::catch_mousebutton_doubleclick( QMouseEvent * e )
 }
 
 
-void InputEngine::catch_scroll(QWheelEvent* e)
+void TInputEventDispatcher::catch_scroll(QWheelEvent* e)
 {
 	if (e->orientation() == Qt::Horizontal) {
 		if (e->delta() > 0) {
@@ -534,7 +534,7 @@ void InputEngine::catch_scroll(QWheelEvent* e)
 	}
 }
 
-void InputEngine::process_press_event(int keyValue)
+void TInputEventDispatcher::process_press_event(int keyValue)
 {
 	if (keyValue == Qt::Key_Escape && is_holding())
 	{
@@ -596,7 +596,7 @@ void InputEngine::process_press_event(int keyValue)
 	}
 }
 
-void InputEngine::process_release_event(int eventcode)
+void TInputEventDispatcher::process_release_event(int eventcode)
 {
 
 	if (is_modifier_keyfact(eventcode)) {
@@ -623,7 +623,7 @@ void InputEngine::process_release_event(int eventcode)
 	}
 }
 
-void InputEngine::process_hold_modifier_keys()
+void TInputEventDispatcher::process_hold_modifier_keys()
 {
 	if (!m_holdModifierKeys.size()) {
 		m_holdKeyRepeatTimer.stop();
@@ -648,12 +648,12 @@ void InputEngine::process_hold_modifier_keys()
 	}
 }
 
-bool InputEngine::is_modifier_keyfact(int keyValue)
+bool TInputEventDispatcher::is_modifier_keyfact(int keyValue)
 {
 	return m_modifierKeys.contains(keyValue);
 }
 
-void InputEngine::finish_hold()
+void TInputEventDispatcher::finish_hold()
 {
 	PENTER3;
 	PMESG("Finishing hold action %s", m_holdingCommand->metaObject()->className());
@@ -706,7 +706,7 @@ void InputEngine::finish_hold()
 	conclusion();
 }
 
-void InputEngine::clear_hold_modifier_keys()
+void TInputEventDispatcher::clear_hold_modifier_keys()
 {
 	m_holdKeyRepeatTimer.stop();
 	foreach(HoldModifierKey* hmk, m_holdModifierKeys) {
@@ -716,14 +716,14 @@ void InputEngine::clear_hold_modifier_keys()
 }
 
 
-void InputEngine::conclusion()
+void TInputEventDispatcher::conclusion()
 {
 	PENTER3;
 	reset();
 }
 
 
-void InputEngine::filter_unknown_sequence(QString& sequence)
+void TInputEventDispatcher::filter_unknown_sequence(QString& sequence)
 {
 	sequence.replace(tr("Up Arrow"), "Up");
 	sequence.replace(tr("Down Arrow"), "Down");
@@ -738,7 +738,7 @@ void InputEngine::filter_unknown_sequence(QString& sequence)
 
 
 // Number colector
-bool InputEngine::check_number_collection(int eventcode)
+bool TInputEventDispatcher::check_number_collection(int eventcode)
 {
 	if (((eventcode >= Qt::Key_0) && (eventcode <= Qt::Key_9)) ||
 	     (eventcode == Qt::Key_Comma) || (eventcode == Qt::Key_Period)) {
@@ -763,7 +763,7 @@ bool InputEngine::check_number_collection(int eventcode)
 	return false;
 }
 
-void InputEngine::stop_collecting()
+void TInputEventDispatcher::stop_collecting()
 {
 	PENTER3;
 	bool ok;
@@ -774,14 +774,14 @@ void InputEngine::stop_collecting()
 	set_numerical_input("");
 }
 
-int InputEngine::collected_number( )
+int TInputEventDispatcher::collected_number( )
 {
 	int n = m_collectedNumber;
 	set_numerical_input("");
 	return n;
 }
 
-bool InputEngine::has_collected_number()
+bool TInputEventDispatcher::has_collected_number()
 {
 	if (m_sCollectedNumber.isEmpty()) {
 		return false;
@@ -790,7 +790,7 @@ bool InputEngine::has_collected_number()
 	return true;
 }
 
-void InputEngine::set_numerical_input(const QString &number)
+void TInputEventDispatcher::set_numerical_input(const QString &number)
 {
 	m_sCollectedNumber = number;
 	bool ok;
@@ -805,12 +805,12 @@ void InputEngine::set_numerical_input(const QString &number)
 	emit collectedNumberChanged();
 }
 
-bool InputEngine::is_holding( )
+bool TInputEventDispatcher::is_holding( )
 {
 	return m_isHolding;
 }
 
-TCommand * InputEngine::get_holding_command() const
+TCommand * TInputEventDispatcher::get_holding_command() const
 {
 	return m_holdingCommand;
 }
@@ -822,7 +822,7 @@ TShortcut::~ TShortcut()
 	}
 }
 
-bool InputEngine::modifierKeysMatch(QList<int> first, QList<int> second)
+bool TInputEventDispatcher::modifierKeysMatch(QList<int> first, QList<int> second)
 {
 	if (first.size() != second.size())
 	{

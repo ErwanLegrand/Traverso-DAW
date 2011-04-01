@@ -120,11 +120,11 @@ void ShortcutEditorDialog::objects_combo_box_activated(int index)
 
 	if (tShortCutManager().isCommandClass(className))
 	{
-		ui->shortCutGroupBox->setTitle(tr("Modifier Key"));
+		ui->shortCutGroupBox->setTitle(tr("Modifier &Key"));
 		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Function") << tr("Modifier Key"));
 	}
 	else {
-		ui->shortCutGroupBox->setTitle(tr("Shortcuts"));
+		ui->shortCutGroupBox->setTitle(tr("&Shortcuts"));
 		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Function") << tr("Shortcut"));
 	}
 
@@ -389,7 +389,7 @@ void ShortcutEditorDialog::show_functions_checkbox_clicked()
 		ui->baseFunctionGroupBox->hide();
 		ui->useBaseFunctionCheckBox->hide();
 		key1_combo_box_activated(ui->keyComboBox1->currentIndex());
-		ui->shortCutGroupBox->setTitle(tr("Shortcut"));
+		ui->shortCutGroupBox->setTitle(tr("&Shortcut"));
 		ui->shortCutGroupBox->setEnabled(true);
 		ui->modifiersGroupBox->setEnabled(false);
 	}

@@ -56,6 +56,9 @@ Themer* Themer::instance()
 Themer::Themer()
 {
 	m_watcher = new QFileSystemWatcher(this);
+
+	m_watcher->addPath("/home/remon/.traverso/themes/style.qss");
+
 	QString themepath = config().get_property("Themer", "themepath", "").toString();
 	
 	// No theme path specified, fall back on built in themes only
@@ -225,6 +228,7 @@ void Themer::load( )
         if (!m_themefile.contains(":")) {
                 m_watcher->addPath(m_themefile);
         }
+
         printf("Themer:: Using themefile: %s\n", QS_C(m_themefile));
 
 	if (!file.open(QIODevice::ReadOnly)) {
@@ -364,6 +368,15 @@ void Themer::load( )
         m_cursors.insert("UD", QCursor(find_pixmap(":/cursorHoldUd")));
 
         validate_loaded_theme();
+
+	QFile cf("/home/remon/.traverso/themes/style.qss");
+	if (cf.open(QIODevice::ReadOnly))
+	{
+		QByteArray ss = cf.readAll();
+		QString sheet(QString::fromUtf8(ss.data()));
+		qApp->setStyleSheet(sheet);
+		cf.close();
+	}
 
 	emit themeLoaded();
 }

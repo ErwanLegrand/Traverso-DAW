@@ -308,6 +308,8 @@ QList<QString> TShortcutManager::getClassNames() const
 	foreach(QList<const QMetaObject*> metaObjectsList, m_metaObjects.values())
 	{
 		names.append(metaObjectsList.first()->className());
+		foreach(const QMetaObject* meta, metaObjectsList)
+			printf("class name %s\n", meta->className());
 	}
 
 	return names;
@@ -1060,7 +1062,8 @@ void TShortcutManager::saveFunction(TFunction *function)
 
 	settings.beginGroup(function->commandName);
 	settings.setValue("keys", function->getKeys().join(";"));
-	settings.setValue("modifiers", function->getModifierSequence().replace("+", ";"));
+	QStringList modifiers = function->getModifierSequence().split("+", QString::SkipEmptyParts);
+	settings.setValue("modifiers", modifiers.join(";"));
 	if (function->getAutoRepeatInterval() >= 0)
 	{
 		settings.setValue("autorepeatinterval", function->getAutoRepeatInterval());

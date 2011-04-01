@@ -57,7 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "TimeLine.h"
 #include "Marker.h"
-#include "InputEngine.h"                       
+#include "TInputEventDispatcher.h"                       
 #include "TSend.h"
 #include <Plugin.h>
 #include <PluginChain.h>
@@ -984,7 +984,7 @@ TCommand* Sheet::start_transport()
 		audiodevice().transport_start(m_audiodeviceClient);
 	}
 	
-	return ie().succes();
+	return ied().succes();
 }
 
 // Function can be called either from the GUI or RT thread.
@@ -1254,7 +1254,7 @@ TCommand* Sheet::prev_skip_pos()
 	if (p < TimeRef()) {
 		PERROR("pos < 0");
 		set_transport_pos(TimeRef());
-		return ie().failure();
+		return ied().failure();
 	}
 
 	QListIterator<TimeRef> it(m_xposList);
@@ -1284,7 +1284,7 @@ TCommand* Sheet::prev_skip_pos()
 	
 	m_skipTimer.start(500);
 	
-	return ie().succes();
+	return ied().succes();
 }
 
 TCommand* Sheet::next_skip_pos()
@@ -1297,7 +1297,7 @@ TCommand* Sheet::next_skip_pos()
 
 	if (p > m_xposList.last()) {
 		PERROR("pos > last snap position");
-		return ie().failure();
+		return ied().failure();
 	}
 
 	QListIterator<TimeRef> it(m_xposList);
@@ -1318,7 +1318,7 @@ TCommand* Sheet::next_skip_pos()
 
 	set_transport_pos(p);
 	
-	return ie().succes();
+	return ied().succes();
 }
 
 void Sheet::update_skip_positions()

@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClip.h"
 #include "ReadSource.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "ContextPointer.h"
 #include "Sheet.h"
 #include "ResourcesManager.h"
@@ -811,7 +811,7 @@ void AudioClipView::load_theme_data()
 
 void AudioClipView::active_context_changed()
 {
-        if (ie().is_holding()) {
+        if (ied().is_holding()) {
                 // TODO: find out if we still need to bail out
                 // when holding is active, say for moving a clip with [ D ]
                 // or something else?
@@ -876,7 +876,7 @@ TCommand * AudioClipView::set_audio_file()
         if (m_clip->is_readsource_invalid()) {
                 ReadSource* rs = m_clip->get_readsource();
                 if ( ! rs ) {
-                        return ie().failure();
+                        return ied().failure();
                 }
 
                 QString filename = QFileDialog::getOpenFileName(TMainWindow::instance(),
@@ -886,11 +886,11 @@ TCommand * AudioClipView::set_audio_file()
 
                 if (filename.isEmpty()) {
                         info().information(tr("No file selected!"));
-                        return ie().failure();
+                        return ied().failure();
                 }
 
                 if (rs->set_file(filename) < 0) {
-                        return ie().failure();
+                        return ied().failure();
                 }
 
                 resources_manager()->set_source_for_clip(m_clip, rs);
@@ -903,10 +903,10 @@ TCommand * AudioClipView::set_audio_file()
 
                 info().information(tr("Succesfully set AudioClip file to %1").arg(filename));
 
-                return ie().succes();
+                return ied().succes();
         }
 
-        return ie().did_not_implement();
+        return ied().did_not_implement();
 }
 
 TCommand * AudioClipView::edit_properties()

@@ -68,7 +68,7 @@
               </size>
              </property>
              <property name="title">
-              <string>Shortcuts</string>
+              <string>&amp;Shortcut</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <item>
@@ -96,34 +96,34 @@
            <item>
             <widget class="QGroupBox" name="modifiersGroupBox">
              <property name="title">
-              <string>Modifiers</string>
+              <string>&amp;Modifiers</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
                <widget class="QCheckBox" name="ctrlCheckBox">
                 <property name="text">
-                 <string>&amp;Ctrl</string>
+                 <string>Ctrl</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="shiftCheckBox">
                 <property name="text">
-                 <string>&amp;Shift</string>
+                 <string>Shift</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="altCheckBox">
                 <property name="text">
-                 <string>&amp;Alt</string>
+                 <string>Alt</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="metaCheckBox">
                 <property name="text">
-                 <string>&amp;Meta</string>
+                 <string>Meta</string>
                 </property>
                </widget>
               </item>
@@ -148,7 +148,7 @@
          <item>
           <widget class="QGroupBox" name="autorepeatGroupBox">
            <property name="title">
-            <string>Autorepeat</string>
+            <string>&amp;Autorepeat</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
@@ -191,7 +191,7 @@
          <item>
           <widget class="QCheckBox" name="useBaseFunctionCheckBox">
            <property name="text">
-            <string>Inherits function:</string>
+            <string>&amp;Inherits function:</string>
            </property>
           </widget>
          </item>

@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TConfig.h"
 #include "DiskIO.h"
 #include "TMainWindow.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "MessageWidget.h" 
 #include "Project.h"
 #include "ProjectManager.h"
@@ -129,7 +129,7 @@ SystemResources::SystemResources(QWidget * parent)
 	
         m_updateTimer.start(700);
 
-        connect(&ie(), SIGNAL(collectedNumberChanged()), this, SLOT(collected_number_changed()));
+        connect(&ied(), SIGNAL(collectedNumberChanged()), this, SLOT(collected_number_changed()));
 }
 
 void SystemResources::update_status( )
@@ -161,7 +161,7 @@ QSize SystemResources::sizeHint() const
 
 void SystemResources::collected_number_changed()
 {
-        QString number = ie().get_collected_number();
+        QString number = ied().get_collected_number();
         if (!number.isEmpty() || !number.isNull()) {
                 m_collectedNumber->setText(tr("Num. Input: ") + number);
         }

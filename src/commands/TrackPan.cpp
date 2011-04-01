@@ -26,7 +26,7 @@
 #include "ContextPointer.h"
 #include "Track.h"
 #include "Mixer.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -180,5 +180,5 @@ void TrackPan::reset_pan(bool autorepeat)
 
 	m_newPan = 0.0f;
 	do_action();
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 }

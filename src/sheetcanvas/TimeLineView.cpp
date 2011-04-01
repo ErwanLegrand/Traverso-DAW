@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <defines.h>
 #include <CommandGroup.h>
 #include "Information.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include <cstdlib>
 
 #include <QFont>
@@ -295,7 +295,7 @@ TCommand* TimeLineView::playhead_to_marker()
 		return 0;
 	}
 
-	return ie().did_not_implement();
+	return ied().did_not_implement();
 }
 
 TCommand* TimeLineView::remove_marker()
@@ -304,7 +304,7 @@ TCommand* TimeLineView::remove_marker()
 		Marker* marker = m_blinkingMarker->get_marker();
 		if (marker->get_type() == Marker::ENDMARKER && m_markerViews.size() > 1) {
 			info().information(tr("You have to remove all other markers first."));
-			return ie().failure();
+			return ied().failure();
 		}
 		return m_timeline->remove_marker(marker);
 	}
@@ -365,7 +365,7 @@ void TimeLineView::active_context_changed()
                         m_blinkingMarker->set_active(true);
                 }
         } else {
-                if (ie().is_holding()) {
+                if (ied().is_holding()) {
                         return;
                 }
 
@@ -395,7 +395,7 @@ TCommand * TimeLineView::drag_marker()
                 return new MoveMarker(m_blinkingMarker, m_sv->timeref_scalefactor, tr("Drag Marker"));
 	}
 	
-	return ie().did_not_implement();
+	return ied().did_not_implement();
 }
 
 TCommand * TimeLineView::clear_markers()

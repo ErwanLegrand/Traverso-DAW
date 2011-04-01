@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "AudioClip.h"
 #include "AudioClipManager.h"
 #include "ContextPointer.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "SnapList.h"
 #include "Sheet.h"
 #include "AudioTrack.h"
@@ -365,7 +365,7 @@ void MoveClip::prev_snap_pos(bool autorepeat)
 void MoveClip::do_prev_next_snap(TimeRef trackStartLocation, TimeRef trackEndLocation)
 {
 	if (d->verticalOnly) return;
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         trackStartLocation -= m_session->get_snap_list()->calculate_snap_diff(trackStartLocation, trackEndLocation);
 	m_posDiff = trackStartLocation - m_trackStartLocation;
 	do_move();
@@ -386,7 +386,7 @@ void MoveClip::move_to_end(bool autorepeat)
 void MoveClip::move_up(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	int deltaTrackIndex = -1;
 	m_group.check_valid_track_index_delta(deltaTrackIndex);
 	m_newTrackIndex = m_newTrackIndex + deltaTrackIndex;
@@ -396,7 +396,7 @@ void MoveClip::move_up(bool autorepeat)
 void MoveClip::move_down(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	int deltaTrackIndex = 1;
 	m_group.check_valid_track_index_delta(deltaTrackIndex);
 	m_newTrackIndex = m_newTrackIndex + deltaTrackIndex;
@@ -416,7 +416,7 @@ void MoveClip::move_left(bool autorepeat)
                 return prev_snap_pos(autorepeat);
         }
 
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         m_posDiff -= (d->sv->timeref_scalefactor * m_speed);
         if (m_posDiff + m_trackStartLocation < TimeRef()) {
                 m_posDiff = -1 * m_trackStartLocation;
@@ -437,7 +437,7 @@ void MoveClip::move_right(bool autorepeat)
                 return next_snap_pos(autorepeat);
         }
 
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+        ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         m_posDiff += (d->sv->timeref_scalefactor * m_speed);
 	do_move();
 }

@@ -193,7 +193,7 @@ private:
 
         // allow this function to create one instance
         friend ContextPointer& cpointer();
-        friend class InputEngine;
+	friend class TInputEventDispatcher;
         friend class Traverso;
 
         int m_x;

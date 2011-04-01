@@ -11,7 +11,7 @@
 #include "CurveNode.h"
 #include "FadeCurve.h"
 #include "Information.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "Marker.h"
 #include "Mixer.h"
 #include "Peak.h"

@@ -604,13 +604,13 @@ void TMainWindow::keyPressEvent( QKeyEvent * e)
 		}
 		return;
 	}
-	ie().catch_key_press(e);
+	ied().catch_key_press(e);
 	e->ignore();
 }
 
 void TMainWindow::keyReleaseEvent( QKeyEvent * e)
 {
-	ie().catch_key_release(e);
+	ied().catch_key_release(e);
 	e->ignore();
 }
 
@@ -630,7 +630,7 @@ bool TMainWindow::eventFilter(QObject * obj, QEvent * event)
 	if (menu) {
 		if (event->type() == QEvent::KeyRelease) {
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-			ie().catch_key_release(keyEvent);
+			ied().catch_key_release(keyEvent);
 			return true;
 		} else if (event->type() == QEvent::MouseMove) {
 			// FIXME: Seems no longer to be the case??
@@ -660,7 +660,7 @@ void TMainWindow::changeEvent(QEvent *event)
 		case QEvent::WindowStateChange:
 			// clean up the ie after Alt-Tab
 			// if problems remain, maybe ie().reset() will help...
-			ie().abort_current_hold_actions();
+			ied().abort_current_hold_actions();
 		default:
 			break;
 	}
@@ -964,7 +964,7 @@ void TMainWindow::process_context_menu_action( QAction * action )
 {
 	QStringList strings = action->data().toStringList();
 	QString name = strings.first();
-	ie().dispatch_shortcut_from_contextmenu(name);
+	ied().dispatch_shortcut_from_contextmenu(name);
 }
 
 TCommand * TMainWindow::show_context_menu( )
@@ -974,8 +974,8 @@ TCommand * TMainWindow::show_context_menu( )
 	// In case of a holding action, show the menu for the holding command!
 	// If not, show the menu for the topmost context item, and it's
 	// siblings as submenus
-	if (ie().is_holding()) {
-		TCommand* holding = ie().get_holding_command();
+	if (ied().is_holding()) {
+		TCommand* holding = ied().get_holding_command();
 		if (holding) {
 			items.append(holding);
 		}
@@ -1150,7 +1150,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 			QAction* action = new QAction(this);
 			action->setText(function->getDescription());
 			QString sequence = function->getKeySequence();
-			ie().filter_unknown_sequence(sequence);
+			ied().filter_unknown_sequence(sequence);
 			action->setShortcut(sequence);
 			QStringList strings;
 			strings << function->getKeySequence() << function->getDescription();
@@ -1181,7 +1181,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 			QAction* action = new QAction(subMenu);
 			action->setText(function->getDescription());
 			QString sequence = function->getKeySequence();
-			ie().filter_unknown_sequence(sequence);
+			ied().filter_unknown_sequence(sequence);
 			action->setShortcut(sequence);
 			QStringList strings;
 			strings << function->getKeySequence() << function->getDescription();

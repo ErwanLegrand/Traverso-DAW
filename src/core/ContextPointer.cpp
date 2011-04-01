@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ContextItem.h"
 #include "TConfig.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include <QCursor>
 
 
@@ -75,8 +75,8 @@ ContextPointer::ContextPointer()
 	m_mouseLeftClickBypassesJog = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
 
 	connect(&m_jogTimer, SIGNAL(timeout()), this, SLOT(update_jog()));
-	connect(&ie(), SIGNAL(jogStarted()), this, SLOT(jog_start()));
-	connect(&ie(), SIGNAL(jogFinished()), this, SLOT(jog_finished()));
+	connect(&ied(), SIGNAL(jogStarted()), this, SLOT(jog_start()));
+	connect(&ied(), SIGNAL(jogFinished()), this, SLOT(jog_finished()));
 }
 
 /**
@@ -185,7 +185,7 @@ void ContextPointer::move_hardware_mouse_cursor_to(QPoint pos)
 	PENTER;
 	QCursor::setPos(pos);
 	m_globalMousePos = pos;
-	ie().update_jog_bypass_pos();
+	ied().update_jog_bypass_pos();
 	m_jogEvent = false;
 }
 
@@ -225,7 +225,7 @@ void ContextPointer::update_jog()
 	}
 
 	if (m_jogEvent) {
-		ie().jog();
+		ied().jog();
 		m_jogEvent = false;
 	}
 }

@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "AudioClip.h"
 #include "ContextPointer.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "Sheet.h"
 #include "SnapList.h"
 #include <SheetView.h>
@@ -148,7 +148,7 @@ void MoveEdge::move_left(bool autorepeat)
 	{
 		return prev_snap_pos(autorepeat);
 	}
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	m_newPos = m_newPos - (m_sv->timeref_scalefactor * m_speed);
 	do_action();
 }
@@ -159,7 +159,7 @@ void MoveEdge::move_right(bool autorepeat)
 	{
 		return next_snap_pos(autorepeat);
 	}
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	m_newPos = m_newPos + (m_sv->timeref_scalefactor * m_speed);
 	do_action();
 }
@@ -167,7 +167,7 @@ void MoveEdge::move_right(bool autorepeat)
 void MoveEdge::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	SnapList* slist = m_sv->get_sheet()->get_snap_list();
 	m_newPos = slist->next_snap_pos(m_newPos);
 	do_action();
@@ -176,7 +176,7 @@ void MoveEdge::next_snap_pos(bool autorepeat)
 void MoveEdge::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	SnapList* slist = m_sv->get_sheet()->get_snap_list();
 	m_newPos = slist->prev_snap_pos(m_newPos);
 	do_action();

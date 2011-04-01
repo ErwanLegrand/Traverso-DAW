@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ProjectManager.h"
 #include "Sheet.h"
 #include "AudioTrack.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include <limits.h>
 
 
@@ -172,7 +172,7 @@ int CropClip::jog()
 
 void CropClip::adjust_left(bool autorepeat)
 {
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 
 	int x = (int) m_selection->mapFromScene(cpointer().scene_x(), cpointer().y()).x();
 
@@ -192,7 +192,7 @@ void CropClip::adjust_left(bool autorepeat)
 
 void CropClip::adjust_right(bool /*autorepeat*/)
 {
-	ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 
 	int x = (int) m_selection->mapFromScene(cpointer().scene_x(), cpointer().y()).x();
 

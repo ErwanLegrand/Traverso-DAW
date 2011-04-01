@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QApplication>
 
 #include <Utils.h>
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "Themer.h"
 
 #include "SheetView.h"
@@ -171,7 +171,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
         QList<ViewItem*> mouseTrackingItems;
 	
-	if (!ie().is_holding()) {
+	if (!ied().is_holding()) {
 		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
                 QList<ContextItem*> activeContextItems;
 
@@ -255,37 +255,37 @@ void ViewPort::leaveEvent(QEvent *)
 
 void ViewPort::keyPressEvent( QKeyEvent * e)
 {
-	ie().catch_key_press(e);
+	ied().catch_key_press(e);
 	e->accept();
 }
 
 void ViewPort::keyReleaseEvent( QKeyEvent * e)
 {
-	ie().catch_key_release(e);
+	ied().catch_key_release(e);
 	e->accept();
 }
 
 void ViewPort::mousePressEvent( QMouseEvent * e )
 {
-	ie().catch_mousebutton_press(e);
+	ied().catch_mousebutton_press(e);
 	e->accept();
 }
 
 void ViewPort::mouseReleaseEvent( QMouseEvent * e )
 {
-	ie().catch_mousebutton_release(e);
+	ied().catch_mousebutton_release(e);
 	e->accept();
 }
 
 void ViewPort::mouseDoubleClickEvent( QMouseEvent * e )
 {
-	ie().catch_mousebutton_doubleclick(e);
+	ied().catch_mousebutton_doubleclick(e);
 	e->accept();
 }
 
 void ViewPort::wheelEvent( QWheelEvent * e )
 {
-	ie().catch_scroll(e);
+	ied().catch_scroll(e);
 	e->accept();
 }
 

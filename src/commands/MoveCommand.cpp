@@ -21,7 +21,7 @@
 
 #include "MoveCommand.h"
 
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include "Project.h"
 #include "ProjectManager.h"
 #include "Sheet.h"
@@ -31,7 +31,7 @@
 MoveCommand::MoveCommand(const QString &description)
 	: TCommand(description)
 {
-	QString collected = ie().get_collected_number();
+	QString collected = ied().get_collected_number();
 	if (!collected.isEmpty()) {
 		set_collected_number(collected);
 	} else {
@@ -46,7 +46,7 @@ MoveCommand::MoveCommand(ContextItem* item, const QString &description)
 	: TCommand(item, description)
 	, m_doSnap(false)
 {
-	QString collected = ie().get_collected_number();
+	QString collected = ied().get_collected_number();
 	if (collected.size()) {
 		set_collected_number(collected);
 	} else {

@@ -23,7 +23,7 @@ $Id: Tsar.cpp,v 1.4 2008/02/11 10:11:52 r_sijrier Exp $
 #include "Tsar.h"
 
 #include "AudioDevice.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 #include <QMetaMethod>
 #include <QMessageBox>
 #include <QCoreApplication>

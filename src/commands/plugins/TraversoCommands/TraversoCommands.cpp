@@ -514,8 +514,8 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 
 			// audio clip selection doesn't support/need number collection, but
 			// other commands do, so if ie() has number collection, ignore it for this clip
-			if (ie().has_collected_number()) {
-				return ie().did_not_implement();
+			if (ied().has_collected_number()) {
+				return ied().did_not_implement();
 			}
 
 			return new ClipSelection(clip, arguments);

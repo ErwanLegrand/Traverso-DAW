@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SnapList.h"
 #include "Project.h"
 #include "ProjectManager.h"
-#include "InputEngine.h"
+#include "TInputEventDispatcher.h"
 		
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -181,7 +181,7 @@ void FadeRange::prev_snap_pos(bool autorepeat)
 
 void FadeRange::do_keyboard_move(double range)
 {
-        ie().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+        ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         m_newRange = range;
         do_action();
 }
