@@ -142,17 +142,7 @@ QString TContextHelpWidget::create_html_for_object(QObject *obj)
                 return m_help.value(mo->className());
         }
 
-        ContextItem* ci = qobject_cast<ContextItem*>(obj);
-        QList<const QMetaObject*> metas;
-        metas.append(mo);
-	while (ci) {
-		if (ci->get_context()) {
-			metas.append(ci->get_context()->metaObject());
-		}
-		ci = ci->get_context();
-	}
-
-	QString html = tShortCutManager().createHtmlForMetaObects(metas, obj);
+	QString html = tShortCutManager().createHtmlForClass(mo->className(), obj);
 
         m_help.insert(mo->className(), html);
 
@@ -174,8 +164,7 @@ void TContextHelpWidget::combobox_activated(int index)
         }
 	else
 	{
-		QList<const QMetaObject*> metas = tShortCutManager().get_metaobjects_for_class(className);
-		QString html = tShortCutManager().createHtmlForMetaObects(metas);
+		QString html = tShortCutManager().createHtmlForClass(className);
 		m_help.insert(className, html);
 		m_textEdit->setHtml(html);
 	}
@@ -186,8 +175,7 @@ void TContextHelpWidget::combobox_activated(int index)
 void TContextHelpWidget::function_keys_changed()
 {
 	m_help.clear();
-	QList<const QMetaObject*> metas = tShortCutManager().get_metaobjects_for_class(m_currentClassName.remove("View"));
-	QString html = tShortCutManager().createHtmlForMetaObects(metas);
+	QString html = tShortCutManager().createHtmlForClass(m_currentClassName.remove("View"));
 	m_help.insert(m_currentClassName, html);
 	m_textEdit->setHtml(html);
 }

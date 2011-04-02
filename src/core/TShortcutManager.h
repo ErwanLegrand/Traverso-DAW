@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QStringList>
 
 class CommandPlugin;
+class TCommand;
 
 class TFunction {
 
@@ -130,16 +131,16 @@ public:
 	void addFunction(TFunction* function);
 	TFunction* getFunction(const QString& function) const;
 
-	QList<TFunction* > getFunctionsFor(const QString& className);
+	QList<TFunction* > getFunctionsFor(QString className);
 	TShortcut* getShortcut(const QString& key);
 	TShortcut* getShortcut(int key);
 	CommandPlugin* getCommandPlugin(const QString& pluginName);
 	void modifyFunctionKeys(TFunction* function, QStringList keys, QStringList modifiers);
 	void add_translation(const QString& signature, const QString& translation);
 	void add_meta_object(const QMetaObject* mo);
+	void registerItemClass(const QString& item, const QString& className);
 	QString get_translation_for(const QString& entry);
-	QString createHtmlForMetaObects(QList<const QMetaObject*> metas, QObject* obj=0);
-	QList<const QMetaObject*> get_metaobjects_for_class(const QString& className);
+	QString createHtmlForClass(const QString& className, QObject* obj=0);
 	QHash<QString, QList<const QMetaObject*> > get_meta_objects() const {return m_metaObjects;}
 	QList<QString> getClassNames() const;
 	bool classInherits(const QString& className, const QString &inherited);
@@ -157,13 +158,16 @@ private:
 	QHash<int, TShortcut*>		m_shortcuts;
 	QHash<QString, QString>		m_translations;
 	QHash<QString, QList<const QMetaObject*> > m_metaObjects;
+	QHash<QString, QStringList>	m_classes;
 
 	TShortcutManager();
 	TShortcutManager(const TShortcutManager&) : QObject() {}
 
-	QList<TFunction* > functionsForMetaobject(const QMetaObject* mo) const;
-
 	friend TShortcutManager& tShortCutManager();
+
+public slots:
+	TCommand* export_keymap();
+	TCommand* get_keymap(QString &);
 
 signals:
 	void functionKeysChanged();

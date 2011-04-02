@@ -216,8 +216,6 @@ public slots :
         TCommand* show_fft_meter_only();
         TCommand* about_traverso();
         TCommand* quick_start();
-        TCommand* export_keymap();
-        TCommand* get_keymap(QString &);
         TCommand* show_export_widget();
         TCommand* show_cd_writing_dialog();
         TCommand* show_context_menu();

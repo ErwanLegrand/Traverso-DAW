@@ -26,12 +26,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QApplication>
 #include <QMap>
 #include <QPalette>
+#include <QTextDocument>
+#include <QDir>
+#include <QTextStream>
 
 #include "PCommand.h"
 #include "ContextItem.h"
 #include "Information.h"
 #include "Utils.h"
 #include "CommandPlugin.h"
+#include "TConfig.h"
 
 #include "Debugger.h"
 
@@ -196,6 +200,7 @@ TShortcutManager& tShortCutManager()
 
 TShortcutManager::TShortcutManager()
 {
+	cpointer().add_contextitem(this);
 }
 
 void TShortcutManager::addFunction(TFunction *function)
@@ -220,37 +225,18 @@ TFunction* TShortcutManager::getFunction(const QString &functionName) const
 	return function;
 }
 
-
-QList<TFunction* > TShortcutManager::functionsForMetaobject(const QMetaObject * metaObject) const
-{
-	QList<TFunction* > list;
-	if (!metaObject)
-	{
-		return list;
-	}
-	QString classname = metaObject->className();
-
-	foreach(TFunction* function, m_functions)
-	{
-		if (function->object == classname)
-		{
-			list.append(function);
-		}
-	}
-
-	return list;
-}
-
-QList< TFunction* > TShortcutManager::getFunctionsFor(const QString &className)
+QList< TFunction* > TShortcutManager::getFunctionsFor(QString className)
 {
 	QList<TFunction* > functionsList;
-	QString coreClassName = className;
-	coreClassName = coreClassName.remove("View");
-	QList<const QMetaObject*> metas = get_metaobjects_for_class(coreClassName);
-	foreach(const QMetaObject* mo, metas) {
-		while (mo) {
-			functionsList << functionsForMetaobject(mo);
-			mo = mo->superClass();
+	QStringList classes = m_classes.value(className.remove("View"));
+	foreach(QString object, classes)
+	{
+		foreach(TFunction* function, m_functions)
+		{
+			if (function->object == object)
+			{
+				functionsList.append(function);
+			}
 		}
 	}
 	return functionsList;
@@ -290,7 +276,7 @@ CommandPlugin* TShortcutManager::getCommandPlugin(const QString &pluginName)
 
 bool TShortcutManager::isCommandClass(const QString &className)
 {
-	QList<const QMetaObject*> list = get_metaobjects_for_class(className);
+	QList<const QMetaObject*> list = m_metaObjects.value(className);
 
 	// A Command class only has one metaobject, compared to a
 	// core + its view item which equals 2 metaobjects for just one 'object'
@@ -304,15 +290,9 @@ bool TShortcutManager::isCommandClass(const QString &className)
 
 QList<QString> TShortcutManager::getClassNames() const
 {
-	QList<QString> names;
-	foreach(QList<const QMetaObject*> metaObjectsList, m_metaObjects.values())
-	{
-		names.append(metaObjectsList.first()->className());
-		foreach(const QMetaObject* meta, metaObjectsList)
-			printf("class name %s\n", meta->className());
-	}
-
-	return names;
+	QStringList stringList = m_classes.keys();
+	stringList.sort();
+	return stringList;
 }
 
 
@@ -333,14 +313,20 @@ void TShortcutManager::loadFunctions()
 	TFunction* function;
 
 	function = new TFunction();
-	function->setDescription(tr("Gain"));
+	function->object = "GainBase";
+	function->setDescription(tr("Gain Function"));
 	function->commandName = "GainBase";
 	addFunction(function);
 
+	m_classes.insert("GainBase", QStringList() << "GainBase");
+
 	function = new TFunction();
+	function->object = "DeleteBase";
 	function->m_description = tr("Remove");
-	function->commandName = "Delete";
+	function->commandName = "DeleteBase";
 	addFunction(function);
+
+	m_classes.insert("DeleteBase", QStringList() << "DeleteBase");
 
 	function = new TFunction();
 	function->object = "ToggleBypass";
@@ -461,7 +447,7 @@ void TShortcutManager::loadFunctions()
 	addFunction(function);
 
 	function = new TFunction();
-	function->object = "TMainWindow";
+	function->object = "TShortcutManager";
 	function->slotsignature = "export_keymap";
 	function->m_description = tr("Export keymap");
 	function->commandName = "ExportShortcutMap";
@@ -1214,15 +1200,28 @@ void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys,
 
 void TShortcutManager::add_meta_object(const QMetaObject* mo)
 {
-	QString classname = QString(mo->className()).remove("View");
-	QList<const QMetaObject*> list = m_metaObjects.value(classname);
+	QString shortcutItem = QString(mo->className()).remove("View");
+	QList<const QMetaObject*> list = m_metaObjects.value(shortcutItem);
 	list.append(mo);
-	m_metaObjects.insert(classname, list);
+	m_metaObjects.insert(shortcutItem, list);
+
+	while(mo)
+	{
+		QString objectName = mo->className();
+		if (objectName == "ContextItem" || objectName == "QObject")
+		{
+			return;
+		}
+		registerItemClass(shortcutItem, objectName);
+		mo = mo->superClass();
+	}
 }
 
-QList<const QMetaObject*> TShortcutManager::get_metaobjects_for_class(const QString &className)
+void TShortcutManager::registerItemClass(const QString &itemName, const QString &className)
 {
-	return m_metaObjects.value(className);
+	QStringList classesList = m_classes.value(itemName);
+	classesList.append(className);
+	m_classes.insert(itemName, classesList);
 }
 
 void TShortcutManager::add_translation(const QString &signature, const QString &translation)
@@ -1241,15 +1240,11 @@ QString TShortcutManager::get_translation_for(const QString &entry)
 	return m_translations.value(key);
 }
 
-QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> metas, QObject* object)
+QString TShortcutManager::createHtmlForClass(const QString& className, QObject* object)
 {
-	if (!metas.size()) {
-		return "";
-	}
-
 	QString holdKeyFact = "";
 
-	QString name = get_translation_for(QString(metas.first()->className()));
+	QString name = get_translation_for(className);
 
 	QString baseColor = QApplication::palette().color(QPalette::Base).name();
 	QString alternateBaseColor = QApplication::palette().color(QPalette::AlternateBase).name();
@@ -1272,7 +1267,7 @@ QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> met
 
 	QStringList result;
 	int j=0;
-	QList<TFunction* > list = getFunctionsFor(metas.first()->className());
+	QList<TFunction* > list = getFunctionsFor(className);
 	QMap<QString, QList<TFunction*> > functionsMap;
 
 	foreach(TFunction* function, list)
@@ -1325,9 +1320,48 @@ QString TShortcutManager::createHtmlForMetaObects(QList<const QMetaObject *> met
 	return html;
 }
 
+TCommand * TShortcutManager::export_keymap()
+{
+	QTextStream out;
+	QFile data(QDir::homePath() + "/traversokeymap.html");
+	if (data.open(QFile::WriteOnly | QFile::Truncate)) {
+		out.setDevice(&data);
+	} else {
+		return 0;
+	}
+
+	QString str;
+	(TCommand *) get_keymap(str);
+	out << str;
+
+	data.close();
+	return 0;
+}
+
+TCommand * TShortcutManager::get_keymap(QString &str)
+{
+	str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
+	      "<style type=\"text/css\">\n"
+	      "H1 {text-align: left; font-size: 20px;}\n"
+	      "table {font-size: 12px; border: solid; border-width: 1px; width: 600px;}\n"
+	      ".object {background-color: #ccc; font-size: 16px; font-weight: bold;}\n"
+	      ".description {background-color: #ddd; width: 300px; padding: 2px; font-size: 12px; font-weight: bold;}\n"
+	      "</style>\n"
+	      "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
+
+	foreach(QString className, tShortCutManager().getClassNames()) {
+		str += tShortCutManager().createHtmlForClass(className);
+		str += "<p></p><p></p>\n";
+	}
+
+	str += "</body>\n</html>";
+
+	return 0;
+}
+
 bool TShortcutManager::classInherits(const QString& className, const QString &inherited)
 {
-	QList<const QMetaObject*> metas = get_metaobjects_for_class(className);
+	QList<const QMetaObject*> metas = m_metaObjects.value(className);
 
 	foreach(const QMetaObject* mo, metas) {
 		while (mo) {
@@ -1341,3 +1375,4 @@ bool TShortcutManager::classInherits(const QString& className, const QString &in
 
 	return false;
 }
+

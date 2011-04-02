@@ -19,7 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -43,10 +42,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "TInputEventDispatcher.h"
 #include "ContextPointer.h"
 #include "TMainWindow.h"
+#include "TShortcutManager.h"
 #include <QDomDocument>
 #include <QPrinter>
 #include <QPrintDialog>
-#include <QTextDocument>
 
 #if defined (JACK_SUPPORT)
 RELAYTOOL_JACK
@@ -855,7 +854,7 @@ void KeyboardConfigPage::reset_default_config()
 
 void KeyboardConfigPage::on_exportButton_clicked()
 {
-	TMainWindow::instance()->export_keymap();
+	tShortCutManager().export_keymap();
 	QMessageBox::information( TMainWindow::instance(), tr("KeyMap Export"), 
 		     tr("The exported keymap can be found here:\n\n %1").arg(QDir::homePath() + "/traversokeymap.html"),
 		     QMessageBox::Ok);
@@ -864,7 +863,7 @@ void KeyboardConfigPage::on_exportButton_clicked()
 void KeyboardConfigPage::on_printButton_clicked()
 {
 	QString kmap;
-	TMainWindow::instance()->get_keymap(kmap);
+	tShortCutManager().get_keymap(kmap);
 
 	QPrinter printer(QPrinter::ScreenResolution);
 	QPrintDialog printDialog(&printer, TMainWindow::instance());

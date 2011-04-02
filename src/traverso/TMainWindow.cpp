@@ -1054,51 +1054,6 @@ TCommand * TMainWindow::show_context_menu( )
 	return 0;
 }
 
-TCommand * TMainWindow::export_keymap()
-{
-	QTextStream out;
-	QFile data(QDir::homePath() + "/traversokeymap.html");
-	if (data.open(QFile::WriteOnly | QFile::Truncate)) {
-		out.setDevice(&data);
-	} else {
-		return 0;
-	}
-
-	QString str;
-	(TCommand *) get_keymap(str);
-	out << str;
-
-	data.close();
-	return 0;
-}
-
-TCommand * TMainWindow::get_keymap(QString &str)
-{
-	QHash<QString, QList<const QMetaObject*> > metas = tShortCutManager().get_meta_objects();
-	QMap<QString, QList<const QMetaObject*> > objects;
-	foreach(QList<const QMetaObject*> value, metas.values()) {
-		objects.insert(metas.key(value), value);
-	}
-
-	str = "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\n"
-	      "<style type=\"text/css\">\n"
-	      "H1 {text-align: left; font-size: 20px;}\n"
-	      "table {font-size: 12px; border: solid; border-width: 1px; width: 600px;}\n"
-	      ".object {background-color: #ccc; font-size: 16px; font-weight: bold;}\n"
-	      ".description {background-color: #ddd; width: 300px; padding: 2px; font-size: 12px; font-weight: bold;}\n"
-	      "</style>\n"
-	      "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
-
-	foreach(QList<const QMetaObject* > objectlist, objects.values()) {
-		str += tShortCutManager().createHtmlForMetaObects(objectlist);
-		str += "<p></p><p></p>\n";
-	}
-
-	str += "</body>\n</html>";
-
-	return 0;
-}
-
 QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menulist)
 {
 	QList<TFunction* > list;
