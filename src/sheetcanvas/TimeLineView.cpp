@@ -392,7 +392,7 @@ TCommand * TimeLineView::drag_marker()
         update_softselected_marker(cpointer().on_first_input_event_scene_pos());
 
 	if (m_blinkingMarker) {
-                return new MoveMarker(m_blinkingMarker, m_sv->timeref_scalefactor, tr("Drag Marker"));
+		return new MoveMarker(m_blinkingMarker, m_sv->timeref_scalefactor, tr("Move Marker"));
 	}
 	
 	return ied().did_not_implement();

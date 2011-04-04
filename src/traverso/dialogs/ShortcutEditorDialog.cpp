@@ -51,10 +51,11 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 		string = QString(string + "|" + string);
 		keys << string;
 	}
-	keys << "Left Button|MouseButtonLeft" << "Right Button|MouseButtonRight";
-	keys << "Scroll Up|MOUSESCROLLVERTICALUP" << "Scroll Down|MOUSESCROLLVERTICALDOWN";
+	keys << "Left Arrow|LEFTARROW" << "Right Arrow|RIGHTARROW" << "Up Arrow|UPARROW" << "Down Arrow|DOWNARROW";
 	keys << "Enter|ENTER" << "Home|HOME" << "End|END" << "Delete|DELETE";
 	keys << "Page Up|PAGEUP" << "Page Down|PAGEDOWN";
+	keys << "Left Button|MouseButtonLeft" << "Right Button|MouseButtonRight";
+	keys << "Scroll Up|MOUSESCROLLVERTICALUP" << "Scroll Down|MOUSESCROLLVERTICALDOWN";
 	keys << "+|PLUS" << "-|MINUS" << "/|/" << "\\|\\" << "[|[" << "]|]" << ",|," << ".|." << ";|;" << "'|'";
 
 	foreach(QString string, keys)

@@ -313,6 +313,7 @@ TMainWindow::TMainWindow()
 	m_projectManagerDialog = 0;
 	m_openProjectDialog = 0;
 	m_newProjectDialog = 0;
+	m_shortcutEditorDialog = 0;
 	m_insertSilenceDialog = 0;
 	m_newSheetDialog = 0;
 	m_newTrackDialog = 0;
@@ -1532,8 +1533,11 @@ TCommand* TMainWindow::show_newtrack_dialog()
 
 TCommand* TMainWindow::show_shortcuts_edit_dialog()
 {
-	ShortcutEditorDialog edit(this);
-	edit.exec();
+	if (!m_shortcutEditorDialog)
+	{
+		m_shortcutEditorDialog = new ShortcutEditorDialog(this);
+	}
+	m_shortcutEditorDialog->show();
 	return 0;
 }
 

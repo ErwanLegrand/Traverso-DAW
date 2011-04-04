@@ -49,12 +49,14 @@ public:
 		m_usesAutoRepeat = false;
 		m_autorepeatInterval = -1;
 		m_autorepeatStartDelay = -1;
+		m_usesInheritedBase = false;
 	}
 
 	QString getKeySequence();
 	QString getModifierSequence();
 	QString getSlotSignature() const;
 	QString getDescription() const;
+	QString getInheritedBase() const {return m_inheritedBase;}
 	QString getLongDescription() const;
 	QList<int> getModifierKeys();
 	QStringList getKeys() const;
@@ -64,8 +66,11 @@ public:
 	TFunction* getInheritedFunction() const {return m_inheritedFunction;}
 
 	bool usesAutoRepeat() const {return m_usesAutoRepeat;}
+	bool usesInheritedBase() const {return m_usesInheritedBase;}
 
 	void setDescription(const QString& des);
+	void setInheritedBase(const QString& base);
+	void setUsesInheritedbase(bool b) {m_usesInheritedBase = b;}
 	void setUsesAutoRepeat(bool b) {m_usesAutoRepeat = b;}
 	void setAutoRepeatInterval(int interval) {m_autorepeatInterval = interval;}
 	void setAutoRepeatStartDelay(int delay) {m_autorepeatStartDelay = delay;}
@@ -76,7 +81,6 @@ public:
 	QString pluginname;
 	QString commandName;
 	QString submenu;
-	QString inherits;
 	bool useX;
 	bool useY;
 	int sortorder;
@@ -85,11 +89,13 @@ private:
 	QStringList	m_keys;
 	QString		slotsignature;
 	QString		m_description;
+	QString		m_inheritedBase;
 	TFunction*	m_inheritedFunction;
 	QList<int >	m_modifierkeys;
 	int		m_autorepeatInterval;
 	int		m_autorepeatStartDelay;
 	bool		m_usesAutoRepeat;
+	bool		m_usesInheritedBase;
 
 	void setInheritedFunction(TFunction* inherited);
 
@@ -104,7 +110,7 @@ public:
 	{
 		m_keyValue = keyValue;
 	}
-	~TShortcut();
+	~ TShortcut() {}
 
 	int getKeyValue() const {return m_keyValue;}
 

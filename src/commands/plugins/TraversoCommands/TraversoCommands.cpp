@@ -193,6 +193,7 @@ TraversoCommands::TraversoCommands()
 	function->commandName = "MoveClip";
 	function->useX = function->useY = true;
 	function->arguments << "move";
+	function->setInheritedBase("MoveBase");
 	addFunction(function, MoveClipCommand);
 
 	function = new TFunction();
@@ -224,6 +225,7 @@ TraversoCommands::TraversoCommands()
 	function->setDescription(tr("Move Up/Down"));
 	function->commandName = "MoveTrack";
 	function->useY = true;
+	function->setInheritedBase("MoveBase");
 	addFunction(function, MoveTrackCommand);
 
 	function = new TFunction();
@@ -231,27 +233,28 @@ TraversoCommands::TraversoCommands()
 	function->setDescription(tr("Move Curve Node(s)"));
 	function->commandName = "MoveCurveNodes";
 	function->useX = function->useY = true;
+	function->setInheritedBase("MoveBase");
 	addFunction(function, MoveCurveNodesCommand);
 
 	function = new TFunction();
 	function->object = "AudioClip";
 	function->setDescription(tr("Gain"));
 	function->commandName = "AudioClipGain";
-	function->inherits = "GainBase";
+	function->setInheritedBase("GainBase");
 	addFunction(function, GainCommand);
 
 	function = new TFunction();
 	function->object = "AudioTrack";
 	function->setDescription(tr("Gain"));
 	function->commandName = "AudioTrackGain";
-	function->inherits = "GainBase";
+	function->setInheritedBase("GainBase");
 	addFunction(function, GainCommand);
 
 	function = new TFunction();
 	function->object = "TBusTrack";
 	function->setDescription(tr("Gain"));
 	function->commandName = "BusTrackGain";
-	function->inherits = "GainBase";
+	function->setInheritedBase("GainBase");
 	addFunction(function, GainCommand);
 
 	function = new TFunction();
@@ -269,19 +272,20 @@ TraversoCommands::TraversoCommands()
 	function->useX = true;
 	addFunction(function, SplitClipCommand);
 
-
 	function = new TFunction();
 	function->object = "TimeLineView";
-	function->setDescription(tr("Drag Marker"));
+	function->setDescription(tr("Move Marker"));
 	function->commandName = "TimeLineMoveMarker";
 	function->useX = true;
+	function->setInheritedBase("MoveBase");
 	addFunction(function, MoveMarkerCommand);
 
 	function = new TFunction();
 	function->object = "MarkerView";
-	function->setDescription(tr("Drag Marker"));
+	function->setDescription(tr("Move Marker"));
 	function->commandName = "MoveMarker";
 	function->useX = true;
+	function->setInheritedBase("MoveBase");
 	addFunction(function, MoveMarkerCommand);
 
 	function = new TFunction();
@@ -293,20 +297,20 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "AudioClip";
 	function->commandName = "RemoveClip";
-	function->inherits = "DeleteBase";
+	function->setInheritedBase("DeleteBase");
 	addFunction(function, RemoveClipCommand);
 
 	function = new TFunction();
 	function->object = "Track";
 	function->commandName = "RemoveTrack";
-	function->inherits = "DeleteBase";
+	function->setInheritedBase("DeleteBase");
 	addFunction(function, RemoveTrackCommand);
 
 	function = new TFunction();
 	function->object = "CurveView";
 	function->commandName = "RemoveCurveNode";
 	function->setDescription("Remove Node(s)");
-	function->inherits = "DeleteBase";
+	function->setInheritedBase("DeleteBase");
 	addFunction(function, RemoveClipNodeCommmand);
 
 	function = new TFunction();
@@ -368,7 +372,6 @@ TraversoCommands::TraversoCommands()
 void TraversoCommands::addFunction(TFunction *function, int command)
 {
 	function->pluginname = "TraversoCommands";
-	function->commandName.prepend("TCP_");
 	m_dict.insert(function->commandName, command);
 	tShortCutManager().addFunction(function);
 }

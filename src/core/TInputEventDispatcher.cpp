@@ -359,20 +359,27 @@ int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepea
 
 
 		if (k) {
-			if (k->begin_hold() != -1) {
-				k->set_valid(true);
-				k->set_cursor_shape(function->useX, function->useY);
-				m_holdingCommand = k;
-				m_isHolding = true;
-				m_holdEventCode = shortCut->getKeyValue();
-				set_jogging(true);
-			} else {
-				PERROR("hold action begin_hold() failed!");
-				// OOPSSS, something went wrong when making the Command
-				// set following stuff to zero to make finish_hold do nothing
-				delete k;
-				k = 0;
-				set_jogging( false );
+			if (k->is_hold_command())
+			{
+				if (k->begin_hold() != -1) {
+					k->set_valid(true);
+					k->set_cursor_shape(function->useX, function->useY);
+					m_holdingCommand = k;
+					m_isHolding = true;
+					m_holdEventCode = shortCut->getKeyValue();
+					set_jogging(true);
+				} else {
+					PERROR("hold action begin_hold() failed!");
+					// OOPSSS, something went wrong when making the Command
+					// set following stuff to zero to make finish_hold do nothing
+					delete k;
+					k = 0;
+					set_jogging( false );
+				}
+			}
+			else
+			{
+				TCommand::process_command(k);
 			}
 		}
 
@@ -813,13 +820,6 @@ bool TInputEventDispatcher::is_holding( )
 TCommand * TInputEventDispatcher::get_holding_command() const
 {
 	return m_holdingCommand;
-}
-
-TShortcut::~ TShortcut()
-{
-	foreach(TFunction* data, objects) {
-		delete data;
-	}
 }
 
 bool TInputEventDispatcher::modifierKeysMatch(QList<int> first, QList<int> second)

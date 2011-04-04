@@ -141,6 +141,12 @@ void TFunction::setDescription(const QString& description)
 	m_description = description;
 }
 
+void TFunction::setInheritedBase(const QString &base)
+{
+	m_inheritedBase = base;
+	setUsesInheritedbase(true);
+}
+
 QStringList TFunction::getKeys() const
 {
 	if (m_inheritedFunction)
@@ -315,6 +321,21 @@ void TShortcutManager::loadFunctions()
 		}
 	}
 
+
+	add_translation("GainBase", tr("Gain"));
+	m_classes.insert("GainBase", QStringList() << "GainBase");
+
+	add_translation("DeleteBase", tr("Remove"));
+	m_classes.insert("DeleteBase", QStringList() << "DeleteBase");
+
+
+	add_translation("MoveBase", tr("Move"));
+	m_classes.insert("MoveBase", QStringList() << "MoveBase");
+
+	add_translation("EditPropertiesBase", tr("Edit Properties"));
+	m_classes.insert("EditPropertiesBase", QStringList() << "EditPropertiesBase");
+
+
 	TFunction* function;
 
 	function = new TFunction();
@@ -323,17 +344,17 @@ void TShortcutManager::loadFunctions()
 	function->commandName = "GainBase";
 	addFunction(function);
 
-	add_translation("GainBase", tr("Gain"));
-	m_classes.insert("GainBase", QStringList() << "GainBase");
+	function = new TFunction();
+	function->object = "MoveBase";
+	function->m_description = tr("Move");
+	function->commandName = "MoveBase";
+	addFunction(function);
 
 	function = new TFunction();
 	function->object = "DeleteBase";
 	function->m_description = tr("Remove");
 	function->commandName = "DeleteBase";
 	addFunction(function);
-
-	add_translation("DeleteBase", tr("Remove"));
-	m_classes.insert("DeleteBase", QStringList() << "DeleteBase");
 
 	function = new TFunction();
 	function->object = "ToggleBypass";
@@ -350,10 +371,10 @@ void TShortcutManager::loadFunctions()
 	addFunction(function);
 
 	function = new TFunction();
-	function->object = "EditProperties";
+	function->object = "EditPropertiesBase";
 	function->slotsignature = "edit_properties";
 	function->setDescription(tr("Edit Properties"));
-	function->commandName = "EditProperties";
+	function->commandName = "EditPropertiesBase";
 	addFunction(function);
 
 	function = new TFunction();
@@ -612,31 +633,31 @@ void TShortcutManager::loadFunctions()
 
 	function = new TFunction();
 	function->object = "TrackView";
-	function->inherits = "EditProperties";
+	function->setInheritedBase("EditPropertiesBase");
 	function->commandName = "EditTrackProperties";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "SheetView";
-	function->inherits = "EditProperties";
+	function->setInheritedBase("EditPropertiesBase");
 	function->commandName = "EditSongProperties";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "PluginView";
-	function->inherits = "EditProperties";
+	function->setInheritedBase("EditPropertiesBase");
 	function->commandName = "EditPluginProperties";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "SpectralMeterView";
-	function->inherits = "EditProperties";
+	function->setInheritedBase("EditPropertiesBase");
 	function->commandName = "EditSpectralMeterProperties";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "AudioClipView";
-	function->inherits = "EditProperties";
+	function->setInheritedBase("EditPropertiesBase");
 	function->commandName = "EditAudioClipProperties";
 	addFunction(function);
 
@@ -846,13 +867,13 @@ void TShortcutManager::loadFunctions()
 
 	function = new TFunction();
 	function->object = "FadeCurve";
-	function->inherits = "ToggleBypass";
+	function->setInheritedBase("ToggleBypass");
 	function->commandName = "FadeCurveToggleBypass";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "Plugin";
-	function->inherits = "ToggleBypass";
+	function->setInheritedBase("ToggleBypass");
 	function->commandName = "PluginToggleBypass";
 	addFunction(function);
 
@@ -1070,6 +1091,13 @@ void TShortcutManager::saveFunction(TFunction *function)
 
 void TShortcutManager::loadShortcuts()
 {
+	foreach(TShortcut* shortCut, m_shortcuts)
+	{
+		delete shortCut;
+	}
+
+	m_shortcuts.clear();
+
 	QSettings defaultSettings(":/Traverso/shortcuts.ini", QSettings::IniFormat);
 	QSettings userSettings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Shortcuts");
 	QSettings* settings;
@@ -1080,6 +1108,9 @@ void TShortcutManager::loadShortcuts()
 
 	foreach(TFunction* function, m_functions)
 	{
+		function->m_keys.clear();
+		function->m_modifierkeys.clear();
+
 		if (userGroups.contains(function->commandName))
 		{ // prefer user settings over default settings
 			settings = &userSettings;
@@ -1136,7 +1167,7 @@ void TShortcutManager::loadShortcuts()
 
 		function->m_keys << keys;
 
-		if (!function->inherits.isEmpty())
+		if (!function->getInheritedBase().isEmpty())
 		{
 			functionsThatInherit.append(function);
 		}
@@ -1155,7 +1186,7 @@ void TShortcutManager::loadShortcuts()
 
 	foreach(TFunction* function, functionsThatInherit)
 	{
-		TFunction* inheritedFunction = getFunction(function->inherits);
+		TFunction* inheritedFunction = getFunction(function->getInheritedBase());
 		if (inheritedFunction)
 		{
 			function->setInheritedFunction(inheritedFunction);
@@ -1176,24 +1207,7 @@ void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys,
 	function->m_keys.clear();
 	function->m_modifierkeys.clear();
 
-	QList<TFunction*> functionsList;
-	foreach(TFunction* f, m_functions)
-	{
-		if (f->getInheritedFunction() == function)
-		{
-			functionsList.append(f);
-		}
-	}
-
-	functionsList.append(function);
-
-	foreach(TShortcut* shortcut, m_shortcuts)
-	{
-		foreach(TFunction* f, functionsList)
-		{
-			shortcut->objects.remove(f->object, f);
-		}
-	}
+	function->m_keys << keys;
 
 	foreach(QString string, modifiers)
 	{
@@ -1204,19 +1218,10 @@ void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys,
 		}
 	}
 
-	foreach(QString key, keys) {
-		function->m_keys << key;
-		TShortcut* shortcut = getShortcut(key);
-		if (shortcut)
-		{
-			foreach(TFunction* f, functionsList)
-			{
-				shortcut->objects.insertMulti(f->object, f);
-			}
-		}
-	}
 
 	saveFunction(function);
+
+	loadShortcuts();
 
 	emit functionKeysChanged();
 }

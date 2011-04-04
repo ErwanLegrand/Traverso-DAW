@@ -37,8 +37,7 @@ public :
 	}
 	~CommandGroup();
 
-	int begin_hold() {return 1;}
-	int finish_hold() {return 1;}
+	bool is_hold_command() const {return false;}
 	int prepare_actions();
 	int do_action();
 	int undo_action();

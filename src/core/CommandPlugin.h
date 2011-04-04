@@ -36,7 +36,7 @@ public:
 	virtual TCommand* create(QObject* obj, const QString& command, QVariantList arguments) = 0;
 };
 
-Q_DECLARE_INTERFACE(CommandInterface, "org.traversodaw.Command.CommandInterface/1.0");
+Q_DECLARE_INTERFACE(CommandInterface, "org.traversodaw.Command.CommandInterface/1.0")
 
 
 /**
@@ -48,7 +48,7 @@ Q_DECLARE_INTERFACE(CommandInterface, "org.traversodaw.Command.CommandInterface/
 class CommandPlugin : public QObject, public CommandInterface
 {
 	Q_OBJECT
-	Q_INTERFACES(CommandInterface);
+	Q_INTERFACES(CommandInterface)
 
 public:
 	virtual ~CommandPlugin() {}

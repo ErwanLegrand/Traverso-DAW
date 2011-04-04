@@ -152,8 +152,7 @@ public :
         int prepare_actions();
         int do_action();
         int undo_action();
-	int begin_hold() {return 1;}
-	int finish_hold() { return 1;}
+	bool is_hold_command() const {return false;}
 
 private :
 	int		m_oldMode;

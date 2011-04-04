@@ -51,6 +51,7 @@ public :
 	virtual void cancel_action();
 	virtual void set_collected_number(const QString& collected);
         virtual void set_jog_bypassed(bool /*bypassed*/) {}
+	virtual bool is_hold_command() const {return true;}
         
 	void undo() {undo_action();}
 	void redo() {do_action();}
