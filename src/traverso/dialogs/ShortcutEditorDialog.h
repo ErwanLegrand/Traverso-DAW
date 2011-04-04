@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QDialog>
 
 class TFunction;
+class QAbstractButton;
 
 namespace Ui {
 	class ShortcutEditorDialog;
@@ -55,6 +56,9 @@ private slots:
 	void function_keys_changed();
 	void modifier_combo_box_toggled();
 	void configure_inherited_shortcut_pushbutton_clicked();
+	void base_function_checkbox_clicked();
+	void on_restoreDefaultPushButton_clicked();
+	void button_box_button_clicked(QAbstractButton*);
 };
 
 #endif // SHORTCUTEDITORDIALOG_H

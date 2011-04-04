@@ -189,9 +189,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="useBaseFunctionCheckBox">
+          <widget class="QPushButton" name="restoreDefaultPushButton">
            <property name="text">
-            <string>&amp;Inherits function:</string>
+            <string>Restore Default</string>
            </property>
           </widget>
          </item>
@@ -199,6 +199,12 @@
           <widget class="QGroupBox" name="baseFunctionGroupBox">
            <property name="title">
             <string/>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
@@ -269,7 +275,10 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Close|QDialogButtonBox::RestoreDefaults</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

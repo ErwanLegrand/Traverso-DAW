@@ -49,11 +49,11 @@ QList<TFunction*> TShortcut::getFunctions()
 	return objects.values();
 }
 
-QString TFunction::getModifierSequence()
+QString TFunction::getModifierSequence(bool fromInheritedBase)
 {
 	QString modifiersString;
 
-	foreach(int modifier, getModifierKeys()) {
+	foreach(int modifier, getModifierKeys(fromInheritedBase)) {
 		if (modifier == Qt::Key_Alt) {
 			modifiersString += "Alt+";
 		} else if (modifier == Qt::Key_Control) {
@@ -91,9 +91,9 @@ QString TFunction::getKeySequence()
 	return sequence;
 }
 
-QList<int> TFunction::getModifierKeys()
+QList<int> TFunction::getModifierKeys(bool fromInheritedBase)
 {
-	if (m_inheritedFunction)
+	if (m_inheritedFunction && m_usesInheritedBase && fromInheritedBase)
 	{
 		return m_inheritedFunction->getModifierKeys();
 	}
@@ -118,7 +118,7 @@ QString TFunction::getDescription() const
 		return m_description;
 	}
 
-	if (m_inheritedFunction)
+	if (m_inheritedFunction && m_usesInheritedBase)
 	{
 		return m_inheritedFunction->getDescription();
 	}
@@ -144,12 +144,11 @@ void TFunction::setDescription(const QString& description)
 void TFunction::setInheritedBase(const QString &base)
 {
 	m_inheritedBase = base;
-	setUsesInheritedbase(true);
 }
 
-QStringList TFunction::getKeys() const
+QStringList TFunction::getKeys(bool fromInheritedBase) const
 {
-	if (m_inheritedFunction)
+	if (m_inheritedFunction && m_usesInheritedBase && fromInheritedBase)
 	{
 		return m_inheritedFunction->getKeys();
 	}
@@ -164,7 +163,7 @@ void TFunction::setInheritedFunction(TFunction *inherited)
 
 int TFunction::getAutoRepeatInterval() const
 {
-	if (m_inheritedFunction)
+	if (m_inheritedFunction && m_usesInheritedBase)
 	{
 		return m_inheritedFunction->getAutoRepeatInterval();
 	}
@@ -174,7 +173,7 @@ int TFunction::getAutoRepeatInterval() const
 
 int TFunction::getAutoRepeatStartDelay() const
 {
-	if (m_inheritedFunction)
+	if (m_inheritedFunction && m_usesInheritedBase)
 	{
 		return m_inheritedFunction->getAutoRepeatStartDelay();
 	}
@@ -306,6 +305,19 @@ QList<QString> TShortcutManager::getClassNames() const
 	return stringList;
 }
 
+QString TShortcutManager::getClassForObject(const QString &object) const
+{
+	QStringList keys = m_classes.keys();
+	foreach(QString key, keys)
+	{
+		QStringList objects = m_classes.value(key);
+		if (objects.contains(object))
+		{
+			return key;
+		}
+	}
+	return "";
+}
 
 void TShortcutManager::loadFunctions()
 {
@@ -380,29 +392,29 @@ void TShortcutManager::loadFunctions()
 	function = new TFunction();
 	function->object = "AudioTrack";
 	function->slotsignature = "toggle_show_clip_volume_automation";
-	function->m_description = tr("Show/Hide Clip Volume Automation");
-	function->commandName = "AudioTrack_ShowClipVolumeAutomation";
+	function->m_description = tr("Clip Volume Automation");
+	function->commandName = "AudioTrackShowClipVolumeAutomation";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "AudioTrack";
 	function->slotsignature = "toggle_arm";
 	function->m_description = tr("Record: On/Off");
-	function->commandName = "AudioTrack_ToggleRecord";
+	function->commandName = "AudioTrackToggleRecord";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "AudioTrack";
 	function->slotsignature = "silence_others";
 	function->m_description = tr("Silence other tracks");
-	function->commandName = "AudioTrack_SilenceOthers";
+	function->commandName = "AudioTrackSilenceOthers";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "FadeCurve";
 	function->slotsignature = "set_mode";
 	function->m_description = tr("Cycle Shape");
-	function->commandName = "FadeCurve_CycleShape";
+	function->commandName = "FadeCurveCycleShape";
 	addFunction(function);
 
 	function = new TFunction();
@@ -463,15 +475,15 @@ void TShortcutManager::loadFunctions()
 	function = new TFunction();
 	function->object = "Track";
 	function->slotsignature = "toggle_show_track_volume_automation";
-	function->m_description = tr("Show/Hide Volume Automation");
-	function->commandName = "Track_ShowVolumeAutomation";
+	function->m_description = tr("Track Volume Automation");
+	function->commandName = "TrackShowVolumeAutomation";
 	addFunction(function);
 
 	function = new TFunction();
 	function->object = "TMainWindow";
 	function->slotsignature = "full_screen";
 	function->m_description = tr("Full Screen");
-	function->commandName = "MainWindow_ShowFullScreen";
+	function->commandName = "MainWindowShowFullScreen";
 	addFunction(function);
 
 	function = new TFunction();
@@ -485,7 +497,7 @@ void TShortcutManager::loadFunctions()
 	function->object = "TrackView";
 	function->slotsignature = "add_new_plugin";
 	function->m_description = tr("Add new Plugin");
-	function->commandName = "Track_AddPlugin";
+	function->commandName = "TrackAddPlugin";
 	addFunction(function);
 
 	function = new TFunction();
@@ -614,7 +626,7 @@ void TShortcutManager::loadFunctions()
 	function->object = "AudioClipView";
 	function->slotsignature = "fade_range";
 	function->m_description = tr("Adjust Length");
-	function->commandName = "AudioClip_FadeLength";
+	function->commandName = "AudioClipFadeLength";
 	addFunction(function);
 
 	function = new TFunction();
@@ -1075,8 +1087,8 @@ void TShortcutManager::saveFunction(TFunction *function)
 	QSettings settings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Shortcuts");
 
 	settings.beginGroup(function->commandName);
-	settings.setValue("keys", function->getKeys().join(";"));
-	QStringList modifiers = function->getModifierSequence().split("+", QString::SkipEmptyParts);
+	settings.setValue("keys", function->getKeys(false).join(";"));
+	QStringList modifiers = function->getModifierSequence(false).split("+", QString::SkipEmptyParts);
 	settings.setValue("modifiers", modifiers.join(";"));
 	if (function->getAutoRepeatInterval() >= 0)
 	{
@@ -1085,6 +1097,17 @@ void TShortcutManager::saveFunction(TFunction *function)
 	if (function->getAutoRepeatStartDelay() >= 0)
 	{
 		settings.setValue("autorepeatstartdelay", function->getAutoRepeatStartDelay());
+	}
+	if (function->getInheritedFunction())
+	{
+		if (function->usesInheritedBase())
+		{
+			settings.setValue("usesinheritedbase", true);
+		}
+		else
+		{
+			settings.setValue("usesinheritedbase", false);
+		}
 	}
 	settings.endGroup();
 }
@@ -1133,9 +1156,22 @@ void TShortcutManager::loadShortcuts()
 		QString autorepeatstartdelay = settings->value("autorepeatstartdelay").toString();
 		QString submenu = settings->value("submenu").toString();
 		QString sortorder = settings->value("sortorder").toString();
+		if (settings->contains("usesinheritedbase"))
+		{
+			bool usesInheritedBase = settings->value("usesinheritedbase").toBool();
+			if (usesInheritedBase)
+			{
+				function->setUsesInheritedbase(true);
+			}
+			else
+			{
+				function->setUsesInheritedbase(false);
+			}
+		}
 		settings->endGroup();
 
 		function->submenu = submenu;
+
 
 		foreach(QString string, modifiers)
 		{
@@ -1171,7 +1207,8 @@ void TShortcutManager::loadShortcuts()
 		{
 			functionsThatInherit.append(function);
 		}
-		else
+
+		if (!function->usesInheritedBase())
 		{
 			foreach(QString key, function->getKeys())
 			{
@@ -1190,12 +1227,15 @@ void TShortcutManager::loadShortcuts()
 		if (inheritedFunction)
 		{
 			function->setInheritedFunction(inheritedFunction);
-			foreach(QString key, function->getKeys())
+			if (function->usesInheritedBase())
 			{
-				TShortcut* shortcut = getShortcut(key);
-				if (shortcut)
+				foreach(QString key, function->getKeys())
 				{
-					shortcut->objects.insertMulti(function->object, function);
+					TShortcut* shortcut = getShortcut(key);
+					if (shortcut)
+					{
+						shortcut->objects.insertMulti(function->object, function);
+					}
 				}
 			}
 		}
@@ -1220,12 +1260,39 @@ void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys,
 
 
 	saveFunction(function);
-
 	loadShortcuts();
-
 	emit functionKeysChanged();
 }
 
+void TShortcutManager::modifyFunctionInheritedBase(TFunction *function, bool usesInheritedBase)
+{
+	function->setUsesInheritedbase(usesInheritedBase);
+	saveFunction(function);
+	loadShortcuts();
+	emit functionKeysChanged();
+}
+
+void TShortcutManager::restoreDefaultFor(TFunction *function)
+{
+	QSettings userSettings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Shortcuts");
+
+	userSettings.beginGroup(function->commandName);
+	foreach(QString key, userSettings.childKeys())
+	{
+		userSettings.remove(key);
+	}
+	loadShortcuts();
+	emit functionKeysChanged();
+}
+
+void TShortcutManager::restoreDefaults()
+{
+	QSettings userSettings(QSettings::IniFormat, QSettings::UserScope, "Traverso", "Shortcuts");
+	userSettings.clear();
+	loadShortcuts();
+	emit functionKeysChanged();
+
+}
 
 void TShortcutManager::add_meta_object(const QMetaObject* mo)
 {

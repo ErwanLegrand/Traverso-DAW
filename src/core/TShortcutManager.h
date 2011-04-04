@@ -53,13 +53,13 @@ public:
 	}
 
 	QString getKeySequence();
-	QString getModifierSequence();
+	QString getModifierSequence(bool fromInheritedBase=true);
 	QString getSlotSignature() const;
 	QString getDescription() const;
 	QString getInheritedBase() const {return m_inheritedBase;}
 	QString getLongDescription() const;
-	QList<int> getModifierKeys();
-	QStringList getKeys() const;
+	QList<int> getModifierKeys(bool fromInheritedBase=true);
+	QStringList getKeys(bool fromInheritedBase=true) const;
 
 	int getAutoRepeatInterval() const;
 	int getAutoRepeatStartDelay() const;
@@ -142,6 +142,7 @@ public:
 	TShortcut* getShortcut(int key);
 	CommandPlugin* getCommandPlugin(const QString& pluginName);
 	void modifyFunctionKeys(TFunction* function, QStringList keys, QStringList modifiers);
+	void modifyFunctionInheritedBase(TFunction* function, bool usesInheritedBase);
 	void add_translation(const QString& signature, const QString& translation);
 	void add_meta_object(const QMetaObject* mo);
 	void registerItemClass(const QString& item, const QString& className);
@@ -149,11 +150,14 @@ public:
 	QString createHtmlForClass(const QString& className, QObject* obj=0);
 	QHash<QString, QList<const QMetaObject*> > get_meta_objects() const {return m_metaObjects;}
 	QList<QString> getClassNames() const;
+	QString getClassForObject(const QString& object) const;
 	bool classInherits(const QString& className, const QString &inherited);
 
 	void loadFunctions();
 	void saveFunction(TFunction* function);
 	void loadShortcuts();
+	void restoreDefaultFor(TFunction* function);
+	void restoreDefaults();
 	static void makeShortcutKeyHumanReadable(QString& key);
 
 	bool isCommandClass(const QString& className);

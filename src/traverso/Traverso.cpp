@@ -29,13 +29,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Traverso.h"
 #include "Mixer.h"
 #include "ProjectManager.h"
-#include <Project.h>
+#include "Project.h"
 #include "TMainWindow.h"
 #include "Themer.h"
 #include "TConfig.h"
-#include <AudioDevice.h>
-#include <ContextPointer.h>
-#include <Information.h>
+#include "AudioDevice.h"
+#include "ContextPointer.h"
+#include "Information.h"
+#include "TShortcutManager.h"
+#include "widgets/SpectralMeterWidget.h"
+#include "widgets/CorrelationMeterWidget.h"
+
 #include "defines.h"
 #include "fpu.h"
 #ifdef __SSE__
@@ -90,8 +94,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
  */
 
 
-
-
 Traverso::Traverso(int &argc, char **argv )
 	: QApplication ( argc, argv )
 {
@@ -102,6 +104,9 @@ Traverso::Traverso(int &argc, char **argv )
 	qRegisterMetaType<InfoStruct>("InfoStruct");
 	qRegisterMetaType<TimeRef>("TimeRef");
 	
+	tShortCutManager().add_meta_object(&SpectralMeterView::staticMetaObject);
+	tShortCutManager().add_meta_object(&CorrelationMeterView::staticMetaObject);
+
 	config().check_and_load_configuration();
 	
 	// Initialize random number generator
