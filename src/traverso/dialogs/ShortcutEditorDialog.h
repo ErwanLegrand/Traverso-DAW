@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include <QDialog>
 
+class TFunction;
 
 namespace Ui {
 	class ShortcutEditorDialog;
@@ -43,6 +44,8 @@ protected:
 private:
 	Ui::ShortcutEditorDialog *ui;
 
+	TFunction* getSelectedFunction();
+
 private slots:
 	void objects_combo_box_activated(int index);
 	void key1_combo_box_activated(int);
@@ -51,6 +54,7 @@ private slots:
 	void show_functions_checkbox_clicked();
 	void function_keys_changed();
 	void modifier_combo_box_toggled();
+	void configure_inherited_shortcut_pushbutton_clicked();
 };
 
 #endif // SHORTCUTEDITORDIALOG_H

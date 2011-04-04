@@ -113,6 +113,11 @@ QString TFunction::getSlotSignature() const
 
 QString TFunction::getDescription() const
 {
+	if (!m_description.isEmpty())
+	{
+		return m_description;
+	}
+
 	if (m_inheritedFunction)
 	{
 		return m_inheritedFunction->getDescription();
@@ -314,10 +319,11 @@ void TShortcutManager::loadFunctions()
 
 	function = new TFunction();
 	function->object = "GainBase";
-	function->setDescription(tr("Gain Function"));
+	function->setDescription(tr("Gain"));
 	function->commandName = "GainBase";
 	addFunction(function);
 
+	add_translation("GainBase", tr("Gain"));
 	m_classes.insert("GainBase", QStringList() << "GainBase");
 
 	function = new TFunction();
@@ -326,6 +332,7 @@ void TShortcutManager::loadFunctions()
 	function->commandName = "DeleteBase";
 	addFunction(function);
 
+	add_translation("DeleteBase", tr("Remove"));
 	m_classes.insert("DeleteBase", QStringList() << "DeleteBase");
 
 	function = new TFunction();
@@ -1169,9 +1176,23 @@ void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys,
 	function->m_keys.clear();
 	function->m_modifierkeys.clear();
 
+	QList<TFunction*> functionsList;
+	foreach(TFunction* f, m_functions)
+	{
+		if (f->getInheritedFunction() == function)
+		{
+			functionsList.append(f);
+		}
+	}
+
+	functionsList.append(function);
+
 	foreach(TShortcut* shortcut, m_shortcuts)
 	{
-		shortcut->objects.remove(function->object, function);
+		foreach(TFunction* f, functionsList)
+		{
+			shortcut->objects.remove(f->object, f);
+		}
 	}
 
 	foreach(QString string, modifiers)
@@ -1188,7 +1209,10 @@ void TShortcutManager::modifyFunctionKeys(TFunction *function, QStringList keys,
 		TShortcut* shortcut = getShortcut(key);
 		if (shortcut)
 		{
-			shortcut->objects.insertMulti(function->object, function);
+			foreach(TFunction* f, functionsList)
+			{
+				shortcut->objects.insertMulti(f->object, f);
+			}
 		}
 	}
 

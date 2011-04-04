@@ -232,7 +232,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QPushButton" name="setBaseShortcutPushButton">
+             <widget class="QPushButton" name="configureInheritedShortcutPushButton">
               <property name="text">
                <string>Configure shortcut</string>
               </property>

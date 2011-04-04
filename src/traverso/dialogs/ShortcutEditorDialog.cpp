@@ -101,6 +101,7 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 	connect(ui->metaCheckBox, SIGNAL(clicked()), this, SLOT(modifier_combo_box_toggled()));
 	connect(ui->startDelaySpinBox, SIGNAL(editingFinished()), this, SLOT(modifier_combo_box_toggled()));
 	connect(ui->repeatIntervalSpinBox, SIGNAL(editingFinished()), this, SLOT(modifier_combo_box_toggled()));
+	connect(ui->configureInheritedShortcutPushButton, SIGNAL(clicked()), this, SLOT(configure_inherited_shortcut_pushbutton_clicked()));
 
 	// teasing the dialog to get into the 'no functions selected' state
 	// and updating it accordingly.
@@ -172,16 +173,11 @@ void ShortcutEditorDialog::key_combo_box_activated(int)
 		return;
 	}
 
-	QList<QTreeWidgetItem*> items = ui->shortcutsTreeWidget->selectedItems();
-
-	if (!items.size())
+	TFunction* function = getSelectedFunction();
+	if (!function)
 	{
 		return;
-
 	}
-	QTreeWidgetItem *item = items.first();
-
-	TFunction* function = (TFunction*) item->data(0, Qt::UserRole).value<void*>();
 
 	QStringList modifiers;
 
@@ -256,6 +252,20 @@ void ShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 
 }
 
+TFunction* ShortcutEditorDialog::getSelectedFunction()
+{
+	QList<QTreeWidgetItem*> items = ui->shortcutsTreeWidget->selectedItems();
+
+	if (!items.size())
+	{
+		return 0;
+
+	}
+	QTreeWidgetItem *item = items.first();
+
+	return (TFunction*) item->data(0, Qt::UserRole).value<void*>();
+}
+
 void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 {
 	if (ui->showfunctionsCheckBox->isChecked())
@@ -263,16 +273,7 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 		return;
 	}
 
-	QList<QTreeWidgetItem*> items = ui->shortcutsTreeWidget->selectedItems();
-
-	if (!items.size())
-	{
-		return;
-
-	}
-	QTreeWidgetItem *item = items.first();
-
-	TFunction* function = (TFunction*) item->data(0, Qt::UserRole).value<void*>();
+	TFunction* function = getSelectedFunction();
 	if (!function)
 	{
 		return;
@@ -428,6 +429,27 @@ void ShortcutEditorDialog::function_keys_changed()
 	}
 
 	fWidget->setFocus();
+}
+
+void ShortcutEditorDialog::configure_inherited_shortcut_pushbutton_clicked()
+{
+	TFunction* function = getSelectedFunction();
+	if (!function)
+	{
+		return;
+	}
+	function = function->getInheritedFunction();
+	if (!function)
+	{
+		return;
+	}
+
+	int index = ui->objectsComboBox->findData(function->object);
+	if (index >= 0)
+	{
+		ui->objectsComboBox->setCurrentIndex(index);
+		objects_combo_box_activated(index);
+	}
 }
 
 void ShortcutEditorDialog::changeEvent(QEvent *e)

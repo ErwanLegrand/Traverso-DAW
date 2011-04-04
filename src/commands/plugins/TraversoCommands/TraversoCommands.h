@@ -44,6 +44,7 @@ private:
 		AddNewAudioTrackCommand,
 		RemoveClipCommand,
 		RemoveTrackCommand,
+		RemoveClipNodeCommmand,
 		AudioClipExternalProcessingCommand,
 		ClipSelectionCommand,
 		MoveClipCommand,

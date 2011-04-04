@@ -235,21 +235,21 @@ TraversoCommands::TraversoCommands()
 
 	function = new TFunction();
 	function->object = "AudioClip";
-	function->setDescription(tr("AudioClip Gain"));
+	function->setDescription(tr("Gain"));
 	function->commandName = "AudioClipGain";
 	function->inherits = "GainBase";
 	addFunction(function, GainCommand);
 
 	function = new TFunction();
 	function->object = "AudioTrack";
-	function->setDescription(tr("AudioTrack Gain"));
+	function->setDescription(tr("Gain"));
 	function->commandName = "AudioTrackGain";
 	function->inherits = "GainBase";
 	addFunction(function, GainCommand);
 
 	function = new TFunction();
 	function->object = "TBusTrack";
-	function->setDescription(tr("Bus Gain"));
+	function->setDescription(tr("Gain"));
 	function->commandName = "BusTrackGain";
 	function->inherits = "GainBase";
 	addFunction(function, GainCommand);
@@ -293,14 +293,21 @@ TraversoCommands::TraversoCommands()
 	function = new TFunction();
 	function->object = "AudioClip";
 	function->commandName = "RemoveClip";
-	function->inherits = "Delete";
+	function->inherits = "DeleteBase";
 	addFunction(function, RemoveClipCommand);
 
 	function = new TFunction();
 	function->object = "Track";
 	function->commandName = "RemoveTrack";
-	function->inherits = "Delete";
+	function->inherits = "DeleteBase";
 	addFunction(function, RemoveTrackCommand);
+
+	function = new TFunction();
+	function->object = "CurveView";
+	function->commandName = "RemoveCurveNode";
+	function->setDescription("Remove Node(s)");
+	function->inherits = "DeleteBase";
+	addFunction(function, RemoveClipNodeCommmand);
 
 	function = new TFunction();
 	function->object = "TPanKnobView";
@@ -338,13 +345,6 @@ TraversoCommands::TraversoCommands()
 	function->setDescription(tr("Scroll"));
 	function->commandName = "Scroll";
 	addFunction(function, ScrollCommand);
-
-	function = new TFunction();
-	function->object = "AudioClip";
-	function->setDescription(tr("(De)Select"));
-	function->commandName = "ClipSelectionSelect";
-	function->arguments << "toggle_selected";
-	addFunction(function, ClipSelectionCommand);
 
 	function = new TFunction();
 	function->object = "AudioClip";
@@ -482,6 +482,18 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 			return activeSession->remove_track(track);
 		}
 
+		case RemoveClipNodeCommmand:
+		{
+			CurveView* curveView = qobject_cast<CurveView*>(obj);
+			if (!curveView)
+			{
+				PERROR("TraversoCommands: Supplied QObject was not a CurveView! "
+					"RemoveClipNodeCommmand needs a CurveView as argument");
+				return 0;
+			}
+			return curveView->remove_node();
+
+		}
 		case AudioClipExternalProcessingCommand:
 		{
 			AudioClip* clip = qobject_cast<AudioClip*>(obj);
