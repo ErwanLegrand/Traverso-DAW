@@ -708,6 +708,10 @@ void AudioClipView::calculate_bounding_rect()
 	m_height = m_parentViewItem->get_height();
 	m_boundingRect = QRectF(0, 0, (double(m_clip->get_length().universal_frame()) / m_sv->timeref_scalefactor), m_height);
 
+	if  (!m_clip->get_channel_count()) {
+		return;
+	}
+
 	if ((m_height / m_clip->get_channel_count()) < 30) {
 		m_classicView = false;
 	} else {
