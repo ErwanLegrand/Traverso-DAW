@@ -33,7 +33,7 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
 		ui(new Ui::ShortcutEditorDialog)
 {
 	ui->setupUi(this);
-	resize(800, 455);
+	resize(740, 400);
 
 	QStringList keys;
 	keys << "|";

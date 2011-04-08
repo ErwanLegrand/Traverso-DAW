@@ -183,6 +183,10 @@ void FadeRange::do_keyboard_move(double range)
 {
         ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
         m_newRange = range;
+
+	TimeRef location = TimeRef(m_newRange);
+	cpointer().get_viewport()->set_holdcursor_text(timeref_to_ms_3(location));
+
         do_action();
 }
 

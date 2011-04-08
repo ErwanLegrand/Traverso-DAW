@@ -118,7 +118,7 @@ QString TFunction::getDescription() const
 		return m_description;
 	}
 
-	if (m_inheritedFunction && m_usesInheritedBase)
+	if (m_inheritedFunction)
 	{
 		return m_inheritedFunction->getDescription();
 	}

@@ -37,39 +37,33 @@
 Zoom::Zoom(SheetView* sv, QVariantList args)
 	: TCommand("Zoom")
 {
-	TrackView* tv = sv->get_trackview_under(cpointer().scene_pos());
-	init(sv, tv, args);
-}
+	m_tv = sv->get_trackview_under(cpointer().scene_pos());
+	m_sv = sv;
 
-void Zoom::init(SheetView *sv, TrackView *tv, QVariantList args)
-{
-        m_sv = sv;
-        m_tv = tv;
+	m_jogHorizontal = m_jogVertical = false;
 
-        m_jogHorizontal = m_jogVertical = false;
+	if (args.size() > 0) {
+		QString type = args.at(0).toString();
+		if (type == "JogZoom") {
+			m_jogHorizontal = m_jogVertical = true;
+		} else if (type == "HJogZoom") {
+			m_jogHorizontal = true;
+		} else if (type == "VJogZoom") {
+			m_jogVertical = true;
+		}
+	}
+	if (args.size() > 1) {
+		m_xScalefactor = args.at(1).toDouble();
+	} else {
+		m_xScalefactor = 1;
+	}
+	if (args.size() > 2) {
+		m_yScalefactor = args.at(2).toDouble();
+	} else {
+		m_yScalefactor = 0;
+	}
 
-        if (args.size() > 0) {
-                QString type = args.at(0).toString();
-                if (type == "JogZoom") {
-                        m_jogHorizontal = m_jogVertical = true;
-                } else if (type == "HJogZoom") {
-                        m_jogHorizontal = true;
-                } else if (type == "VJogZoom") {
-                        m_jogVertical = true;
-                }
-        }
-        if (args.size() > 1) {
-                m_xScalefactor = args.at(1).toDouble();
-        } else {
-                m_xScalefactor = 1;
-        }
-        if (args.size() > 2) {
-                m_yScalefactor = args.at(2).toDouble();
-        } else {
-                m_yScalefactor = 0;
-        }
-
-        m_trackHeight = collected_number_to_track_height(ied().get_collected_number());
+	m_trackHeight = collected_number_to_track_height(ied().get_collected_number());
 }
 
 int Zoom::prepare_actions()

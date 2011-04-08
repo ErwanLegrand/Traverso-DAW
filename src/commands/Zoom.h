@@ -59,7 +59,6 @@ private :
         QPoint	m_mousePos;
         QPointF	m_origPos;
 
-        void init(SheetView* sv, TrackView* tv, QVariantList args);
         int collected_number_to_track_height(const QString& collected) const;
 	
         SheetView* m_sv;

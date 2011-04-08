@@ -175,6 +175,11 @@ void TContextHelpWidget::combobox_activated(int index)
 void TContextHelpWidget::function_keys_changed()
 {
 	m_help.clear();
+	if (m_currentClassName.isEmpty())
+	{
+		m_textEdit->setHtml("");
+		return;
+	}
 	QString html = tShortCutManager().createHtmlForClass(m_currentClassName.remove("View"));
 	m_help.insert(m_currentClassName, html);
 	m_textEdit->setHtml(html);

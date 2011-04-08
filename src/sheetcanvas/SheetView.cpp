@@ -225,13 +225,17 @@ AudioTrackView* SheetView::get_audio_trackview_under( QPointF point )
 
 TrackView* SheetView::get_trackview_under( QPointF point )
 {
-	TrackView* view = 0;
 	QList<QGraphicsItem*> views = m_clipsViewPort->items(m_clipsViewPort->mapFromScene(point));
 
 	for (int i=0; i<views.size(); ++i) {
-		view = dynamic_cast<TrackView*>(views.at(i));
+		TrackView* view = dynamic_cast<TrackView*>(views.at(i));
 		if (view) {
 			return view;
+		}
+		TrackPanelView* tpv = dynamic_cast<TrackPanelView*>(views.at(i));
+		if (tpv)
+		{
+			return tpv->get_track_view();
 		}
 	}
 	return  0;
