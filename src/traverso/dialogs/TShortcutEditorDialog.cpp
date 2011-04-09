@@ -19,8 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#include "ShortcutEditorDialog.h"
-#include "ui_ShortcutEditorDialog.h"
+#include "TShortcutEditorDialog.h"
+#include "ui_TShortcutEditorDialog.h"
 
 #include "TShortcutManager.h"
 #include "config.h"
@@ -28,9 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent)
+TShortcutEditorDialog::TShortcutEditorDialog(QWidget *parent)
 	: QDialog(parent),
-	ui(new Ui::ShortcutEditorDialog)
+	ui(new Ui::TShortcutEditorDialog)
 {
 	ui->setupUi(this);
 
@@ -119,12 +119,12 @@ ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent)
 	show_functions_checkbox_clicked();
 }
 
-ShortcutEditorDialog::~ShortcutEditorDialog()
+TShortcutEditorDialog::~TShortcutEditorDialog()
 {
 	delete ui;
 }
 
-void ShortcutEditorDialog::objects_combo_box_activated(int index)
+void TShortcutEditorDialog::objects_combo_box_activated(int index)
 {
 	ui->shortcutsTreeWidget->clear();
 
@@ -158,12 +158,12 @@ void ShortcutEditorDialog::objects_combo_box_activated(int index)
 	}
 }
 
-void ShortcutEditorDialog::modifier_combo_box_toggled()
+void TShortcutEditorDialog::modifier_combo_box_toggled()
 {
 	key_combo_box_activated(0);
 }
 
-void ShortcutEditorDialog::key_combo_box_activated(int)
+void TShortcutEditorDialog::key_combo_box_activated(int)
 {
 	if (ui->showfunctionsCheckBox->isChecked()) {
 		return;
@@ -205,7 +205,7 @@ void ShortcutEditorDialog::key_combo_box_activated(int)
 	tShortCutManager().modifyFunctionKeys(function, keys, modifiers);
 }
 
-void ShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
+void TShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 {
 	if (!ui->showfunctionsCheckBox->isChecked())
 	{
@@ -235,7 +235,7 @@ void ShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 	}
 }
 
-TFunction* ShortcutEditorDialog::getSelectedFunction()
+TFunction* TShortcutEditorDialog::getSelectedFunction()
 {
 	QList<QTreeWidgetItem*> items = ui->shortcutsTreeWidget->selectedItems();
 
@@ -249,7 +249,7 @@ TFunction* ShortcutEditorDialog::getSelectedFunction()
 	return (TFunction*) item->data(0, Qt::UserRole).value<void*>();
 }
 
-void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
+void TShortcutEditorDialog::shortcut_tree_widget_item_activated()
 {
 	if (ui->showfunctionsCheckBox->isChecked())
 	{
@@ -383,7 +383,7 @@ void ShortcutEditorDialog::shortcut_tree_widget_item_activated()
 
 }
 
-void ShortcutEditorDialog::base_function_checkbox_clicked()
+void TShortcutEditorDialog::base_function_checkbox_clicked()
 {
 	TFunction* function = getSelectedFunction();
 	if (!function)
@@ -402,7 +402,7 @@ void ShortcutEditorDialog::base_function_checkbox_clicked()
 	}
 }
 
-void ShortcutEditorDialog::show_functions_checkbox_clicked()
+void TShortcutEditorDialog::show_functions_checkbox_clicked()
 {
 	if (ui->showfunctionsCheckBox->isChecked())
 	{
@@ -431,7 +431,7 @@ void ShortcutEditorDialog::show_functions_checkbox_clicked()
 	}
 }
 
-void ShortcutEditorDialog::function_keys_changed()
+void TShortcutEditorDialog::function_keys_changed()
 {
 	QWidget* fWidget = focusWidget();
 
@@ -455,7 +455,7 @@ void ShortcutEditorDialog::function_keys_changed()
 	fWidget->setFocus();
 }
 
-void ShortcutEditorDialog::configure_inherited_shortcut_pushbutton_clicked()
+void TShortcutEditorDialog::configure_inherited_shortcut_pushbutton_clicked()
 {
 	TFunction* function = getSelectedFunction();
 	if (!function)
@@ -476,7 +476,7 @@ void ShortcutEditorDialog::configure_inherited_shortcut_pushbutton_clicked()
 	}
 }
 
-void ShortcutEditorDialog::on_restoreDefaultPushButton_clicked()
+void TShortcutEditorDialog::on_restoreDefaultPushButton_clicked()
 {
 	TFunction* function = getSelectedFunction();
 	if (!function)
@@ -487,7 +487,7 @@ void ShortcutEditorDialog::on_restoreDefaultPushButton_clicked()
 	tShortCutManager().restoreDefaultFor(function);
 }
 
-void ShortcutEditorDialog::button_box_button_clicked(QAbstractButton* button)
+void TShortcutEditorDialog::button_box_button_clicked(QAbstractButton* button)
 {
 	if (button == ui->buttonBox->button(QDialogButtonBox::RestoreDefaults))
 	{
@@ -496,17 +496,17 @@ void ShortcutEditorDialog::button_box_button_clicked(QAbstractButton* button)
 	}
 }
 
-void ShortcutEditorDialog::on_downPushButton_clicked()
+void TShortcutEditorDialog::on_downPushButton_clicked()
 {
 	moveItemUpDown(1);
 }
 
-void ShortcutEditorDialog::on_upPushButton_clicked()
+void TShortcutEditorDialog::on_upPushButton_clicked()
 {
 	moveItemUpDown(-1);
 }
 
-void ShortcutEditorDialog::moveItemUpDown(int direction)
+void TShortcutEditorDialog::moveItemUpDown(int direction)
 {
 	QTreeWidgetItem* item = ui->shortcutsTreeWidget->currentItem();
 	if (!item)
@@ -533,7 +533,7 @@ void ShortcutEditorDialog::moveItemUpDown(int direction)
 	tShortCutManager().exportFunctions();
 }
 
-void ShortcutEditorDialog::changeEvent(QEvent *e)
+void TShortcutEditorDialog::changeEvent(QEvent *e)
 {
 	QDialog::changeEvent(e);
 	switch (e->type()) {

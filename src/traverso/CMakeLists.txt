@@ -42,7 +42,7 @@ dialogs/ExportDialog.cpp
 dialogs/CDWritingDialog.cpp
 dialogs/ThemeModifierDialog.cpp
 dialogs/TTrackSelector.cpp
-dialogs/ShortcutEditorDialog.cpp
+dialogs/TShortcutEditorDialog.cpp
 widgets/BusMonitor.cpp
 widgets/CorrelationMeterWidget.cpp
 widgets/ExportFormatOptionsWidget.cpp
@@ -88,7 +88,7 @@ ui/ImportClipsDialog.ui
 ui/WelcomeWidget.ui
 ui/ThemeModifierDialog.ui
 ui/TTrackSelector.ui
-ui/ShortcutEditorDialog.ui
+ui/TShortcutEditorDialog.ui
 )
 
 SET(TRAVERSO_GUI_MOC_CLASSES
@@ -111,7 +111,7 @@ dialogs/settings/SettingsDialog.h
 dialogs/settings/Pages.h
 dialogs/ThemeModifierDialog.h
 dialogs/TTrackSelector.h
-dialogs/ShortcutEditorDialog.h
+dialogs/TShortcutEditorDialog.h
 widgets/BusMonitor.h
 widgets/CorrelationMeterWidget.h
 widgets/ExportFormatOptionsWidget.h

@@ -81,7 +81,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "dialogs/CDWritingDialog.h"
 #include "dialogs/project/ImportClipsDialog.h"
 #include "dialogs/TTrackSelector.h"
-#include "dialogs/ShortcutEditorDialog.h"
+#include "dialogs/TShortcutEditorDialog.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
@@ -1535,7 +1535,7 @@ TCommand* TMainWindow::show_shortcuts_edit_dialog()
 {
 	if (!m_shortcutEditorDialog)
 	{
-		m_shortcutEditorDialog = new ShortcutEditorDialog(this);
+		m_shortcutEditorDialog = new TShortcutEditorDialog(this);
 	}
 	m_shortcutEditorDialog->show();
 	return 0;

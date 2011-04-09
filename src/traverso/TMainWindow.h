@@ -71,13 +71,13 @@ class MarkerDialog;
 class NewSheetDialog;
 class NewTrackDialog;
 class NewProjectDialog;
-class ShortcutEditorDialog;
+class TShortcutEditorDialog;
 class Ui_QuickStartDialog;
 class RestoreProjectBackupDialog;
 class ProgressToolBar;
 class WelcomeWidget;
 class TSessionTabWidget;
-class ShortcutEditorDialog;
+class TShortcutEditorDialog;
 struct TFunction;
 
 class AbstractVUMeterLevel
@@ -151,7 +151,7 @@ private:
 	NewSheetDialog*		m_newSheetDialog;
 	NewTrackDialog*		m_newTrackDialog;
 	NewProjectDialog*	m_newProjectDialog;
-	ShortcutEditorDialog*	m_shortcutEditorDialog;
+	TShortcutEditorDialog*	m_shortcutEditorDialog;
         WelcomeWidget*          m_welcomeWidget;
 	QDialog*		m_quickStart;
 	RestoreProjectBackupDialog* m_restoreProjectBackupDialog;

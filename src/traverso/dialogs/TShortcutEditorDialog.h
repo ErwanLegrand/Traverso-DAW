@@ -19,8 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 */
 
-#ifndef SHORTCUTEDITORDIALOG_H
-#define SHORTCUTEDITORDIALOG_H
+#ifndef TSHORTCUTEDITORDIALOG_H
+#define TSHORTCUTEDITORDIALOG_H
 
 #include <QDialog>
 
@@ -28,22 +28,22 @@ class TFunction;
 class QAbstractButton;
 
 namespace Ui {
-	class ShortcutEditorDialog;
+	class TShortcutEditorDialog;
 }
 
-class ShortcutEditorDialog : public QDialog
+class TShortcutEditorDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-	explicit ShortcutEditorDialog(QWidget *parent = 0);
-	~ShortcutEditorDialog();
+	explicit TShortcutEditorDialog(QWidget *parent = 0);
+	~TShortcutEditorDialog();
 
 protected:
 	void changeEvent(QEvent *e);
 
 private:
-	Ui::ShortcutEditorDialog *ui;
+	Ui::TShortcutEditorDialog *ui;
 
 	TFunction* getSelectedFunction();
 	void  moveItemUpDown(int direction);

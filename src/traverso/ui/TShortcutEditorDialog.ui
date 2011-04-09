@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ShortcutEditorDialog</class>
- <widget class="QDialog" name="ShortcutEditorDialog">
+ <class>TShortcutEditorDialog</class>
+ <widget class="QDialog" name="TShortcutEditorDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -303,7 +303,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>ShortcutEditorDialog</receiver>
+   <receiver>TShortcutEditorDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -319,7 +319,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>ShortcutEditorDialog</receiver>
+   <receiver>TShortcutEditorDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
