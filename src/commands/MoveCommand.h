@@ -23,7 +23,6 @@
 #define MOVE_COMMAND_H
 
 #include "TCommand.h"
-#include <defines.h>
 
 class MoveCommand : public TCommand
 {

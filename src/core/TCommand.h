@@ -26,11 +26,9 @@
 #include <QObject>
 #include <QUndoCommand>
 #include <QUndoStack>
-#include <QVariantList>
-#include <QPoint>
 
-class HistoryStack;
 class ContextItem;
+class QUndoStack;
 
 class TCommand : public QObject, public QUndoCommand
 {

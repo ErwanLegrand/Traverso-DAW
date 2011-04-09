@@ -24,6 +24,9 @@
 
 #include "TCommand.h"
 
+#include <QVariantList>
+#include <QPoint>
+
 class Sheet;
 class Track;
 

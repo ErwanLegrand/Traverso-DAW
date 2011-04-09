@@ -23,16 +23,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_ShortcutEditorDialog.h"
 
 #include "TShortcutManager.h"
-
+#include "config.h"
 #include <QTreeWidgetItem>
 
 #include "Debugger.h"
 
-ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent) :
-		QDialog(parent),
-		ui(new Ui::ShortcutEditorDialog)
+ShortcutEditorDialog::ShortcutEditorDialog(QWidget *parent)
+	: QDialog(parent),
+	ui(new Ui::ShortcutEditorDialog)
 {
 	ui->setupUi(this);
+
+	ui->upPushButton->hide();
+	ui->downPushButton->hide();
+#ifdef USE_DEBUGGER
+	ui->upPushButton->show();
+	ui->downPushButton->show();
+#endif
+
 	resize(740, 400);
 
 	QStringList keys;
@@ -133,29 +141,14 @@ void ShortcutEditorDialog::objects_combo_box_activated(int index)
 	}
 
 	QList<TFunction* > functionsList = tShortCutManager().getFunctionsFor(className);
-	QMap<QString, QList<TFunction*> > functionsMap;
 
 	foreach(TFunction* function, functionsList)
 	{
-		QList<TFunction*> listForKey = functionsMap.value(function->submenu);
-		listForKey.append(function);
-		functionsMap.insert(function->submenu, listForKey);
-	}
-
-	QStringList subMenus = functionsMap.keys();
-
-	foreach(QString submenu, subMenus)
-	{
-		QList<TFunction*> subMenuFunctionList = functionsMap.value(submenu);
-
-		foreach(TFunction* function, subMenuFunctionList)
-		{
-			QTreeWidgetItem* item;
-			item = new QTreeWidgetItem(QStringList() << function->getLongDescription() << function->getKeySequence());
-			QVariant v = qVariantFromValue((void*) function);
-			item->setData(0, Qt::UserRole, v);
-			ui->shortcutsTreeWidget->addTopLevelItem(item);
-		}
+		QTreeWidgetItem* item;
+		item = new QTreeWidgetItem(QStringList() << function->getLongDescription() << function->getKeySequence());
+		QVariant v = qVariantFromValue((void*) function);
+		item->setData(0, Qt::UserRole, v);
+		ui->shortcutsTreeWidget->addTopLevelItem(item);
 	}
 
 	QTreeWidgetItem* item = ui->shortcutsTreeWidget->topLevelItem(0);
@@ -501,6 +494,43 @@ void ShortcutEditorDialog::button_box_button_clicked(QAbstractButton* button)
 		tShortCutManager().restoreDefaults();
 
 	}
+}
+
+void ShortcutEditorDialog::on_downPushButton_clicked()
+{
+	moveItemUpDown(1);
+}
+
+void ShortcutEditorDialog::on_upPushButton_clicked()
+{
+	moveItemUpDown(-1);
+}
+
+void ShortcutEditorDialog::moveItemUpDown(int direction)
+{
+	QTreeWidgetItem* item = ui->shortcutsTreeWidget->currentItem();
+	if (!item)
+	{
+		return;
+	}
+
+	int index = ui->shortcutsTreeWidget->indexOfTopLevelItem(item);
+	if ((index + direction) < 0 || (index + direction) >= ui->shortcutsTreeWidget->topLevelItemCount())
+	{
+		return;
+	}
+	ui->shortcutsTreeWidget->takeTopLevelItem(index);
+	ui->shortcutsTreeWidget->insertTopLevelItem(index + direction, item);
+	ui->shortcutsTreeWidget->setCurrentItem(item);
+
+	for (int i=0; i<ui->shortcutsTreeWidget->topLevelItemCount(); ++i)
+	{
+		item = ui->shortcutsTreeWidget->topLevelItem(i);
+		TFunction* function = (TFunction*) item->data(0, Qt::UserRole).value<void*>();
+		function->sortorder = i;
+	}
+
+	tShortCutManager().exportFunctions();
 }
 
 void ShortcutEditorDialog::changeEvent(QEvent *e)

@@ -243,12 +243,31 @@ QList< TFunction* > TShortcutManager::getFunctionsFor(QString className)
 	{
 		foreach(TFunction* function, m_functions)
 		{
-			if (function->object == object)
+			// filter out objects that inherit from MoveCommand
+			// but do not support move up/down
+			bool hasRequiredSlot = true;
+			if (!function->slotsignature.isEmpty())
+			{
+				QList<const QMetaObject*> metaList = m_metaObjects.value(className);
+				if (metaList.size())
+				{
+					if (function->slotsignature == "move_up" && metaList.first()->indexOfMethod("move_up(bool)") == -1) {
+						hasRequiredSlot = false;
+					}
+					if (function->slotsignature == "move_down" && metaList.first()->indexOfMethod("move_down(bool)") == -1) {
+						hasRequiredSlot = false;
+					}
+				}
+			}
+
+			if (function->object == object && hasRequiredSlot)
 			{
 				functionsList.append(function);
 			}
 		}
 	}
+
+	qSort(functionsList.begin(), functionsList.end(), TFunction::smaller);
 	return functionsList;
 }
 
@@ -1090,6 +1109,11 @@ void TShortcutManager::saveFunction(TFunction *function)
 	settings.setValue("keys", function->getKeys(false).join(";"));
 	QStringList modifiers = function->getModifierSequence(false).split("+", QString::SkipEmptyParts);
 	settings.setValue("modifiers", modifiers.join(";"));
+	settings.setValue("sortorder", function->sortorder);
+	if (!function->submenu.isEmpty())
+	{
+		settings.setValue("submenu", function->submenu);
+	}
 	if (function->getAutoRepeatInterval() >= 0)
 	{
 		settings.setValue("autorepeatinterval", function->getAutoRepeatInterval());
@@ -1110,6 +1134,14 @@ void TShortcutManager::saveFunction(TFunction *function)
 		}
 	}
 	settings.endGroup();
+}
+
+void TShortcutManager::exportFunctions()
+{
+	foreach(TFunction* function, m_functions)
+	{
+		saveFunction(function);
+	}
 }
 
 void TShortcutManager::loadShortcuts()

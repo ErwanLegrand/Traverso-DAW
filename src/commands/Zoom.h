@@ -25,6 +25,9 @@
 
 #include "TCommand.h"
 
+#include <QVariantList>
+#include <QPointF>
+
 class SheetView;
 class TrackView;
 class QPoint;

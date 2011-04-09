@@ -155,6 +155,7 @@ public:
 
 	void loadFunctions();
 	void saveFunction(TFunction* function);
+	void exportFunctions();
 	void loadShortcuts();
 	void restoreDefaultFor(TFunction* function);
 	void restoreDefaults();

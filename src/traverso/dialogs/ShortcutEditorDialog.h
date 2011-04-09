@@ -46,6 +46,7 @@ private:
 	Ui::ShortcutEditorDialog *ui;
 
 	TFunction* getSelectedFunction();
+	void  moveItemUpDown(int direction);
 
 private slots:
 	void objects_combo_box_activated(int index);
@@ -58,6 +59,8 @@ private slots:
 	void configure_inherited_shortcut_pushbutton_clicked();
 	void base_function_checkbox_clicked();
 	void on_restoreDefaultPushButton_clicked();
+	void on_upPushButton_clicked();
+	void on_downPushButton_clicked();
 	void button_box_button_clicked(QAbstractButton*);
 };
 

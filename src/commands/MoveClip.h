@@ -25,6 +25,7 @@
 #include "MoveCommand.h"
 
 #include <QPoint>
+#include <QVariantList>
 #include <defines.h>
 #include "AudioClipGroup.h"
 #include "Marker.h"
@@ -99,7 +100,7 @@ public slots:
 	void prev_snap_pos(bool autorepeat);
         void move_to_start(bool autorepeat);
         void move_to_end(bool autorepeat);
-	void move_up(bool autorepeat);;
+	void move_up(bool autorepeat);
 	void move_down(bool autorepeat);
 	void move_left(bool autorepeat);
 	void move_right(bool autorepeat);

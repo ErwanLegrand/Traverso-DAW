@@ -24,6 +24,8 @@
 
 #include "TCommand.h"
 
+#include <QVariant>
+
 class ContextItem;
 
 class PCommand : public TCommand

@@ -23,6 +23,7 @@
 #define PLAYHEAD_MOVE_H
 
 #include "MoveCommand.h"
+#include "defines.h"
 
 class TSession;
 class SheetView;
@@ -30,7 +31,7 @@ class PlayHead;
 
 class PlayHeadMove : public MoveCommand
 {
-        Q_OBJECT;
+	Q_OBJECT
 
 public :
         PlayHeadMove(SheetView* sv);

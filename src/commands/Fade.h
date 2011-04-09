@@ -26,6 +26,8 @@ $Id: Fade.h,v 1.13 2008/01/21 16:22:11 r_sijrier Exp $
 #include "TCommand.h"
 #include "MoveCommand.h"
 
+#include <QPoint>
+
 class Curve;
 class AudioClip;
 class FadeCurve;

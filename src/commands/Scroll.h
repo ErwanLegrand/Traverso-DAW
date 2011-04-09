@@ -24,6 +24,8 @@
 
 #include "MoveCommand.h"
 
+#include <QVariantList>
+
 class SheetView;
 class QPoint;
 

@@ -24,6 +24,7 @@
 
 #include "TCommand.h"
 #include <QPoint>
+#include <QVariantList>
 
 class ContextItem;
 
