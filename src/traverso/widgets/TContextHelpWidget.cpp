@@ -80,12 +80,28 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 
 	m_helpIntroduction = m_helpIntroduction.arg(tr("Current Context")).arg(tShortCutManager().get_translation_for("AudioTrack")).arg(tShortCutManager().get_translation_for("AudioClip"));
 
-	QMap<QString, QString> sorted;
+
+	QMap<QString, QString> classNamesMap;
+	QMap<QString, QString> commandClassNamesMap;
+
 	foreach(QString className, tShortCutManager().getClassNames()) {
-		sorted.insert(tShortCutManager().get_translation_for(className), className);
-        }
-	foreach(QString value, sorted.values()) {
-		m_comboBox->addItem(sorted.key(value), value);
+		if (tShortCutManager().isCommandClass(className))
+		{
+			commandClassNamesMap.insert(tShortCutManager().get_translation_for(className), className);
+		}
+		else
+		{
+			classNamesMap.insert(tShortCutManager().get_translation_for(className), className);
+		}
+	}
+
+	foreach(QString className, classNamesMap.values()) {
+		m_comboBox->addItem(classNamesMap.key(className), className);
+	}
+
+	foreach(QString className, commandClassNamesMap)
+	{
+		m_comboBox->addItem(commandClassNamesMap.key(className) + " " + tr("(Hold Function)"), className);
 	}
 
 	int index = config().get_property("ShortcutsHelp", "DropDownIndex", 0).toInt();
