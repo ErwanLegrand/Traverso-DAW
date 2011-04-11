@@ -37,7 +37,7 @@ class Marker : public ContextItem, public Snappable
 public:
 	enum Type {
 		CDTRACK,
-		ENDMARKER,
+		ENDMARKER
 	};
 
 	Marker(TimeLine* tl, const TimeRef when, Type type = CDTRACK);

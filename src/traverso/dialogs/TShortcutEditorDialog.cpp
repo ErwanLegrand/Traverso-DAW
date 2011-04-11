@@ -41,7 +41,7 @@ TShortcutEditorDialog::TShortcutEditorDialog(QWidget *parent)
 	ui->downPushButton->show();
 #endif
 
-	resize(740, 400);
+	resize(780, 400);
 
 	QStringList keys;
 	keys << "|";
@@ -62,7 +62,7 @@ TShortcutEditorDialog::TShortcutEditorDialog(QWidget *parent)
 	keys << "Left Arrow|LEFTARROW" << "Right Arrow|RIGHTARROW" << "Up Arrow|UPARROW" << "Down Arrow|DOWNARROW";
 	keys << "Enter|ENTER" << "Home|HOME" << "End|END" << "Delete|DELETE";
 	keys << "Page Up|PAGEUP" << "Page Down|PAGEDOWN";
-	keys << "Left Button|MouseButtonLeft" << "Right Button|MouseButtonRight";
+	keys << "Left Button|MOUSEBUTTONLEFT" << "Right Button|MOUSEBUTTONRIGHT";
 	keys << "Scroll Up|MOUSESCROLLVERTICALUP" << "Scroll Down|MOUSESCROLLVERTICALDOWN";
 	keys << "+|PLUS" << "-|MINUS" << "/|/" << "\\|\\" << "[|[" << "]|]" << ",|," << ".|." << ";|;" << "'|'";
 
@@ -214,7 +214,7 @@ void TShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 
 	ui->shortcutsTreeWidget->clear();
 
-	QString keyString = ui->keyComboBox1->currentText();
+	QString keyString = ui->keyComboBox1->itemData(ui->keyComboBox1->currentIndex()).toString();
 	TShortcut* shortCut = tShortCutManager().getShortcut(keyString);
 
 	if (!shortCut)
@@ -316,6 +316,7 @@ void TShortcutEditorDialog::shortcut_tree_widget_item_activated()
 	{
 		ui->baseFunctionGroupBox->setTitle(tr("Inherits:") + " " + inheritedFunction->getDescription());
 		ui->baseFunctionShortCutLable->setText(inheritedFunction->getKeySequence());
+		ui->configureInheritedShortcutPushButton->setText(tr("Configure %1").arg(inheritedFunction->getDescription()));
 		ui->baseFunctionGroupBox->show();
 
 		if (usesInheritedBase)
@@ -408,8 +409,8 @@ void TShortcutEditorDialog::show_functions_checkbox_clicked()
 	{
 		ui->shortcutsTreeWidget->setColumnCount(3);
 		ui->shortcutsTreeWidget->setHeaderLabels(QStringList() << tr("Item") << tr("Function") << tr("Shortcut"));
-		ui->shortcutsTreeWidget->header()->resizeSection(0, 200);
-		ui->shortcutsTreeWidget->header()->resizeSection(1, 200);
+		ui->shortcutsTreeWidget->header()->resizeSection(0, 190);
+		ui->shortcutsTreeWidget->header()->resizeSection(1, 190);
 		ui->objectsComboBox->hide();
 		ui->keyComboBox2->hide();
 		ui->baseFunctionGroupBox->hide();

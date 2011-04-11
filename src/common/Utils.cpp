@@ -344,6 +344,14 @@ bool t_KeyStringToKeyValue(int &variable, const QString &text)
 							variable = Qt::Key_Minus;
 						} else if (text == "PLUS") {
 							variable = Qt::Key_Plus;
+						} else if (text == ";") {
+							variable = Qt::Key_Semicolon;
+						} else if (text == "'") {
+							variable = Qt::Key_Apostrophe;
+						} else if (text == ",") {
+							variable = Qt::Key_Comma;
+						} else if (text == ".") {
+							variable = Qt::Key_Period;
 						} else {
 							printf("KeyStringToValue: No value found for key %s\n", QS_C(text));
 							return false;
