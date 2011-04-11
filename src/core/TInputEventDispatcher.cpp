@@ -382,6 +382,11 @@ int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepea
 					m_isHolding = true;
 					m_holdEventCode = shortCut->getKeyValue();
 					set_jogging(true);
+					if (fromContextMenu)
+					{
+						m_isHoldingFromContextMenu = true;
+						info().information(tr("Enter to accept, Esc to abort"));
+					}
 				} else {
 					PERROR("hold action begin_hold() failed!");
 					// OOPSSS, something went wrong when making the Command
@@ -478,6 +483,7 @@ void TInputEventDispatcher::reset()
 {
 	PENTER3;
 	m_isHolding = false;
+	m_isHoldingFromContextMenu = false;
 	m_cancelHold = false;
 	m_bypassJog = false;
 
@@ -560,6 +566,12 @@ void TInputEventDispatcher::process_press_event(int keyValue)
 	if (keyValue == Qt::Key_Escape && is_holding())
 	{
 		m_cancelHold = true;
+		finish_hold();
+		return;
+	}
+
+	if ((keyValue == Qt::Key_Return || keyValue == Qt::Key_Enter) && m_isHoldingFromContextMenu)
+	{
 		finish_hold();
 		return;
 	}
@@ -679,7 +691,6 @@ void TInputEventDispatcher::finish_hold()
 	PENTER3;
 	PMESG("Finishing hold action %s", m_holdingCommand->metaObject()->className());
 
-	m_isHolding = false;
 	m_holdEventCode = -100;
 
 	clear_hold_modifier_keys();

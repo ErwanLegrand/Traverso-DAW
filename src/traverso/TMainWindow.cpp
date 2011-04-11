@@ -955,6 +955,9 @@ void TMainWindow::set_project_actions_enabled(bool enable)
 
 void TMainWindow::process_context_menu_action( QAction * action )
 {
+	QMenu* menu = qobject_cast<QMenu*>(action->parent());
+	QCursor::setPos(menu->pos());
+	qApp->processEvents();
 	TFunction* function = (TFunction*) action->data().value<void*>();
 	ied().dispatch_shortcut_from_contextmenu(function);
 }
@@ -1092,7 +1095,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 			list = submenus.value(function->submenu);
 			list->append(function);
 		} else {
-			QAction* action = new QAction(this);
+			QAction* action = new QAction(menu);
 			action->setText(function->getDescription());
 			QKeySequence sequence(function->getKeySequence().remove(" "));
 			action->setShortcut(sequence);
