@@ -1124,7 +1124,7 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 		QAction* action = menu->insertMenu(0, subMenu);
 		action->setText(tShortCutManager().get_translation_for(key));
 		foreach(TFunction* function, *list) {
-			QAction* action = new QAction(subMenu);
+			QAction* action = new QAction(menu);
 			action->setText(function->getDescription());
 			QKeySequence sequence(function->getKeySequence().remove(" "));
 			action->setShortcut(sequence);
