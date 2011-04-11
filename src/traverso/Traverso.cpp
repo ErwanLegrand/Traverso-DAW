@@ -104,11 +104,11 @@ Traverso::Traverso(int &argc, char **argv )
 	qRegisterMetaType<InfoStruct>("InfoStruct");
 	qRegisterMetaType<TimeRef>("TimeRef");
 	
+	config().check_and_load_configuration();
+	
 	tShortCutManager().add_meta_object(&SpectralMeterView::staticMetaObject);
 	tShortCutManager().add_meta_object(&CorrelationMeterView::staticMetaObject);
 
-	config().check_and_load_configuration();
-	
 	// Initialize random number generator
 	srand ( time(NULL) );
 	

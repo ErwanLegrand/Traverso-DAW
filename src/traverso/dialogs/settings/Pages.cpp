@@ -819,13 +819,18 @@ KeyboardConfigPage::KeyboardConfigPage(QWidget * parent)
 {
 	setupUi(this);
 
+	QButtonGroup* group = new QButtonGroup(this);
+	group->addButton(enterPressedCheckBox);
+	group->addButton(keyReleaseCheckBox);
+
 	load_config();
 }
 
 void KeyboardConfigPage::load_config()
 {
-        int jogByPassDistance = config().get_property("CCE", "jobbypassdistance", 70).toInt();
-        int mouseClickTakesOverKeyboardNavigation = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
+	int jogByPassDistance = config().get_property("InputEventDispatcher", "jobbypassdistance", 70).toInt();
+	int mouseClickTakesOverKeyboardNavigation = config().get_property("InputEventDispatcher", "mouseclicktakesoverkeyboardnavigation", false).toBool();
+	bool enterFinishesHold = config().get_property("InputEventDispatcher", "EnterFinishesHold", false).toBool();
 	
         mouseTreshHoldSpinBox->setValue(jogByPassDistance);
 
@@ -834,12 +839,19 @@ void KeyboardConfigPage::load_config()
         } else {
                 mouseMoveRadioButton->setChecked(true);
         }
+
+	if (enterFinishesHold) {
+		enterPressedCheckBox->setChecked(true);
+	} else {
+		keyReleaseCheckBox->setChecked(true);
+	}
 }
 
 void KeyboardConfigPage::save_config()
 {
-        config().set_property("CCE", "jobbypassdistance", mouseTreshHoldSpinBox->value());
-        config().set_property("CCE", "mouseclicktakesoverkeyboardnavigation", leftMouseClickRadioButton->isChecked());
+	config().set_property("InputEventDispatcher", "jobbypassdistance", mouseTreshHoldSpinBox->value());
+	config().set_property("InputEventDispatcher", "mouseclicktakesoverkeyboardnavigation", leftMouseClickRadioButton->isChecked());
+	config().set_property("InputEventDispatcher", "EnterFinishesHold", enterPressedCheckBox->isChecked());
 
         cpointer().set_jog_bypass_distance(mouseTreshHoldSpinBox->value());
         cpointer().set_left_mouse_click_bypasses_jog(leftMouseClickRadioButton->isChecked());
@@ -847,9 +859,10 @@ void KeyboardConfigPage::save_config()
 
 void KeyboardConfigPage::reset_default_config()
 {
-        config().set_property("CCE", "jobbypassdistance", 70);
-        config().set_property("CCE", "mouseclicktakesoverkeyboardnavigation", false);
-        load_config();
+	config().set_property("InputEventDispatcher", "jobbypassdistance", 70);
+	config().set_property("InputEventDispatcher", "mouseclicktakesoverkeyboardnavigation", false);
+	config().set_property("InputEventDispatcher", "EnterFinishesHold", false);
+	load_config();
 }
 
 void KeyboardConfigPage::on_exportButton_clicked()
@@ -900,7 +913,7 @@ PerformanceConfigPage::PerformanceConfigPage(QWidget* parent)
 
 void PerformanceConfigPage::load_config()
 {
-	int jogUpdateInterval = config().get_property("CCE", "jogupdateinterval", 28).toInt();
+	int jogUpdateInterval = config().get_property("InputEventDispatcher", "jogupdateinterval", 28).toInt();
 	bool useOpenGL = config().get_property("Interface", "OpenGL", false).toBool();
 	
 	jogUpdateIntervalSpinBox->setValue(1000 / jogUpdateInterval);
@@ -914,15 +927,14 @@ void PerformanceConfigPage::load_config()
 void PerformanceConfigPage::save_config()
 {
 	config().set_property("Interface", "OpenGL", useOpenGLCheckBox->isChecked());
-	config().set_property("CCE", "jogupdateinterval", 1000 / jogUpdateIntervalSpinBox->value());	
+	config().set_property("InputEventDispatcher", "jogupdateinterval", 1000 / jogUpdateIntervalSpinBox->value());
 	double buffertime = bufferTimeSpinBox->value();
 	config().set_property("Hardware", "readbuffersize", buffertime);
 }
 
 void PerformanceConfigPage::reset_default_config()
 {
-	config().set_property("CCE", "jogupdateinterval", 28);
-	config().set_property("Interface", "OpenGL", false);
+	config().set_property("InputEventDispatcher", "jogupdateinterval", 28);
 	config().set_property("Hardware", "readbuffersize", 1.0);
 	load_config();
 }
