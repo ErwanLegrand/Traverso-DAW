@@ -225,27 +225,19 @@ TMainWindow::TMainWindow()
 //        m_mainMenuToolBar->setStyleSheet("margin-top: 0px; margin-bottom: 0px;");
 	m_mainMenuToolBar->setMovable(false);
 
-#if defined (Q_WS_MAC)  // OS X is a lot pickier about menu bars. If we don't use
-			// QMainWindow::menuBar(), the menus won't be shown at all.
-			// If possible, I would recommend using the same solution
-			// on other platforms as well, to reduce platform-specific
-			// code. (ND)
+#if defined (Q_WS_MAC)
+	// OS X is a lot pickier about menu bars. If we don't use
+	// QMainWindow::menuBar(), the menus won't be shown at all.
+	// If possible, I would recommend using the same solution
+	// on other platforms as well, to reduce platform-specific
+	// code. (ND)
 	m_mainMenuBar = menuBar();
 #else
-	m_mainMenuBar = new QMenuBar(m_mainMenuToolBar);
+	m_mainMenuBar = menuBar();
 	m_mainMenuToolBar->addWidget(m_mainMenuBar);
 #endif
-	QLabel* webAddressLabel = new QLabel(m_mainMenuToolBar);
-	webAddressLabel->setText("<a href=\"http://traverso-daw.org/Welcome\">traverso-daw.org</a>");
-	webAddressLabel->setOpenExternalLinks(true);
-
-	m_mainMenuToolBar->addWidget(webAddressLabel);
 	addToolBar(Qt::TopToolBarArea, m_mainMenuToolBar);
 
-#if !defined (Q_WS_MAC)
-		// why do that? Anyway, it just doesn't look good on OS X. (ND)
-	addToolBarBreak();
-#endif
 
 	m_projectToolBar = new QToolBar(this);
 	m_projectToolBar->setObjectName("Project Toolbar");
