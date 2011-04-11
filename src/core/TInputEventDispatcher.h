@@ -61,9 +61,8 @@ public:
 	bool is_holding();
 
 	TCommand* get_holding_command() const;
-	void filter_unknown_sequence(QString& sequence);
 
-	int dispatch_shortcut_from_contextmenu(const QString& name);
+	int dispatch_shortcut_from_contextmenu(TFunction* function);
 
         void jog();
         void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=50);
@@ -80,7 +79,7 @@ private:
 	~TInputEventDispatcher();
 
 	enum BroadcastResult {
-		SUCCES=1,
+		SUCCESS=1,
 		FAILURE=2,
 		DIDNOTIMPLEMENT=3
 	};

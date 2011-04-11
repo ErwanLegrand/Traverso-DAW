@@ -955,9 +955,8 @@ void TMainWindow::set_project_actions_enabled(bool enable)
 
 void TMainWindow::process_context_menu_action( QAction * action )
 {
-	QStringList strings = action->data().toStringList();
-	QString name = strings.first();
-	ied().dispatch_shortcut_from_contextmenu(name);
+	TFunction* function = (TFunction*) action->data().value<void*>();
+	ied().dispatch_shortcut_from_contextmenu(function);
 }
 
 TCommand * TMainWindow::show_context_menu( )
@@ -1061,8 +1060,6 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 		return 0;
 	}
 
-	qSort(list.begin(), list.end(), TFunction::smaller);
-
 	QString name;
 	if (item) {
 		name = tShortCutManager().get_translation_for(QString(item->metaObject()->className()));
@@ -1097,12 +1094,10 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 		} else {
 			QAction* action = new QAction(this);
 			action->setText(function->getDescription());
-			QString sequence = function->getKeySequence();
-			ied().filter_unknown_sequence(sequence);
+			QKeySequence sequence(function->getKeySequence().remove(" "));
 			action->setShortcut(sequence);
-			QStringList strings;
-			strings << function->getKeySequence() << function->getDescription();
-			action->setData(strings);
+			QVariant v = qVariantFromValue((void*) function);
+			action->setData(v);
 			menu->addAction(action);
 		}
 	}
@@ -1128,12 +1123,10 @@ QMenu* TMainWindow::create_context_menu(QObject* item, QList<TFunction* >* menul
 		foreach(TFunction* function, *list) {
 			QAction* action = new QAction(subMenu);
 			action->setText(function->getDescription());
-			QString sequence = function->getKeySequence();
-			ied().filter_unknown_sequence(sequence);
+			QKeySequence sequence(function->getKeySequence().remove(" "));
 			action->setShortcut(sequence);
-			QStringList strings;
-			strings << function->getKeySequence() << function->getDescription();
-			action->setData(strings);
+			QVariant v = qVariantFromValue((void*) function);
+			action->setData(v);
 			subMenu->addAction(action);
 		}
 

@@ -102,17 +102,31 @@ TInputEventDispatcher::~ TInputEventDispatcher( )
 {
 }
 
-int TInputEventDispatcher::dispatch_shortcut_from_contextmenu(const QString& keySequence)
+int TInputEventDispatcher::dispatch_shortcut_from_contextmenu(TFunction* function)
 {
 	PENTER2;
-	TShortcut* action = tShortCutManager().getShortcut(keySequence);
+	QStringList keys = function->getKeys();
+	if (!keys.size())
+	{
+		return -1;
+	}
+	TShortcut* shortCut = tShortCutManager().getShortcut(keys.first());
 
-	if (! action) {
-		PERROR("ContextMenu keySequence doesn't apply to any InputEngine knows off!! (%s)", QS_C(keySequence));
+	if (! shortCut) {
+		PERROR("ContextMenu keySequence doesn't apply to any InputEngine knows off!! (%s)", QS_C(keys.first()));
 		return -1;
 	}
 
-	return dispatch_shortcut(action, false, true);
+	foreach(int modifier, function->getModifierKeys())
+	{
+		m_activeModifierKeys.append(modifier);
+	}
+
+	dispatch_shortcut(shortCut, false, true);
+
+	m_activeModifierKeys.clear();
+
+	return 1;
 }
 
 
@@ -340,7 +354,7 @@ int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepea
 		// don't want to try lower level context items or the action was succesfull but we'd like
 		// to give a lower level object precedence over the current one.
 		if (m_dispatchResult) {
-			if (m_dispatchResult == SUCCES) {
+			if (m_dispatchResult == SUCCESS) {
 				PMESG("Broadcast Result indicates succes, but no returned Command object");
 				conclusion();
 				return 1;
@@ -391,7 +405,7 @@ int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepea
 
 TCommand* TInputEventDispatcher::succes()
 {
-	m_dispatchResult = SUCCES;
+	m_dispatchResult = SUCCESS;
 	return 0;
 }
 
@@ -728,21 +742,6 @@ void TInputEventDispatcher::conclusion()
 	PENTER3;
 	reset();
 }
-
-
-void TInputEventDispatcher::filter_unknown_sequence(QString& sequence)
-{
-	sequence.replace(tr("Up Arrow"), "Up");
-	sequence.replace(tr("Down Arrow"), "Down");
-	sequence.replace(tr("Left Arrow"), "Left");
-	sequence.replace(tr("Right Arrow"), "Right");
-//	sequence.replace(tr("Delete", "Delete"));
-	sequence.replace(QString("-"), "Minus");
-	sequence.replace(QString("+"), "Plus");
-//	sequence.replace(tr("Page Down"));
-//	sequence.replace(tr("Page Up"));
-}
-
 
 // Number colector
 bool TInputEventDispatcher::check_number_collection(int eventcode)
