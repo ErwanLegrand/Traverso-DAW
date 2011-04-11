@@ -123,6 +123,7 @@ Traverso::~Traverso()
 	delete TMainWindow::instance();
 	delete themer();
         config().save();
+	audiodevice().shutdown();
 }
 
 void Traverso::create_interface( )
