@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "CommandPlugin.h"
 #include "Utils.h"
 #include "TShortcutManager.h"
+#include "TConfig.h"
 
 #include <QMetaMethod>
 #include <QKeyEvent>
@@ -384,7 +385,7 @@ int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepea
 					set_jogging(true);
 					if (fromContextMenu)
 					{
-						m_isHoldingFromContextMenu = true;
+						m_enterFinishesHold = true;
 						info().information(tr("Enter to accept, Esc to abort"));
 					}
 				} else {
@@ -483,7 +484,7 @@ void TInputEventDispatcher::reset()
 {
 	PENTER3;
 	m_isHolding = false;
-	m_isHoldingFromContextMenu = false;
+	m_enterFinishesHold = config().get_property("InputEventDispatcher", "EnterFinishesHold", false).toBool();
 	m_cancelHold = false;
 	m_bypassJog = false;
 
@@ -570,7 +571,7 @@ void TInputEventDispatcher::process_press_event(int keyValue)
 		return;
 	}
 
-	if ((keyValue == Qt::Key_Return || keyValue == Qt::Key_Enter) && m_isHoldingFromContextMenu)
+	if ((keyValue == Qt::Key_Return || keyValue == Qt::Key_Enter) && m_enterFinishesHold)
 	{
 		finish_hold();
 		return;
@@ -650,6 +651,11 @@ void TInputEventDispatcher::process_release_event(int eventcode)
 			PMESG("release event during hold action, but NOT for holdaction itself!!");
 			return;
 		} else {
+			if (m_enterFinishesHold)
+			{
+				PMESG("Only Enter or Esc keys are accepted to finish a hold command");
+				return;
+			}
 			PMESG("release event for hold action detected!");
 			finish_hold();
 		}

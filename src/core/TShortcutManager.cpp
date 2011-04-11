@@ -198,6 +198,7 @@ void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
 	keyfact.replace(QString("PAGEDOWN"), tr("Page Down"));
 	keyfact.replace(QString("PAGEUP"), tr("Page Up"));
 	keyfact.replace(QString("ESC"), tr("Esc"));
+	keyfact.replace(QString("ENTER"), tr("Enter"));
 	keyfact.replace(QString("NUMERICAL"), tr("0, 1, ... 9"));
 }
 
@@ -722,8 +723,14 @@ void TShortcutManager::loadFunctions()
 
 	function = new TFunction();
 	function->object = "TCommand";
-	function->m_description = tr("Abort");
-	function->commandName = "AbortHoldCommand";
+	function->m_description = tr("Reject");
+	function->commandName = "RejectHoldCommand";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TCommand";
+	function->m_description = tr("Accept");
+	function->commandName = "AcceptHoldCommand";
 	addFunction(function);
 
 	function = new TFunction();
@@ -1475,7 +1482,7 @@ TCommand * TShortcutManager::get_keymap(QString &str)
 	      ".object {background-color: #ccc; font-size: 16px; font-weight: bold;}\n"
 	      ".description {background-color: #ddd; width: 300px; padding: 2px; font-size: 12px; font-weight: bold;}\n"
 	      "</style>\n"
-	      "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("CCE", "keymap", "default").toString() + "</h1>\n";
+	      "</head>\n<body>\n<h1>Traverso keymap: " + config().get_property("InputEventDispatcher", "keymap", "default").toString() + "</h1>\n";
 
 	foreach(QString className, tShortCutManager().getClassNames()) {
 		str += tShortCutManager().createHtmlForClass(className);

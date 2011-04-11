@@ -102,7 +102,7 @@ private:
 
 
         bool 			m_isHolding;
-	bool			m_isHoldingFromContextMenu;
+	bool			m_enterFinishesHold;
         bool 			m_isJogging;
 	bool			m_cancelHold;
 	bool			m_bypassJog;

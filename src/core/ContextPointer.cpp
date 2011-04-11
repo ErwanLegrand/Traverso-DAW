@@ -72,7 +72,7 @@ ContextPointer::ContextPointer()
 	m_currentContext = 0;
 	m_keyboardOnlyInput = false;
 
-	m_mouseLeftClickBypassesJog = config().get_property("CCE", "mouseclicktakesoverkeyboardnavigation", false).toBool();
+	m_mouseLeftClickBypassesJog = config().get_property("InputEventDispatcher", "mouseclicktakesoverkeyboardnavigation", false).toBool();
 
 	connect(&m_jogTimer, SIGNAL(timeout()), this, SLOT(update_jog()));
 	connect(&ied(), SIGNAL(jogStarted()), this, SLOT(jog_start()));
@@ -149,7 +149,7 @@ void ContextPointer::jog_start()
 		m_port->grab_mouse();
 	}
 	m_jogEvent = true;
-	int interval = config().get_property("CCE", "jogupdateinterval", 33).toInt();
+	int interval = config().get_property("InputEventDispatcher", "jogupdateinterval", 33).toInt();
 	m_jogTimer.start(interval);
 }
 
