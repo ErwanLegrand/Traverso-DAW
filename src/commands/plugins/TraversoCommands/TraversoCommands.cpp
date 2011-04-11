@@ -85,7 +85,7 @@ TraversoCommands::TraversoCommands()
 	tShortCutManager().add_translation("ArrowKeyBrowser", tr("Arrow Key Browser"));
 	tShortCutManager().add_translation("ArmTracks", tr("Arm Tracks"));
 	tShortCutManager().add_translation("CropClip", tr("Cut Clip (Magnetic)"));
-	tShortCutManager().add_translation("Fade", tr("Fade"));
+	tShortCutManager().add_translation("Fade", tr("Fade In/Out"));
 	tShortCutManager().add_translation("Gain", tr("Gain"));
 	tShortCutManager().add_translation("MoveClip", tr("Move Clip"));
 	tShortCutManager().add_translation("MoveCurveNode", tr("Move Node"));
