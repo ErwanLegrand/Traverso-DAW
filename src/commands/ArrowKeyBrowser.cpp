@@ -28,45 +28,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 ArrowKeyBrowser::ArrowKeyBrowser(SheetView *sv, QVariantList args)
 {
         m_sv = sv;
-        m_arrow = -1;
-	m_repeatInterval = 140;
-
-        if (args.size() >= 1) {
-                m_arrow = args.at(0).toInt();
-        }
-        if (args.size() >=2) {
-                m_repeatInterval = args.at(1).toInt();
-        }
-
-        connect(&m_browseTimer, SIGNAL(timeout()), this, SLOT(browse()));
-}
-
-void ArrowKeyBrowser::start_autorepeat_timer()
-{
-	m_browseTimer.start(m_repeatInterval);
 }
 
 int ArrowKeyBrowser::begin_hold()
 {
-        if (m_arrow == -1) {
-                // we couldn't detect in the constructor
-                // what type of browsing we should do, so
-                // bail out here
-                return -1;
-        }
-
-	// always browse at least one time, autorepeat
-	// is simulated by the browseTimer
-	browse();
-
-	QTimer::singleShot(200, this, SLOT(start_autorepeat_timer()));
-
         return 1;
 }
 
 int ArrowKeyBrowser::finish_hold()
 {
-        m_browseTimer.stop();
         return -1;
 }
 
@@ -80,18 +50,22 @@ void ArrowKeyBrowser::set_cursor_shape(int useX, int useY)
         }
 }
 
-void ArrowKeyBrowser::browse()
+void ArrowKeyBrowser::up(bool autorepeat)
 {
-        if (m_arrow == Qt::LeftArrow) {
-                m_sv->browse_to_previous_context_item();
-        } else if (m_arrow == Qt::RightArrow) {
-                m_sv->browse_to_next_context_item();
-        } else if (m_arrow == Qt::UpArrow) {
-                m_sv->browse_to_context_item_above();
-        } else if (m_arrow == Qt::DownArrow) {
-                m_sv->browse_to_context_item_below();
-        } else {
-                printf("m_arrow is not a supported arrow key %d\n", m_arrow);
-        }
+	m_sv->browse_to_context_item_above();
 }
 
+void ArrowKeyBrowser::down(bool autorepeat)
+{
+	m_sv->browse_to_context_item_below();
+}
+
+void ArrowKeyBrowser::left(bool autorepeat)
+{
+	m_sv->browse_to_previous_context_item();
+}
+
+void ArrowKeyBrowser::right(bool autorepeat)
+{
+	m_sv->browse_to_next_context_item();
+}

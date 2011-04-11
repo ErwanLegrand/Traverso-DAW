@@ -67,7 +67,7 @@ public:
         void jog();
         void bypass_jog_until_mouse_movements_exceeded_manhattenlength(int length=50);
         void update_jog_bypass_pos();
-	void abort_current_hold_actions();
+	void reject_current_hold_actions();
 	
 	TCommand* succes();
 	TCommand* failure();

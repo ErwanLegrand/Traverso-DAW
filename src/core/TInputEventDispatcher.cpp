@@ -491,7 +491,7 @@ void TInputEventDispatcher::reset()
 	set_numerical_input("");
 }
 
-void TInputEventDispatcher::abort_current_hold_actions()
+void TInputEventDispatcher::reject_current_hold_actions()
 {
 	m_activeModifierKeys.clear();
 	clear_hold_modifier_keys();
@@ -595,28 +595,21 @@ void TInputEventDispatcher::process_press_event(int keyValue)
 
 	TShortcut* shortCut = tShortCutManager().getShortcut(keyValue);
 
-	if (m_isHolding)
+	if (m_isHolding && shortCut)
 	{
-		// PRE-CONDITION:
-		// The eventcode must be bind to a single key fact AND
-		// the eventcode must be != the current active holding
-		// command's eventcode!
-		if (shortCut && m_holdEventCode != keyValue)
-		{
-			HoldModifierKey* hmk = new HoldModifierKey;
-			hmk->keycode = keyValue;
-			hmk->wasExecuted = false;
-			hmk->lastTimeExecuted = 0;
-			hmk->shortcut = shortCut;
-			m_holdModifierKeys.insert(keyValue, hmk);
-			// execute the first one directly, this is needed
-			// if the release event comes before the timer actually
-			// fires (mouse scroll wheel does press/release events real quick
-			process_hold_modifier_keys();
-			// only start it once
-			if (!m_holdKeyRepeatTimer.isActive()) {
-				m_holdKeyRepeatTimer.start(10);
-			}
+		HoldModifierKey* hmk = new HoldModifierKey;
+		hmk->keycode = keyValue;
+		hmk->wasExecuted = false;
+		hmk->lastTimeExecuted = 0;
+		hmk->shortcut = shortCut;
+		m_holdModifierKeys.insert(keyValue, hmk);
+		// execute the first one directly, this is needed
+		// if the release event comes before the timer actually
+		// fires (mouse scroll wheel does press/release events real quick
+		process_hold_modifier_keys();
+		// only start it once
+		if (!m_holdKeyRepeatTimer.isActive()) {
+			m_holdKeyRepeatTimer.start(10);
 		}
 		return;
 	}
@@ -626,6 +619,12 @@ void TInputEventDispatcher::process_press_event(int keyValue)
 		cpointer().inputengine_first_input_event();
 
 		dispatch_shortcut(shortCut);
+
+		if (m_holdingCommand && m_holdingCommand->metaObject()->className() == QString("ArrowKeyBrowser"))
+		{
+			process_press_event(keyValue);
+			m_enterFinishesHold = false;
+		}
 		return;
 	}
 }

@@ -199,6 +199,7 @@ void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
 	keyfact.replace(QString("PAGEUP"), tr("Page Up"));
 	keyfact.replace(QString("ESC"), tr("Esc"));
 	keyfact.replace(QString("ENTER"), tr("Enter"));
+	keyfact.replace(QString("RETURN"), tr("Return"));
 	keyfact.replace(QString("NUMERICAL"), tr("0, 1, ... 9"));
 }
 
@@ -1105,6 +1106,40 @@ void TShortcutManager::loadFunctions()
 	function->slotsignature = "browse_to_last_track_in_active_sheet";
 	function->setDescription(tr("Browse to last Track in current View"));
 	function->commandName = "MainWindowNavigateToLastTrack";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "ArrowKeyBrowser";
+	function->slotsignature = "left";
+	function->setDescription(tr("Left"));
+	function->commandName = "BrowseLeft";
+	function->setUsesAutoRepeat(true);
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "ArrowKeyBrowser";
+	function->slotsignature = "right";
+	function->setDescription(tr("Right"));
+	function->commandName = "BrowseRight";
+	function->setUsesAutoRepeat(true);
+	addFunction(function);
+
+
+	function = new TFunction();
+	function->object = "ArrowKeyBrowser";
+	function->slotsignature = "up";
+	function->setDescription(tr("Up"));
+	function->commandName = "BrowseUp";
+	function->setUsesAutoRepeat(true);
+	addFunction(function);
+
+
+	function = new TFunction();
+	function->object = "ArrowKeyBrowser";
+	function->slotsignature = "down";
+	function->setDescription(tr("Down"));
+	function->commandName = "BrowseDown";
+	function->setUsesAutoRepeat(true);
 	addFunction(function);
 }
 

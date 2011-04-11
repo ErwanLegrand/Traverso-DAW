@@ -103,7 +103,7 @@ void ProjectManager::set_current_project(Project* project)
 	
         if (m_currentProject) {
 
-                ied().abort_current_hold_actions();
+                ied().reject_current_hold_actions();
 
 //                printf("exit in progress");
                 QString oncloseaction = config().get_property("Project", "onclose", "save").toString();

@@ -41,14 +41,13 @@ public:
 
 
 private:
-        int             m_arrow;
-        int             m_repeatInterval;
         SheetView*      m_sv;
-        QTimer          m_browseTimer;
 
-private slots:
-        void browse();
-	void start_autorepeat_timer();
+public slots:
+	void up(bool autorepeat);
+	void down(bool autorepeat);
+	void left(bool autorepeat);
+	void right(bool autorepeat);
 };
 
 #endif // ARROWKEYBROWSER_H
