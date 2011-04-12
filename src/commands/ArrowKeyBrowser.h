@@ -38,7 +38,7 @@ public:
         int finish_hold();
 
         void set_cursor_shape(int useX, int useY);
-
+	bool supportsEnterFinishesHold() const {return false;}
 
 private:
         SheetView*      m_sv;

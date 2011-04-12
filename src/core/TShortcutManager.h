@@ -60,6 +60,8 @@ public:
 	QString getLongDescription() const;
 	QList<int> getModifierKeys(bool fromInheritedBase=true);
 	QStringList getKeys(bool fromInheritedBase=true) const;
+	QStringList getObjects() const;
+	QString getObject() const;
 
 	int getAutoRepeatInterval() const;
 	int getAutoRepeatStartDelay() const;
@@ -74,6 +76,7 @@ public:
 	void setUsesAutoRepeat(bool b) {m_usesAutoRepeat = b;}
 	void setAutoRepeatInterval(int interval) {m_autorepeatInterval = interval;}
 	void setAutoRepeatStartDelay(int delay) {m_autorepeatStartDelay = delay;}
+	void setSlotSignature(const QString& signature) {slotsignature = signature;}
 
 	QStringList modes;
 	QVariantList arguments;

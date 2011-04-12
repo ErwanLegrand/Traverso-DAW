@@ -383,10 +383,19 @@ int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepea
 					m_isHolding = true;
 					m_holdEventCode = shortCut->getKeyValue();
 					set_jogging(true);
-					if (fromContextMenu)
+					if (fromContextMenu && k->supportsEnterFinishesHold())
 					{
 						m_enterFinishesHold = true;
 						info().information(tr("Enter to accept, Esc to abort"));
+					}
+					if (function->usesAutoRepeat())
+					{
+						PMESG("Function uses autorepeat");
+						process_press_event(shortCut->getKeyValue());
+					}
+					if (!k->supportsEnterFinishesHold())
+					{
+						m_enterFinishesHold = false;
 					}
 				} else {
 					PERROR("hold action begin_hold() failed!");
@@ -617,14 +626,7 @@ void TInputEventDispatcher::process_press_event(int keyValue)
 	if (shortCut)
 	{
 		cpointer().inputengine_first_input_event();
-
 		dispatch_shortcut(shortCut);
-
-		if (m_holdingCommand && m_holdingCommand->metaObject()->className() == QString("ArrowKeyBrowser"))
-		{
-			process_press_event(keyValue);
-			m_enterFinishesHold = false;
-		}
 		return;
 	}
 }

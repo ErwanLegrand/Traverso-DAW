@@ -156,6 +156,16 @@ QStringList TFunction::getKeys(bool fromInheritedBase) const
 	return m_keys;
 }
 
+QStringList TFunction::getObjects() const
+{
+	return object.split("::", QString::SkipEmptyParts);
+}
+
+QString TFunction::getObject() const
+{
+	return getObjects().first();
+}
+
 void TFunction::setInheritedFunction(TFunction *inherited)
 {
 	m_inheritedFunction = inherited;
@@ -262,7 +272,7 @@ QList< TFunction* > TShortcutManager::getFunctionsFor(QString className)
 				}
 			}
 
-			if (function->object == object && hasRequiredSlot)
+			if (function->getObject() == object && hasRequiredSlot)
 			{
 				functionsList.append(function);
 			}
@@ -1107,40 +1117,6 @@ void TShortcutManager::loadFunctions()
 	function->setDescription(tr("Browse to last Track in current View"));
 	function->commandName = "MainWindowNavigateToLastTrack";
 	addFunction(function);
-
-	function = new TFunction();
-	function->object = "ArrowKeyBrowser";
-	function->slotsignature = "left";
-	function->setDescription(tr("Left"));
-	function->commandName = "BrowseLeft";
-	function->setUsesAutoRepeat(true);
-	addFunction(function);
-
-	function = new TFunction();
-	function->object = "ArrowKeyBrowser";
-	function->slotsignature = "right";
-	function->setDescription(tr("Right"));
-	function->commandName = "BrowseRight";
-	function->setUsesAutoRepeat(true);
-	addFunction(function);
-
-
-	function = new TFunction();
-	function->object = "ArrowKeyBrowser";
-	function->slotsignature = "up";
-	function->setDescription(tr("Up"));
-	function->commandName = "BrowseUp";
-	function->setUsesAutoRepeat(true);
-	addFunction(function);
-
-
-	function = new TFunction();
-	function->object = "ArrowKeyBrowser";
-	function->slotsignature = "down";
-	function->setDescription(tr("Down"));
-	function->commandName = "BrowseDown";
-	function->setUsesAutoRepeat(true);
-	addFunction(function);
 }
 
 void TShortcutManager::saveFunction(TFunction *function)
@@ -1289,7 +1265,10 @@ void TShortcutManager::loadShortcuts()
 				TShortcut* shortcut = getShortcut(key);
 				if (shortcut)
 				{
-					shortcut->objects.insertMulti(function->object, function);
+					foreach(QString object, function->getObjects())
+					{
+						shortcut->objects.insertMulti(object, function);
+					}
 				}
 			}
 		}
@@ -1308,7 +1287,10 @@ void TShortcutManager::loadShortcuts()
 					TShortcut* shortcut = getShortcut(key);
 					if (shortcut)
 					{
-						shortcut->objects.insertMulti(function->object, function);
+						foreach(QString object, function->getObjects())
+						{
+							shortcut->objects.insertMulti(object, function);
+						}
 					}
 				}
 			}

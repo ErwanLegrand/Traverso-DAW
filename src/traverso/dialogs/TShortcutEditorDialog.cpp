@@ -224,7 +224,7 @@ void TShortcutEditorDialog::key1_combo_box_activated(int /*index*/)
 
 	foreach(TFunction* function, shortCut->getFunctions())
 	{
-		QString translatedObjectName = tShortCutManager().get_translation_for(function->object);
+		QString translatedObjectName = tShortCutManager().get_translation_for(function->getObject());
 		QStringList stringlist;
 		stringlist << translatedObjectName << function->getLongDescription() << function->getKeySequence();
 		QTreeWidgetItem* item = new QTreeWidgetItem(stringlist);
@@ -256,7 +256,7 @@ void TShortcutEditorDialog::shortcut_tree_widget_item_activated()
 		TFunction* function = getSelectedFunction();
 		if (function)
 		{
-			int index = ui->objectsComboBox->findData(tShortCutManager().getClassForObject(function->object));
+			int index = ui->objectsComboBox->findData(tShortCutManager().getClassForObject(function->getObject()));
 			if (index >= 0)
 			{
 				ui->objectsComboBox->setCurrentIndex(index);
@@ -336,18 +336,8 @@ void TShortcutEditorDialog::shortcut_tree_widget_item_activated()
 	if (isHoldFunction)
 	{
 		ui->modifiersGroupBox->setEnabled(false);
-		if (function->usesAutoRepeat())
-		{
-			ui->autorepeatGroupBox->show();
-			ui->startDelaySpinBox->setValue(function->getAutoRepeatStartDelay());
-			ui->repeatIntervalSpinBox->setValue(function->getAutoRepeatInterval());
-		}
-		else
-		{
-			ui->autorepeatGroupBox->hide();
-		}
-
-	} else
+	}
+	else
 	{
 		ui->autorepeatGroupBox->hide();
 
@@ -382,6 +372,16 @@ void TShortcutEditorDialog::shortcut_tree_widget_item_activated()
 		ui->modifiersGroupBox->setEnabled(true);
 	}
 
+	if (function->usesAutoRepeat())
+	{
+		ui->autorepeatGroupBox->show();
+		ui->startDelaySpinBox->setValue(function->getAutoRepeatStartDelay());
+		ui->repeatIntervalSpinBox->setValue(function->getAutoRepeatInterval());
+	}
+	else
+	{
+		ui->autorepeatGroupBox->hide();
+	}
 }
 
 void TShortcutEditorDialog::base_function_checkbox_clicked()
@@ -469,7 +469,7 @@ void TShortcutEditorDialog::configure_inherited_shortcut_pushbutton_clicked()
 		return;
 	}
 
-	int index = ui->objectsComboBox->findData(function->object);
+	int index = ui->objectsComboBox->findData(function->getObject());
 	if (index >= 0)
 	{
 		ui->objectsComboBox->setCurrentIndex(index);

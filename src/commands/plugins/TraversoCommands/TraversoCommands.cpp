@@ -81,7 +81,6 @@ TraversoCommands::TraversoCommands()
 	tShortCutManager().add_meta_object(&SplitClip::staticMetaObject);
 	tShortCutManager().add_meta_object(&TPanKnobView::staticMetaObject);
 	tShortCutManager().add_meta_object(&MoveCommand::staticMetaObject);
-	tShortCutManager().add_meta_object(&ArrowKeyBrowser::staticMetaObject);
 
 	tShortCutManager().add_translation("ArrowKeyBrowser", tr("Arrow Key Browser"));
 	tShortCutManager().add_translation("ArmTracks", tr("Arm Tracks"));
@@ -142,28 +141,32 @@ TraversoCommands::TraversoCommands()
 	TFunction* function;
 
 	function = new TFunction();
-	function->object = "SheetView";
+	function->object = "SheetView::ArrowKeyBrowser";
+	function->setSlotSignature("up");
 	function->setDescription(tr("Up"));
 	function->commandName = "ArrowKeyBrowserUp";
 	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
-	function->object = "SheetView";
+	function->object = "SheetView::ArrowKeyBrowser";
+	function->setSlotSignature("down");
 	function->setDescription(tr("Down"));
 	function->commandName = "ArrowKeyBrowserDown";
 	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
-	function->object = "SheetView";
+	function->object = "SheetView::ArrowKeyBrowser";
+	function->setSlotSignature("left");
 	function->setDescription(tr("Left"));
 	function->commandName = "ArrowKeyBrowserLeft";
 	function->setUsesAutoRepeat(true);
 	addFunction(function, ArrowKeyBrowserCommand);
 
 	function = new TFunction();
-	function->object = "SheetView";
+	function->object = "SheetView::ArrowKeyBrowser";
+	function->setSlotSignature("right");
 	function->setDescription(tr("Right"));
 	function->commandName = "ArrowKeyBrowserRight";
 	function->setUsesAutoRepeat(true);
