@@ -383,6 +383,7 @@ int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepea
 					m_isHolding = true;
 					m_holdEventCode = shortCut->getKeyValue();
 					set_jogging(true);
+					m_enterFinishesHold = config().get_property("InputEventDispatcher", "EnterFinishesHold", false).toBool();
 					if (fromContextMenu && k->supportsEnterFinishesHold())
 					{
 						m_enterFinishesHold = true;
@@ -493,7 +494,6 @@ void TInputEventDispatcher::reset()
 {
 	PENTER3;
 	m_isHolding = false;
-	m_enterFinishesHold = config().get_property("InputEventDispatcher", "EnterFinishesHold", false).toBool();
 	m_cancelHold = false;
 	m_bypassJog = false;
 
