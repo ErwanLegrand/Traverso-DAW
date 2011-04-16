@@ -55,6 +55,8 @@ TimeLine.cpp
 Marker.cpp
 Themer.cpp
 ProjectConverter.cpp
+TGlobalContext.cpp
+TTransport.cpp
 )
 
 SET(TRAVERSO_CORE_MOC_CLASSES
@@ -91,6 +93,8 @@ WriteSource.h
 ContextItem.h
 TInputEventDispatcher.h
 CommandPlugin.h
+TGlobalContext.h
+TTransport.h
 )
 
 QT4_WRAP_CPP(TRAVERSO_CORE_MOC_SOURCES ${TRAVERSO_CORE_MOC_CLASSES})

@@ -81,6 +81,9 @@ TraversoCommands::TraversoCommands()
 	tShortCutManager().add_meta_object(&SplitClip::staticMetaObject);
 	tShortCutManager().add_meta_object(&TPanKnobView::staticMetaObject);
 	tShortCutManager().add_meta_object(&MoveCommand::staticMetaObject);
+	tShortCutManager().add_meta_object(&TTransport::staticMetaObject);
+
+	tShortCutManager().add_translation("TTransport", tr("Transport"));
 
 	tShortCutManager().add_translation("ArrowKeyBrowser", tr("Arrow Key Browser"));
 	tShortCutManager().add_translation("ArmTracks", tr("Arm Tracks"));

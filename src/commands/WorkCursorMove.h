@@ -44,6 +44,7 @@ public :
 	int jog();
 
 	void set_cursor_shape(int useX, int useY);
+	bool supportsEnterFinishesHold() {return false;}
 
 private :
 	TSession*	m_session;

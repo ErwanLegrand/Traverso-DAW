@@ -62,6 +62,7 @@ TShortcutEditorDialog::TShortcutEditorDialog(QWidget *parent)
 	keys << "Left Arrow|LEFTARROW" << "Right Arrow|RIGHTARROW" << "Up Arrow|UPARROW" << "Down Arrow|DOWNARROW";
 	keys << "Enter|ENTER" << "Home|HOME" << "End|END" << "Delete|DELETE";
 	keys << "Page Up|PAGEUP" << "Page Down|PAGEDOWN";
+	keys << "Space Bar|SPACE";
 	keys << "Left Button|MOUSEBUTTONLEFT" << "Right Button|MOUSEBUTTONRIGHT";
 	keys << "Scroll Up|MOUSESCROLLVERTICALUP" << "Scroll Down|MOUSESCROLLVERTICALDOWN";
 	keys << "+|PLUS" << "-|MINUS" << "/|/" << "\\|\\" << "[|[" << "]|]" << ",|," << ".|." << ";|;" << "'|'";
@@ -152,10 +153,7 @@ void TShortcutEditorDialog::objects_combo_box_activated(int index)
 	}
 
 	QTreeWidgetItem* item = ui->shortcutsTreeWidget->topLevelItem(0);
-	if (item)
-	{
-		ui->shortcutsTreeWidget->setCurrentItem(item);
-	}
+	ui->shortcutsTreeWidget->setCurrentItem(item);
 }
 
 void TShortcutEditorDialog::modifier_combo_box_toggled()
@@ -273,9 +271,20 @@ void TShortcutEditorDialog::shortcut_tree_widget_item_activated()
 		return;
 	}
 
+	ui->keyComboBox1->setCurrentIndex(0);
+	ui->keyComboBox2->setCurrentIndex(0);
+	ui->shiftCheckBox->setChecked(false);
+	ui->ctrlCheckBox->setChecked(false);
+	ui->altCheckBox->setChecked(false);
+	ui->metaCheckBox->setChecked(false);
+
 	TFunction* function = getSelectedFunction();
 	if (!function)
 	{
+		ui->baseFunctionGroupBox->hide();
+		ui->autorepeatGroupBox->hide();
+		ui->shortCutGroupBox->setEnabled(false);
+		ui->modifiersGroupBox->setEnabled(false);
 		return;
 	}
 
@@ -286,13 +295,6 @@ void TShortcutEditorDialog::shortcut_tree_widget_item_activated()
 		QString objectClassName = ui->objectsComboBox->itemData(index).toString();
 		isHoldFunction = tShortCutManager().classInherits(objectClassName, "TCommand");
 	}
-
-	ui->keyComboBox1->setCurrentIndex(0);
-	ui->keyComboBox2->setCurrentIndex(0);
-	ui->shiftCheckBox->setChecked(false);
-	ui->ctrlCheckBox->setChecked(false);
-	ui->altCheckBox->setChecked(false);
-	ui->metaCheckBox->setChecked(false);
 
 	QStringList keys = function->getKeys(false);
 	if (keys.size() > 0)

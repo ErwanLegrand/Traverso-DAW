@@ -151,7 +151,6 @@ public:
 	void registerItemClass(const QString& item, const QString& className);
 	QString get_translation_for(const QString& entry);
 	QString createHtmlForClass(const QString& className, QObject* obj=0);
-	QHash<QString, QList<const QMetaObject*> > get_meta_objects() const {return m_metaObjects;}
 	QList<QString> getClassNames() const;
 	QString getClassForObject(const QString& object) const;
 	bool classInherits(const QString& className, const QString &inherited);

@@ -50,6 +50,7 @@ public :
 
         void set_cursor_shape(int useX, int useY);
         void set_collected_number(const QString & collected);
+	bool supportsEnterFinishesHold() const {return false;}
 
 private :
         int m_horizontalJogZoomLastX;

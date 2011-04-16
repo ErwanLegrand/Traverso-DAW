@@ -1637,33 +1637,6 @@ void TMainWindow::save_config_and_emit_message(const QString & message)
 	config().save();
 }
 
-
-
-TCommand * TMainWindow::start_transport()
-{
-	Project* project = pm().get_project();
-	if (project) {
-		TSession* session = project->get_current_session();
-		if (session) {
-			return session->start_transport();
-		}
-	}
-
-	return 0;
-}
-
-TCommand * TMainWindow::set_recordable_and_start_transport()
-{
-	if (m_project) {
-		Sheet* sheet = m_project->get_active_sheet();
-		if (sheet) {
-			return sheet->set_recordable_and_start_transport();
-		}
-	}
-
-	return 0;
-}
-
 // snapping is a global property and should be stored in each sheet
 void TMainWindow::snap_state_changed(bool state)
 {

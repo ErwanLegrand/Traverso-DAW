@@ -43,6 +43,7 @@ public :
 	int jog();
 
 	void set_cursor_shape(int useX, int useY);
+	bool supportsEnterFinishesHold() {return false;}
 
 private :
 	PlayHead*	m_playhead;

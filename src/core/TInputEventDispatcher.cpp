@@ -516,7 +516,7 @@ void TInputEventDispatcher::catch_key_press(QKeyEvent * e )
 	if (e->isAutoRepeat()) {
 		return;
 	}
-	PENTER3;
+	PENTER;
 
 	process_press_event(e->key());
 }

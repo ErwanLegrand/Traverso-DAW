@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include "CommandPlugin.h"
 #include "TConfig.h"
+#include "TTransport.h"
 
 #include "Debugger.h"
 
@@ -202,14 +203,17 @@ void TShortcutManager::makeShortcutKeyHumanReadable(QString& keyfact)
 	keyfact.replace(QString("DOWNARROW"), tr("Down Arrow"));
 	keyfact.replace(QString("LEFTARROW"), tr("Left Arrow"));
 	keyfact.replace(QString("RIGHTARROW"), tr("Right Arrow"));
-	keyfact.replace(QString("DELETE"), tr("Delete"));
-	keyfact.replace(QString("MINUS"), QString("-"));
-	keyfact.replace(QString("PLUS"), QString("+"));
-	keyfact.replace(QString("PAGEDOWN"), tr("Page Down"));
-	keyfact.replace(QString("PAGEUP"), tr("Page Up"));
-	keyfact.replace(QString("ESC"), tr("Esc"));
-	keyfact.replace(QString("ENTER"), tr("Enter"));
-	keyfact.replace(QString("RETURN"), tr("Return"));
+	keyfact.replace(QString("DELETE"), "Delete");
+	keyfact.replace(QString("MINUS"), "-");
+	keyfact.replace(QString("PLUS"), "+");
+	keyfact.replace(QString("PAGEDOWN"), "Page Down");
+	keyfact.replace(QString("PAGEUP"), "Page Up");
+	keyfact.replace(QString("ESC"), "Esc");
+	keyfact.replace(QString("ENTER"), "Enter");
+	keyfact.replace(QString("RETURN"), "Return");
+	keyfact.replace(QString("SPACE"), tr("Space Bar"));
+	keyfact.replace(QString("HOME"), "Home");
+	keyfact.replace(QString("END"), "End");
 	keyfact.replace(QString("NUMERICAL"), tr("0, 1, ... 9"));
 }
 
@@ -223,6 +227,7 @@ TShortcutManager& tShortCutManager()
 TShortcutManager::TShortcutManager()
 {
 	cpointer().add_contextitem(this);
+	cpointer().add_contextitem(new TTransport());
 }
 
 void TShortcutManager::addFunction(TFunction *function)
@@ -661,17 +666,31 @@ void TShortcutManager::loadFunctions()
 	addFunction(function);
 
 	function = new TFunction();
-	function->object = "TMainWindow";
+	function->object = "TTransport";
 	function->slotsignature = "start_transport";
 	function->m_description = tr("Play (Start/Stop)");
-	function->commandName = "PlayStartStop";
+	function->commandName = "TransportPlayStartStop";
 	addFunction(function);
 
 	function = new TFunction();
-	function->object = "TMainWindow";
+	function->object = "TTransport";
 	function->slotsignature = "set_recordable_and_start_transport";
 	function->m_description = tr("Start Recording");
-	function->commandName = "SetRecordingPlayStart";
+	function->commandName = "TransportSetRecordingPlayStart";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TTransport";
+	function->slotsignature = "to_start";
+	function->setDescription(tr("To start"));
+	function->commandName = "TransportToStart";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TTransport";
+	function->slotsignature = "to_end";
+	function->setDescription(tr("To end"));
+	function->commandName = "TransportToEnd";
 	addFunction(function);
 
 	function = new TFunction();
@@ -1014,13 +1033,6 @@ void TShortcutManager::loadFunctions()
 	addFunction(function);
 
 	function = new TFunction();
-	function->object = "SheetView";
-	function->slotsignature = "play_to_end";
-	function->setDescription(tr("To end"));
-	function->commandName = "PlayHeadToEnd";
-	addFunction(function);
-
-	function = new TFunction();
 	function->object = "MoveTrack";
 	function->slotsignature = "to_bottom";
 	function->setDescription(tr("To Bottom"));
@@ -1032,13 +1044,6 @@ void TShortcutManager::loadFunctions()
 	function->slotsignature = "goto_begin";
 	function->setDescription(tr("To start"));
 	function->commandName = "WorkCursorToStart";
-	addFunction(function);
-
-	function = new TFunction();
-	function->object = "SheetView";
-	function->slotsignature = "play_to_begin";
-	function->setDescription(tr("To start"));
-	function->commandName = "PlayHeadToStart";
 	addFunction(function);
 
 	function = new TFunction();

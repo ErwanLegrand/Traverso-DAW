@@ -827,20 +827,6 @@ TCommand * SheetView::touch_play_cursor( )
 	return 0;
 }
 
-TCommand * SheetView::play_to_begin( )
-{
-	m_session->set_transport_pos(TimeRef());
-
-	return 0;
-}
-
-TCommand* SheetView::play_to_end()
-{
-	m_session->set_transport_pos(m_session->get_last_location());
-
-	return 0;
-}
-
 void SheetView::set_snap_range(int start)
 {
 // 	printf("SheetView::set_snap_range\n");

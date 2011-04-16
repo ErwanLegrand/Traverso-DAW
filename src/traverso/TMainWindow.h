@@ -233,8 +233,6 @@ public slots :
 	TCommand* show_shortcuts_edit_dialog();
         TCommand* show_welcome_page();
         TCommand* show_current_sheet();
-        TCommand* start_transport();
-        TCommand* set_recordable_and_start_transport();
         TCommand* show_track_finder();
         TCommand* browse_to_first_track_in_active_sheet();
         TCommand* browse_to_last_track_in_active_sheet();
