@@ -57,26 +57,37 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 	m_comboBox->addItem(tr("Shortcuts Explained"));
 	m_comboBox->addItem(tr("Current Context"));
 
-        m_helpIntroduction = ("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body>"
-		"Traverso uses a powerful shortcuts system with which you can control the program using the mouse "
-                "or the keyboard + mouse or just the keyboard!"
-                "<p>"
+	m_helpIntroduction = (
+		"<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head><body>"
 		"To show the shortcuts for the item below the cursor, use the right mouse button, or "
-                "select <u>%1</u> in the dropdown menu to auto update this help, or select an entry in the dropdown menu"
-                "<p>"
-                "<b>Advice</b>"
-                "<p>"
-                "Place the left hand in the typing position, most of the used keys are there, so you can use the right hand to move the cursor with the mouse or the arrow keys"
-                "<p>"
-                "<b>Examples</b>"
-                "<p>"
-                "<table>"
+		"select <u>%1</u> in the dropdown menu to auto update this help"
+		"<p>"
+		"<b>Edit Shortcuts</b>"
+		"<p>"
+		"Some shortcuts when keeping pressed support pressing additional keys. "
+		"Available modes are: <br /><br />Keep the key pressed, and make your changes "
+		"by moving the mouse, using arrow keys or any of the keys supported by the Edit Shortcut and finish "
+		"it by releasing the Shortcut key or, <br /><br />Set in "
+		"the keyboard preferences to finish an Edit Shortcut by pressing Enter (or the same shortcut key)."
+		"<br /><br />(When started from the right click menu, finish by using Enter is the only option)"
+		"<p>"
+		"<b>Examples</b>"
+		"<p>"
+		"<table>"
+		"<tr><td width=20 align=center><b>V</b></td><td>Press V and move mouse left/right or use arrow keys: Set Play Position</td></tr>"
+		"<tr><td width=20 align=center><b>Z</b></td><td>Press Z and move mouse left/right or use arrow keys: Zoom In/Out</td></tr>"
 		"<tr><td width=20 align=center><b>I</b></td><td>Hover mouse over an %2, type I (from Import) and select the file(s) to import</td></tr>"
-		"<tr><td width=20 align=center><b>G</b></td><td>Hover mouse over the %3, press G (from Gain) and keep it pressed. Now move mouse up/down to change gain, or use scroll wheel or up/down arrow key or just type in the gain value. <br />Works on all objects with a Gain value</td></tr>"
-		"<tr><td width=20 align=center><b>D</b></td><td>Hover mouse over an %3, press D (from Drag, left mouse button works too) and move the mouse to move the %3<br />Works on all objects that can be moved</td></tr>"
-		"<tr><td width=20 align=center><b>Z</b></td><td>Press Z and move mouse left/right: Zoom In/Out</td></tr>"
-                "</table>"
-                "</body></html>");
+		"<tr><td width=20 align=center><b>G</b></td><td>Hover mouse over an %3, press G (from Gain). Move mouse or use arrow keys to change Gain</td></tr>"
+		"<tr><td width=20 align=center><b>D</b></td><td>Hover mouse over an %3, press D (from Drag, left mouse button works too) and move the mouse or use arrow keys to move the %3</td></tr>"
+		"</table>"
+		"<p>"
+		"<b>Advice</b>"
+		"<p>"
+		"Place the left hand in the typing position, most of the used keys are there, so you can use the right hand to move the cursor with the mouse or the arrow keys"
+		"<p>"
+		"You can of course configure the shortcuts to your liking in the shortcut configuration dialog"
+		"</body></html>"
+	);
 
 	m_helpIntroduction = m_helpIntroduction.arg(tr("Current Context")).arg(tShortCutManager().get_translation_for("AudioTrack")).arg(tShortCutManager().get_translation_for("AudioClip"));
 
@@ -101,7 +112,7 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 
 	foreach(QString className, commandClassNamesMap)
 	{
-		m_comboBox->addItem(commandClassNamesMap.key(className) + " " + tr("(Hold Function)"), className);
+		m_comboBox->addItem(commandClassNamesMap.key(className) + " " + tr("(Edit Function)"), className);
 	}
 
 	int index = config().get_property("ShortcutsHelp", "DropDownIndex", 0).toInt();

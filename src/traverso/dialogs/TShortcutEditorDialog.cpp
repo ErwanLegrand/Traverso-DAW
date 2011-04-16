@@ -95,7 +95,7 @@ TShortcutEditorDialog::TShortcutEditorDialog(QWidget *parent)
 
 	foreach(QString className, commandClassNamesMap)
 	{
-		ui->objectsComboBox->addItem(commandClassNamesMap.key(className) + " " + tr("(Hold Function)"), className);
+		ui->objectsComboBox->addItem(commandClassNamesMap.key(className) + " " + tr("(Edit Function)"), className);
 	}
 
 	connect(ui->objectsComboBox, SIGNAL(activated(int)), this, SLOT(objects_combo_box_activated(int)));
