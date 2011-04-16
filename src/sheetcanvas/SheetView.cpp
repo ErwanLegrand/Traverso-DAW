@@ -1411,6 +1411,11 @@ void SheetView::set_cursor_shape(const QString& shape)
 	m_editCursor->set_cursor_shape(shape);
 }
 
+void SheetView::set_edit_cursor_text(const QString &text)
+{
+	m_editCursor->set_text(text);
+}
+
 void SheetView::context_changed()
 {
 	if (!cpointer().keyboard_only_input()) {

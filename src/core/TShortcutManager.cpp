@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Utils.h"
 #include "CommandPlugin.h"
 #include "TConfig.h"
-#include "TTransport.h"
 
 #include "Debugger.h"
 
@@ -227,7 +226,6 @@ TShortcutManager& tShortCutManager()
 TShortcutManager::TShortcutManager()
 {
 	cpointer().add_contextitem(this);
-	cpointer().add_contextitem(new TTransport());
 }
 
 void TShortcutManager::addFunction(TFunction *function)
@@ -691,6 +689,14 @@ void TShortcutManager::loadFunctions()
 	function->slotsignature = "to_end";
 	function->setDescription(tr("To end"));
 	function->commandName = "TransportToEnd";
+	addFunction(function);
+
+	function = new TFunction();
+	function->object = "TTransport";
+	function->setSlotSignature("set_transport_position");
+	function->setDescription(tr("Set Play Position"));
+	function->commandName = "TransportSetPosition";
+	function->useX = true;
 	addFunction(function);
 
 	function = new TFunction();

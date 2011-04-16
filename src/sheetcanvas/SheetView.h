@@ -115,6 +115,7 @@ public :
 	void set_vscrollbar_value(int value);
 
 	void set_cursor_shape(const QString& cursor);
+	void set_edit_cursor_text(const QString& text);
 
 
 	void browse_to_track(Track* track);

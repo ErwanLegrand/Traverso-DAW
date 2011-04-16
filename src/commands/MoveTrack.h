@@ -46,6 +46,7 @@ public :
         int jog();
 
         void set_cursor_shape(int useX, int useY);
+	bool supportsEnterFinishesHold() const {return false;}
 
         void move_to_sheet();
 

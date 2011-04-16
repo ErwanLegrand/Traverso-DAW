@@ -72,9 +72,9 @@ int PlayHeadMove::begin_hold()
                 m_sv->center_in_view(m_playhead, Qt::AlignHCenter);
         }
 
-        QCursor::setPos(port->mapToGlobal(
-                        port->mapFromScene(
-                        m_playhead->scenePos().x(), m_holdCursorSceneY)));
+//        QCursor::setPos(port->mapToGlobal(
+//                        port->mapFromScene(
+//                        m_playhead->scenePos().x(), m_holdCursorSceneY)));
 
 
 	// Mabye a technically more proper fix is to check if 
@@ -98,7 +98,11 @@ void PlayHeadMove::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+	AbstractViewPort* viewPort = cpointer().get_viewport();
+	if (viewPort)
+	{
+		viewPort->set_holdcursor(":/cursorHoldLr");
+	}
 }
 
 int PlayHeadMove::jog()
@@ -122,10 +126,13 @@ int PlayHeadMove::jog()
 		}
 		
 		m_sv->update_shuttle_factor();
-                cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_newTransportLocation, m_sv->timeref_scalefactor));
+		m_sv->set_edit_cursor_text(timeref_to_text(m_newTransportLocation, m_sv->timeref_scalefactor));
 	}
 	
-        cpointer().get_viewport()->set_holdcursor_pos(QPointF(x, y));
+	if (cpointer().get_viewport())
+	{
+		cpointer().get_viewport()->set_holdcursor_pos(QPointF(x, y));
+	}
 	
 	m_newXPos = x;
 	m_newYPos = y;

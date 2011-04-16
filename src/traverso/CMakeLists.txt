@@ -25,6 +25,7 @@ ${CMAKE_SOURCE_DIR}/src/common/fpu.cc
 Main.cpp
 TMainWindow.cpp
 Traverso.cpp
+TTransport.cpp
 dialogs/settings/Pages.cpp
 dialogs/settings/SettingsDialog.cpp
 dialogs/project/ProjectManagerDialog.cpp
@@ -94,6 +95,7 @@ ui/TShortcutEditorDialog.ui
 SET(TRAVERSO_GUI_MOC_CLASSES
 TMainWindow.h
 Traverso.h
+TTransport.h
 dialogs/CDWritingDialog.h
 dialogs/ExportDialog.h
 dialogs/InsertSilenceDialog.h

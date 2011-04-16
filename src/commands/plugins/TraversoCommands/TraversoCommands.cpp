@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "commands.h"
 #include <float.h>
 #include "TMainWindow.h"
+#include "TTransport.h"
 #include "TShortcutManager.h"
 
 // Always put me below _all_ includes, this is needed
@@ -360,13 +361,6 @@ TraversoCommands::TraversoCommands()
 	function->arguments << "toggle_selected";
 	addFunction(function, ClipSelectionCommand);
 
-	function = new TFunction();
-	function->object = "SheetView";
-	function->setDescription(tr("Set Play Position"));
-	function->commandName = "PlayHeadMove";
-	function->useX = true;
-	addFunction(function, PlayHeadMoveCommand);
-
 // TODO:
 	// <Object objectname="SheetView" mousehint="LR" sortorder="6" pluginname="TraversoCommands" commandname="Shuttle" />
 	// <Object objectname="SheetView" mousehint="UD" sortorder="7" pluginname="TraversoCommands" commandname="ArmTracks"  arguments="" />
@@ -665,17 +659,6 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 				return 0;
 			}
 			return new WorkCursorMove(view);
-		}
-
-		case PlayHeadMoveCommand:
-		{
-			SheetView* view = qobject_cast<SheetView*>(obj);
-			if (!view) {
-				PERROR("TraversoCommands: Supplied QObject was not an SheetView! "
-						"WorkCursorMove Command needs an SheetView as argument");
-				return 0;
-			}
-			return new PlayHeadMove(view);
 		}
 
 		case MoveCurveNodesCommand:

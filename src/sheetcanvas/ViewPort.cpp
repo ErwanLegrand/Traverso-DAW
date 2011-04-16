@@ -325,12 +325,12 @@ void ViewPort::set_holdcursor( const QString & cursorName )
 
 void ViewPort::set_holdcursor_text( const QString & text )
 {
-	m_holdcursor->set_text(text);
+	m_sv->set_edit_cursor_text(text);
 }
 
 void ViewPort::set_holdcursor_pos(QPointF pos)
 {
-        m_holdcursor->set_pos(pos);
+//        m_holdcursor->set_pos(pos);
 }
 
 QPointF ViewPort::get_hold_cursor_pos() const

@@ -110,6 +110,7 @@ public :
 
         QLineEdit* get_track_finder() const {return m_trackFinder;}
 	QMenu* create_context_menu(QObject* item, QList<TFunction* >* list = 0);
+	SheetWidget* getCurrentSheetWidget() const {return m_currentSheetWidget;}
 
 protected:
         void timerEvent(QTimerEvent *event);
