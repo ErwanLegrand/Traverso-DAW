@@ -113,7 +113,7 @@ private:
         int                     m_holdEventCode;
 
         void 			finish_hold();
-        void 			conclusion();
+	void 			reset();
         void 			stop_collecting();
         bool 			check_number_collection(int eventcode);
 
@@ -122,7 +122,6 @@ private:
 
         void set_jogging(bool jog);
         void set_numerical_input(const QString& number);
-	void reset();
 	void process_press_event(int keyValue);
 	void process_release_event(int keyValue);
 	bool is_modifier_keyfact(int eventcode);

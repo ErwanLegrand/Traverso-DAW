@@ -357,12 +357,12 @@ int TInputEventDispatcher::dispatch_shortcut(TShortcut* shortCut, bool autorepea
 		if (m_dispatchResult) {
 			if (m_dispatchResult == SUCCESS) {
 				PMESG("Broadcast Result indicates succes, but no returned Command object");
-				conclusion();
+				reset();
 				return 1;
 			}
 			if (m_dispatchResult == FAILURE) {
 				PMESG("Broadcast Result indicates failure, and doesn't want lower level items to be processed");
-				conclusion();
+				reset();
 				return 0;
 			}
 			if (m_dispatchResult == DIDNOTIMPLEMENT) {
@@ -580,6 +580,13 @@ void TInputEventDispatcher::process_press_event(int keyValue)
 		return;
 	}
 
+	if (keyValue == m_holdEventCode && is_holding() && m_holdingCommand->supportsEnterFinishesHold())
+	{
+		finish_hold();
+		return;
+	}
+
+
 	if ((keyValue == Qt::Key_Return || keyValue == Qt::Key_Enter) && m_enterFinishesHold)
 	{
 		finish_hold();
@@ -742,7 +749,7 @@ void TInputEventDispatcher::finish_hold()
 	}
 
 	set_jogging(false);
-	conclusion();
+	reset();
 }
 
 void TInputEventDispatcher::clear_hold_modifier_keys()
@@ -754,16 +761,13 @@ void TInputEventDispatcher::clear_hold_modifier_keys()
 	m_holdModifierKeys.clear();
 }
 
-
-void TInputEventDispatcher::conclusion()
-{
-	PENTER3;
-	reset();
-}
-
-// Number colector
 bool TInputEventDispatcher::check_number_collection(int eventcode)
 {
+	if (!m_activeModifierKeys.isEmpty())
+	{
+		return false;
+	}
+
 	if (((eventcode >= Qt::Key_0) && (eventcode <= Qt::Key_9)) ||
 	     (eventcode == Qt::Key_Comma) || (eventcode == Qt::Key_Period)) {
 		// it had a ",1" complement after fact1_k1... why?
