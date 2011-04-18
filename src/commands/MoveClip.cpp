@@ -340,8 +340,8 @@ int MoveClip::jog()
 	
 	d->sv->update_shuttle_factor();
 	
-        cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
-	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newTrackStartLocation, d->sv->timeref_scalefactor));
+	cpointer().setCursorPos(cpointer().scene_pos());
+	d->sv->set_edit_cursor_text(timeref_to_text(newTrackStartLocation, d->sv->timeref_scalefactor));
 
 
 	return 1;
@@ -449,10 +449,10 @@ void MoveClip::start_zoom(bool autorepeat)
 	if (!d->zoom) {
 		d->zoom = new Zoom(d->sv, QList<QVariant>() << "HJogZoom" << "1.2" << "0.2");
 		d->zoom->begin_hold();
-		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
+		cpointer().setCursor(":/cursorZoomHorizontal");
 		d->sv->start_shuttle(false);
 	} else {
-		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+		cpointer().setCursor(":/cursorHoldLrud");
 		d->sv->start_shuttle(true, true);
                 delete d->zoom;
                 d->zoom = 0;
@@ -462,11 +462,11 @@ void MoveClip::start_zoom(bool autorepeat)
 void MoveClip::set_cursor_shape(int useX, int useY)
 {
 	if (useX && useY) {
-		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLrud");
+		cpointer().setCursor(":/cursorHoldLrud");
 	} else if (useX) {
-		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+		cpointer().setCursor(":/cursorHoldLr");
 	} else {
-		cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
+		cpointer().setCursor(":/cursorHoldUd");
 	}
 }
 
@@ -489,7 +489,7 @@ void MoveClip::do_move()
                 TrackView* tv = d->sv->get_track_views().at(m_newTrackIndex);
                 int sceneY = tv->scenePos().y() + tv->boundingRect().height() / 2;
                 d->sv->move_edit_point_to(m_trackStartLocation + m_posDiff + d->relativeWorkCursorPos, sceneY);
-                cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_trackStartLocation + m_posDiff, d->sv->timeref_scalefactor));
+		d->sv->set_edit_cursor_text(timeref_to_text(m_trackStartLocation + m_posDiff, d->sv->timeref_scalefactor));
 	}
 }
 

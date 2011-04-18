@@ -161,34 +161,6 @@ void ContextPointer::jog_finished()
 	m_jogTimer.stop();
 }
 
-
-/**
- * 	Used by InputEngine to reset the current ViewPort's HoldCursor<br />
-	after a 'Hold type' Command has been finished. Not be called <br />
-	from anywhere else
- */
-void ContextPointer::reset_cursor( )
-{
-	if (!m_port) {
-		return;
-	}
-
-	if (keyboard_only_input()) {
-		m_port->update_holdcursor_shape();
-	} else {
-		m_port->reset_cursor();
-	}
-}
-
-void ContextPointer::move_hardware_mouse_cursor_to(QPoint pos)
-{
-	PENTER;
-	QCursor::setPos(pos);
-	m_globalMousePos = pos;
-	ied().update_jog_bypass_pos();
-	m_jogEvent = false;
-}
-
 void ContextPointer::set_jog_bypass_distance(int distance)
 {
 	m_jogBypassDistance = distance;
@@ -235,9 +207,40 @@ void ContextPointer::set_current_viewport(AbstractViewPort *vp)
 	PENTER;
 	m_port = vp;
 	if (!m_port) {
+		m_onFirstInputEventActiveContextItems.clear();
 		QList<ContextItem *> items;
 		set_active_context_items(items);
 	}
+}
+
+void ContextPointer::setCursor(const QString &cursor)
+{
+	if (!m_port)
+	{
+		return;
+	}
+
+	m_port->setCanvasCursor(cursor);
+}
+
+void ContextPointer::setCursorText(const QString &text)
+{
+	if (!m_port)
+	{
+		return;
+	}
+
+	m_port->setCursorText(text);
+}
+
+void ContextPointer::setCursorPos(QPointF pos)
+{
+	if (!m_port)
+	{
+		return;
+	}
+
+	m_port->set_holdcursor_pos(pos);
 }
 
 void ContextPointer::set_edit_point_position(int x, int y)

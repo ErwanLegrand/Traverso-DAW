@@ -95,11 +95,11 @@ void Zoom::set_cursor_shape( int useX, int useY )
 	Q_UNUSED(useY);
 	
 	if (useX && useY) {
-		cpointer().get_viewport()->set_holdcursor(":/cursorZoom");
+		cpointer().setCursor(":/cursorZoom");
 	} else if(useX) {
-		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
+		cpointer().setCursor(":/cursorZoomHorizontal");
 	} else if (useY) {
-		cpointer().get_viewport()->set_holdcursor(":/cursorZoomVertical");
+		cpointer().setCursor(":/cursorZoomVertical");
 	}
 
         m_mousePos = QCursor::pos();
@@ -137,7 +137,7 @@ int Zoom::jog()
 		}
 	}
 
-        cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
+	cpointer().setCursorPos(m_origPos);
 	
         return 1;
 }
@@ -277,13 +277,13 @@ void Zoom::toggle_vertical_horizontal_jog_zoom(bool autorepeat)
 	if (autorepeat) return;
 	
 	if (m_jogVertical) {
-		cpointer().get_viewport()->set_holdcursor(":/cursorZoomHorizontal");
-                cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
+		cpointer().setCursor(":/cursorZoomHorizontal");
+		cpointer().setCursorPos(m_origPos);
                 m_jogVertical = false;
 		m_jogHorizontal = true;
 	} else {
-		cpointer().get_viewport()->set_holdcursor(":/cursorZoomVertical");
-                cpointer().get_viewport()->set_holdcursor_pos(m_origPos);
+		cpointer().setCursor(":/cursorZoomVertical");
+		cpointer().setCursorPos(m_origPos);
 		m_jogVertical = true;
 		m_jogHorizontal = false;
 	}

@@ -138,6 +138,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)), m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
 
 	connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
+	connect(&ied(), SIGNAL(jogFinished()), this, SLOT(jog_finished()));
 
 	m_shuttleCurve = new Curve(0);
 	m_shuttleCurve->set_sheet(m_session);
@@ -1416,16 +1417,21 @@ void SheetView::set_edit_cursor_text(const QString &text)
 	m_editCursor->set_text(text);
 }
 
+void SheetView::set_edit_cursor_pos(QPointF pos)
+{
+	m_editCursor->setPos(pos);
+}
+
 void SheetView::context_changed()
 {
-	if (!cpointer().keyboard_only_input()) {
-		m_editCursor->hide();
-		return;
-	} else {
-		if (!m_editCursor->isVisible()) {
+//	if (!cpointer().keyboard_only_input()) {
+//		m_editCursor->hide();
+//		return;
+//	} else {
+//		if (!m_editCursor->isVisible()) {
 			m_editCursor->setVisible(true);
-		}
-	}
+//		}
+//	}
 
 	ItemBrowserData data;
 	collect_item_browser_data(data);
@@ -1436,7 +1442,7 @@ void SheetView::context_changed()
 
 void SheetView::jog_finished()
 {
-
+	m_editCursor->reset();
 }
 
 void SheetView::calculate_cursor_dict()

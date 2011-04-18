@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Themer.h"
 
 #include "SheetView.h"
-#include "Sheet.h"
 #include "ViewPort.h"
 #include "ViewItem.h"
 #include "ContextPointer.h"
@@ -76,21 +75,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 	ContextPointer::on_first_input_event_x(), ContextPointer::on_first_input_event_y()
 
 
- *	\sa ContextPointer, InputEngine
+ *	\sa ContextPointer, InputEventDispatcher
  */
-
-
-
-ViewPort::ViewPort(QWidget* parent)
-	: QGraphicsView(parent)
-        , AbstractViewPort()
-        , m_sv(0)
-        , m_mode(0)
-{
-	PENTERCONS;
-	setFrameStyle(QFrame::NoFrame);
-	setAlignment(Qt::AlignLeft | Qt::AlignTop);
-}
 
 ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	: QGraphicsView(scene, parent)
@@ -102,19 +88,8 @@ ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	setFrameStyle(QFrame::NoFrame);
 	setAlignment(Qt::AlignLeft | Qt::AlignTop);
 	
-        // FIXME This flag causes clips to disappear after mouse leave event,
-        // at least when using Qt < 4.6.0 ??
 	setOptimizationFlag(DontAdjustForAntialiasing);
         setOptimizationFlag(DontSavePainterState);
-
-	m_holdcursor = new HoldCursor(this);
-	scene->addItem(m_holdcursor);
-	m_holdcursor->hide();
-	// m_holdCursorActive is a replacement for m_holdcursor->isVisible()
-	// in mouseMoveEvents, which crashes when a hold action in one viewport
-	// ends with the mouse upon a different viewport.
-	// Should get a proper fix ?
-	m_holdCursorActive = false;
 }
 
 ViewPort::~ViewPort()
@@ -128,20 +103,26 @@ bool ViewPort::event(QEvent * event)
 {
 	// We want Tab events also send to the InputEngine
 	// so treat them as 'normal' key events.
-	if (event->type() == QEvent::KeyPress) {
+	if (event->type() == QEvent::KeyPress)
+	{
 		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
-		if (ke->key() == Qt::Key_Tab) {
+		if (ke->key() == Qt::Key_Tab)
+		{
 			keyPressEvent(ke);
 			return true;
 		}
 	}
-	if (event->type() == QEvent::KeyRelease) {
+
+	if (event->type() == QEvent::KeyRelease)
+	{
 		QKeyEvent *ke = static_cast<QKeyEvent *>(event);
-		if (ke->key() == Qt::Key_Tab) {
+		if (ke->key() == Qt::Key_Tab)
+		{
 			keyReleaseEvent(ke);
 			return true;
 		}
         }
+
 	return QGraphicsView::event(event);
 }
 
@@ -171,28 +152,36 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
         QList<ViewItem*> mouseTrackingItems;
 	
-	if (!ied().is_holding()) {
+	if (!ied().is_holding())
+	{
 		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
                 QList<ContextItem*> activeContextItems;
 
-		if (itemsUnderCursor.size()) {
-                        itemsUnderCursor.first()->setCursor(itemsUnderCursor.first()->cursor());
-
-
-                        foreach(QGraphicsItem* item, itemsUnderCursor) {
-				if (ViewItem::is_viewitem(item)) {
+		if (itemsUnderCursor.size())
+		{
+			foreach(QGraphicsItem* item, itemsUnderCursor)
+			{
+				if (ViewItem::is_viewitem(item))
+				{
 					ViewItem* viewItem = (ViewItem*)item;
-					if (!viewItem->ignore_context()) {
+					if (!viewItem->ignore_context())
+					{
 						activeContextItems.append(viewItem);
-						if (viewItem->has_mouse_tracking()) {
+						if (viewItem->has_mouse_tracking())
+						{
 							mouseTrackingItems.append(viewItem);
 						}
 					}
                                 }
                         }
-                } else {
+		}
+		else
+		{
 			// If no item is below the mouse, default to default cursor
-			viewport()->setCursor(themer()->get_cursor("Default"));
+			if (m_sv)
+			{
+				m_sv->set_cursor_shape(":/cursorFloat");
+			}
 		}
 
                 // since sheetview has no bounding rect, and should always have 'active context'
@@ -203,13 +192,9 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
                 cpointer().set_active_context_items_by_mouse_movement(activeContextItems);
 
-
-	} else {
-		// It can happen that a cursor is set for a newly created viewitem
-		// but we don't want that when the holdcursor is set!
-		// So force it back to be a blankcursor.
-		if (m_holdCursorActive /* was m_holdcursor->isVisible() */ && viewport()->cursor().shape() != Qt::BlankCursor) {
-			viewport()->setCursor(Qt::BlankCursor);
+		if (m_sv)
+		{
+			m_sv->set_edit_cursor_pos(mapToScene(event->pos()));
 		}
 	}
 
@@ -217,12 +202,6 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
                 item->mouse_hover_move_event();
         }
 
-//        EditPointLocation editPoint;
-//        editPoint.sceneY = mapToScene(event->pos()).y();
-//        if (m_sv) {
-//                editPoint.location = m_sv->get_sheet()->get_work_location();
-//                m_sv->get_sheet()->set_edit_point_location(editPoint);
-//        }
 	event->accept();
 }
 
@@ -240,6 +219,16 @@ void ViewPort::tabletEvent(QTabletEvent * event)
 void ViewPort::enterEvent(QEvent* e)
 {
 	QGraphicsView::enterEvent(e);
+
+	if (m_sv)
+	{
+		viewport()->setCursor(Qt::BlankCursor);
+	}
+	else
+	{
+		viewport()->setCursor(themer()->get_cursor("Default"));
+	}
+
 	cpointer().set_current_viewport(this);
 	setFocus();
 }
@@ -297,82 +286,38 @@ void ViewPort::paintEvent( QPaintEvent* e )
 
 void ViewPort::reset_cursor( )
 {
-	viewport()->unsetCursor();
-	m_holdcursor->hide();
-	m_holdcursor->reset();
-        m_holdCursorActive = false;
-
-//        QPoint pos = mapToGlobal(mapFromScene(m_holdcursor->get_scene_pos()));
-//        QCursor::setPos(pos);
 }
 
-void ViewPort::set_cursor_shape(const QString &cursor)
-{
-        viewport()->setCursor(themer()->get_cursor(cursor));
-}
-
-void ViewPort::set_holdcursor( const QString & cursorName )
+void ViewPort::setCanvasCursor(const QString &cursor)
 {
 	viewport()->setCursor(Qt::BlankCursor);
-	
-	if (!m_holdCursorActive) {
-                m_holdcursor->set_pos(cpointer().scene_pos());
-		m_holdcursor->show();
-	}
-	m_holdcursor->set_type(cursorName);
-	m_holdCursorActive = true;
+
+	m_sv->set_cursor_shape(cursor);
 }
 
-void ViewPort::set_holdcursor_text( const QString & text )
+void ViewPort::setCursorText( const QString & text )
 {
 	m_sv->set_edit_cursor_text(text);
 }
 
 void ViewPort::set_holdcursor_pos(QPointF pos)
 {
-//        m_holdcursor->set_pos(pos);
+	m_sv->set_edit_cursor_pos(pos);
 }
 
-QPointF ViewPort::get_hold_cursor_pos() const
-{
-        return m_holdcursor->get_scene_pos();
-}
-
-void ViewPort::set_edit_point_position(QPointF pos)
-{
-        QList<QGraphicsItem *> itemsUnderCursor = scene()->items(pos);
-        QList<ContextItem*> activeContextItems;
-
-        foreach(QGraphicsItem* item, itemsUnderCursor) {
-                if (ViewItem::is_viewitem(item)) {
-                        ViewItem* vItem = (ViewItem*)item;
-                        activeContextItems.append(vItem);
-                }
-        }
-        if (m_sv) {
-                activeContextItems.append(m_sv);
-        }
-
-        cpointer().set_active_context_items_by_keyboard_input(activeContextItems);
-
-        m_holdcursor->show();
-        set_holdcursor_pos(pos);
-        update_holdcursor_shape();
-}
-
-void ViewPort::update_holdcursor_shape()
+void ViewPort::update_cursor_shape()
 {
         QList<ContextItem*> items = cpointer().get_active_context_items();
 
         if (cpointer().keyboard_only_input() && items.size()) {
                 if (items.first()->metaObject()->className() == QString("AudioClipView")) {
-                        set_holdcursor(":/cursorFloatOverClip");
+			setCanvasCursor(":/cursorFloatOverClip");
                 }
-                if (items.first()->metaObject()->className() == QString("AudioTrackView")) {
-                        set_holdcursor(":/cursorFloatOverTrack");
+		if (items.first()->metaObject()->className() == QString("AudioTrackView")) {
+			setCanvasCursor(":/cursorFloatOverTrack");
                 }
                 if (items.first()->metaObject()->className() == QString("CurveView")) {
-                        set_holdcursor(":/cursorDragNode");
+			setCanvasCursor(":/cursorDragNode");
                 }
         }
 
@@ -393,106 +338,7 @@ void ViewPort::grab_mouse()
         viewport()->grabMouse();
 }
 
-
 void ViewPort::release_mouse()
 {
         viewport()->releaseMouse();
-        // This issues a mouse move event, so the cursor
-        // will change to the item that's below it....
-//        QCursor::setPos(QCursor::pos()-QPoint(1,1));
-}
-
-
-/**********************************************************************/
-/*                      HoldCursor                                    */
-/**********************************************************************/
-
-
-HoldCursor::HoldCursor(ViewPort* vp)
-	: m_vp(vp)
-{
-	m_textItem = new QGraphicsTextItem(this);
-	m_textItem->setFont(themer()->get_font("ViewPort:fontscale:infocursor"));
-
-	setZValue(200);
-}
-
-HoldCursor::~ HoldCursor( )
-{
-}
-
-void HoldCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
-{
-	Q_UNUSED(widget);
-	Q_UNUSED(option);
-
-	painter->drawPixmap(0, 0, m_pixmap);
-}
-
-
-void HoldCursor::set_text( const QString & text )
-{
-	m_text = text;
-	
-	if (!m_text.isEmpty()) {
-		QString html = "<html><body bgcolor=ghostwhite>" + m_text + "</body></html>";
-		m_textItem->setHtml(html);
-		m_textItem->show();
-	} else {
-		m_textItem->hide();
-	}
-}
-
-void HoldCursor::set_type( const QString & type )
-{
-        QPointF origPos = scenePos();
-        origPos.setX(origPos.x() + (qreal(m_pixmap.width()) / 2));
-        origPos.setY(origPos.y() + (qreal(m_pixmap.height()) / 2));
-        m_pixmap = find_pixmap(type);
-        set_pos(origPos);
-}
-
-QRectF HoldCursor::boundingRect( ) const
-{
-        return QRectF(0, 0, m_pixmap.width(), m_pixmap.height());
-}
-
-void HoldCursor::reset()
-{
-	m_text = "";
-	m_textItem->hide();
-}
-
-void HoldCursor::set_pos(QPointF p)
-{
-	int x = m_vp->mapFromScene(pos()).x();
-	int y = m_vp->mapFromScene(pos()).y();
-        int yoffset = m_pixmap.height() + 25;
-	
-	if (y < 0) {
-		yoffset = - y;
-	} else if (y > m_vp->height() - m_pixmap.height()) {
-		yoffset = m_vp->height() - y - m_pixmap.height();
-	}
-	
-	int diff = m_vp->width() - (x + m_pixmap.width() + 8);
-	
-	if (diff < m_textItem->boundingRect().width()) {
-		m_textItem->setPos(diff - m_pixmap.width(), yoffset);
-	} else if (x < -m_pixmap.width()) {
-		m_textItem->setPos(8 - x, yoffset);
-	} else {
-		m_textItem->setPos(m_pixmap.width() + 8, yoffset);
-	}
-
-        p.setX(p.x() - (qreal(m_pixmap.width()) / 2));
-        p.setY(p.y() - (qreal(m_pixmap.height()) / 2));
-
-        setPos(p);
-}
-
-QPointF HoldCursor::get_scene_pos()
-{
-        QPointF holdcursorShapeAdjust(boundingRect().width() / 2, boundingRect().height() / 2);
-        return scenePos() + holdcursorShapeAdjust;
 }

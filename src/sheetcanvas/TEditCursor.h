@@ -36,7 +36,7 @@ public:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
         void set_text(const QString& text);
-        void set_cursor_shape(const QString& type);
+	void set_cursor_shape(const QString& shape);
         void set_pos(QPointF pos);
 
         // returns the real cursor position, i.e. the center of the cursor.

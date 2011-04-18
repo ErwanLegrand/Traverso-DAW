@@ -116,6 +116,7 @@ public :
 
 	void set_cursor_shape(const QString& cursor);
 	void set_edit_cursor_text(const QString& text);
+	void set_edit_cursor_pos(QPointF pos);
 
 
 	void browse_to_track(Track* track);

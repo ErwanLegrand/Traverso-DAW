@@ -109,8 +109,8 @@ int WorkCursorMove::jog()
 	m_session->set_work_at(newLocation);
 
 	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(newLocation, m_sv->timeref_scalefactor));
-	cpointer().get_viewport()->set_holdcursor_pos(QPointF(m_workCursor->scenePos().x(), m_holdCursorSceneY));
+	cpointer().setCursorText(timeref_to_text(newLocation, m_sv->timeref_scalefactor));
+	cpointer().setCursorPos(QPointF(m_workCursor->scenePos().x(), m_holdCursorSceneY));
 
 	return 1;
 }

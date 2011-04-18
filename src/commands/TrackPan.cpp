@@ -109,9 +109,9 @@ void TrackPan::set_cursor_shape(int useX, int useY)
 	
 	d->mousePos = QCursor::pos();
 	if (useX) {
-		cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+		cpointer().setCursor(":/cursorHoldLr");
 	} else {
-		cpointer().get_viewport()->set_holdcursor("");
+		cpointer().setCursor("");
 	}
 }
 
@@ -143,8 +143,7 @@ int TrackPan::jog()
 	
 	QCursor::setPos(d->mousePos);
 
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
-	
+	cpointer().setCursorText(QByteArray::number(m_newPan, 'f', 2));
 	return 1;
 }
 
@@ -157,7 +156,7 @@ void TrackPan::pan_left(bool autorepeat)
                 m_newPan = -1.0f;
 	m_track->set_pan(m_newPan);
 	
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
+	cpointer().setCursorText(QByteArray::number(m_newPan, 'f', 2));
 }
 
 void TrackPan::pan_right(bool autorepeat)
@@ -169,7 +168,7 @@ void TrackPan::pan_right(bool autorepeat)
                 m_newPan = 1.0f;
 	m_track->set_pan(m_newPan);
 
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(m_newPan, 'f', 2));
+	cpointer().setCursorText(QByteArray::number(m_newPan, 'f', 2));
 }
 
 void TrackPan::reset_pan(bool autorepeat)

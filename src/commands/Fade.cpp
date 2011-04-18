@@ -120,7 +120,7 @@ void FadeRange::set_cursor_shape(int useX, int useY)
 	
 	d->mousePos = QCursor::pos();
 	
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+	cpointer().setCursor(":/cursorHoldLr");
 }
 
 
@@ -136,7 +136,7 @@ int FadeRange::jog()
 	m_curve->set_range( m_newRange );
 	
 	TimeRef location = TimeRef(m_newRange);
-	cpointer().get_viewport()->set_holdcursor_text(timeref_to_ms_3(location));
+	cpointer().setCursorText(timeref_to_ms_3(location));
 	
 	return 1;
 }
@@ -185,7 +185,7 @@ void FadeRange::do_keyboard_move(double range)
         m_newRange = range;
 
 	TimeRef location = TimeRef(m_newRange);
-	cpointer().get_viewport()->set_holdcursor_text(timeref_to_ms_3(location));
+	cpointer().setCursorText(timeref_to_ms_3(location));
 
         do_action();
 }
@@ -263,7 +263,7 @@ void FadeBend::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	mousePos = QCursor::pos();
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
+	cpointer().setCursor(":/cursorHoldUd");
 }
 
 int FadeBend::jog()
@@ -281,7 +281,7 @@ int FadeBend::jog()
 
 	oldValue = m_fade->get_bend_factor();
 	newBend = oldValue;
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(newBend, 'f', 2));
+	cpointer().setCursorText(QByteArray::number(newBend, 'f', 2));
 	
 	origY = cpointer().y();
 	
@@ -355,7 +355,7 @@ void FadeStrength::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	mousePos = QCursor::pos();	
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
+	cpointer().setCursor(":/cursorHoldUd");
 }
 
 int FadeStrength::jog()
@@ -375,7 +375,7 @@ int FadeStrength::jog()
 	
 	oldValue = m_fade->get_strength_factor();
 	newStrength = oldValue;
-	cpointer().get_viewport()->set_holdcursor_text(QByteArray::number(newStrength, 'f', 2));
+	cpointer().setCursorText(QByteArray::number(newStrength, 'f', 2));
 
 	origY = cpointer().y();
 

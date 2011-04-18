@@ -40,7 +40,6 @@ class ViewPort : public QGraphicsView, public AbstractViewPort
         Q_OBJECT
 			
 public :
-        ViewPort(QWidget* parent);
         ViewPort(QGraphicsScene* scene, QWidget* parent);
         virtual ~ViewPort();
 
@@ -48,20 +47,17 @@ public :
 
 
         // Set functions
-	void set_holdcursor(const QString& cursorName);
-	void set_holdcursor_text(const QString& text);
+	void setCursorText(const QString& text);
         void set_holdcursor_pos(QPointF pos);
-        void set_edit_point_position(QPointF pos);
-        void update_holdcursor_shape();
+	void update_cursor_shape();
 	void set_current_mode(int mode);
-        void set_cursor_shape(const QString& cursor);
+	void setCanvasCursor(const QString& cursor);
         void hide_mouse_cursor();
         virtual void set_sheetview(SheetView* view) {m_sv = view;}
 
 	void reset_cursor();
 	
 	int get_current_mode() const {return m_mode;}
-        QPointF get_hold_cursor_pos() const;
 
         void grab_mouse();
         void release_mouse();
@@ -91,46 +87,8 @@ protected:
 private:
         int             m_mode;
         bool            m_holdCursorActive;
-        HoldCursor*	m_holdcursor;
         QPoint		m_oldMousePos;
-
-	// Interface wants to call mouseMoveEvent()
-	friend class Interface;
 };
-
-
-class HoldCursor : public ContextItem, public QGraphicsItem
-{
-	Q_OBJECT
-#if QT_VERSION >= 0x040600
-        Q_INTERFACES(QGraphicsItem)
-#endif
-
-public:
-	HoldCursor(ViewPort* vp);
-	~HoldCursor();
-
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
-	void set_text(const QString& text);
-	void set_type(const QString& type);
-        void set_pos(QPointF pos);
-
-        // returns the real cursor position, i.e. the center of the cursor.
-        QPointF get_scene_pos();
-	void reset();
-
-	QRectF boundingRect() const;
-
-private:
-	ViewPort* 	m_vp;
-	QGraphicsTextItem* m_textItem;
-	QPoint          m_pos;
-	QPixmap		m_pixmap;
-	QString         m_text;
-
-};
-
 
 #endif
 

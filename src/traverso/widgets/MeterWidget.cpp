@@ -37,7 +37,7 @@
 static const int STOP_DELAY = 6000; // in ms
 
 MeterWidget::MeterWidget(QWidget* parent, MeterView* item)
-	: ViewPort(parent)
+	: ViewPort(0, parent)
 	, m_item(item)
 {
 	PENTERCONS;

@@ -26,11 +26,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SheetView.h"
 #include "ViewPort.h"
 
+#include "Debugger.h"
+
 TEditCursor::TEditCursor(SheetView* sv)
         : m_sv(sv)
 {
         m_textItem = new QGraphicsTextItem(this);
         m_textItem->setFont(themer()->get_font("ViewPort:fontscale:infocursor"));
+
+	m_ignoreContext = true;
 
         setZValue(200);
 }
@@ -61,13 +65,13 @@ void TEditCursor::set_text( const QString & text )
         }
 }
 
-void TEditCursor::set_cursor_shape( const QString & type )
+void TEditCursor::set_cursor_shape( const QString & shape )
 {
         QPointF origPos = scenePos();
         origPos.setX(origPos.x() + (qreal(m_pixmap.width()) / 2));
         origPos.setY(origPos.y() + (qreal(m_pixmap.height()) / 2));
-        m_pixmap = find_pixmap(type);
-        set_pos(origPos);
+	m_pixmap = find_pixmap(shape);
+	set_pos(origPos);
 }
 
 QRectF TEditCursor::boundingRect( ) const
@@ -86,7 +90,7 @@ void TEditCursor::set_pos(QPointF p)
         ViewPort* vp = m_sv->get_clips_viewport();
         int x = vp->mapFromScene(pos()).x();
         int y = vp->mapFromScene(pos()).y();
-        int yoffset = m_pixmap.height() + 25;
+	int yoffset = m_pixmap.height() + 25;
 
         if (y < 0) {
                 yoffset = - y;
@@ -96,13 +100,16 @@ void TEditCursor::set_pos(QPointF p)
 
         int diff = vp->width() - (x + m_pixmap.width() + 8);
 
-        if (diff < m_textItem->boundingRect().width()) {
-                m_textItem->setPos(diff - m_pixmap.width(), yoffset);
-        } else if (x < -m_pixmap.width()) {
-                m_textItem->setPos(8 - x, yoffset);
-        } else {
-                m_textItem->setPos(m_pixmap.width() + 8, yoffset);
-        }
+	if (m_textItem->isVisible())
+	{
+		if (diff < m_textItem->boundingRect().width()) {
+			m_textItem->setPos(diff - m_pixmap.width(), yoffset);
+		} else if (x < -m_pixmap.width()) {
+			m_textItem->setPos(8 - x, yoffset);
+		} else {
+			m_textItem->setPos(m_pixmap.width() + 8, yoffset);
+		}
+	}
 
         p.setX(p.x() - (qreal(m_pixmap.width()) / 2));
         p.setY(p.y() - (qreal(m_pixmap.height()) / 2));

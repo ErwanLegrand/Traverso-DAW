@@ -155,8 +155,6 @@ public:
 		return -1;
 	}
 	
-        void reset_cursor();
-        void move_hardware_mouse_cursor_to(QPoint pos);
         void set_jog_bypass_distance(int distance);
         void set_left_mouse_click_bypasses_jog(bool bypassOnLeftMouseClick);
         void mouse_button_left_pressed();
@@ -169,6 +167,9 @@ public:
         }
 
         void set_current_viewport(AbstractViewPort* vp);
+	void setCursor(const QString& cursor);
+	void setCursorText(const QString& text);
+	void setCursorPos(QPointF pos);
 
         QList<QObject* > get_context_items();
         QList<ContextItem*> get_active_context_items() const {return m_activeContextItems;}
@@ -211,12 +212,12 @@ private:
 	
 	
 	
-        AbstractViewPort* m_port;
-        ContextItem*     m_currentContext;
-        QList<QObject* > m_contextItemsList;
+	AbstractViewPort* m_port;
+	ContextItem*     m_currentContext;
+	QList<QObject* > m_contextItemsList;
 	QList<QObject* > m_contextMenuItems;
-        QList<ContextItem*> m_activeContextItems;
-        QList<ContextItem*> m_onFirstInputEventActiveContextItems;
+	QList<ContextItem*> m_activeContextItems;
+	QList<ContextItem*> m_onFirstInputEventActiveContextItems;
 
         void set_active_context_items(const QList<ContextItem*>& items);
 

@@ -716,10 +716,7 @@ void TInputEventDispatcher::finish_hold()
 			delete m_holdingCommand;
 			m_holdingCommand = 0;
 		}
-		cpointer().reset_cursor();
 	} else if (m_holdingCommand) {
-
-		cpointer().reset_cursor();
 
 		int holdFinish = m_holdingCommand->finish_hold();
 		int holdprepare = -1;

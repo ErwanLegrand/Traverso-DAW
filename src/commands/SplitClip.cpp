@@ -134,7 +134,7 @@ void SplitClip::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	cpointer().get_viewport()->set_holdcursor(":/cursorHoldLr");
+	cpointer().setCursor(":/cursorHoldLr");
 }
 
 
@@ -163,8 +163,8 @@ int SplitClip::jog()
 	}
 	m_splitcursor->setPos(xpos, 0);
 	m_sv->update_shuttle_factor();
-	cpointer().get_viewport()->set_holdcursor_text(timeref_to_text(m_splitPoint, m_sv->timeref_scalefactor));
-        cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
+	cpointer().setCursorText(timeref_to_text(m_splitPoint, m_sv->timeref_scalefactor));
+        cpointer().setCursorPos(cpointer().scene_pos());
 	
 	return 1;
 }

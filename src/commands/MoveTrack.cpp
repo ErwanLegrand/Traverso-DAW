@@ -96,7 +96,7 @@ void MoveTrack::cancel_action()
 
 int MoveTrack::jog()
 {
-        cpointer().get_viewport()->set_holdcursor_pos(cpointer().scene_pos());
+	cpointer().setCursorPos(cpointer().scene_pos());
 
         if (int(m_trackView->scenePos().y() + m_trackView->boundingRect().height()) < cpointer().scene_y()) {
                 move_down();
@@ -138,7 +138,7 @@ void MoveTrack::move_down(bool /*autorepeat*/)
 void MoveTrack::set_cursor_shape(int /*useX*/, int useY)
 {
         if (useY) {
-                cpointer().get_viewport()->set_holdcursor(":/cursorHoldUd");
+		cpointer().setCursor(":/cursorHoldUd");
         }
 }
 
