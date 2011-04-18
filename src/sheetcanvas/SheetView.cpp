@@ -1065,13 +1065,13 @@ TCommand* SheetView::browse_to_time_line()
 
 void SheetView::collect_item_browser_data(ItemBrowserData &data)
 {
-	QList<QObject*> list = cpointer().get_context_items();
+	QList<ContextItem*> list = cpointer().get_active_context_items();
 
 	if (list.size()) {
 		data.currentContext = list.first()->metaObject()->className();
 	}
 
-	foreach(QObject* obj, list) {
+	foreach(ContextItem* obj, list) {
 		if (!data.timeLineView) {
 			data.timeLineView = qobject_cast<TimeLineView*>(obj);
 		}
@@ -1424,17 +1424,15 @@ void SheetView::set_edit_cursor_pos(QPointF pos)
 
 void SheetView::context_changed()
 {
-//	if (!cpointer().keyboard_only_input()) {
-//		m_editCursor->hide();
-//		return;
-//	} else {
-//		if (!m_editCursor->isVisible()) {
-			m_editCursor->setVisible(true);
-//		}
-//	}
+	if (!m_clipsViewPort->isVisible())
+	{
+		return;
+	}
 
 	ItemBrowserData data;
 	collect_item_browser_data(data);
+
+	printf("context changed %s\n", data.currentContext.toAscii().data());
 
 	QString shape = cursor_dict()->value(data.currentContext, ":/cursorFloat");
 	set_cursor_shape(shape);
@@ -1443,6 +1441,7 @@ void SheetView::context_changed()
 void SheetView::jog_finished()
 {
 	m_editCursor->reset();
+	context_changed();
 }
 
 void SheetView::calculate_cursor_dict()

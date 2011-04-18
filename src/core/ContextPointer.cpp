@@ -280,8 +280,10 @@ void ContextPointer::set_active_context_items_by_keyboard_input(const QList<Cont
 
 void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
 {
-	foreach(ContextItem* oldItem, m_activeContextItems) {
-		if (!items.contains(oldItem)) {
+	foreach(ContextItem* oldItem, m_activeContextItems)
+	{
+		if (!items.contains(oldItem))
+		{
 			oldItem->set_has_active_context(false);
 		}
 	}
@@ -293,16 +295,16 @@ void ContextPointer::set_active_context_items(const QList<ContextItem *> &items)
 		item->set_has_active_context(true);
 	}
 
-	if (m_port) {
-//                m_port->update_holdcursor_shape();
-	}
-
-	if (m_activeContextItems.isEmpty()) {
-		if (m_currentContext) {
+	if (m_activeContextItems.isEmpty())
+	{
+		if (m_currentContext)
+		{
 			m_currentContext = 0;
 			emit contextChanged();
 		}
-	} else if (m_activeContextItems.first() != m_currentContext) {
+	}
+	else if (m_activeContextItems.first() != m_currentContext)
+	{
 		m_currentContext = m_activeContextItems.first();
 		emit contextChanged();
 	}
