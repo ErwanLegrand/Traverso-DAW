@@ -144,8 +144,13 @@ void TContextHelpWidget::context_changed()
         QList<ContextItem*> items = cpointer().get_active_context_items();
 
         if (items.size()) {
-                m_textEdit->setHtml(create_html_for_object(items.first()));
-		m_currentClassName = items.first()->metaObject()->className();
+		QString newClassName = items.first()->metaObject()->className();
+		if (m_currentClassName == newClassName)
+		{
+			return;
+		}
+		m_textEdit->setHtml(create_html_for_object(items.first()));
+		m_currentClassName = newClassName;
         }
 }
 
