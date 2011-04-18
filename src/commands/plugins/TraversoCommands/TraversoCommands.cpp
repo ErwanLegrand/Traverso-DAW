@@ -64,7 +64,6 @@ TraversoCommands::TraversoCommands()
 	tShortCutManager().add_meta_object(&FadeCurve::staticMetaObject);
 	tShortCutManager().add_meta_object(&FadeCurveView::staticMetaObject);
 	tShortCutManager().add_meta_object(&TMainWindow::staticMetaObject);
-	tShortCutManager().add_meta_object(&Project::staticMetaObject);
 	tShortCutManager().add_meta_object(&ProjectManager::staticMetaObject);
 	tShortCutManager().add_meta_object(&Gain::staticMetaObject);
 	tShortCutManager().add_meta_object(&MoveTrack::staticMetaObject);
@@ -120,7 +119,6 @@ TraversoCommands::TraversoCommands()
 	tShortCutManager().add_translation("TimeLine",tr("Time Line"));
 	tShortCutManager().add_translation("TBusTrackPanel", tr("Bus Track"));
 	tShortCutManager().add_translation("TMainWindow", tr("Main Window"));
-	tShortCutManager().add_translation("Project", tr("Project"));
 	tShortCutManager().add_translation("ProjectManager", tr("Project Manager"));
 	tShortCutManager().add_translation("TrackPanelGain", tr("Gain"));
 	tShortCutManager().add_translation("TrackPanelPan", tr("Panorama"));

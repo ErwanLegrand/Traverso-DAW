@@ -160,8 +160,6 @@ public :
 
 public slots:
         void track_property_changed();
-	TCommand* select();
-        TCommand* start_transport();
         TCommand* remove_child_session();
 
 private:

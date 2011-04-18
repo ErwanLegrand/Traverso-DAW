@@ -1417,16 +1417,6 @@ int Project::create_cdrdao_toc(ExportSpecification* spec)
 	return 1;
 }
 
-TCommand* Project::select()
-{
-	int index = ied().collected_number();
-        QList<TSession*> sessions = get_sessions();
-        if (index < sessions.size() && index >= 0) {
-                set_current_session(sessions.at(index)->get_id());
-	}
-	return (TCommand*) 0;
-}
-
 int Project::get_rate( ) const
 {
 	// FIXME: Projects should eventually just use the universal samplerate
@@ -1803,15 +1793,6 @@ TimeRef Project::get_transport_location() const
         if (!m_activeSheet) return TimeRef();
 
         return m_activeSheet->get_transport_location();
-}
-
-TCommand* Project::start_transport()
-{
-        if (!m_activeSheet) {
-                return 0;
-        }
-
-        return m_activeSheet->start_transport();
 }
 
 QStringList Project::get_input_buses_for(TBusTrack *busTrack)
