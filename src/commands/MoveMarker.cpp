@@ -146,7 +146,8 @@ int MoveMarker::jog()
 	}
 
 	m_newWhen = newpos;
-	d->view->set_position(int(m_newWhen / d->scalefactor));
+	m_marker->set_when(m_newWhen);
+//	d->view->set_position(int(m_newWhen / d->scalefactor));
 
 	d->view->get_sheetview()->update_shuttle_factor();
 
