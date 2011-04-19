@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ViewItem.h"
 
 class SheetView;
+class PositionIndicator;
 
 class TEditCursor : public ViewItem
 {
@@ -47,7 +48,7 @@ public:
 
 private:
 	SheetView*		m_sv;
-	QGraphicsTextItem*	m_textItem;
+	PositionIndicator*	m_textItem;
 	QPointF			m_pos;
 	float			m_xOffset;
 	float			m_yOffset;

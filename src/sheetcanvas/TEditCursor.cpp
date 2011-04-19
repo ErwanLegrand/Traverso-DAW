@@ -25,14 +25,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ClipsViewPort.h"
 #include "SheetView.h"
 #include "ViewPort.h"
+#include "PositionIndicator.h"
 
 #include "Debugger.h"
 
 TEditCursor::TEditCursor(SheetView* sv)
         : m_sv(sv)
 {
-        m_textItem = new QGraphicsTextItem(this);
-        m_textItem->setFont(themer()->get_font("ViewPort:fontscale:infocursor"));
+	m_textItem = new PositionIndicator(this);
+	m_textItem->hide();
 
 	m_ignoreContext = true;
 	m_xOffset = m_yOffset = 0.0f;
@@ -102,8 +103,7 @@ void TEditCursor::set_text( const QString & text )
         m_text = text;
 
         if (!m_text.isEmpty()) {
-                QString html = "<html><body bgcolor=ghostwhite>" + m_text + "</body></html>";
-                m_textItem->setHtml(html);
+		m_textItem->set_value(m_text);
                 m_textItem->show();
         } else {
                 m_textItem->hide();
