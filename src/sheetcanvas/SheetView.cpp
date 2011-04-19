@@ -1099,7 +1099,7 @@ TCommand* SheetView::to_upper_context_level()
 	ItemBrowserData data;
 	collect_item_browser_data(data);
 
-	if (data.currentContext == "TimeLineView"|| data.currentContext == "MarkerView") {
+	if (data.currentContext == "TimeLineView" || data.currentContext == "MarkerView") {
 		browse_to_track(data.tv->get_track());
 	} else if (data.currentContext == "AudioTrackView") {
 		AudioClipView* nearestClipView = data.atv->get_nearest_audioclip_view(m_session->get_work_location());
@@ -1107,7 +1107,10 @@ TCommand* SheetView::to_upper_context_level()
 			browse_to_audio_clip_view(nearestClipView);
 		}
 	} else if (data.currentContext == "AudioClipView") {
-		browse_to_curve_view(data.acv->get_gain_curve_view());
+		if (data.acv->get_gain_curve_view()->isVisible())
+		{
+			browse_to_curve_view(data.acv->get_gain_curve_view());
+		}
 	}
 
 	return 0;
@@ -1118,11 +1121,16 @@ TCommand* SheetView::to_lower_context_level()
 	ItemBrowserData data;
 	collect_item_browser_data(data);
 
-	if (data.currentContext == "CurveView") {
+	if (data.currentContext == "CurveView")
+	{
 		browse_to_audio_clip_view(data.acv);
-	} else if (data.currentContext == "AudioClipView") {
+	}
+	else if (data.currentContext == "AudioClipView")
+	{
 		browse_to_track(data.acv->get_clip()->get_track());
-	} else if (data.currentContext == "AudioTrackView" || data.currentContext == "TBusTrackView") {
+	}
+	else if (data.currentContext == "AudioTrackView" || data.currentContext == "TBusTrackView")
+	{
 		browse_to_time_line();
 	}
 
@@ -1419,7 +1427,7 @@ void SheetView::set_edit_cursor_text(const QString &text)
 
 void SheetView::set_edit_cursor_pos(QPointF pos)
 {
-	m_editCursor->setPos(pos);
+	m_editCursor->set_pos(pos);
 }
 
 void SheetView::context_changed()
@@ -1432,9 +1440,7 @@ void SheetView::context_changed()
 	ItemBrowserData data;
 	collect_item_browser_data(data);
 
-	printf("context changed %s\n", data.currentContext.toAscii().data());
-
-	QString shape = cursor_dict()->value(data.currentContext, ":/cursorFloat");
+	QString shape = cursor_dict()->value(data.currentContext, "");
 	set_cursor_shape(shape);
 }
 
@@ -1446,10 +1452,10 @@ void SheetView::jog_finished()
 
 void SheetView::calculate_cursor_dict()
 {
-	m_cursorsDict.insert("AudioClipView", ":/cursorFloatOverClip");
-	m_cursorsDict.insert("AudioTrackView", ":/cursorFloatOverTrack");
-	m_cursorsDict.insert("TBusTrackView", ":/cursorFloatOverTrack");
-	m_cursorsDict.insert("PluginView", ":/cursorFloatOverPlugin");
-	m_cursorsDict.insert("FadeCurveView", ":/cursorFloatOverFade");
-	m_cursorsDict.insert("CurveView", ":/cursorDragNode");
+	m_cursorsDict.insert("AudioClipView", "C");
+	m_cursorsDict.insert("AudioTrackView", "T");
+	m_cursorsDict.insert("TBusTrackView", "B");
+	m_cursorsDict.insert("PluginView", "P");
+	m_cursorsDict.insert("FadeCurveView", "F");
+	m_cursorsDict.insert("CurveView", "~");
 }

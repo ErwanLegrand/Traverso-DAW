@@ -46,11 +46,15 @@ public:
         QRectF boundingRect() const;
 
 private:
-        SheetView* 	m_sv;
-        QGraphicsTextItem* m_textItem;
-        QPoint          m_pos;
-        QPixmap		m_pixmap;
-        QString         m_text;
+	SheetView*		m_sv;
+	QGraphicsTextItem*	m_textItem;
+	QPointF			m_pos;
+	float			m_xOffset;
+	float			m_yOffset;
+	QPixmap			m_pixmap;
+	QString			m_text;
+
+	void create_cursor_pixmap(const QString& shape);
 };
 
 #endif // TEDITCURSOR_H

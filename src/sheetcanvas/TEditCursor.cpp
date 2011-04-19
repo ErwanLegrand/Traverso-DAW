@@ -35,6 +35,7 @@ TEditCursor::TEditCursor(SheetView* sv)
         m_textItem->setFont(themer()->get_font("ViewPort:fontscale:infocursor"));
 
 	m_ignoreContext = true;
+	m_xOffset = m_yOffset = 0.0f;
 
         setZValue(200);
 }
@@ -48,9 +49,53 @@ void TEditCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * op
         Q_UNUSED(widget);
         Q_UNUSED(option);
 
-        painter->drawPixmap(0, 0, m_pixmap);
+	painter->drawPixmap(0, 0, m_pixmap);
 }
 
+void TEditCursor::create_cursor_pixmap(const QString &shape)
+{
+	int width = 9;
+	int height = 16;
+	int bottom = height + height / 2 - 2;
+	m_pixmap = QPixmap(width + 2, bottom);
+	m_pixmap.fill(Qt::transparent);
+	QPainter painter(&m_pixmap);
+	QPainterPath path;
+
+	float halfWidth = float(width) / 2;
+	QPointF endPoint(halfWidth + 1, 1);
+	QPointF c1(1, height);
+	QPointF c2(width + 1, height);
+	path.moveTo(endPoint);
+	path.quadTo(QPointF(-1, height * 0.75), c1);
+	path.quadTo(QPointF(halfWidth + 1, bottom), c2);
+	path.quadTo(QPointF(width + 3, height * 0.75), endPoint);
+	QLinearGradient gradient;
+	int graycolor = 160;
+	int transparanty = 230;
+	QColor gray(graycolor, graycolor, graycolor, transparanty);
+	QColor black(0, 0, 0, transparanty);
+	gradient.setColorAt(0.0, gray);
+	gradient.setColorAt(1.0, black);
+	gradient.setStart(0, 0);
+	gradient.setFinalStop(0, -height);
+	gradient.setSpread(QGradient::ReflectSpread);
+
+	painter.setBrush(gradient);
+	int white = 200;
+	painter.setPen(QColor(white, white, white));
+	painter.setRenderHint(QPainter::Antialiasing);
+	painter.drawPath(path);
+	QColor color (Qt::yellow);
+	color.setAlpha(160);
+	painter.setPen(color);
+	QFont font;
+	font.setPixelSize(8);
+	font.setKerning(false);
+	painter.setFont(font);
+	QRectF textRect(0, 8, width + 2, height - 8);
+	painter.drawText(textRect, Qt::AlignHCenter, shape);
+}
 
 void TEditCursor::set_text( const QString & text )
 {
@@ -67,16 +112,15 @@ void TEditCursor::set_text( const QString & text )
 
 void TEditCursor::set_cursor_shape( const QString & shape )
 {
-        QPointF origPos = scenePos();
-        origPos.setX(origPos.x() + (qreal(m_pixmap.width()) / 2));
-        origPos.setY(origPos.y() + (qreal(m_pixmap.height()) / 2));
-	m_pixmap = find_pixmap(shape);
-	set_pos(origPos);
+	create_cursor_pixmap(shape);
+	m_xOffset = float(m_pixmap.width()) / 2;
+
+	set_pos(m_pos);
 }
 
 QRectF TEditCursor::boundingRect( ) const
 {
-        return QRectF(0, 0, m_pixmap.width(), m_pixmap.height());
+	return m_pixmap.rect();
 }
 
 void TEditCursor::reset()
@@ -87,18 +131,25 @@ void TEditCursor::reset()
 
 void TEditCursor::set_pos(QPointF p)
 {
-        ViewPort* vp = m_sv->get_clips_viewport();
-        int x = vp->mapFromScene(pos()).x();
-        int y = vp->mapFromScene(pos()).y();
+	m_pos = p;
+
+	int diff = 0;
+	int x = mapFromScene(pos()).x();
+	int y = mapFromScene(pos()).y();
 	int yoffset = m_pixmap.height() + 25;
 
-        if (y < 0) {
-                yoffset = - y;
-        } else if (y > vp->height() - m_pixmap.height()) {
-                yoffset = vp->height() - y - m_pixmap.height();
-        }
+	ViewPort* vp = static_cast<ViewPort*>(cpointer().get_viewport());
+	if (vp)
+	{
+		if (y < 0) {
+			yoffset = - y;
+		} else if (y > vp->height() - m_pixmap.height()) {
+			yoffset = vp->height() - y - m_pixmap.height();
+		}
 
-        int diff = vp->width() - (x + m_pixmap.width() + 8);
+		diff = vp->width() - (x + m_pixmap.width() + 8);
+
+	}
 
 	if (m_textItem->isVisible())
 	{
@@ -111,10 +162,10 @@ void TEditCursor::set_pos(QPointF p)
 		}
 	}
 
-        p.setX(p.x() - (qreal(m_pixmap.width()) / 2));
-        p.setY(p.y() - (qreal(m_pixmap.height()) / 2));
+	p.setX(p.x() - m_xOffset);
+	p.setY(p.y() - m_yOffset);
 
-        setPos(p);
+	setPos(p);
 }
 
 QPointF TEditCursor::get_scene_pos()
