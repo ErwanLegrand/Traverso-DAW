@@ -92,7 +92,7 @@ Gain::~Gain()
 
 int Gain::prepare_actions()
 {
-        if (m_origGain == m_newGain) {
+	if (qFuzzyCompare(m_origGain, m_newGain)) {
 		// Nothing happened!
 		return -1;
 	}

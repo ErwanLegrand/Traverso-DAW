@@ -63,6 +63,13 @@ TrackPan::TrackPan(Track* track, QVariantList args)
 int TrackPan::prepare_actions()
 {
 	delete d;
+
+	if (qFuzzyCompare(m_origPan, m_newPan))
+	{
+		// nothing happened
+		return -1;
+	}
+
         return 1;
 }
 
