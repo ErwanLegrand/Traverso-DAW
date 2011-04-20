@@ -543,15 +543,6 @@ void TInputEventDispatcher::catch_mousebutton_release( QMouseEvent * e )
 	process_release_event(e->button());
 }
 
-void TInputEventDispatcher::catch_mousebutton_doubleclick( QMouseEvent * e )
-{
-	process_press_event(e->button());
-	process_release_event(e->button());
-	process_press_event(e->button());
-	process_release_event(e->button());
-}
-
-
 void TInputEventDispatcher::catch_scroll(QWheelEvent* e)
 {
 	if (e->orientation() == Qt::Horizontal) {

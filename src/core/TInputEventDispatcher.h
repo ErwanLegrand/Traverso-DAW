@@ -50,7 +50,6 @@ public:
         void catch_key_release(QKeyEvent *);
         void catch_mousebutton_press( QMouseEvent * e );
         void catch_mousebutton_release( QMouseEvent * e );
-        void catch_mousebutton_doubleclick( QMouseEvent * e );
         void catch_scroll(QWheelEvent * e );
 
         int collected_number();

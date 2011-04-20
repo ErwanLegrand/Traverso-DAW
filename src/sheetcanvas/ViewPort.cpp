@@ -268,7 +268,7 @@ void ViewPort::mouseReleaseEvent( QMouseEvent * e )
 
 void ViewPort::mouseDoubleClickEvent( QMouseEvent * e )
 {
-	ied().catch_mousebutton_doubleclick(e);
+	ied().catch_mousebutton_press(e);
 	e->accept();
 }
 
