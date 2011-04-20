@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 */
 
 
-#include "TEditCursor.h"
+#include "TCanvasCursor.h"
 
 #include "ClipsViewPort.h"
 #include "SheetView.h"
@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "Debugger.h"
 
-TEditCursor::TEditCursor(SheetView* sv)
+TCanvasCursor::TCanvasCursor(SheetView* sv)
         : m_sv(sv)
 {
 	m_textItem = new PositionIndicator(this);
@@ -41,11 +41,11 @@ TEditCursor::TEditCursor(SheetView* sv)
         setZValue(200);
 }
 
-TEditCursor::~TEditCursor( )
+TCanvasCursor::~TCanvasCursor( )
 {
 }
 
-void TEditCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
+void TCanvasCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget )
 {
         Q_UNUSED(widget);
         Q_UNUSED(option);
@@ -53,7 +53,7 @@ void TEditCursor::paint( QPainter * painter, const QStyleOptionGraphicsItem * op
 	painter->drawPixmap(0, 0, m_pixmap);
 }
 
-void TEditCursor::create_cursor_pixmap(const QString &shape)
+void TCanvasCursor::create_cursor_pixmap(const QString &shape)
 {
 	int width = 9;
 	int height = 16;
@@ -92,14 +92,14 @@ void TEditCursor::create_cursor_pixmap(const QString &shape)
 	color.setAlpha(160);
 	painter.setPen(color);
 	QFont font;
-	font.setPixelSize(8);
+	font.setPointSizeF(6);
 	font.setKerning(false);
 	painter.setFont(font);
 	QRectF textRect(0, 8, width + 2, height - 8);
 	painter.drawText(textRect, Qt::AlignHCenter, shape);
 }
 
-void TEditCursor::set_text( const QString & text )
+void TCanvasCursor::set_text( const QString & text )
 {
         m_text = text;
 
@@ -111,7 +111,7 @@ void TEditCursor::set_text( const QString & text )
         }
 }
 
-void TEditCursor::set_cursor_shape( const QString & shape )
+void TCanvasCursor::set_cursor_shape( const QString & shape )
 {
 	create_cursor_pixmap(shape);
 	m_xOffset = float(m_pixmap.width()) / 2;
@@ -119,13 +119,13 @@ void TEditCursor::set_cursor_shape( const QString & shape )
 	set_pos(m_pos);
 }
 
-void TEditCursor::reset()
+void TCanvasCursor::reset()
 {
         m_text = "";
         m_textItem->hide();
 }
 
-void TEditCursor::set_pos(QPointF p)
+void TCanvasCursor::set_pos(QPointF p)
 {
 	m_pos = p;
 
@@ -164,7 +164,7 @@ void TEditCursor::set_pos(QPointF p)
 	setPos(p);
 }
 
-QPointF TEditCursor::get_scene_pos()
+QPointF TCanvasCursor::get_scene_pos()
 {
         QPointF shapeAdjust(boundingRect().width() / 2, boundingRect().height() / 2);
         return scenePos() + shapeAdjust;

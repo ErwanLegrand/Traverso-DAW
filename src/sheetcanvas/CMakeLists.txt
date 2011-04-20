@@ -39,7 +39,7 @@ ViewPort.cpp
 dialogs/AudioClipEditDialog.cpp
 dialogs/TTrackManagerDialog.cpp
 VUMeterView.cpp
-TEditCursor.cpp
+TCanvasCursor.cpp
 TKnobView.cpp
 )
 
@@ -68,7 +68,7 @@ TimeLineView.h
 LineView.h
 ViewPort.h
 VUMeterView.h
-TEditCursor.h
+TCanvasCursor.h
 TKnobView.h
 )
 

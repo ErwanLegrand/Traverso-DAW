@@ -27,12 +27,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 class SheetView;
 class PositionIndicator;
 
-class TEditCursor : public ViewItem
+class TCanvasCursor : public ViewItem
 {
         Q_OBJECT
 public:
-        TEditCursor(SheetView* sv);
-        ~TEditCursor();
+	TCanvasCursor(SheetView* sv);
+	~TCanvasCursor();
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

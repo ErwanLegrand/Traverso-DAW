@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-11  USA.
 #include "TimeLineViewPort.h"
 #include "TimeLineView.h"
 #include "TrackPanelViewPort.h"
-#include "TEditCursor.h"
+#include "TCanvasCursor.h"
 #include "TSession.h"
 
 #include "AddRemove.h"
@@ -92,7 +92,7 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 
 	m_playCursor = new PlayHead(this, m_session, m_clipsViewPort);
 	m_workCursor = new WorkCursor(this, m_session);
-	m_editCursor = new TEditCursor(this);
+	m_editCursor = new TCanvasCursor(this);
 	scene()->addItem(m_editCursor);
 
 	Sheet* sheet = qobject_cast<Sheet*>(m_session);
@@ -1458,4 +1458,5 @@ void SheetView::calculate_cursor_dict()
 	m_cursorsDict.insert("PluginView", "P");
 	m_cursorsDict.insert("FadeCurveView", "F");
 	m_cursorsDict.insert("CurveView", "~");
+	m_cursorsDict.insert("CurveNodeView", "N");
 }

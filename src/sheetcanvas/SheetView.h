@@ -43,7 +43,7 @@ class AudioTrackView;
 class Track;
 class PlayHead;
 class WorkCursor;
-class TEditCursor;
+class TCanvasCursor;
 class Curve;
 
 struct ItemBrowserData {
@@ -142,7 +142,7 @@ private:
 	TrackView*              m_sheetMasterOutView;
 	TrackView*              m_projectMasterOutView;
 	WorkCursor*		m_workCursor;
-	TEditCursor*            m_editCursor;
+	TCanvasCursor*            m_editCursor;
 	int			m_shuttleXfactor;
 	int			m_shuttleYfactor;
 	int			m_sceneHeight;
