@@ -141,27 +141,6 @@ int Peak::read_header()
 			qWarning("Couldn't open peak file for reading! (%s, Error: %s)", QS_C(data->fileName), QS_C(errorstring));
 			return -1;
 		}
-
-#if QT_VERSION >= 0x040400
-		data->memory = data->file.map(0, data->file.size());
-		if (data->memory) {
-			PMESG3("Peak:: sucessfully mapped data into memory (%s)\n", QS_C(data->fileName));
-		}
-#elif defined(Q_WS_X11) || defined(Q_WS_MAC)
-		int offset = 0;
-		int size = data->file.size();
-		int pagesSize = getpagesize();
-		int realOffset = offset / pagesSize;
-		int extra = offset % pagesSize;
-
-		void *mapAddress = mmap((void*)0, (size_t)size + extra,
-					 PROT_READ, MAP_SHARED, data->file.handle(), realOffset * pagesSize);
-		if (MAP_FAILED != mapAddress) {
-			uchar *address = extra + static_cast<uchar*>(mapAddress);
-			data->memory = address;
-			data->maps[address] = QPair<int,int>(extra, size);
-		}
-#endif
 		
 		QFileInfo file(m_source->get_filename());
 		QFileInfo peakFile(data->fileName);
@@ -908,12 +887,9 @@ bool PeakDataReader::seek(nframes_t start)
 			return false;
 		}
 	
-		// only seek if we didn't mmap 
-		if (!m_d->memory) {
-			if (!m_d->file.seek(start)) {
-				qWarning("PeakDataReader: could not seek to data point %d within %s", start, QS_C(m_d->fileName));
-				return false;
-			}
+		if (!m_d->file.seek(start)) {
+			qWarning("PeakDataReader: could not seek to data point %d within %s", start, QS_C(m_d->fileName));
+			return false;
 		}
 		
 		m_readPos = start;
@@ -937,22 +913,13 @@ nframes_t PeakDataReader::read(DecodeBuffer* buffer, nframes_t count)
 	int framesRead = 0;
 	peak_data_t* readbuffer;
 	
-// 	PROFILE_START;
-	
-	if (m_d->memory) {
-		readbuffer = (peak_data_t*)(m_d->memory + m_readPos);
-		framesRead = count;
-	} else {
-		framesRead = m_d->file.read((char*)buffer->readBuffer, sizeof(peak_data_t) * count) / sizeof(peak_data_t);
-		readbuffer = (peak_data_t*)(buffer->readBuffer);
-	}
+	framesRead = m_d->file.read((char*)buffer->readBuffer, sizeof(peak_data_t) * count) / sizeof(peak_data_t);
+	readbuffer = (peak_data_t*)(buffer->readBuffer);
 
 	for (int f = 0; f < framesRead; f++) {
 		buffer->destination[0][f] = float(readbuffer[f]);
 	}
 	
-// 	PROFILE_END("peakdata reader read");
-
 	m_readPos += framesRead;
 	
 	return framesRead;

@@ -166,7 +166,6 @@ private:
 
 	struct ChannelData {
 		ChannelData() {
-			memory = 0;
 			peakdataDecodeBuffer = 0;
 		}
 		~ChannelData();
@@ -178,7 +177,6 @@ private:
 		PeakDataReader*	peakreader;
 		ProcessData* 	pd;
 		DecodeBuffer*	peakdataDecodeBuffer;
-		uchar*		memory;
 		QHash<uchar *, QPair<int /*offset*/, int /*handle|len*/> > maps;
 	};
 	
