@@ -22,11 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "SplitClip.h"
 		
 #include <libtraversocore.h>
-#include <SheetView.h>
-#include <AudioClipView.h>
+#include "SheetView.h"
+#include "AudioClipView.h"
 #include "LineView.h"
-#include <ViewItem.h>
+#include "ViewItem.h"
 #include "Fade.h"
+#include "Themer.h"
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!

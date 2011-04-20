@@ -51,6 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "Plugin.h"
 #include "Import.h"
 #include "TimeLine.h"
+#include "Themer.h"
 #include "AudioFileCopyConvert.h"
 
 #include "../sheetcanvas/SheetWidget.h"

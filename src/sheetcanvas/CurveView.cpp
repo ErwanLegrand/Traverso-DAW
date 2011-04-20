@@ -70,7 +70,7 @@ CurveView::CurveView(SheetView* sv, ViewItem* parentViewItem, Curve* curve)
 	connect(m_curve, SIGNAL(nodePositionChanged()), this, SLOT(node_moved()));
         connect(m_curve, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 	
-        m_hasMouseTracking = true;
+	m_hasMouseTracking = true;
 }
 
 CurveView::~ CurveView( )
@@ -277,13 +277,12 @@ void CurveView::mouse_hover_move_event()
         update_softselected_node(cpointer().scene_pos());
 
 	if (m_blinkingNode) {
-		setCursor(themer()->get_cursor("CurveNode"));
+		QString shape = m_sv->cursor_dict()->value("CurveNodeView", "");
+		m_sv->set_cursor_shape(shape);
 	} else {
-		setCursor(themer()->get_cursor("AudioClip"));
+		QString shape = m_sv->cursor_dict()->value("CurveView", "");
+		m_sv->set_cursor_shape(shape);
 	}
-// 	printf("mouse x,y pos %d,%d\n", point.x(), point.y());
-	
-// 	printf("\n");
 }
 
 

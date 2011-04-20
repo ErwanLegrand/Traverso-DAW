@@ -353,15 +353,9 @@ void Themer::load( )
 	}
 	
 	m_cursors.clear();
-	m_cursors.insert("AudioClip", QCursor(find_pixmap(":/cursorFloatOverClip")));
-	m_cursors.insert("Track", QCursor(find_pixmap(":/cursorFloatOverTrack")));
-	m_cursors.insert("Plugin", QCursor(find_pixmap(":/cursorFloatOverPlugin")));
-	m_cursors.insert("Fade", QCursor(find_pixmap(":/cursorFloatOverFade")));
-	m_cursors.insert("Default", QCursor(find_pixmap(":/cursorFloat")));
 	m_cursors.insert("Zoom", QCursor(find_pixmap(":/cursorZoom")));
 	m_cursors.insert("ZoomVertical", QCursor(find_pixmap(":/cursorZoomVertical")));
 	m_cursors.insert("ZoomHorizontal", QCursor(find_pixmap(":/cursorZoomHorizontal")));
-	m_cursors.insert("CurveNode", QCursor(find_pixmap(":/cursorDragNode")));
 	
 	m_cursors.insert("LRUD", QCursor(find_pixmap(":/cursorHoldLrud")));
 	m_cursors.insert("LR", QCursor(find_pixmap(":/cursorHoldLr")));

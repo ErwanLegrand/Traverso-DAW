@@ -63,7 +63,6 @@ FadeCurveView::FadeCurveView(SheetView* sv, AudioClipView* parent, FadeCurve * f
 	
 	load_theme_data();
 
-	setCursor(themer()->get_cursor("Fade"));
         setFlags(QGraphicsItem::ItemUsesExtendedStyleOption);
 
 	connect(m_fadeCurve, SIGNAL(stateChanged()), this, SLOT(state_changed()));

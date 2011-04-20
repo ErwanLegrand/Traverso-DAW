@@ -61,8 +61,6 @@ TrackView::TrackView(SheetView* sv, Track * track)
 
 	m_isMoving = false;
 
-	setCursor(themer()->get_cursor("Track"));
-
 	m_pluginChainView = new PluginChainView(m_sv, this, m_track->get_plugin_chain());
 
 	connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));

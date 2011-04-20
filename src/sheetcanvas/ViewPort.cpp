@@ -90,6 +90,7 @@ ViewPort::ViewPort(QGraphicsScene* scene, QWidget* parent)
 	
 	setOptimizationFlag(DontAdjustForAntialiasing);
         setOptimizationFlag(DontSavePainterState);
+	setMouseTracking(true);
 }
 
 ViewPort::~ViewPort()

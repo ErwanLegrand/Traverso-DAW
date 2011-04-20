@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "TKnobView.h"
 
+#include "Themer.h"
 #include "Track.h"
 #include "math.h"
 

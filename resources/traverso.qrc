@@ -1,13 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="cursorDrag">images/cursorDrag.xpm</file>
-        <file alias="cursorDragNode">images/cursorDragNode.xpm</file>
-        <file alias="cursorFloatOverClip">images/cursorFloatOverClip.xpm</file>
-        <file alias="cursorFloatOverPlugin">images/cursorFloatOverPlugin.xpm</file>
-        <file alias="cursorFloatOverFade">images/cursorFloatOverFade.xpm</file>
-        <file alias="cursorFloatOverTrack">images/cursorFloatOverTrack.xpm</file>
-        <file alias="cursorFloat">images/cursorFloat.xpm</file>
-        <file alias="cursorZoom">images/cursorZoom.xpm</file>
+	<file alias="cursorZoom">images/cursorZoom.xpm</file>
         <file alias="cursorZoomHorizontal">images/cursorZoomHorizontal.xpm</file>
         <file alias="cursorZoomVertical">images/cursorZoomVertical.xpm</file>
         <file alias="cursorHoldLrud">images/cursorHoldLrud.xpm</file>
@@ -76,14 +69,14 @@
         <file alias="remove">images/icons/list-remove.png</file>
         <file alias="welcomebackground">images/background_center_frame.png</file>
         <file alias="welcomeheaderlogo">images/traverso.png</file>
-        <file>translations/traverso_nl.qm</file>
-        <file>translations/traverso_de.qm</file>
-        <file>translations/traverso_fr.qm</file>
-        <file>translations/traverso_bg.qm</file>
-        <file>translations/traverso_cs.qm</file>
-        <file>translations/traverso_es.qm</file>
-        <file>translations/traverso_ru.qm</file>
-        <file>translations/traverso_it.qm</file>
-        <file alias="project_conversion_description_2_3">projectconversion/2_to_3.html</file>
+	<file>translations/traverso_nl.qm</file>
+	<file>translations/traverso_de.qm</file>
+	<file>translations/traverso_fr.qm</file>
+	<file>translations/traverso_bg.qm</file>
+	<file>translations/traverso_cs.qm</file>
+	<file>translations/traverso_es.qm</file>
+	<file>translations/traverso_ru.qm</file>
+	<file>translations/traverso_it.qm</file>
+	<file alias="project_conversion_description_2_3">projectconversion/2_to_3.html</file>
     </qresource>
 </RCC>

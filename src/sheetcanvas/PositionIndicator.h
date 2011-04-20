@@ -35,7 +35,6 @@ public:
 	
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void calculate_bounding_rect();
-	void set_position(int x, int y);
 	
 	void set_value(const QString& value);
 	

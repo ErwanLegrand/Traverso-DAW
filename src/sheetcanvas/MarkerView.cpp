@@ -191,7 +191,7 @@ void MarkerView::set_dragging(bool dragging)
         }
 
         if (dragging) {
-                m_posIndicator->set_position(- (m_posIndicator->boundingRect().width() + 4), 0);
+		m_posIndicator->setPos(- (m_posIndicator->boundingRect().width() + 4), 0);
                 m_posIndicator->show();
         } else {
                 m_posIndicator->hide();

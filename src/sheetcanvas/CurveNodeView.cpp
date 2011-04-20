@@ -40,7 +40,6 @@ CurveNodeView::CurveNodeView( SheetView * sv, CurveView* curveview, CurveNode * 
 	m_sv = sv;
 	m_curveview = curveview;
 	m_isSoftSelected = m_isHardSelected = false;
-	setCursor(themer()->get_cursor("CurveNode"));
 
 	setFlags(QGraphicsItem::ItemIgnoresTransformations);
 

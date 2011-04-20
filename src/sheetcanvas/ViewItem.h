@@ -28,9 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
-#include <QCursor>
 #include <Utils.h>
-#include <Themer.h>
 
 class SheetView;
 		
@@ -61,7 +59,6 @@ public:
         {
                 set_context_item(parentContext);
                 m_parentViewItem = parentViewItem;
-                setCursor(themer()->get_cursor("Default"));
                 m_hasMouseTracking = false;
 		m_ignoreContext = false;
         }

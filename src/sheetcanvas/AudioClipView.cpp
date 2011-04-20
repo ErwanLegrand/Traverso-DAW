@@ -104,8 +104,6 @@ AudioClipView::AudioClipView(SheetView* sv, AudioTrackView* parent, AudioClip* c
                 start_recording();
                 connect(m_clip, SIGNAL(recordingFinished(AudioClip*)), this, SLOT(finish_recording()));
         }
-
-        setCursor(themer()->get_cursor("AudioClip"));
 }
 
 AudioClipView::~ AudioClipView()

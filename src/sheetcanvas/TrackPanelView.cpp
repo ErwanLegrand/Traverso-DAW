@@ -114,8 +114,6 @@ TrackPanelView::TrackPanelView(TrackView* view)
         connect(m_track, SIGNAL(activeContextChanged()), this, SLOT(active_context_changed()));
 
         connect(themer(), SIGNAL(themeLoaded()), this, SLOT(theme_config_changed()));
-
-        setCursor(themer()->get_cursor("Track"));
 }
 
 TrackPanelView::~TrackPanelView( )
