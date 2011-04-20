@@ -59,6 +59,7 @@ void TEditCursor::create_cursor_pixmap(const QString &shape)
 	int height = 16;
 	int bottom = height + height / 2 - 2;
 	m_pixmap = QPixmap(width + 2, bottom);
+	m_boundingRect = m_pixmap.rect();
 	m_pixmap.fill(Qt::transparent);
 	QPainter painter(&m_pixmap);
 	QPainterPath path;
@@ -116,11 +117,6 @@ void TEditCursor::set_cursor_shape( const QString & shape )
 	m_xOffset = float(m_pixmap.width()) / 2;
 
 	set_pos(m_pos);
-}
-
-QRectF TEditCursor::boundingRect( ) const
-{
-	return m_pixmap.rect();
 }
 
 void TEditCursor::reset()

@@ -44,8 +44,6 @@ public:
         QPointF get_scene_pos();
         void reset();
 
-        QRectF boundingRect() const;
-
 private:
 	SheetView*		m_sv;
 	PositionIndicator*	m_textItem;
