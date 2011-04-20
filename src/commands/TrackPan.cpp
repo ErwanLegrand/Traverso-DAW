@@ -158,24 +158,22 @@ void TrackPan::pan_left(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
 	
-        m_newPan -= 0.05f;
+	m_newPan -= 0.05f;
 	if (m_newPan < -1.0) 
                 m_newPan = -1.0f;
-	m_track->set_pan(m_newPan);
-	
-	cpointer().setCursorText(QByteArray::number(m_newPan, 'f', 2));
+
+	set_value_by_keyboard_input(m_newPan);
 }
 
 void TrackPan::pan_right(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	
+
         m_newPan += 0.05f;
         if (m_newPan > 1.0f)
                 m_newPan = 1.0f;
-	m_track->set_pan(m_newPan);
 
-	cpointer().setCursorText(QByteArray::number(m_newPan, 'f', 2));
+	set_value_by_keyboard_input(m_newPan);
 }
 
 void TrackPan::reset_pan(bool autorepeat)
@@ -184,7 +182,15 @@ void TrackPan::reset_pan(bool autorepeat)
 		return;
 	}
 
-	m_newPan = 0.0f;
-	do_action();
+	set_value_by_keyboard_input(0.0f);
+}
+
+void TrackPan::set_value_by_keyboard_input(float newPan)
+{
 	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+
+	m_newPan = newPan;
+	m_track->set_pan(m_newPan);
+
+	cpointer().setCursorText(QByteArray::number(m_newPan, 'f', 2));
 }
