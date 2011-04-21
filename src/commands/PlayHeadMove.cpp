@@ -65,21 +65,13 @@ int PlayHeadMove::begin_hold()
         m_holdCursorSceneY = cpointer().scene_y();
 
         ClipsViewPort* port = m_sv->get_clips_viewport();
-	port->set_holdcursor_pos(QPointF(m_playhead->scenePos().x() - 16, cpointer().y()));
+	cpointer().setCursorPos(QPointF(m_playhead->scenePos().x(), cpointer().y()));
         int x = port->mapFromScene(m_playhead->scenePos()).x();
 
         if (x < 0 || x > port->width()) {
                 m_sv->center_in_view(m_playhead, Qt::AlignHCenter);
         }
 
-//        QCursor::setPos(port->mapToGlobal(
-//                        port->mapFromScene(
-//                        m_playhead->scenePos().x(), m_holdCursorSceneY)));
-
-
-	// Mabye a technically more proper fix is to check if 
-	// m_origXPos and the x pos in finish_hold() are equal or not ??
-//	jog();
 	return 1;
 }
 
@@ -198,7 +190,7 @@ void PlayHeadMove::do_keyboard_move(TimeRef newLocation, bool centerInView)
 
 
 	cpointer().setCursorText(timeref_to_text(m_newTransportLocation, m_sv->timeref_scalefactor));
-	cpointer().setCursorPos(QPointF(m_playhead->scenePos().x() - 16, m_holdCursorSceneY));
+	cpointer().setCursorPos(QPointF(m_playhead->scenePos().x(), m_holdCursorSceneY));
 }
 
 void PlayHeadMove::move_to_work_cursor(bool autorepeat)

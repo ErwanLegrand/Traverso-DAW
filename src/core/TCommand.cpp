@@ -285,7 +285,7 @@ void TCommand::set_cursor_shape( int useX, int useY )
 	} else if (useY) {
 		port->setCanvasCursor("UD");
 	} else{
-                port->reset_cursor();
+		port->setCanvasCursor("Default");
 	}
 	
 }

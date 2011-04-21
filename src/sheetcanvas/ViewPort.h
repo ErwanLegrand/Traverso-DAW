@@ -49,14 +49,10 @@ public :
         // Set functions
 	void setCursorText(const QString& text);
         void set_holdcursor_pos(QPointF pos);
-	void update_cursor_shape();
 	void set_current_mode(int mode);
 	void setCanvasCursor(const QString& cursor);
-        void hide_mouse_cursor();
         virtual void set_sheetview(SheetView* view) {m_sv = view;}
 
-	void reset_cursor();
-	
 	int get_current_mode() const {return m_mode;}
 
         void grab_mouse();

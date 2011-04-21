@@ -285,10 +285,6 @@ void ViewPort::paintEvent( QPaintEvent* e )
 	QGraphicsView::paintEvent(e);
 }
 
-void ViewPort::reset_cursor( )
-{
-}
-
 void ViewPort::setCanvasCursor(const QString &cursor)
 {
 	viewport()->setCursor(Qt::BlankCursor);
@@ -304,29 +300,6 @@ void ViewPort::setCursorText( const QString & text )
 void ViewPort::set_holdcursor_pos(QPointF pos)
 {
 	m_sv->set_edit_cursor_pos(pos);
-}
-
-void ViewPort::update_cursor_shape()
-{
-        QList<ContextItem*> items = cpointer().get_active_context_items();
-
-        if (cpointer().keyboard_only_input() && items.size()) {
-                if (items.first()->metaObject()->className() == QString("AudioClipView")) {
-			setCanvasCursor(":/cursorFloatOverClip");
-                }
-		if (items.first()->metaObject()->className() == QString("AudioTrackView")) {
-			setCanvasCursor(":/cursorFloatOverTrack");
-                }
-                if (items.first()->metaObject()->className() == QString("CurveView")) {
-			setCanvasCursor(":/cursorDragNode");
-                }
-        }
-
-}
-
-void ViewPort::hide_mouse_cursor()
-{
-        viewport()->setCursor(Qt::BlankCursor);
 }
 
 void ViewPort::set_current_mode(int mode)

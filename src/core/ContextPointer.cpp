@@ -240,6 +240,8 @@ void ContextPointer::setCursorPos(QPointF pos)
 		return;
 	}
 
+	set_edit_point_position(int(pos.x()), int(pos.y()));
+
 	m_port->set_holdcursor_pos(pos);
 }
 
@@ -333,14 +335,8 @@ void ContextPointer::set_keyboard_only_input(bool keyboardOnly)
 
 	// Mouse cursor is taking over, let it look like it started
 	// from the edit point :)
-	if (!keyboardOnly) {
+	if (!keyboardOnly)
+	{
 		QCursor::setPos(m_globalMousePos);
-		if (m_port) {
-			m_port->reset_cursor();
-		}
-	}  else {
-		if (m_port) {
-			m_port->hide_mouse_cursor();
-		}
 	}
 }
