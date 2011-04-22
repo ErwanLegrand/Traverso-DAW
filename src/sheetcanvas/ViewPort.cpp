@@ -151,18 +151,11 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
         m_oldMousePos = event->pos();
 
-	updateContext(event->pos());
-
-	event->accept();
-}
-
-void ViewPort::updateContext(const QPoint &pos)
-{
 	QList<ViewItem*> mouseTrackingItems;
 
 	if (!ied().is_holding())
 	{
-		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(pos));
+		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
 		QList<ContextItem*> activeContextItems;
 
 		if (itemsUnderCursor.size())
@@ -202,15 +195,16 @@ void ViewPort::updateContext(const QPoint &pos)
 
 		if (m_sv)
 		{
-			m_sv->set_canvas_cursor_pos(mapToScene(pos));
+			m_sv->set_canvas_cursor_pos(mapToScene(event->pos()));
 		}
 	}
 
 	foreach(ViewItem* item, mouseTrackingItems) {
 		item->mouse_hover_move_event();
 	}
-}
 
+	event->accept();
+}
 
 void ViewPort::tabletEvent(QTabletEvent * event)
 {
@@ -320,5 +314,4 @@ void ViewPort::grab_mouse()
 void ViewPort::release_mouse()
 {
         viewport()->releaseMouse();
-	updateContext(m_oldMousePos);
 }

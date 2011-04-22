@@ -84,8 +84,6 @@ private:
         int             m_mode;
         bool            m_holdCursorActive;
         QPoint		m_oldMousePos;
-
-	void updateContext(const QPoint& pos);
 };
 
 #endif
