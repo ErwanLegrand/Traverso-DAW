@@ -82,7 +82,6 @@ protected:
 	
 private:
         int             m_mode;
-        bool            m_holdCursorActive;
         QPoint		m_oldMousePos;
 };
 

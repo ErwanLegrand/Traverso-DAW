@@ -244,8 +244,6 @@ void ContextPointer::setCursorPos(QPointF pos)
 		return;
 	}
 
-	store_canvas_cursor_position(int(pos.x()), int(pos.y()));
-
 	if (ied().get_holding_command() && ied().get_holding_command()->restoreCursorPosition())
 	{
 		QCursor::setPos(m_globalMousePos);
