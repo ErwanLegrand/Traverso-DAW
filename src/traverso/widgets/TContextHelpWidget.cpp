@@ -121,7 +121,6 @@ TContextHelpWidget::TContextHelpWidget(QWidget* parent)
 
         connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
         connect(&ied(), SIGNAL(jogStarted()), this, SLOT(jog_started()));
-        connect(&ied(), SIGNAL(jogFinished()), this, SLOT(context_changed()));
         connect(m_comboBox, SIGNAL(activated(int)), this, SLOT(combobox_activated(int)));
 	connect(&tShortCutManager(), SIGNAL(functionKeysChanged()), this, SLOT(function_keys_changed()));
 }
@@ -163,6 +162,7 @@ void TContextHelpWidget::jog_started()
         TCommand* hold = ied().get_holding_command();
         if (hold) {
                 m_textEdit->setHtml(create_html_for_object(hold));
+		m_currentClassName = hold->metaObject()->className();
         }
 }
 

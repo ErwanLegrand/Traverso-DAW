@@ -741,8 +741,9 @@ void TInputEventDispatcher::finish_hold()
 		m_holdingCommand = 0;
 	}
 
-	set_jogging(false);
 	reset();
+
+	set_jogging(false);
 }
 
 void TInputEventDispatcher::clear_hold_modifier_keys()

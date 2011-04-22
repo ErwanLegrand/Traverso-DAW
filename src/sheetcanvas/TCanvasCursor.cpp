@@ -117,6 +117,8 @@ void TCanvasCursor::set_cursor_shape( const QString & shape )
 	m_xOffset = float(m_pixmap.width()) / 2;
 
 	set_pos(m_pos);
+	reset();
+	update();
 }
 
 void TCanvasCursor::reset()

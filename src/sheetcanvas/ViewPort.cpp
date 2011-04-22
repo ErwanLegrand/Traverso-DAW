@@ -151,12 +151,19 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
         m_oldMousePos = event->pos();
 
-        QList<ViewItem*> mouseTrackingItems;
-	
+	updateContext(event->pos());
+
+	event->accept();
+}
+
+void ViewPort::updateContext(const QPoint &pos)
+{
+	QList<ViewItem*> mouseTrackingItems;
+
 	if (!ied().is_holding())
 	{
-		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(event->pos()));
-                QList<ContextItem*> activeContextItems;
+		QList<QGraphicsItem *> itemsUnderCursor = scene()->items(mapToScene(pos));
+		QList<ContextItem*> activeContextItems;
 
 		if (itemsUnderCursor.size())
 		{
@@ -173,8 +180,8 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 							mouseTrackingItems.append(viewItem);
 						}
 					}
-                                }
-                        }
+				}
+			}
 		}
 		else
 		{
@@ -185,25 +192,23 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 			}
 		}
 
-                // since sheetview has no bounding rect, and should always have 'active context'
-                // add it if it's available
-                if (m_sv) {
-                        activeContextItems.append(m_sv);
-                }
+		// since sheetview has no bounding rect, and should always have 'active context'
+		// add it if it's available
+		if (m_sv) {
+			activeContextItems.append(m_sv);
+		}
 
-                cpointer().set_active_context_items_by_mouse_movement(activeContextItems);
+		cpointer().set_active_context_items_by_mouse_movement(activeContextItems);
 
 		if (m_sv)
 		{
-			m_sv->set_canvas_cursor_pos(mapToScene(event->pos()));
+			m_sv->set_canvas_cursor_pos(mapToScene(pos));
 		}
 	}
 
-        foreach(ViewItem* item, mouseTrackingItems) {
-                item->mouse_hover_move_event();
-        }
-
-	event->accept();
+	foreach(ViewItem* item, mouseTrackingItems) {
+		item->mouse_hover_move_event();
+	}
 }
 
 
@@ -315,4 +320,5 @@ void ViewPort::grab_mouse()
 void ViewPort::release_mouse()
 {
         viewport()->releaseMouse();
+	updateContext(m_oldMousePos);
 }

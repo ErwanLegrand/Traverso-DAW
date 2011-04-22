@@ -138,7 +138,6 @@ SheetView::SheetView(SheetWidget* sheetwidget,
 	connect(m_vScrollBar, SIGNAL(valueChanged(int)), m_clipsViewPort->verticalScrollBar(), SLOT(setValue(int)));
 
 	connect(&cpointer(), SIGNAL(contextChanged()), this, SLOT(context_changed()));
-	connect(&ied(), SIGNAL(jogFinished()), this, SLOT(jog_finished()));
 
 	m_shuttleCurve = new Curve(0);
 	m_shuttleCurve->set_sheet(m_session);
@@ -1432,6 +1431,7 @@ void SheetView::set_canvas_cursor_pos(QPointF pos)
 
 void SheetView::context_changed()
 {
+	PENTER;
 	if (!m_clipsViewPort->isVisible())
 	{
 		return;
@@ -1442,12 +1442,6 @@ void SheetView::context_changed()
 
 	QString shape = cursor_dict()->value(data.currentContext, "");
 	set_cursor_shape(shape);
-}
-
-void SheetView::jog_finished()
-{
-	m_editCursor->reset();
-	context_changed();
 }
 
 void SheetView::calculate_cursor_dict()

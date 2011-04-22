@@ -208,7 +208,6 @@ private slots:
 	void session_vertical_scrollbar_position_changed();
 	void session_horizontal_scrollbar_position_changed();
 	void context_changed();
-	void jog_finished();
 	void layout_tracks();
 };
 

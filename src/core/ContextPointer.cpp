@@ -159,6 +159,10 @@ void ContextPointer::jog_start()
 void ContextPointer::jog_finished()
 {
 	if (m_port) {
+		// invalidate current context, so a call to set_active_context_items();
+		// will force a context changed signal (so eventually a hold cursor can
+		// be reset to the actual context)
+		m_currentContext = 0;
 		m_port->release_mouse();
 	}
 	m_jogTimer.stop();
