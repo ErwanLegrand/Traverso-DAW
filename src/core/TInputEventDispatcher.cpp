@@ -700,6 +700,11 @@ void TInputEventDispatcher::finish_hold()
 
 	clear_hold_modifier_keys();
 
+	if (m_holdingCommand->restoreCursorPosition())
+	{
+		cpointer().setCursorPos(cpointer().on_first_input_event_scene_pos());
+	}
+
 	if (m_cancelHold) {
 		PMESG("Canceling this hold command");
 		if (m_holdingCommand) {

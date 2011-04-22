@@ -54,6 +54,7 @@ public :
         int jog();
 	
 	void set_cursor_shape(int useX, int useY);
+	bool restoreCursorPosition() const {return true;}
 
 private :
 	FadeCurve*	m_curve;
@@ -65,7 +66,6 @@ private :
                         AudioClip* clip;
 			int origX;
 			int direction;
-			QPoint	mousePos;
 			qint64 scalefactor;
 	};
 	Private* d;
@@ -100,6 +100,7 @@ public :
 	int jog();
 
 	void set_cursor_shape(int useX, int useY);
+	bool restoreCursorPosition() const {return true;}
 	
 private :
 	float	oldValue;
@@ -108,7 +109,6 @@ private :
 	double	newStrength;
 	FadeCurve*	m_fade;
 	FadeCurveView*	m_fv;
-	QPoint		mousePos;
 };
 
 
@@ -131,6 +131,7 @@ public :
 	int jog();
 	
 	void set_cursor_shape(int useX, int useY);
+	bool restoreCursorPosition() const {return true;}
 
 private :
 	float	oldValue;
@@ -139,7 +140,6 @@ private :
 	double	newBend;
 	FadeCurve*	m_fade;
 	FadeCurveView*	m_fv;
-	QPoint		mousePos;
 };
 
 

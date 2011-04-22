@@ -47,17 +47,13 @@ public :
         int jog();
 
 	void set_cursor_shape(int useX, int useY);
+	bool restoreCursorPosition() const {return true;}
 	
-private :
-	struct Data {
-		QPoint	mousePos;
-		int origX;
-	};
-	Data* d;
-	
-	float m_origPan;
-	float m_newPan;
-        Track* m_track;
+private :	
+	float	m_origPan;
+	float	m_newPan;
+	Track*	m_track;
+	int	m_origX;
 
 	void set_value_by_keyboard_input(float newPan);
 	

@@ -42,7 +42,6 @@
 
 TrackPan::TrackPan(Track* track, QVariantList args)
 	: TCommand(track, "")
-	, d(new Data)
 {
         m_track = track;
 	
@@ -62,8 +61,6 @@ TrackPan::TrackPan(Track* track, QVariantList args)
 
 int TrackPan::prepare_actions()
 {
-	delete d;
-
 	if (qFuzzyCompare(m_origPan, m_newPan))
 	{
 		// nothing happened
@@ -76,7 +73,7 @@ int TrackPan::prepare_actions()
 
 int TrackPan::begin_hold()
 {
-        d->origX = cpointer().x();
+	m_origX = cpointer().x();
         m_origPan = m_newPan = m_track->get_pan();
 
         return 1;
@@ -85,7 +82,6 @@ int TrackPan::begin_hold()
 
 int TrackPan::finish_hold()
 {
-	QCursor::setPos(d->mousePos);
 	return 1;
 }
 
@@ -114,7 +110,6 @@ void TrackPan::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	d->mousePos = QCursor::pos();
 	if (useX) {
 		cpointer().setCursor(":/cursorHoldLr");
 	} else {
@@ -125,7 +120,7 @@ void TrackPan::set_cursor_shape(int useX, int useY)
 int TrackPan::jog()
 {
         float w = 600.0;
-        float ofx = (float) d->origX - cpointer().x();
+	float ofx = (float) m_origX - cpointer().x();
         float p = -2.0f *  (ofx) / w ;
 
         if (p > 0.0f && p < 0.01f) {
@@ -148,8 +143,6 @@ int TrackPan::jog()
 
         m_track->set_pan(m_newPan);
 	
-	QCursor::setPos(d->mousePos);
-
 	cpointer().setCursorText(QByteArray::number(m_newPan, 'f', 2));
 	return 1;
 }

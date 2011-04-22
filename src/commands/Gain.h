@@ -48,13 +48,13 @@ public :
         int jog();
         
         void set_cursor_shape(int useX, int useY);
+	bool restoreCursorPosition() const {return true;}
 
 private :
         ContextItem*	m_gainObject;
         float 		m_origGain;
         float 		m_newGain;
         QPointF		m_origPos;
-        QPoint		m_mousePos;
 	
 	int get_gain_from_object(float& gain);
 	

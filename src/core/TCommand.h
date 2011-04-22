@@ -51,6 +51,7 @@ public :
         virtual void set_jog_bypassed(bool /*bypassed*/) {}
 	virtual bool is_hold_command() const {return true;}
 	virtual bool supportsEnterFinishesHold() const {return true;}
+	virtual bool restoreCursorPosition() const {return false;}
         
 	void undo() {undo_action();}
 	void redo() {do_action();}

@@ -118,8 +118,6 @@ void FadeRange::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	d->mousePos = QCursor::pos();
-	
 	cpointer().setCursor(":/cursorHoldLr");
 }
 
@@ -229,7 +227,6 @@ int FadeBend::begin_hold()
 
 int FadeBend::finish_hold()
 {
-	QCursor::setPos(mousePos);
 	m_fv->set_holding(false);
 	return 1;
 }
@@ -262,7 +259,6 @@ void FadeBend::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	mousePos = QCursor::pos();
 	cpointer().setCursor(":/cursorHoldUd");
 }
 
@@ -321,7 +317,6 @@ int FadeStrength::begin_hold()
 
 int FadeStrength::finish_hold()
 {
-	QCursor::setPos(mousePos);
 	m_fv->set_holding(false);
 	return 1;
 }
@@ -354,7 +349,6 @@ void FadeStrength::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	mousePos = QCursor::pos();	
 	cpointer().setCursor(":/cursorHoldUd");
 }
 

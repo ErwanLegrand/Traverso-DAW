@@ -111,7 +111,6 @@ int Gain::begin_hold()
 
 int Gain::finish_hold()
 {
-        QCursor::setPos(m_mousePos);
 	return 1;
 }
 
@@ -189,7 +188,6 @@ void Gain::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-        m_mousePos = QCursor::pos();
         cpointer().setCursor(":/cursorGain");
 }
 
@@ -262,8 +260,6 @@ int Gain::jog()
 	// Update the vieport's hold cursor!
 	cpointer().setCursorText(coefficient_to_dbstring(m_newGain));
 	cpointer().setCursorPos(m_origPos);
-
-        QCursor::setPos(m_mousePos);
 
 	return result;
 }

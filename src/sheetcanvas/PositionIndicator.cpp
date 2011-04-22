@@ -24,7 +24,8 @@
 #include "SheetView.h"
 
 #include <QColor>
-#include <Utils.h>
+#include "Utils.h"
+#include "Themer.h"
 
 PositionIndicator::PositionIndicator(ViewItem* parentView)
 	: ViewItem(parentView, 0)
@@ -40,6 +41,7 @@ void PositionIndicator::paint(QPainter * painter, const QStyleOptionGraphicsItem
 	
 	painter->drawPixmap(0, 0, m_background);
 	painter->setPen(Qt::black);
+	painter->setFont(themer()->get_font("TrackPanel:fontscale:name"));
         painter->drawText(m_boundingRect, Qt::AlignHCenter, m_value);
 }
 

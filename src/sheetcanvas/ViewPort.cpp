@@ -134,7 +134,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
         // tells the context pointer where we are, so command object can 'get' the
         // scene position in their jog function from cpointer, or view items that
         // accept mouse hover move 'events'
-        cpointer().set_mouse_cursor_position(event->x(), event->y());
+	cpointer().store_mouse_cursor_position(event->x(), event->y());
 
         if (cpointer().keyboard_only_input()) {
                 event->accept();
@@ -195,7 +195,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 
 		if (m_sv)
 		{
-			m_sv->set_edit_cursor_pos(mapToScene(event->pos()));
+			m_sv->set_canvas_cursor_pos(mapToScene(event->pos()));
 		}
 	}
 
@@ -212,7 +212,7 @@ void ViewPort::tabletEvent(QTabletEvent * event)
 	PMESG("ViewPort tablet event:: x, y: %d, %d", (int)event->x(), (int)event->y());
 	PMESG("ViewPort tablet event:: high resolution x, y: %f, %f",
 	      event->hiResGlobalX(), event->hiResGlobalY());
-        cpointer().set_mouse_cursor_position((int)event->x(), (int)event->y());
+	cpointer().store_mouse_cursor_position((int)event->x(), (int)event->y());
 	
 	QGraphicsView::tabletEvent(event);
 }
@@ -299,7 +299,7 @@ void ViewPort::setCursorText( const QString & text )
 
 void ViewPort::set_holdcursor_pos(QPointF pos)
 {
-	m_sv->set_edit_cursor_pos(pos);
+	m_sv->set_canvas_cursor_pos(pos);
 }
 
 void ViewPort::set_current_mode(int mode)

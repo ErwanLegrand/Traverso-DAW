@@ -1026,7 +1026,6 @@ void TShortcutManager::loadFunctions()
 	function->object = "FadeCurveView";
 	function->slotsignature = "strength";
 	function->setDescription(tr("Adjust Strength"));
-	function->setUsesAutoRepeat(true);
 	function->commandName = "FadeCurveStrenght";
 	function->useX = true;
 	addFunction(function);

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ContextItem.h"
 #include "TConfig.h"
 #include "TInputEventDispatcher.h"
+#include "TCommand.h"
 #include <QCursor>
 
 
@@ -145,6 +146,8 @@ void ContextPointer::remove_contextitem(QObject* item)
 
 void ContextPointer::jog_start()
 {
+	m_globalMousePos = QCursor::pos();
+
 	if (m_port) {
 		m_port->grab_mouse();
 	}
@@ -240,29 +243,34 @@ void ContextPointer::setCursorPos(QPointF pos)
 		return;
 	}
 
-	set_edit_point_position(int(pos.x()), int(pos.y()));
+	store_canvas_cursor_position(int(pos.x()), int(pos.y()));
+
+	if (ied().get_holding_command() && ied().get_holding_command()->restoreCursorPosition())
+	{
+		QCursor::setPos(m_globalMousePos);
+	}
 
 	m_port->set_holdcursor_pos(pos);
 }
 
-void ContextPointer::set_edit_point_position(int x, int y)
+void ContextPointer::store_canvas_cursor_position(int x, int y)
 {
 	m_x = x;
 	m_y = y;
 }
 
-void ContextPointer::set_mouse_cursor_position(int x, int y)
+void ContextPointer::store_mouse_cursor_position(int x, int y)
 {
 	m_x = x;
 	m_y = y;
 	m_jogEvent = true;
 
-	if (m_keyboardOnlyInput && !m_mouseLeftClickBypassesJog) {
+	if (m_keyboardOnlyInput && !m_mouseLeftClickBypassesJog)
+	{
 		QPoint diff = m_globalMousePos - QCursor::pos();
-		if (diff.manhattanLength() > m_jogBypassDistance) {
+		if (diff.manhattanLength() > m_jogBypassDistance)
+		{
 			set_keyboard_only_input(false);
-		} else {
-			return;
 		}
 	}
 }
