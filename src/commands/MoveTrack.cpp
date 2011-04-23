@@ -138,7 +138,7 @@ void MoveTrack::move_down(bool /*autorepeat*/)
 void MoveTrack::set_cursor_shape(int /*useX*/, int useY)
 {
         if (useY) {
-		cpointer().setCursor(":/cursorHoldUd");
+		cpointer().setCursorShape(":/cursorHoldUd");
         }
 }
 

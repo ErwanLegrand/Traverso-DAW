@@ -90,7 +90,7 @@ void PlayHeadMove::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	cpointer().setCursor(":/cursorHoldLr");
+	cpointer().setCursorShape(":/cursorHoldLr");
 }
 
 int PlayHeadMove::jog()

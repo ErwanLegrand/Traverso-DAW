@@ -188,7 +188,7 @@ void Gain::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-        cpointer().setCursor(":/cursorGain");
+	cpointer().setCursorShape(":/cursorGain");
 }
 
 

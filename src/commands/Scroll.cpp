@@ -52,9 +52,9 @@ int Scroll::begin_hold()
         m_sv->start_shuttle(true, true);
 	m_sv->set_shuttle_factor_values(m_dx, m_dy);
 	if (m_dx) {
-		cpointer().setCursor("LR");
+		cpointer().setCursorShape("LR");
 	} else {
-		cpointer().setCursor("UD");
+		cpointer().setCursorShape("UD");
 	}
 	
 	return 1;

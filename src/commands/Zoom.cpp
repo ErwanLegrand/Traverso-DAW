@@ -95,11 +95,11 @@ void Zoom::set_cursor_shape( int useX, int useY )
 	Q_UNUSED(useY);
 	
 	if (useX && useY) {
-		cpointer().setCursor(":/cursorZoom");
+		cpointer().setCursorShape(":/cursorZoom");
 	} else if(useX) {
-		cpointer().setCursor(":/cursorZoomHorizontal");
+		cpointer().setCursorShape(":/cursorZoomHorizontal");
 	} else if (useY) {
-		cpointer().setCursor(":/cursorZoomVertical");
+		cpointer().setCursorShape(":/cursorZoomVertical");
 	}
 
         m_mousePos = QCursor::pos();
@@ -277,12 +277,12 @@ void Zoom::toggle_vertical_horizontal_jog_zoom(bool autorepeat)
 	if (autorepeat) return;
 	
 	if (m_jogVertical) {
-		cpointer().setCursor(":/cursorZoomHorizontal");
+		cpointer().setCursorShape(":/cursorZoomHorizontal");
 		cpointer().setCursorPos(m_origPos);
                 m_jogVertical = false;
 		m_jogHorizontal = true;
 	} else {
-		cpointer().setCursor(":/cursorZoomVertical");
+		cpointer().setCursorShape(":/cursorZoomVertical");
 		cpointer().setCursorPos(m_origPos);
 		m_jogVertical = true;
 		m_jogHorizontal = false;

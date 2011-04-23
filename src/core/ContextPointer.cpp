@@ -217,7 +217,7 @@ void ContextPointer::set_current_viewport(AbstractViewPort *vp)
 	}
 }
 
-void ContextPointer::setCursor(const QString &cursor)
+void ContextPointer::setCursorShape(const QString &cursor)
 {
 	if (!m_port)
 	{

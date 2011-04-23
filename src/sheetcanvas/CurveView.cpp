@@ -278,10 +278,10 @@ void CurveView::mouse_hover_move_event()
 
 	if (m_blinkingNode) {
 		QString shape = m_sv->cursor_dict()->value("CurveNodeView", "");
-		cpointer().setCursor(shape);
+		cpointer().setCursorShape(shape);
 	} else {
 		QString shape = m_sv->cursor_dict()->value("CurveView", "");
-		cpointer().setCursor(shape);
+		cpointer().setCursorShape(shape);
 	}
 }
 

@@ -118,7 +118,7 @@ void FadeRange::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	cpointer().setCursor(":/cursorHoldLr");
+	cpointer().setCursorShape(":/cursorHoldLr");
 }
 
 
@@ -259,7 +259,7 @@ void FadeBend::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	cpointer().setCursor(":/cursorHoldUd");
+	cpointer().setCursorShape(":/cursorHoldUd");
 }
 
 int FadeBend::jog()
@@ -349,7 +349,7 @@ void FadeStrength::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	cpointer().setCursor(":/cursorHoldUd");
+	cpointer().setCursorShape(":/cursorHoldUd");
 }
 
 int FadeStrength::jog()

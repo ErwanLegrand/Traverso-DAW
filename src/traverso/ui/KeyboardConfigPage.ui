@@ -80,6 +80,9 @@
           <property name="text">
            <string>on key release</string>
           </property>
+          <attribute name="buttonGroup">
+           <string>buttonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item>
@@ -87,6 +90,9 @@
           <property name="text">
            <string>on enter pressed</string>
           </property>
+          <attribute name="buttonGroup">
+           <string>buttonGroup</string>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -157,4 +163,7 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

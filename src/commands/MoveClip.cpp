@@ -449,10 +449,10 @@ void MoveClip::start_zoom(bool autorepeat)
 	if (!d->zoom) {
 		d->zoom = new Zoom(d->sv, QList<QVariant>() << "HJogZoom" << "1.2" << "0.2");
 		d->zoom->begin_hold();
-		cpointer().setCursor(":/cursorZoomHorizontal");
+		cpointer().setCursorShape(":/cursorZoomHorizontal");
 		d->sv->start_shuttle(false);
 	} else {
-		cpointer().setCursor(":/cursorHoldLrud");
+		cpointer().setCursorShape(":/cursorHoldLrud");
 		d->sv->start_shuttle(true, true);
                 delete d->zoom;
                 d->zoom = 0;
@@ -462,11 +462,11 @@ void MoveClip::start_zoom(bool autorepeat)
 void MoveClip::set_cursor_shape(int useX, int useY)
 {
 	if (useX && useY) {
-		cpointer().setCursor(":/cursorHoldLrud");
+		cpointer().setCursorShape(":/cursorHoldLrud");
 	} else if (useX) {
-		cpointer().setCursor(":/cursorHoldLr");
+		cpointer().setCursorShape(":/cursorHoldLr");
 	} else {
-		cpointer().setCursor(":/cursorHoldUd");
+		cpointer().setCursorShape(":/cursorHoldUd");
 	}
 }
 

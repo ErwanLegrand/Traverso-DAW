@@ -819,10 +819,6 @@ KeyboardConfigPage::KeyboardConfigPage(QWidget * parent)
 {
 	setupUi(this);
 
-	QButtonGroup* group = new QButtonGroup(this);
-	group->addButton(enterPressedCheckBox);
-	group->addButton(keyReleaseCheckBox);
-
 	load_config();
 }
 

@@ -111,9 +111,9 @@ void TrackPan::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useY);
 	
 	if (useX) {
-		cpointer().setCursor(":/cursorHoldLr");
+		cpointer().setCursorShape(":/cursorHoldLr");
 	} else {
-		cpointer().setCursor("");
+		cpointer().setCursorShape("");
 	}
 }
 
