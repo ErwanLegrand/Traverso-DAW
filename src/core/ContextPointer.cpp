@@ -224,7 +224,7 @@ void ContextPointer::setCursor(const QString &cursor)
 		return;
 	}
 
-	m_port->setCanvasCursor(cursor);
+	m_port->setCanvasCursorShape(cursor);
 }
 
 void ContextPointer::setCursorText(const QString &text)

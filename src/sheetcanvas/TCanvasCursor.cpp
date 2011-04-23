@@ -59,7 +59,6 @@ void TCanvasCursor::create_cursor_pixmap(const QString &shape)
 	int height = 16;
 	int bottom = height + height / 2 - 2;
 	m_pixmap = QPixmap(width + 2, bottom);
-	m_boundingRect = m_pixmap.rect();
 	m_pixmap.fill(Qt::transparent);
 	QPainter painter(&m_pixmap);
 	QPainterPath path;
@@ -111,10 +110,40 @@ void TCanvasCursor::set_text( const QString & text )
         }
 }
 
-void TCanvasCursor::set_cursor_shape( const QString & shape )
+void TCanvasCursor::set_cursor_shape(QString shape, int alignment)
 {
-	create_cursor_pixmap(shape);
-	m_xOffset = float(m_pixmap.width()) / 2;
+	m_xOffset = m_yOffset = 0;
+
+	if (shape.size() > 1)
+	{
+		m_pixmap = find_pixmap(shape);
+		if (m_pixmap.isNull())
+		{
+			shape = "";
+		}
+	}
+
+	if (shape.size() <= 1)
+	{
+		create_cursor_pixmap(shape);
+	}
+
+	if (alignment & Qt::AlignTop)
+	{
+		m_yOffset = 0;
+	}
+
+	if (alignment & Qt::AlignHCenter)
+	{
+		m_xOffset = float(m_pixmap.width()) / 2;
+	}
+
+	if (alignment & Qt::AlignVCenter)
+	{
+		m_yOffset = float(m_pixmap.height() / 2);
+	}
+
+	m_boundingRect = m_pixmap.rect();
 
 	set_pos(m_pos);
 	reset();
@@ -134,7 +163,7 @@ void TCanvasCursor::set_pos(QPointF p)
 	int diff = 0;
 	int x = mapFromScene(pos()).x();
 	int y = mapFromScene(pos()).y();
-	int yoffset = m_pixmap.height() + 25;
+	int yoffset = 40;
 
 	ViewPort* vp = static_cast<ViewPort*>(cpointer().get_viewport());
 	if (vp)
@@ -149,14 +178,15 @@ void TCanvasCursor::set_pos(QPointF p)
 
 	}
 
+	int textItemX = 30;
 	if (m_textItem->isVisible())
 	{
 		if (diff < m_textItem->boundingRect().width()) {
-			m_textItem->setPos(diff - m_pixmap.width(), yoffset);
+			m_textItem->setPos(diff - textItemX, yoffset);
 		} else if (x < -m_pixmap.width()) {
-			m_textItem->setPos(8 - x, yoffset);
+			m_textItem->setPos(textItemX - x, yoffset);
 		} else {
-			m_textItem->setPos(m_pixmap.width() + 8, yoffset);
+			m_textItem->setPos(textItemX + 8, yoffset);
 		}
 	}
 

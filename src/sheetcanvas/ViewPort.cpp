@@ -181,7 +181,7 @@ void ViewPort::mouseMoveEvent(QMouseEvent* event)
 			// If no item is below the mouse, default to default cursor
 			if (m_sv)
 			{
-				m_sv->set_cursor_shape(":/cursorFloat");
+				m_sv->set_cursor_shape(":/cursorFloat", Qt::AlignTop | Qt::AlignHCenter);
 			}
 		}
 
@@ -284,11 +284,9 @@ void ViewPort::paintEvent( QPaintEvent* e )
 	QGraphicsView::paintEvent(e);
 }
 
-void ViewPort::setCanvasCursor(const QString &cursor)
+void ViewPort::setCanvasCursorShape(const QString &shape, int alignment)
 {
-	viewport()->setCursor(Qt::BlankCursor);
-
-	m_sv->set_cursor_shape(cursor);
+	m_sv->set_cursor_shape(shape, alignment);
 }
 
 void ViewPort::setCursorText( const QString & text )

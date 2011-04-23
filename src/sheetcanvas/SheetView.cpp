@@ -1414,9 +1414,9 @@ TCommand* SheetView::edit_properties()
 	return 0;
 }
 
-void SheetView::set_cursor_shape(const QString& shape)
+void SheetView::set_cursor_shape(const QString& shape, int alignment)
 {
-	m_editCursor->set_cursor_shape(shape);
+	m_editCursor->set_cursor_shape(shape, alignment);
 }
 
 void SheetView::set_edit_cursor_text(const QString &text)
@@ -1441,7 +1441,7 @@ void SheetView::context_changed()
 	collect_item_browser_data(data);
 
 	QString shape = cursor_dict()->value(data.currentContext, "");
-	set_cursor_shape(shape);
+	set_cursor_shape(shape, Qt::AlignTop | Qt::AlignHCenter);
 }
 
 void SheetView::calculate_cursor_dict()

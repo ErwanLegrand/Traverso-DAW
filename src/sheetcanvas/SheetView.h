@@ -114,7 +114,7 @@ public :
 	void set_hscrollbar_value(int value);
 	void set_vscrollbar_value(int value);
 
-	void set_cursor_shape(const QString& cursor);
+	void set_cursor_shape(const QString& shape, int alignment);
 	void set_edit_cursor_text(const QString& text);
 	void set_canvas_cursor_pos(QPointF pos);
 

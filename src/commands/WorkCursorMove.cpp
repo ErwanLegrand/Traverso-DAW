@@ -66,7 +66,7 @@ int WorkCursorMove::begin_hold()
 
 	m_session->get_work_snap()->set_snappable(false);
 	m_sv->start_shuttle(true, true);
-	m_sv->set_cursor_shape(":/cursorHoldLr");
+	cpointer().setCursor(":/cursorHoldLr");
 	m_origPos = m_session->get_work_location();
 
 	return 1;

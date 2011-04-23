@@ -50,7 +50,7 @@ public :
 	void setCursorText(const QString& text);
         void set_holdcursor_pos(QPointF pos);
 	void set_current_mode(int mode);
-	void setCanvasCursor(const QString& cursor);
+	void setCanvasCursorShape(const QString& shape, int alignment=Qt::AlignCenter);
         virtual void set_sheetview(SheetView* view) {m_sv = view;}
 
 	int get_current_mode() const {return m_mode;}

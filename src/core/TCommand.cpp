@@ -279,13 +279,13 @@ void TCommand::set_cursor_shape( int useX, int useY )
 	}
 	
 	if (useX && useY) {
-		 port->setCanvasCursor("LRUD");
+		 port->setCanvasCursorShape("LRUD");
 	} else if (useX) {
-		port->setCanvasCursor("LR");
+		port->setCanvasCursorShape("LR");
 	} else if (useY) {
-		port->setCanvasCursor("UD");
+		port->setCanvasCursorShape("UD");
 	} else{
-		port->setCanvasCursor("Default");
+		port->setCanvasCursorShape("Default");
 	}
 	
 }
