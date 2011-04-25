@@ -280,7 +280,7 @@ void AudioClip::removed_from_track()
 
 void AudioClip::set_left_edge(TimeRef newLeftLocation)
 {
-	if (newLeftLocation < qint64(0)) {
+	if (newLeftLocation < TimeRef()) {
 		newLeftLocation = TimeRef();
 	}
 	

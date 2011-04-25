@@ -137,6 +137,7 @@ void TCanvasCursor::set_cursor_shape(QString shape, int alignment)
 	if (shape.size() <= 1)
 	{
 		create_cursor_pixmap(shape);
+		set_text("");
 	}
 
 	if (alignment & Qt::AlignTop)
@@ -157,9 +158,6 @@ void TCanvasCursor::set_cursor_shape(QString shape, int alignment)
 	m_boundingRect = m_pixmap.rect();
 
 	set_pos(m_pos);
-
-	m_text = "";
-	m_textItem->hide();
 
 	update();
 }

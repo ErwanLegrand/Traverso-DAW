@@ -65,10 +65,12 @@ int MoveEdge::begin_hold()
 	if (m_edge == "set_left_edge") {
 		m_newPos = m_originalPos = m_clip->get_track_start_location();
 		m_otherEdgePos = m_clip->get_track_end_location();
+		cpointer().setCursorText(tr("Left Edge"), 800);
 	}
 	if (m_edge == "set_right_edge") {
 		m_newPos = m_originalPos = m_clip->get_track_end_location();
 		m_otherEdgePos = m_clip->get_track_start_location();
+		cpointer().setCursorText(tr("Right Edge"), 800);
 	}
 
 	m_clip->set_snappable(false);
