@@ -477,8 +477,10 @@ void MoveClip::toggle_vertical_only(bool autorepeat)
 	d->verticalOnly = !d->verticalOnly;
 	if (d->verticalOnly) {
 		set_cursor_shape(0, 1);
+		cpointer().setCursorText(tr("Vertical On"), 1000);
 	} else {
 		set_cursor_shape(1, 1);
+		cpointer().setCursorText(tr("Vertical Off"), 1000);
 	}
 }
 

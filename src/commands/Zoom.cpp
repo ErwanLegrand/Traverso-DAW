@@ -278,11 +278,13 @@ void Zoom::toggle_vertical_horizontal_jog_zoom(bool autorepeat)
 	
 	if (m_jogVertical) {
 		cpointer().setCursorShape(":/cursorZoomHorizontal");
+		cpointer().setCursorText(tr("Vertical Off"), 1000);
 		cpointer().setCursorPos(m_origPos);
                 m_jogVertical = false;
 		m_jogHorizontal = true;
 	} else {
 		cpointer().setCursorShape(":/cursorZoomVertical");
+		cpointer().setCursorText(tr("Vertical On"), 1000);
 		cpointer().setCursorPos(m_origPos);
 		m_jogVertical = true;
 		m_jogHorizontal = false;

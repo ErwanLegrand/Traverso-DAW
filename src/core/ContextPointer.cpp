@@ -227,14 +227,14 @@ void ContextPointer::setCursorShape(const QString &cursor)
 	m_port->setCanvasCursorShape(cursor);
 }
 
-void ContextPointer::setCursorText(const QString &text)
+void ContextPointer::setCursorText(const QString &text, int mseconds)
 {
 	if (!m_port)
 	{
 		return;
 	}
 
-	m_port->setCursorText(text);
+	m_port->setCursorText(text, mseconds);
 }
 
 void ContextPointer::setCursorPos(QPointF pos)

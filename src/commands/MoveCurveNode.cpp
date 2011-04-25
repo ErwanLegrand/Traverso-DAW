@@ -66,6 +66,15 @@ void MoveCurveNode::toggle_vertical_only(bool autorepeat)
 	}
 
 	d->verticalOnly = !d->verticalOnly;
+	if (d->verticalOnly)
+	{
+		cpointer().setCursorText(tr("Vertical On"), 1000);
+
+	}
+	else
+	{
+		cpointer().setCursorText(tr("Vertical Off"), 1000);
+	}
 }
 
 int MoveCurveNode::prepare_actions()

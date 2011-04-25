@@ -289,9 +289,9 @@ void ViewPort::setCanvasCursorShape(const QString &shape, int alignment)
 	m_sv->set_cursor_shape(shape, alignment);
 }
 
-void ViewPort::setCursorText( const QString & text )
+void ViewPort::setCursorText( const QString & text, int mseconds)
 {
-	m_sv->set_edit_cursor_text(text);
+	m_sv->set_edit_cursor_text(text, mseconds);
 }
 
 void ViewPort::set_holdcursor_pos(QPointF pos)

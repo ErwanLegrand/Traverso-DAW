@@ -1419,9 +1419,9 @@ void SheetView::set_cursor_shape(const QString& shape, int alignment)
 	m_editCursor->set_cursor_shape(shape, alignment);
 }
 
-void SheetView::set_edit_cursor_text(const QString &text)
+void SheetView::set_edit_cursor_text(const QString &text, int mseconds)
 {
-	m_editCursor->set_text(text);
+	m_editCursor->set_text(text, mseconds);
 }
 
 void SheetView::set_canvas_cursor_pos(QPointF pos)

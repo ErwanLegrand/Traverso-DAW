@@ -39,6 +39,8 @@ TCanvasCursor::TCanvasCursor(SheetView* sv)
 	m_xOffset = m_yOffset = 0.0f;
 
         setZValue(200);
+
+	connect(&m_timer, SIGNAL(timeout()), this, SLOT(timer_timeout()));
 }
 
 TCanvasCursor::~TCanvasCursor( )
@@ -98,13 +100,22 @@ void TCanvasCursor::create_cursor_pixmap(const QString &shape)
 	painter.drawText(textRect, Qt::AlignHCenter, shape);
 }
 
-void TCanvasCursor::set_text( const QString & text )
+void TCanvasCursor::set_text( const QString & text, int mseconds)
 {
         m_text = text;
+
+	if (m_timer.isActive())
+	{
+		m_timer.stop();
+	}
 
         if (!m_text.isEmpty()) {
 		m_textItem->set_value(m_text);
                 m_textItem->show();
+		if (mseconds > 0)
+		{
+			m_timer.start(mseconds);
+		}
         } else {
                 m_textItem->hide();
         }
@@ -191,4 +202,9 @@ void TCanvasCursor::set_pos(QPointF p)
 	p.setY(p.y() - m_yOffset);
 
 	setPos(p);
+}
+
+void TCanvasCursor::timer_timeout()
+{
+	set_text("");
 }

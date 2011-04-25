@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ViewItem.h"
 
+#include <QTimer>
+
 class SheetView;
 class PositionIndicator;
 
@@ -36,7 +38,7 @@ public:
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-        void set_text(const QString& text);
+	void set_text(const QString& text, int mseconds=-1);
 	void set_cursor_shape(QString shape, int alignment);
         void set_pos(QPointF pos);
 
@@ -48,8 +50,12 @@ private:
 	float			m_yOffset;
 	QPixmap			m_pixmap;
 	QString			m_text;
+	QTimer			m_timer;
 
 	void create_cursor_pixmap(const QString& shape);
+
+private slots:
+	void timer_timeout();
 };
 
 #endif // TEDITCURSOR_H

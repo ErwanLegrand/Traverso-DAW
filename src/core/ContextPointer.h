@@ -168,7 +168,7 @@ public:
 
         void set_current_viewport(AbstractViewPort* vp);
 	void setCursorShape(const QString& cursor);
-	void setCursorText(const QString& text);
+	void setCursorText(const QString& text, int mseconds=-1);
 	void setCursorPos(QPointF pos);
 
         QList<QObject* > get_context_items();

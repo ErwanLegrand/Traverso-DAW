@@ -73,6 +73,7 @@ void MoveCommand::move_faster(bool autorepeat)
 	}
 
 	pm().get_project()->set_keyboard_arrow_key_navigation_speed(m_speed);
+	cpointer().setCursorText(tr("Speed: %1").arg(m_speed), 1000);
 }
 
 
@@ -95,6 +96,7 @@ void MoveCommand::move_slower(bool autorepeat)
 	}
 
 	pm().get_project()->set_keyboard_arrow_key_navigation_speed(m_speed);
+	cpointer().setCursorText(tr("Speed: %1").arg(m_speed), 1000);
 }
 
 void MoveCommand::set_collected_number(const QString &collected)
@@ -109,8 +111,10 @@ void MoveCommand::set_collected_number(const QString &collected)
 		number = QString(cleared.data()[cleared.size() -1]).toInt(&ok);
 	}
 
-	if (ok) {
-		switch(number) {
+	if (ok)
+	{
+		switch(number)
+		{
 		case 0: m_speed = 1; break;
 		case 1: m_speed = 2; break;
 		case 2: m_speed = 4; break;
@@ -123,9 +127,9 @@ void MoveCommand::set_collected_number(const QString &collected)
 		case 9: m_speed = 128; break;
 		default: m_speed = 2;
 		}
+		pm().get_project()->set_keyboard_arrow_key_navigation_speed(m_speed);
+		cpointer().setCursorText(tr("Speed: %1").arg(m_speed), 1000);
 	}
-
-	pm().get_project()->set_keyboard_arrow_key_navigation_speed(m_speed);
 }
 
 
@@ -138,4 +142,13 @@ void MoveCommand::toggle_snap_on_off(bool autorepeat)
 	Sheet* sheet = pm().get_project()->get_active_sheet();
 	sheet->toggle_snap();
 	m_doSnap = sheet->is_snap_on();
+
+	if (m_doSnap)
+	{
+		cpointer().setCursorText(tr("Snap On"), 1000);
+	}
+	else
+	{
+		cpointer().setCursorText(tr("Snap Off"), 1000);
+	}
 }
