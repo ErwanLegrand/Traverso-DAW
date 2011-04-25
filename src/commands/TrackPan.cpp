@@ -110,11 +110,7 @@ void TrackPan::set_cursor_shape(int useX, int useY)
 	Q_UNUSED(useX);
 	Q_UNUSED(useY);
 	
-	if (useX) {
-		cpointer().setCursorShape(":/cursorHoldLr");
-	} else {
-		cpointer().setCursorShape("");
-	}
+	cpointer().setCursorShape(":/cursorHoldLr");
 }
 
 int TrackPan::jog()
@@ -142,6 +138,8 @@ int TrackPan::jog()
         }
 
         m_track->set_pan(m_newPan);
+
+	m_origX = cpointer().x();
 	
 	cpointer().setCursorText(QByteArray::number(m_newPan, 'f', 2));
 	return 1;

@@ -146,14 +146,11 @@ void TCanvasCursor::set_cursor_shape(QString shape, int alignment)
 	m_boundingRect = m_pixmap.rect();
 
 	set_pos(m_pos);
-	reset();
-	update();
-}
 
-void TCanvasCursor::reset()
-{
-        m_text = "";
-        m_textItem->hide();
+	m_text = "";
+	m_textItem->hide();
+
+	update();
 }
 
 void TCanvasCursor::set_pos(QPointF p)
@@ -194,10 +191,4 @@ void TCanvasCursor::set_pos(QPointF p)
 	p.setY(p.y() - m_yOffset);
 
 	setPos(p);
-}
-
-QPointF TCanvasCursor::get_scene_pos()
-{
-        QPointF shapeAdjust(boundingRect().width() / 2, boundingRect().height() / 2);
-        return scenePos() + shapeAdjust;
 }

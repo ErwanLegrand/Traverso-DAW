@@ -40,10 +40,6 @@ public:
 	void set_cursor_shape(QString shape, int alignment);
         void set_pos(QPointF pos);
 
-        // returns the real cursor position, i.e. the center of the cursor.
-        QPointF get_scene_pos();
-        void reset();
-
 private:
 	SheetView*		m_sv;
 	PositionIndicator*	m_textItem;
