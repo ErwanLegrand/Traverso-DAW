@@ -338,6 +338,7 @@ TraversoCommands::TraversoCommands()
 	function->setDescription(tr("Move Edge"));
 	function->commandName = "MoveClipEdge";
 	function->arguments << "false";
+	function->useX = true;
 	addFunction(function, MoveEdgeCommand);
 
 	function = new TFunction();

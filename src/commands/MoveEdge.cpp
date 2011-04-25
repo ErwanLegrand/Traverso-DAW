@@ -138,6 +138,8 @@ int MoveEdge::jog()
 		m_newPos = m_otherEdgePos - (2 * m_sv->timeref_scalefactor);
 	}
 
+	cpointer().setCursorPos(cpointer().scene_pos());
+
 	return do_action();
 }
 

@@ -271,21 +271,14 @@ void TCommand::set_collected_number(const QString & collected)
  */
 void TCommand::set_cursor_shape( int useX, int useY )
 {
-        AbstractViewPort* port = cpointer().get_viewport();
-
-	if (!port)
-	{
-		return;
-	}
-	
 	if (useX && useY) {
-		 port->setCanvasCursorShape("LRUD");
+		 cpointer().setCursorShape(":/cursorHoldLrud");
 	} else if (useX) {
-		port->setCanvasCursorShape("LR");
+		cpointer().setCursorShape(":/cursorHoldLr");
 	} else if (useY) {
-		port->setCanvasCursorShape("UD");
+		cpointer().setCursorShape(":/cursorHoldUd");
 	} else{
-		port->setCanvasCursorShape("Default");
+		cpointer().setCursorShape(":/cursorFloat");
 	}
 	
 }
