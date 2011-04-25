@@ -140,9 +140,20 @@ int MoveEdge::jog()
 		m_newPos = m_otherEdgePos - (2 * m_sv->timeref_scalefactor);
 	}
 
-	cpointer().setCursorPos(cpointer().scene_pos());
+	if (m_edge == "set_right_edge") {
+		m_clip->set_right_edge(m_newPos);
+		m_newPos = m_clip->get_track_end_location();
+	}
 
-	return do_action();
+	if (m_edge == "set_left_edge") {
+		m_clip->set_left_edge(m_newPos);
+		m_newPos = m_clip->get_track_start_location();
+	}
+
+	cpointer().setCursorPos(cpointer().scene_pos());
+	cpointer().setCursorText(timeref_to_text(m_newPos, m_sv->timeref_scalefactor));
+
+	return 1;
 }
 
 
@@ -152,9 +163,8 @@ void MoveEdge::move_left(bool autorepeat)
 	{
 		return prev_snap_pos(autorepeat);
 	}
-	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	m_newPos = m_newPos - (m_sv->timeref_scalefactor * m_speed);
-	do_action();
+	do_keyboard_move();
 }
 
 void MoveEdge::move_right(bool autorepeat)
@@ -163,27 +173,41 @@ void MoveEdge::move_right(bool autorepeat)
 	{
 		return next_snap_pos(autorepeat);
 	}
-	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	m_newPos = m_newPos + (m_sv->timeref_scalefactor * m_speed);
-	do_action();
+	do_keyboard_move();
 }
 
 void MoveEdge::next_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	SnapList* slist = m_sv->get_sheet()->get_snap_list();
 	m_newPos = slist->next_snap_pos(m_newPos);
-	do_action();
+	do_keyboard_move();
 }
 
 void MoveEdge::prev_snap_pos(bool autorepeat)
 {
 	Q_UNUSED(autorepeat);
-	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
 	SnapList* slist = m_sv->get_sheet()->get_snap_list();
 	m_newPos = slist->prev_snap_pos(m_newPos);
+	do_keyboard_move();
+}
+
+void MoveEdge::do_keyboard_move()
+{
+	ied().bypass_jog_until_mouse_movements_exceeded_manhattenlength();
+
 	do_action();
+
+	if (m_edge == "set_right_edge") {
+		m_newPos = m_clip->get_track_end_location();
+	}
+
+	if (m_edge == "set_left_edge") {
+		m_newPos = m_clip->get_track_start_location();
+	}
+
+	cpointer().setCursorText(timeref_to_text(m_newPos, m_sv->timeref_scalefactor));
 }
 
 // eof

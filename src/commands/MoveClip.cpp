@@ -206,6 +206,8 @@ int MoveClip::begin_hold()
 	d->sceneXStartPos = cpointer().on_first_input_event_scene_x();
         d->relativeWorkCursorPos = m_session->get_work_location() - m_group.get_track_start_location();
 	
+	cpointer().setCursorText(timeref_to_text(m_group.get_track_start_location(), d->sv->timeref_scalefactor));
+
 	return 1;
 }
 
@@ -341,8 +343,7 @@ int MoveClip::jog()
 	d->sv->update_shuttle_factor();
 	
 	cpointer().setCursorPos(cpointer().scene_pos());
-	d->sv->set_edit_cursor_text(timeref_to_text(newTrackStartLocation, d->sv->timeref_scalefactor));
-
+	cpointer().setCursorText(timeref_to_text(newTrackStartLocation, d->sv->timeref_scalefactor));
 
 	return 1;
 }

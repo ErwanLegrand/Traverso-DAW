@@ -55,6 +55,8 @@ private :
 	TimeRef		m_newPos;
 	TimeRef		m_otherEdgePos;
 
+	void do_keyboard_move();
+
 public slots:
         void move_left(bool autorepeat);
         void move_right(bool autorepeat);

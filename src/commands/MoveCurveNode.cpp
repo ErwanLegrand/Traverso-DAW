@@ -97,6 +97,7 @@ void MoveCurveNode::cancel_action()
 int MoveCurveNode::begin_hold()
 {
         d->mousepos = QPoint(cpointer().on_first_input_event_x(), cpointer().on_first_input_event_y());
+	check_and_apply_when_and_value_diffs();
         return 1;
 }
 

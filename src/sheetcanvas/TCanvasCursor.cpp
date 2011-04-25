@@ -165,41 +165,36 @@ void TCanvasCursor::set_cursor_shape(QString shape, int alignment)
 void TCanvasCursor::set_pos(QPointF p)
 {
 	m_pos = p;
-
-	int diff = 0;
-	int x = mapFromScene(pos()).x();
-	int y = mapFromScene(pos()).y();
-	int yoffset = 40;
-
-	ViewPort* vp = static_cast<ViewPort*>(cpointer().get_viewport());
-	if (vp)
-	{
-		if (y < 0) {
-			yoffset = - y;
-		} else if (y > vp->height() - m_pixmap.height()) {
-			yoffset = vp->height() - y - m_pixmap.height();
-		}
-
-		diff = vp->width() - (x + m_pixmap.width() + 8);
-
-	}
-
-	int textItemX = 30;
-	if (m_textItem->isVisible())
-	{
-		if (diff < m_textItem->boundingRect().width()) {
-			m_textItem->setPos(diff - textItemX, yoffset);
-		} else if (x < -m_pixmap.width()) {
-			m_textItem->setPos(textItemX - x, yoffset);
-		} else {
-			m_textItem->setPos(textItemX + 8, yoffset);
-		}
-	}
-
 	p.setX(p.x() - m_xOffset);
 	p.setY(p.y() - m_yOffset);
 
 	setPos(p);
+
+	int textItemX = 40;
+	int textItemY = 40;
+
+	ViewPort* vp = static_cast<ViewPort*>(cpointer().get_viewport());
+	if (vp && m_textItem->isVisible())
+	{
+		QPointF textPos(textItemX, textItemY);
+		int xRightTextItem = vp->mapFromScene(scenePos()).x()  + m_textItem->boundingRect().width() + textItemX;
+		int xLeftTextItem = vp->mapFromScene(scenePos()).x() + textItemX;
+
+		int viewPortWidth = vp->width();
+
+		if (xLeftTextItem < 0)
+		{
+			textPos = mapFromScene(vp->mapToScene(0, m_textItem->scenePos().y()));
+		}
+
+		if (xRightTextItem > viewPortWidth)
+		{
+			textPos = mapFromScene(vp->mapToScene(viewPortWidth - m_textItem->boundingRect().width(), m_textItem->scenePos().y()));
+		}
+
+		m_textItem->setPos(textPos);
+	}
+
 }
 
 void TCanvasCursor::timer_timeout()

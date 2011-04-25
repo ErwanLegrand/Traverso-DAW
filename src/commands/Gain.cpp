@@ -106,6 +106,8 @@ int Gain::begin_hold()
 	}
         m_newGain = m_origGain;
         m_origPos = cpointer().scene_pos();
+
+	cpointer().setCursorText(coefficient_to_dbstring(m_newGain));
 	return 1;
 }
 
@@ -258,8 +260,8 @@ int Gain::jog()
         int result = get_gain_from_object(m_newGain);
 	
 	// Update the vieport's hold cursor!
-	cpointer().setCursorText(coefficient_to_dbstring(m_newGain));
 	cpointer().setCursorPos(m_origPos);
+	cpointer().setCursorText(coefficient_to_dbstring(m_newGain));
 
 	return result;
 }
