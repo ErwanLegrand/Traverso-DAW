@@ -42,13 +42,15 @@ public :
 	int begin_hold();
 	int finish_hold();
 
+	bool is_hold_command() const {return false;}
+
 // private :
 	AudioTrack* m_track;
 	AudioClip* m_clip;
 	AudioClip* m_resultingclip;
-	
+
 // 	friend class ExternalProcessingDialog;
-	
+
 };
 
 #endif
