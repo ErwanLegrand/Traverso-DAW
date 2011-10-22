@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include "ui_TShortcutEditorDialog.h"
 
 #include "TShortcutManager.h"
-#include "config.h"
 #include <QTreeWidgetItem>
 
 #include "Debugger.h"
