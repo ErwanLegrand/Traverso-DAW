@@ -49,21 +49,22 @@ PluginSelectorDialog::PluginSelectorDialog(QWidget* parent)
 	pluginTreeWidget->header()->resizeSection(2, 60);
 	
 
-#if defined (LV2_SUPPORT)
+//#if defined (LV2_SUPPORT)
         printf("Getting the list of found lv2 plugins from the PluginManager\n");
-	SLV2Plugins pluginList = PluginManager::instance()->get_slv2_plugin_list();
+	const LilvPlugins* pluginList = PluginManager::instance()->get_lilv_plugins();
 
-	QMap<QString, PluginInfo> plugins;
+	QMap<QString, PluginInfo> pluginsMap;
 
-        printf("Number of found lv2 plugins: %d\n", slv2_plugins_size(pluginList));
+	printf("Number of found lv2 plugins: %d\n", lilv_plugins_size(pluginList));
 	
-	for (uint i=0; i < slv2_plugins_size(pluginList); ++i) {
-		const SLV2Plugin plugin = slv2_plugins_get_at(pluginList, i);
-		PluginInfo pinfo = LV2Plugin::get_plugin_info(plugin);
-		plugins.insertMulti(pinfo.type, pinfo);
+	LILV_FOREACH(plugins, i, pluginList) {
+
+		const LilvPlugin* p = lilv_plugins_get(pluginList, i);
+		PluginInfo pinfo = LV2Plugin::get_plugin_info(p);
+		pluginsMap.insertMulti(pinfo.type, pinfo);
 	}
 	
-	foreach(PluginInfo pinfo, plugins) {
+	foreach(PluginInfo pinfo, pluginsMap) {
 		
 		if ( (pinfo.audioPortInCount == 1 && pinfo.audioPortOutCount ==  1) ||
 		     (pinfo.audioPortInCount == 2 && pinfo.audioPortOutCount ==  2) ) {
@@ -78,7 +79,7 @@ PluginSelectorDialog::PluginSelectorDialog(QWidget* parent)
 			item->setToolTip(0, pinfo.name);
 		}
 	}
-#endif
+//#endif
 
 	connect(pluginTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(plugin_double_clicked()));
 }

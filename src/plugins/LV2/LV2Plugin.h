@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define LV2_PLUGIN_H
 
 #include <cstdlib>
-#include <slv2/slv2.h>
+#include <lilv/lilv.h>
 #include <QList>
 #include <QString>
 #include <QObject>
@@ -48,8 +48,8 @@ public:
 
 	void process(AudioBus* bus, unsigned long nframes);
 
-	SLV2Instance  get_instance() const {return m_instance; }
-	SLV2Plugin get_slv2_plugin() const {return m_plugin; }
+	LilvInstance*  get_instance() const {return m_instance; }
+	const LilvPlugin* get_slv2_plugin() const {return m_plugin; }
 	LV2Plugin* create_copy();
 
 	QDomNode get_state(QDomDocument doc);
@@ -58,20 +58,20 @@ public:
 	int init();
 	int set_state(const QDomNode & node );
 	
-	static PluginInfo get_plugin_info(SLV2Plugin plugin);
+	static PluginInfo get_plugin_info(const LilvPlugin* plugin);
 
 private:
 	QString		m_pluginUri;
-	SLV2Plugin     m_plugin;   /**< Plugin "class" (actually just a few strings) */
-	SLV2Instance   m_instance;      /**< Plugin "instance" (loaded shared lib) */
+	const LilvPlugin*     m_plugin;   /**< Plugin "class" (actually just a few strings) */
+	LilvInstance*   m_instance;      /**< Plugin "instance" (loaded shared lib) */
 	uint32_t       m_num_ports;     /**< Size of the two following arrays: */
 	struct Port*   m_ports;         /**< Port array of size num_ports */
-	SLV2Value      m_input_class;   /**< Input port class (URI) */
-	SLV2Value      m_output_class;  /**< Output port class (URI) */
-	SLV2Value      m_control_class; /**< Control port class (URI) */
-	SLV2Value      m_audio_class;   /**< Audio port class (URI) */
-	SLV2Value      m_event_class;   /**< Event port class (URI) */
-	SLV2Value      optional;        /**< lv2:connectionOptional port property */
+	LilvNode*      m_input_class;   /**< Input port class (URI) */
+	LilvNode*      m_output_class;  /**< Output port class (URI) */
+	LilvNode*      m_control_class; /**< Control port class (URI) */
+	LilvNode*      m_audio_class;   /**< Audio port class (URI) */
+	LilvNode*      m_event_class;   /**< Event port class (URI) */
+	LilvNode*      optional;        /**< lv2:connectionOptional port property */
 	bool 		m_isSlave;
 	
 	LV2ControlPort* create_port(int portIndex, float defaultValue);

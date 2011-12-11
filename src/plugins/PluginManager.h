@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #define PLUGIN_MANAGER_H
 
 #if defined (LV2_SUPPORT)
-#include <slv2/slv2.h>
+#include <lilv/lilv.h>
 #endif
 
 #include <QDomDocument>
@@ -42,8 +42,8 @@ public:
 	Plugin* get_plugin(const QDomNode node);
 
 #if defined (LV2_SUPPORT)
-	SLV2Plugins get_slv2_plugin_list();
-	SLV2World get_slv2_world() {return m_slv2World;}
+	const LilvPlugins* get_lilv_plugins();
+	LilvWorld* get_lilv_world() {return m_lilvWorld;}
 	Plugin* create_lv2_plugin(const QString& uri);
 #endif
 
@@ -52,8 +52,8 @@ private:
 
 	static PluginManager* m_instance;
 #if defined (LV2_SUPPORT)
-	SLV2World 	m_slv2World;
-	SLV2Plugins	m_slv2Plugins;
+	LilvWorld* 	m_lilvWorld;
+	const LilvPlugins*	m_lilvPlugins;
 #endif
 	void init();
 };

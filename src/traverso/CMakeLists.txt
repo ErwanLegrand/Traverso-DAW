@@ -287,21 +287,11 @@ IF(HAVE_PULSEAUDIO)
         )
 ENDIF(HAVE_PULSEAUDIO)
 
-IF(HAVE_SLV2)
-        IF(USE_SYSTEM_SLV2_LIBRARY)
-                TARGET_LINK_LIBRARIES(traverso
-                        slv2
-                )
-        ELSE(USE_SYSTEM_SLV2_LIBRARY)
-                TARGET_LINK_LIBRARIES(traverso
-                        traversoslv2
-                        rdf
-                        rasqal
-                        raptor
-			${CMAKE_DL_LIBS}
-		)
-        ENDIF(USE_SYSTEM_SLV2_LIBRARY)
-ENDIF(HAVE_SLV2)
+IF(HAVE_LILV)
+	TARGET_LINK_LIBRARIES(traverso
+		${LIBLILV_LIBRARIES}
+	)
+ENDIF(HAVE_LILV)
 
 IF(HAVE_MP3_DECODING)
         TARGET_LINK_LIBRARIES(traverso

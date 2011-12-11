@@ -47,7 +47,7 @@ PluginManager::PluginManager()
 PluginManager::~PluginManager()
 {
 #if defined (LV2_SUPPORT)
-	slv2_world_free(m_slv2World);
+	lilv_world_free(m_lilvWorld);
 #endif
 }
 
@@ -66,9 +66,9 @@ void PluginManager::init()
 {
 #if defined (LV2_SUPPORT)
 // LV2 part:
-	m_slv2World = slv2_world_new();
-	slv2_world_load_all(m_slv2World);
-	m_slv2Plugins = slv2_world_get_all_plugins(m_slv2World);
+	m_lilvWorld = lilv_world_new();
+	lilv_world_load_all(m_lilvWorld);
+	m_lilvPlugins = lilv_world_get_all_plugins(m_lilvWorld);
 #endif
 }
 
@@ -116,9 +116,9 @@ Plugin* PluginManager::get_plugin(const  QDomNode node )
 
 #if defined (LV2_SUPPORT)
 
-SLV2Plugins PluginManager::get_slv2_plugin_list()
+const LilvPlugins* PluginManager::get_lilv_plugins()
 {
-	return m_slv2Plugins;
+	return m_lilvPlugins;
 }
 
 Plugin* PluginManager::create_lv2_plugin(const QString& uri)
