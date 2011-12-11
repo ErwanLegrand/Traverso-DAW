@@ -45,6 +45,7 @@ private:
 		RemoveClipCommand,
 		RemoveTrackCommand,
 		RemoveClipNodeCommmand,
+		RemovePluginCommand,
 		AudioClipExternalProcessingCommand,
 		ClipSelectionCommand,
 		MoveClipCommand,

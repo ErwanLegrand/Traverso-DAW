@@ -309,6 +309,13 @@ TraversoCommands::TraversoCommands()
 	addFunction(function, RemoveTrackCommand);
 
 	function = new TFunction();
+	function->object = "PluginView";
+	function->commandName = "RemovePlugin";
+	function->setInheritedBase("DeleteBase");
+	addFunction(function, RemovePluginCommand);
+
+
+	function = new TFunction();
 	function->object = "CurveView";
 	function->commandName = "RemoveCurveNode";
 	function->setDescription("Remove Node(s)");
@@ -479,6 +486,18 @@ TCommand* TraversoCommands::create(QObject* obj, const QString& command, QVarian
 				return 0;
 			}
 			return activeSession->remove_track(track);
+		}
+
+		case RemovePluginCommand:
+		{
+			PluginView* view = qobject_cast<PluginView*>(obj);
+			if (!view) {
+				PERROR("TraversoCommands: Supplied QObject was not a PluginView! "
+					"RemovePluginCommand needs a PluginView as argument");
+				return 0;
+			}
+
+			return view->remove_plugin();
 		}
 
 		case RemoveClipNodeCommmand:

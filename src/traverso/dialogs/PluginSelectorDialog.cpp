@@ -49,7 +49,7 @@ PluginSelectorDialog::PluginSelectorDialog(QWidget* parent)
 	pluginTreeWidget->header()->resizeSection(2, 60);
 	
 
-//#if defined (LV2_SUPPORT)
+#if defined (LV2_SUPPORT)
         printf("Getting the list of found lv2 plugins from the PluginManager\n");
 	const LilvPlugins* pluginList = PluginManager::instance()->get_lilv_plugins();
 
@@ -79,7 +79,7 @@ PluginSelectorDialog::PluginSelectorDialog(QWidget* parent)
 			item->setToolTip(0, pinfo.name);
 		}
 	}
-//#endif
+#endif
 
 	connect(pluginTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(plugin_double_clicked()));
 }
