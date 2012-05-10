@@ -260,6 +260,7 @@ TARGET_LINK_LIBRARIES(traverso
         ${VORBIS_ENC_LIB}
         ${FLAC_LIB}
 # 	rt
+        dl
 )
 
 IF(WIN32)
