@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 
 #include "ResampleAudioReader.h"
 #include <QString>
+#include <cstdio>
 
 #define OVERFLOW_SIZE 512
 

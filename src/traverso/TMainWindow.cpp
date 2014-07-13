@@ -235,7 +235,11 @@ TMainWindow::TMainWindow()
 	m_mainMenuBar = menuBar();
 #else
 	m_mainMenuBar = menuBar();
-	m_mainMenuToolBar->addWidget(m_mainMenuBar);
+    // fix for appmenu-qt crash
+    // Adding the main menu bar to a toolbar seems to be a
+    // good idea after all, unity desktop crashes with it
+    // so for now, disable this 'feature'
+//    m_mainMenuToolBar->addWidget(m_mainMenuBar);
 #endif
 	addToolBar(Qt::TopToolBarArea, m_mainMenuToolBar);
 

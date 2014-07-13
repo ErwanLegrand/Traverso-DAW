@@ -21,6 +21,7 @@ $Id: CommandGroup.cpp,v 1.6 2007/04/30 10:09:11 r_sijrier Exp $
 */
 
 #include "CommandGroup.h"
+#include <cstdio>
 
 // Always put me below _all_ includes, this is needed
 // in case we run with memory leak detection enabled!
