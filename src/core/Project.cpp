@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA.
 #include <QString>
 
 #include <cfloat>
+#include <unistd.h>
 
 #include "AudioBus.h"
 #include "AudioChannel.h"
@@ -346,7 +347,7 @@ int Project::load(QString projectfile)
         }
 
 
-        prepare_audio_device(doc);
+	prepare_audio_device(doc);
 
         QDomNode masterOutNode = docElem.firstChildElement("MasterOut");
         m_masterOut->set_state(masterOutNode.firstChildElement());
@@ -667,7 +668,7 @@ void Project::prepare_audio_device(QDomDocument doc)
         ads.cardDevice = e.attribute("device", "");
         ads.rate = e.attribute("samplerate", "44100").toInt();
         ads.bufferSize = e.attribute("buffersize", "512").toInt();
-        ads.jackChannels.append(m_softwareAudioChannels.values());
+//        ads.jackChannels.append(m_softwareAudioChannels.values());
 
         if (ads.driverType.isEmpty() || ads.driverType.isNull()) {
 #if defined (Q_WS_X11)

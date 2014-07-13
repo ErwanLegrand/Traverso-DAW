@@ -105,9 +105,9 @@ int JackDriver::setup(QList<AudioChannel* > channels)
                 return -1;
         }
 
-        foreach(AudioChannel* channel, channels) {
-                add_channel(channel);
-        }
+	foreach(AudioChannel* channel, channels) {
+		add_channel(channel);
+	}
 
 	return 1;
 }
@@ -119,11 +119,11 @@ void JackDriver::add_channel(AudioChannel* channel)
         PortChannelPair* pcpair = new PortChannelPair();
 
         if (channel->get_type() == ChannelIsInput) {
-                pcpair->jackport = jack_port_register (m_jack_client, channel->get_name().toUtf8().data(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+		pcpair->jackport = jack_port_register (m_jack_client, channel->get_name().toUtf8().data(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
         }
 
         if (channel->get_type() == ChannelIsOutput) {
-                pcpair->jackport = jack_port_register (m_jack_client, channel->get_name().toUtf8().data(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+		pcpair->jackport = jack_port_register (m_jack_client, channel->get_name().toUtf8().data(), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
         }
 
         if (pcpair->jackport == 0) {
@@ -172,7 +172,6 @@ void JackDriver::remove_channel(AudioChannel* channel)
                 }
         }
 }
-
 
 int JackDriver::attach( )
 {

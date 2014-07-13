@@ -65,8 +65,8 @@ void CurveNodeView::paint( QPainter * painter, const QStyleOptionGraphicsItem * 
 	QPointF mapped = mapToParent(QPointF(0, 0));
 	int x = (int) mapped.x();
 	int y = (int) mapped.y();
-	int heightadjust = 0;
-	int widthadjust = 0;
+    int heightadjust = 0;
+    int widthadjust = 0;
 
 	if ( (y + m_boundingRect.height()) > (int) m_parentViewItem->boundingRect().height() ) {
 		heightadjust = y - (int)m_parentViewItem->boundingRect().height() + (int) m_boundingRect.height();

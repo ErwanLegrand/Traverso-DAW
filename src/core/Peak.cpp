@@ -265,8 +265,8 @@ int Peak::calculate_peaks(
 		}
 		
 		int offset = qRound(startPos / nearestpow2) * 2;
-		int truncate = 0;
-		
+        int truncate = 0;
+
 		// Check if this zoom level has as many data as requested.
 		if ( (peakDataCount + offset) > data->headerdata.peakDataSizeForLevel[index]) {
 			truncate = peakDataCount - (data->headerdata.peakDataSizeForLevel[index] - offset);

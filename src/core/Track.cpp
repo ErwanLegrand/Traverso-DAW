@@ -522,7 +522,7 @@ bool Track::connect_to_jack(bool inports, bool outports)
 
         if (outports) {
                 for (int chan=0; chan<m_channelCount; ++chan) {
-                        channelconfig.name = m_name + "/out " + QString("%1").arg(chan);
+			channelconfig.name = m_name + "_" + QString("%1").arg(chan);
                         channelconfig.type = "output";
                         busconfig.channelNames << channelconfig.name;
                 }
@@ -535,7 +535,7 @@ bool Track::connect_to_jack(bool inports, bool outports)
 
         if (inports) {
                 for (int chan=0; chan<m_channelCount; ++chan) {
-                        channelconfig.name = m_name + "/in " + QString("%1").arg(chan);
+			channelconfig.name = m_name + "_" + QString("%1").arg(chan);
                         channelconfig.type = "input";
                         busconfig.channelNames << channelconfig.name;
                 }

@@ -109,7 +109,7 @@ int AlsaDriver::setup(bool capture, bool playback, const QString& devicename, co
         QString pcmName = "default";
         if (devicename != "default") {
                 pcmName = QString("hw:%1").arg(get_device_id_by_name(devicename));
-        }
+	}
 	char *playback_pcm_name = strdup(pcmName.toAscii().data());
 	char *capture_pcm_name = strdup(pcmName.toAscii().data());
 	int shorts_first = false;
@@ -1494,8 +1494,8 @@ int AlsaDriver::_read(nframes_t nframes)
 int AlsaDriver::_write(nframes_t nframes)
 {
 	audio_sample_t* buf;
-	nframes_t orig_nframes;
-	snd_pcm_uframes_t nwritten;
+    nframes_t orig_nframes;
+    snd_pcm_uframes_t nwritten;
 	snd_pcm_uframes_t contiguous;
 	snd_pcm_uframes_t offset;
 	int err;
@@ -1575,7 +1575,7 @@ int AlsaDriver::attach()
 	char buf[32];
 	channel_t chn;
 	AudioChannel* chan;
-	int port_flags;
+    int port_flags;
 
 	device->set_buffer_size (frames_per_cycle);
 	device->set_sample_rate (frame_rate);

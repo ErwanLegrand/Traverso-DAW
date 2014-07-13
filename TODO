@@ -2,6 +2,8 @@ TOBEDONE FOR 0.50.x
 
 Update website where to download the new 0.49.2 debian/ubuntu package.
 
+* track VU"s aligned vertical: pan knob disappears when changing vertical zoom
+* Restore original behavior of main menu bar.
 * Better feedback for alsa driver when using incompatible setup, this: printf("ALSA: use %d periods for %s\n", *nperiodsp, stream_name);
   doesn't read like: you should do that! what about a popup that explains driver failures in more detail?
 * solo track B then Solo track A unsolo Track B, then solo track B again and unsolo track A: clips next to playhead no longer play!

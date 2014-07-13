@@ -243,8 +243,8 @@ int Sheet::set_state( const QDomNode & node )
         while(!trackNode.isNull()) {
 		AudioTrack* track = new AudioTrack(this, trackNode);
                 private_add_track(track);
-                private_track_added(track);
 		track->set_state(trackNode);
+		private_track_added(track);
 
 		trackNode = trackNode.nextSibling();
 	}

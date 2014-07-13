@@ -111,7 +111,7 @@ SET(MINIMAL_REDLAND_VERSION 1.0.2)
 SET(MINIMAL_PULSAUDIO_VERSION 0.9)
 SET(HAVE_COREAUDIO FALSE)
 
-SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb3 -Wall ${CXX_FLAGS}")
+SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb3 -Wall -Wno-unused-local-typedefs ${CXX_FLAGS}")
 SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -Wall -fPIC ${CXX_FLAGS}")
 
 # Detect the flags to be used for large file support
